@@ -30,6 +30,10 @@ export default function TripDetailPage() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [message, setMessage] = useState("讀取中...");
+  const totalAmount = expenses.reduce(
+  (sum, expense) => sum + Number(expense.amount || 0),
+  0
+);
 
   useEffect(() => {
     async function loadTrip() {
@@ -104,7 +108,9 @@ setMessage("");
           <hr style={{ margin: "30px 0" }} />
 
 <h2>這趟旅程的花費</h2>
-
+<p>
+  總花費：{totalAmount.toFixed(2)}
+</p>
 {expenses.length === 0 ? (
   <p>目前還沒有花費紀錄。</p>
 ) : (
