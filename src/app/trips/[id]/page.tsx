@@ -22,6 +22,17 @@ type Expense = {
   currency: string | null;
   category: string | null;
 };
+type ItineraryItem = {
+  id: number;
+  date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  title: string;
+  location: string | null;
+  transportation: string | null;
+  notes: string | null;
+};
+
 
 export default function TripDetailPage() {
   const params = useParams();
@@ -30,7 +41,9 @@ export default function TripDetailPage() {
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>([]);
   const [message, setMessage] = useState("讀取中...");
+  
   const totalAmount = expenses.reduce(
   (sum, expense) => sum + Number(expense.amount || 0),
   0
@@ -57,6 +70,15 @@ export default function TripDetailPage() {
   .select("id,date,item,amount,currency,category")
   .eq("trip_id", id)
   .order("date", { ascending: false });
+
+      const { data: itineraryData, error: itineraryError } = await supabase
+  .from("ItineraryItems")
+  .select(
+    "id,date,start_time,end_time,title,location,transportation,notes"
+  )
+  .eq("trip_id", id)
+  .order("date", { ascending: true })
+  .order("start_time", { ascending: true });
       
 
       if (error) {
@@ -69,8 +91,14 @@ if (expenseError) {
   return;
 }
 
+if (itineraryError) {
+  setMessage("讀取每日行程失敗：" + itineraryError.message);
+  return;
+}
+
 setTrip(data);
 setExpenses(expenseData ?? []);
+setItineraryItems(itineraryData ?? []);
 setMessage("");
     }
 
@@ -135,6 +163,44 @@ setMessage("");
     ➕ 新增每日行程
   </Link>
 </p>
+          <hr style={{ margin: "30px 0" }} />
+
+<h2>每日行程</h2>
+
+{itineraryItems.length === 0 ? (
+  <p>目前還沒有每日行程。</p>
+) : (
+  itineraryItems.map((item) => (
+    <div
+      key={item.id}
+      style={{
+        border: "1px solid #ccc",
+        padding: 14,
+        borderRadius: 8,
+        marginBottom: 10,
+      }}
+    >
+      <strong>{item.title}</strong>
+
+      <p>日期：{item.date || "未設定"}</p>
+
+      <p>
+        時間：{item.start_time || "未設定"}
+        {" ～ "}
+        {item.end_time || "未設定"}
+      </p>
+
+      {item.location && <p>地點：{item.location}</p>}
+
+      {item.transportation && (
+        <p>交通：{item.transportation}</p>
+      )}
+
+      {item.notes && <p>備註：{item.notes}</p>}
+    </div>
+  ))
+)}
+          
           
         <button
   onClick={handleDeleteTrip}
