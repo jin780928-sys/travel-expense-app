@@ -6,14 +6,16 @@ import { supabase } from "../lib/supabase";
 
 export default function Home() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     async function checkLogin() {
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
+  data: { session },
+} = await supabase.auth.getSession();
 
-      setLoggedIn(!!session);
+setLoggedIn(!!session);
+setUserEmail(session?.user?.email || "");
     }
 
     checkLogin();
@@ -35,6 +37,11 @@ export default function Home() {
       <h1>Travel Expense App</h1>
 
       <p>行程規劃＋旅遊／日常記帳</p>
+      {loggedIn && userEmail && (
+  <p style={{ marginTop: 12 }}>
+    目前登入：{userEmail}
+  </p>
+)}
 
       <div
         style={{
