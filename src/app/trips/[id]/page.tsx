@@ -129,7 +129,26 @@ setMessage("");
 
   router.push("/trips");
 }
-  
+  async function handleDeleteItinerary(itemId: number) {
+  const confirmed = window.confirm("確定要刪除這筆每日行程嗎？");
+
+  if (!confirmed) return;
+
+  const { error } = await supabase
+    .from("ItineraryItems")
+    .delete()
+    .eq("id", itemId)
+    .eq("trip_id", id);
+
+  if (error) {
+    setMessage("刪除每日行程失敗：" + error.message);
+    return;
+  }
+
+  setItineraryItems((current) =>
+    current.filter((item) => item.id !== itemId)
+  );
+}
   return (
     <main style={{ maxWidth: 800, margin: "40px auto", padding: 20 }}>
       <p>
@@ -202,6 +221,15 @@ setMessage("");
     ✏️ 編輯這筆行程
   </Link>
 </p>
+      <button
+  onClick={() => handleDeleteItinerary(item.id)}
+  style={{
+    padding: "8px 12px",
+    marginTop: 4,
+  }}
+>
+  刪除這筆行程
+</button>
     </div>
   ))
 )}
