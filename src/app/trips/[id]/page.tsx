@@ -51,6 +51,23 @@ export default function TripDetailPage() {
   const groupedItinerary = itineraryItems.reduce<
   Record<string, ItineraryItem[]>
 >((groups, item) => {
+    function formatDateWithWeekday(date: string) {
+  if (date === "未設定日期") return date;
+
+  const weekdays = [
+    "週日",
+    "週一",
+    "週二",
+    "週三",
+    "週四",
+    "週五",
+    "週六",
+  ];
+
+  const parsedDate = new Date(`${date}T00:00:00`);
+
+  return `${date}（${weekdays[parsedDate.getDay()]}）`;
+}
   const dateKey = item.date || "未設定日期";
 
   if (!groups[dateKey]) {
@@ -204,7 +221,7 @@ setMessage("");
 ) : (
   Object.entries(groupedItinerary).map(([date, items]) => (
     <section key={date} style={{ marginBottom: 32 }}>
-      <h3>{date}</h3>
+     <h3>{formatDateWithWeekday(date)}</h3>
 
       {items.map((item) => (
         <div
