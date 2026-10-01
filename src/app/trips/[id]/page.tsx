@@ -14,11 +14,21 @@ type Trip = {
   notes: string | null;
 };
 
+type Expense = {
+  id: number;
+  date: string | null;
+  item: string;
+  amount: number | null;
+  currency: string | null;
+  category: string | null;
+};
+
 export default function TripDetailPage() {
   const params = useParams();
   const id = Number(params.id);
 
   const [trip, setTrip] = useState<Trip | null>(null);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [message, setMessage] = useState("讀取中...");
 
   useEffect(() => {
@@ -37,14 +47,26 @@ export default function TripDetailPage() {
         .select("id,name,location,start_date,end_date,notes")
         .eq("id", id)
         .single();
+      const { data: expenseData, error: expenseError } = await supabase
+  .from("Expenses")
+  .select("id,date,item,amount,currency,category")
+  .eq("trip_id", id)
+  .order("date", { ascending: false });
+      
 
       if (error) {
-        setMessage("讀取失敗：" + error.message);
-        return;
-      }
+  setMessage("讀取旅程失敗：" + error.message);
+  return;
+}
 
-      setTrip(data);
-      setMessage("");
+if (expenseError) {
+  setMessage("讀取花費失敗：" + expenseError.message);
+  return;
+}
+
+setTrip(data);
+setExpenses(expenseData ?? []);
+setMessage("");
     }
 
     if (id) {
@@ -79,6 +101,37 @@ export default function TripDetailPage() {
               ＋ 新增這趟旅程的花費
             </Link>
           </p>
+          <hr style={{ margin: "30px 0" }} />
+
+<h2>這趟旅程的花費</h2>
+
+{expenses.length === 0 ? (
+  <p>目前還沒有花費紀錄。</p>
+) : (
+  expenses.map((expense) => (
+    <div
+      key={expense.id}
+      style={{
+        border: "1px solid #ccc",
+        padding: 14,
+        borderRadius: 8,
+        marginBottom: 10,
+      }}
+    >
+      <strong>{expense.item}</strong>
+
+      <p>
+        金額：{expense.currency || "USD"} {expense.amount ?? 0}
+      </p>
+
+      <p>日期：{expense.date || "未設定"}</p>
+
+      {expense.category && (
+        <p>分類：{expense.category}</p>
+      )}
+    </div>
+  ))
+)}
         </>
       )}
     </main>
