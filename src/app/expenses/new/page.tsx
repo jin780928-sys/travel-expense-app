@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
 type Trip = {
@@ -15,7 +14,7 @@ type Person = {
 };
 
 export default function NewExpensePage() {
-  const searchParams = useSearchParams();
+
   const [date, setDate] = useState("");
   const [item, setItem] = useState("");
   const [amount, setAmount] = useState("");
@@ -25,13 +24,15 @@ export default function NewExpensePage() {
   const [expenseScope, setExpenseScope] = useState("daily");
   const [tripId, setTripId] = useState("");
   useEffect(() => {
-  const tripFromUrl = searchParams.get("trip_id");
+  const params = new URLSearchParams(window.location.search);
+  const tripFromUrl = params.get("trip_id");
 
   if (tripFromUrl) {
     setTripId(tripFromUrl);
     setExpenseScope("travel");
   }
-}, [searchParams]);
+}, []);
+  
   const [paidBy, setPaidBy] = useState("");
   const [splitType, setSplitType] = useState("equal");
   const [notes, setNotes] = useState("");
