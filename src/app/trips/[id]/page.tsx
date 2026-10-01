@@ -48,6 +48,19 @@ export default function TripDetailPage() {
   (sum, expense) => sum + Number(expense.amount || 0),
   0
 );
+  const groupedItinerary = itineraryItems.reduce<
+  Record<string, ItineraryItem[]>
+>((groups, item) => {
+  const dateKey = item.date || "未設定日期";
+
+  if (!groups[dateKey]) {
+    groups[dateKey] = [];
+  }
+
+  groups[dateKey].push(item);
+
+  return groups;
+}, {});
 
   useEffect(() => {
     async function loadTrip() {
@@ -189,48 +202,54 @@ setMessage("");
 {itineraryItems.length === 0 ? (
   <p>目前還沒有每日行程。</p>
 ) : (
-  itineraryItems.map((item) => (
-    <div
-      key={item.id}
-      style={{
-        border: "1px solid #ccc",
-        padding: 14,
-        borderRadius: 8,
-        marginBottom: 10,
-      }}
-    >
-      <strong>{item.title}</strong>
+  Object.entries(groupedItinerary).map(([date, items]) => (
+    <section key={date} style={{ marginBottom: 32 }}>
+      <h3>{date}</h3>
 
-      <p>日期：{item.date || "未設定"}</p>
+      {items.map((item) => (
+        <div
+          key={item.id}
+          style={{
+            border: "1px solid #ccc",
+            padding: 14,
+            borderRadius: 8,
+            marginBottom: 10,
+          }}
+        >
+          <strong>{item.title}</strong>
 
-      <p>
-        時間：{item.start_time || "未設定"}
-        {" ～ "}
-        {item.end_time || "未設定"}
-      </p>
+          <p>
+            時間：{item.start_time || "未設定"}
+            {" ～ "}
+            {item.end_time || "未設定"}
+          </p>
 
-      {item.location && <p>地點：{item.location}</p>}
+          {item.location && <p>地點：{item.location}</p>}
 
-      {item.transportation && (
-        <p>交通：{item.transportation}</p>
-      )}
+          {item.transportation && (
+            <p>交通：{item.transportation}</p>
+          )}
 
-      {item.notes && <p>備註：{item.notes}</p>}
-      <p style={{ marginTop: 12 }}>
-  <Link href={`/trips/${id}/itinerary/${item.id}/edit`}>
-    ✏️ 編輯這筆行程
-  </Link>
-</p>
-      <button
-  onClick={() => handleDeleteItinerary(item.id)}
-  style={{
-    padding: "8px 12px",
-    marginTop: 4,
-  }}
->
-  刪除這筆行程
-</button>
-    </div>
+          {item.notes && <p>備註：{item.notes}</p>}
+
+          <p style={{ marginTop: 12 }}>
+            <Link href={`/trips/${id}/itinerary/${item.id}/edit`}>
+              ✏️ 編輯這筆行程
+            </Link>
+          </p>
+
+          <button
+            onClick={() => handleDeleteItinerary(item.id)}
+            style={{
+              padding: "8px 12px",
+              marginTop: 4,
+            }}
+          >
+            刪除這筆行程
+          </button>
+        </div>
+      ))}
+    </section>
   ))
 )}
           
