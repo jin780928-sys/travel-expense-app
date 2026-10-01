@@ -197,6 +197,11 @@ setMessage("");
       )}
 
       {item.notes && <p>備註：{item.notes}</p>}
+      <p style={{ marginTop: 12 }}>
+  <Link href={`/trips/${id}/itinerary/${item.id}/edit`}>
+    ✏️ 編輯這筆行程
+  </Link>
+</p>
     </div>
   ))
 )}
