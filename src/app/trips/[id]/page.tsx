@@ -129,6 +129,13 @@ setMessage("");
     ✏️ 編輯旅程
   </Link>
 </p>
+
+          <p>
+  <Link href={`/trips/${id}/itinerary/new`}>
+    ➕ 新增每日行程
+  </Link>
+</p>
+          
         <button
   onClick={handleDeleteTrip}
   style={{
