@@ -100,6 +100,13 @@ setMessage("");
 
           {trip.notes && <p>備註：{trip.notes}</p>}
 
+          <p style={{ marginTop: 20 }}>
+  <Link href={`/trips/${id}/edit`}>
+    ✏️ 編輯旅程
+  </Link>
+</p>
+          
+
           <p style={{ marginTop: 30 }}>
             <Link href={`/expenses/new?trip_id=${trip.id}`}>
               ＋ 新增這趟旅程的花費
