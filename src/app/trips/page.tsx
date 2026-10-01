@@ -67,7 +67,11 @@ export default function TripsPage() {
             borderRadius: 8,
           }}
         >
-          <h2>{trip.name}</h2>
+          <h2>
+  <Link href={`/trips/${trip.id}`}>
+    {trip.name}
+  </Link>
+</h2>
 
           {trip.location && <p>地點：{trip.location}</p>}
 
