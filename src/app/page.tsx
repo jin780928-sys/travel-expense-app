@@ -1,6 +1,29 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "../lib/supabase";
 
 export default function Home() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    async function checkLogin() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setLoggedIn(!!session);
+    }
+
+    checkLogin();
+  }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    setLoggedIn(false);
+  }
+
   return (
     <main
       style={{
@@ -30,7 +53,19 @@ export default function Home() {
 
         <Link href="/people">👥 人員管理</Link>
 
-        <Link href="/login">🔐 登入</Link>
+        {!loggedIn ? (
+          <Link href="/login">🔐 登入</Link>
+        ) : (
+          <button
+            onClick={handleLogout}
+            style={{
+              width: "fit-content",
+              padding: "8px 12px",
+            }}
+          >
+            🚪 登出
+          </button>
+        )}
       </div>
     </main>
   );
