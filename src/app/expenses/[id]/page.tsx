@@ -210,6 +210,11 @@ export default function ExpenseDetailPage() {
           {expense.notes && (
             <p>備註：{expense.notes}</p>
           )}
+          <p style={{ marginTop: 20 }}>
+  <Link href={`/expenses/${id}/edit`}>
+    ✏️ 編輯這筆花費
+  </Link>
+</p>
           <button
   onClick={handleDelete}
   style={{
