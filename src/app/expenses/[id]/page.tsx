@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 
@@ -30,6 +30,7 @@ type Split = {
 export default function ExpenseDetailPage() {
   const params = useParams();
   const id = Number(params.id);
+  const router = useRouter();
 
   const [expense, setExpense] = useState<Expense | null>(null);
   const [tripName, setTripName] = useState("");
@@ -123,6 +124,34 @@ export default function ExpenseDetailPage() {
     }
   }, [id]);
 
+  async function handleDelete() {
+  const confirmed = window.confirm("確定要刪除這筆花費嗎？");
+
+  if (!confirmed) return;
+
+  const { error: splitError } = await supabase
+    .from("ExpenseSplits")
+    .delete()
+    .eq("expense_id", id);
+
+  if (splitError) {
+    setMessage("刪除分攤資料失敗：" + splitError.message);
+    return;
+  }
+
+  const { error } = await supabase
+    .from("Expenses")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    setMessage("刪除花費失敗：" + error.message);
+    return;
+  }
+
+  router.push("/expenses");
+}
+
   return (
     <main
       style={{
@@ -181,6 +210,16 @@ export default function ExpenseDetailPage() {
           {expense.notes && (
             <p>備註：{expense.notes}</p>
           )}
+          <button
+  onClick={handleDelete}
+  style={{
+    padding: "10px 16px",
+    marginTop: 16,
+  }}
+>
+  刪除這筆花費
+</button>
+          
 
           <hr style={{ margin: "30px 0" }} />
 
