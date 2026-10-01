@@ -28,6 +28,8 @@ export default function NewExpensePage() {
 
   const [trips, setTrips] = useState<Trip[]>([]);
   const [people, setPeople] = useState<Person[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<number[]>([]);
+  const [customAmounts, setCustomAmounts] = useState<Record<number, string>>({});
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -55,6 +57,14 @@ export default function NewExpensePage() {
     loadOptions();
   }, []);
 
+  function togglePerson(personId: number) {
+  setSelectedPeople((current) =>
+    current.includes(personId)
+      ? current.filter((id) => id !== personId)
+      : [...current, personId]
+  );
+}
+  
   async function handleSubmit() {
     setMessage("");
 
@@ -67,28 +77,54 @@ export default function NewExpensePage() {
       return;
     }
 
-    const { error } = await supabase.from("Expenses").insert({
-      date: date || null,
-      item,
-      amount: amount ? Number(amount) : null,
-      category,
-      payment_method: paymentMethod,
-      currency,
-      expense_scope: expenseScope,
-      trip_id: tripId ? Number(tripId) : null,
-      paid_by: paidBy ? Number(paidBy) : null,
-      split_type: splitType,
-      notes,
-      user_id: user.id,
-    });
+   const { data: expenseData, error } = await supabase
+  .from("Expenses")
+  .insert({
+    date: date || null,
+    item,
+    amount: amount ? Number(amount) : null,
+    category,
+    payment_method: paymentMethod,
+    currency,
+    expense_scope: expenseScope,
+    trip_id: tripId ? Number(tripId) : null,
+    paid_by: paidBy ? Number(paidBy) : null,
+    split_type: splitType,
+    notes,
+    user_id: user.id,
+  })
+  .select("id")
+  .single();
 
     if (error) {
-      setMessage("新增失敗：" + error.message);
-      return;
-    }
+  setMessage("新增失敗：" + error.message);
+  return;
+}
 
-    setMessage("花費新增成功！");
+if (selectedPeople.length > 0 && expenseData) {
+  const totalAmount = Number(amount) || 0;
+
+  const splitRows = selectedPeople.map((personId) => ({
+    expense_id: expenseData.id,
+    person_id: personId,
+    share_amount:
+      splitType === "equal"
+        ? totalAmount / selectedPeople.length
+        : Number(customAmounts[personId] || 0),
+    user_id: user.id,
+  }));
+
+  const { error: splitError } = await supabase
+    .from("ExpenseSplits")
+    .insert(splitRows);
+
+  if (splitError) {
+    setMessage("花費已新增，但分攤資料新增失敗：" + splitError.message);
+    return;
   }
+}
+
+setMessage("花費新增成功！");
 
   return (
     <main style={{ maxWidth: 650, margin: "40px auto", padding: 20 }}>
@@ -183,6 +219,69 @@ export default function NewExpensePage() {
         ))}
       </select>
 
+      <label>分攤者</label>
+
+<div style={{ marginBottom: 16 }}>
+  {people.length === 0 ? (
+    <p>目前還沒有人員資料。</p>
+  ) : (
+    people.map((person) => (
+      <label
+        key={person.id}
+        style={{
+          display: "block",
+          marginBottom: 8,
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={selectedPeople.includes(person.id)}
+          onChange={() => togglePerson(person.id)}
+          style={{ marginRight: 8 }}
+        />
+
+        {person.name}
+      </label>
+    ))
+  )}
+</div>
+
+      {splitType === "custom" && selectedPeople.length > 0 && (
+  <div style={{ marginBottom: 16 }}>
+    <p>自訂分攤金額</p>
+
+    {selectedPeople.map((personId) => {
+      const person = people.find((p) => p.id === personId);
+
+      return (
+        <div key={personId} style={{ marginBottom: 10 }}>
+          <label>
+            {person?.name || "未命名"}
+          </label>
+
+          <input
+            type="number"
+            step="0.01"
+            placeholder="分攤金額"
+            value={customAmounts[personId] || ""}
+            onChange={(e) =>
+              setCustomAmounts((current) => ({
+                ...current,
+                [personId]: e.target.value,
+              }))
+            }
+            style={{
+              width: "100%",
+              padding: 10,
+              marginTop: 4,
+            }}
+          />
+        </div>
+      );
+    })}
+  </div>
+)}
+      
       <label>分攤方式</label>
       <select
         value={splitType}
