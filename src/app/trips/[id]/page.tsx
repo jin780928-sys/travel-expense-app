@@ -102,10 +102,17 @@ export default function TripDetailPage() {
     }
   }, [id]);
 
-  const totalAmount = expenses.reduce(
-    (sum, expense) => sum + Number(expense.amount || 0),
-    0
-  );
+  const totalsByCurrency = expenses.reduce<Record<string, number>>(
+  (totals, expense) => {
+    const currency = expense.currency || "USD";
+    const amount = Number(expense.amount || 0);
+
+    totals[currency] = (totals[currency] || 0) + amount;
+
+    return totals;
+  },
+  {}
+);
 
   const groupedItinerary = itineraryItems.reduce<
     Record<string, ItineraryItem[]>
@@ -311,7 +318,19 @@ export default function TripDetailPage() {
 
           <h2>這趟旅程的花費</h2>
 
-          <p>總花費：{totalAmount.toFixed(2)}</p>
+          <div>
+  <strong>總花費：</strong>
+
+  {Object.keys(totalsByCurrency).length === 0 ? (
+    <span>目前沒有花費</span>
+  ) : (
+    Object.entries(totalsByCurrency).map(([currency, total]) => (
+      <p key={currency}>
+        {currency} {total.toFixed(2)}
+      </p>
+    ))
+  )}
+</div>
 
           {expenses.length === 0 ? (
             <p>目前還沒有花費紀錄。</p>
