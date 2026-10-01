@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 
@@ -26,6 +26,7 @@ type Expense = {
 export default function TripDetailPage() {
   const params = useParams();
   const id = Number(params.id);
+  const router = useRouter();
 
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -78,6 +79,29 @@ setMessage("");
     }
   }, [id]);
 
+  async function handleDeleteTrip() {
+  if (expenses.length > 0) {
+    window.alert("這個旅程還有花費紀錄，請先刪除花費後再刪除旅程。");
+    return;
+  }
+
+  const confirmed = window.confirm("確定要刪除這個旅程嗎？");
+
+  if (!confirmed) return;
+
+  const { error } = await supabase
+    .from("Trips")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    setMessage("刪除旅程失敗：" + error.message);
+    return;
+  }
+
+  router.push("/trips");
+}
+  
   return (
     <main style={{ maxWidth: 800, margin: "40px auto", padding: 20 }}>
       <p>
@@ -105,7 +129,15 @@ setMessage("");
     ✏️ 編輯旅程
   </Link>
 </p>
-          
+        <button
+  onClick={handleDeleteTrip}
+  style={{
+    padding: "10px 16px",
+    marginTop: 12,
+  }}
+>
+  刪除這個旅程
+</button>  
 
           <p style={{ marginTop: 30 }}>
             <Link href={`/expenses/new?trip_id=${trip.id}`}>
