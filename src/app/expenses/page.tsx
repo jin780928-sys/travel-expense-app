@@ -72,7 +72,11 @@ export default function ExpensesPage() {
             borderRadius: 8,
           }}
         >
-          <h2>{expense.item}</h2>
+          <h2>
+  <Link href={`/expenses/${expense.id}`}>
+    {expense.item}
+  </Link>
+</h2>
 
           <p>
             金額：{expense.currency || "USD"}{" "}
