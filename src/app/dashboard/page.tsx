@@ -324,104 +324,97 @@ export default function DashboardPage() {
   }
 
   const currentCardStatements = useMemo(() => {
-    return creditCards.map((card) => {
-      if (!card.statement_day) {
-        return {
-  ...card,
-  periodStart: startText,
-  periodEnd: endText,
-  totals,
-  statementStatusId:
-    statementStatus?.id || null,
-  isPaid:
-    statementStatus?.is_paid || false,
-  paidDate:
-    statementStatus?.paid_date || null,
-};
-      }
-
-      const periodEnd = createSafeDate(
-        selectedYear,
-        selectedMonth - 1,
-        card.statement_day
-      );
-
-      const previousStatementDate = createSafeDate(
-        selectedYear,
-        selectedMonth - 2,
-        card.statement_day
-      );
-
-      const periodStart = new Date(
-        previousStatementDate
-      );
-
-      periodStart.setDate(
-        periodStart.getDate() + 1
-      );
-
-      const startText = formatDate(periodStart);
-      const endText = formatDate(periodEnd);
-
-      const totals = statementExpenses.reduce(
-        (result, expense) => {
-          if (
-            expense.card_name !== card.name
-          ) {
-            return result;
-          }
-
-          if (!expense.date) {
-            return result;
-          }
-
-          if (
-            expense.date < startText ||
-            expense.date > endText
-          ) {
-            return result;
-          }
-
-          const currency =
-            expense.currency || "未指定";
-
-          const amount =
-            Number(expense.amount || 0);
-
-          result[currency] =
-            (result[currency] || 0) +
-            amount;
-
-          return result;
-        },
-        {} as Record<string, number>
-      );
-
-      const statementStatus = cardStatements.find(
-        (statement) =>
-          statement.card_id === card.id &&
-          statement.period_start === startText &&
-          statement.period_end === endText
-      );
-
+  return creditCards.map((card) => {
+    if (!card.statement_day) {
       return {
         ...card,
-        periodStart: startText,
-        periodEnd: endText,
-        totals,
-        statementStatusId:
-          statementStatus?.id || null,
-        isPaid:
-          statementStatus?.is_paid || false,
+        periodStart: null,
+        periodEnd: null,
+        totals: {} as Record<string, number>,
+        statementStatusId: null as number | null,
+        isPaid: false,
+        paidDate: null as string | null,
       };
-    });
-  }, [
-    creditCards,
-    cardStatements,
-    statementExpenses,
-    selectedYear,
-    selectedMonth,
-  ]);
+    }
+
+    const periodEnd = createSafeDate(
+      selectedYear,
+      selectedMonth - 1,
+      card.statement_day
+    );
+
+    const previousStatementDate = createSafeDate(
+      selectedYear,
+      selectedMonth - 2,
+      card.statement_day
+    );
+
+    const periodStart = new Date(previousStatementDate);
+
+    periodStart.setDate(periodStart.getDate() + 1);
+
+    const startText = formatDate(periodStart);
+    const endText = formatDate(periodEnd);
+
+    const totals = statementExpenses.reduce(
+      (result, expense) => {
+        if (expense.card_name !== card.name) {
+          return result;
+        }
+
+        if (!expense.date) {
+          return result;
+        }
+
+        if (
+          expense.date < startText ||
+          expense.date > endText
+        ) {
+          return result;
+        }
+
+        const currency =
+          expense.currency || "未指定";
+
+        const amount =
+          Number(expense.amount || 0);
+
+        result[currency] =
+          (result[currency] || 0) + amount;
+
+        return result;
+      },
+      {} as Record<string, number>
+    );
+
+    const statementStatus = cardStatements.find(
+      (statement) =>
+        statement.card_id === card.id &&
+        statement.period_start === startText &&
+        statement.period_end === endText
+    );
+
+    return {
+      ...card,
+      periodStart: startText,
+      periodEnd: endText,
+      totals,
+      statementStatusId:
+        statementStatus?.id || null,
+      isPaid:
+        statementStatus?.is_paid || false,
+      paidDate:
+        statementStatus?.paid_date || null,
+    };
+  });
+}, [
+  creditCards,
+  cardStatements,
+  statementExpenses,
+  selectedYear,
+  selectedMonth,
+]);
+  
 
   const selectedStatementExpenses = useMemo(() => {
     if (!selectedStatementCard) {
