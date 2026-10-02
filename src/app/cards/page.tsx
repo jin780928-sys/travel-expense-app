@@ -1,0 +1,112 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
+type CreditCard = {
+  id: number;
+  name: string;
+  is_active: boolean;
+};
+
+export default function CardsPage() {
+  const [cards, setCards] = useState<CreditCard[]>([]);
+  const [name, setName] = useState("");
+  const [message, setMessage] = useState("讀取中...");
+
+  useEffect(() => {
+    loadCards();
+  }, []);
+
+  async function loadCards() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("請先登入");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("CreditCards")
+      .select("id,name,is_active")
+      .eq("user_id", user.id)
+      .order("name");
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    setCards(data || []);
+    setMessage("");
+  }
+async function addCard() {
+  if (!name.trim()) {
+    setMessage("請輸入信用卡名稱");
+    return;
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    setMessage("請先登入");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("CreditCards")
+    .insert({
+      name: name.trim(),
+      is_active: true,
+      user_id: user.id,
+    });
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  setName("");
+  setMessage("新增成功");
+  await loadCards();
+}
+  return (
+    <main style={{ padding: 24 }}>
+      <h1>信用卡管理</h1>
+
+      <input
+  type="text"
+  placeholder="信用卡名稱"
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 8,
+  }}
+/>
+
+<button
+  onClick={addCard}
+  style={{
+    padding: "10px 16px",
+    marginBottom: 20,
+  }}
+>
+  新增信用卡
+</button>
+      {message && <p>{message}</p>}
+
+      {cards.map((card) => (
+        <div key={card.id} style={{ marginBottom: 12 }}>
+          <strong>{card.name}</strong>
+          <div>{card.is_active ? "啟用" : "停用"}</div>
+        </div>
+      ))}
+    </main>
+  );
+}
