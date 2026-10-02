@@ -16,6 +16,16 @@ export default function DashboardPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [message, setMessage] = useState("讀取中...");
 
+  const now = new Date();
+
+const [selectedYear, setSelectedYear] = useState(
+  now.getFullYear()
+);
+
+const [selectedMonth, setSelectedMonth] = useState(
+  now.getMonth() + 1
+);
+
   useEffect(() => {
     async function loadExpenses() {
       const {
@@ -27,19 +37,23 @@ export default function DashboardPage() {
         return;
       }
 
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const month = String(selectedMonth).padStart(2, "0");
 
-      const startDate = `${year}-${month}-01`;
+const startDate = `${selectedYear}-${month}-01`;
 
-      const nextMonth = new Date(year, now.getMonth() + 1, 1);
-      const nextYear = nextMonth.getFullYear();
-      const nextMonthText = String(
-        nextMonth.getMonth() + 1
-      ).padStart(2, "0");
+const nextMonthDate = new Date(
+  selectedYear,
+  selectedMonth,
+  1
+);
 
-      const endDate = `${nextYear}-${nextMonthText}-01`;
+const nextYear = nextMonthDate.getFullYear();
+
+const nextMonthText = String(
+  nextMonthDate.getMonth() + 1
+).padStart(2, "0");
+
+const endDate = `${nextYear}-${nextMonthText}-01`;
 
       const { data, error } = await supabase
         .from("Expenses")
@@ -61,7 +75,7 @@ export default function DashboardPage() {
     }
 
     loadExpenses();
-  }, []);
+  }, [selectedYear, selectedMonth]);
 
   const totalsByCurrency = useMemo(() => {
     return expenses.reduce<Record<string, number>>(
@@ -123,7 +137,47 @@ export default function DashboardPage() {
     >
       <h1>日常花費統計</h1>
 
-      <p>本月日常花費</p>
+      <div
+  style={{
+    display: "flex",
+    gap: 12,
+    marginBottom: 20,
+  }}
+>
+  <select
+    value={selectedYear}
+    onChange={(e) => setSelectedYear(Number(e.target.value))}
+    style={{
+      padding: 10,
+    }}
+  >
+    {[2025, 2026, 2027, 2028, 2029, 2030].map((year) => (
+      <option key={year} value={year}>
+        {year} 年
+      </option>
+    ))}
+  </select>
+
+  <select
+    value={selectedMonth}
+    onChange={(e) => setSelectedMonth(Number(e.target.value))}
+    style={{
+      padding: 10,
+    }}
+  >
+    {Array.from({ length: 12 }, (_, index) => index + 1).map(
+      (month) => (
+        <option key={month} value={month}>
+          {month} 月
+        </option>
+      )
+    )}
+  </select>
+</div>
+
+<p>
+  {selectedYear} 年 {selectedMonth} 月日常花費
+</p>
 
       {message && <p>{message}</p>}
 
