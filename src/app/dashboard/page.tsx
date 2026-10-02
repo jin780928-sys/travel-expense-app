@@ -175,10 +175,8 @@ export default function DashboardPage() {
     }
 
     setCreditCards(cardData || []);
-    setMessage("");
-  }
 
-  const {
+const {
   data: statementStatusData,
   error: statementStatusError,
 } = await supabase
@@ -198,6 +196,8 @@ if (statementStatusError) {
 }
 
 setCardStatements(statementStatusData || []);
+setMessage("");
+}
   
   const totalsByCurrency = useMemo(() => {
     return expenses.reduce(
