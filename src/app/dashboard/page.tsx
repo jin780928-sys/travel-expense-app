@@ -28,6 +28,7 @@ type CreditCardStatement = {
   period_start: string;
   period_end: string;
   is_paid: boolean;
+  paid_date: string | null;
 };
 
 export default function DashboardPage() {
@@ -180,12 +181,13 @@ export default function DashboardPage() {
     } = await supabase
       .from("CreditCardStatements")
       .select(`
-        id,
-        card_id,
-        period_start,
-        period_end,
-        is_paid
-      `)
+  id,
+  card_id,
+  period_start,
+  period_end,
+  is_paid,
+  paid_date
+`)
       .eq("user_id", user.id);
 
     if (statementStatusError) {
@@ -325,13 +327,17 @@ export default function DashboardPage() {
     return creditCards.map((card) => {
       if (!card.statement_day) {
         return {
-          ...card,
-          periodStart: null,
-          periodEnd: null,
-          totals: {} as Record<string, number>,
-          statementStatusId: null as number | null,
-          isPaid: false,
-        };
+  ...card,
+  periodStart: startText,
+  periodEnd: endText,
+  totals,
+  statementStatusId:
+    statementStatus?.id || null,
+  isPaid:
+    statementStatus?.is_paid || false,
+  paidDate:
+    statementStatus?.paid_date || null,
+};
       }
 
       const periodEnd = createSafeDate(
@@ -465,6 +471,7 @@ export default function DashboardPage() {
       periodEnd: string | null;
       statementStatusId: number | null;
       isPaid: boolean;
+      paidDate: string | null;
     }
   ) {
     if (
@@ -490,8 +497,11 @@ export default function DashboardPage() {
       const { error } = await supabase
         .from("CreditCardStatements")
         .update({
-          is_paid: !card.isPaid,
-        })
+  is_paid: !card.isPaid,
+  paid_date: card.isPaid
+    ? null
+    : new Date().toISOString().slice(0, 10),
+})
         .eq("id", card.statementStatusId)
         .eq("user_id", user.id);
 
@@ -503,12 +513,13 @@ export default function DashboardPage() {
       const { error } = await supabase
         .from("CreditCardStatements")
         .insert({
-          card_id: card.id,
-          period_start: card.periodStart,
-          period_end: card.periodEnd,
-          is_paid: true,
-          user_id: user.id,
-        });
+  card_id: card.id,
+  period_start: card.periodStart,
+  period_end: card.periodEnd,
+  is_paid: true,
+  paid_date: new Date().toISOString().slice(0, 10),
+  user_id: user.id,
+});
 
       if (error) {
         setMessage(error.message);
@@ -849,6 +860,13 @@ export default function DashboardPage() {
                 ? "已繳"
                 : "未繳"}
             </div>
+
+            {card.isPaid && (
+  <div>
+    實際繳款日：
+    {card.paidDate || "未記錄"}
+  </div>
+)}
 
             <button
               onClick={() =>
