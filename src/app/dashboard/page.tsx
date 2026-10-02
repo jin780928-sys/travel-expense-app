@@ -12,6 +12,7 @@ type Expense = {
   major_category: string | null;
   category: string | null;
   currency: string | null;
+  card_name: string | null;
 };
 
 export default function DashboardPage() {
@@ -60,7 +61,7 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
       const { data, error } = await supabase
         .from("Expenses")
         .select(
-  "id,date,item,amount,major_category,category,currency"
+  "id,date,item,amount,major_category,category,currency,card_name"
 )
         .eq("expense_scope", "daily")
         .gte("date", startDate)
@@ -128,6 +129,27 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
       return totals;
     }, {});
   }, [expenses]);
+
+  const totalsByCard = useMemo(() => {
+  return expenses.reduce(
+    (result, expense) => {
+      if (!expense.card_name) return result;
+
+      const currency = expense.currency || "未指定";
+      const amount = Number(expense.amount || 0);
+
+      if (!result[expense.card_name]) {
+        result[expense.card_name] = {};
+      }
+
+      result[expense.card_name][currency] =
+        (result[expense.card_name][currency] || 0) + amount;
+
+      return result;
+    },
+    {} as Record<string, Record<string, number>>
+  );
+}, [expenses]);
 
   return (
     <main
@@ -243,7 +265,31 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
                         )}
 
                         <hr style={{ margin: "30px 0" }} />
+<h2>信用卡支出統計</h2>
 
+{Object.keys(totalsByCard).length === 0 ? (
+  <p>本月沒有信用卡支出</p>
+) : (
+  Object.entries(totalsByCard).map(([cardName, totals]) => (
+    <div
+      key={cardName}
+      style={{
+        border: "1px solid #ddd",
+        padding: 12,
+        marginBottom: 12,
+        borderRadius: 8,
+      }}
+    >
+      <strong>{cardName}</strong>
+
+      {Object.entries(totals).map(([currency, total]) => (
+        <div key={currency}>
+          {currency}: {total.toFixed(2)}
+        </div>
+      ))}
+    </div>
+  ))
+)}
 <h2>本月花費明細</h2>
 
 {expenses.length === 0 ? (
