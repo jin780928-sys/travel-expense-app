@@ -513,6 +513,7 @@ export default function DashboardPage() {
 
       if (error) {
         setMessage(error.message);
+        alert(`新增帳單狀態失敗：${error.message}`);
         return;
       }
     } else {
