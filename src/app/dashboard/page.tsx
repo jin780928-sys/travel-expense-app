@@ -29,6 +29,7 @@ export default function DashboardPage() {
 
   const [message, setMessage] = useState("讀取中...");
   const [selectedCard, setSelectedCard] = useState("");
+  const [selectedStatementCard, setSelectedStatementCard] = useState("");
 
   const now = new Date();
 
@@ -376,6 +377,39 @@ export default function DashboardPage() {
     selectedMonth,
   ]);
 
+  const selectedStatementExpenses = useMemo(() => {
+  if (!selectedStatementCard) {
+    return [];
+  }
+
+  const card = currentCardStatements.find(
+    (item) => item.name === selectedStatementCard
+  );
+
+  if (!card || !card.periodStart || !card.periodEnd) {
+    return [];
+  }
+
+  return statementExpenses.filter((expense) => {
+    if (expense.card_name !== card.name) {
+      return false;
+    }
+
+    if (!expense.date) {
+      return false;
+    }
+
+    return (
+      expense.date >= card.periodStart &&
+      expense.date <= card.periodEnd
+    );
+  });
+}, [
+  selectedStatementCard,
+  currentCardStatements,
+  statementExpenses,
+]);
+  
   return (
     <main
       style={{
@@ -647,7 +681,19 @@ export default function DashboardPage() {
               borderRadius: 8,
             }}
           >
-            <strong>{card.name}</strong>
+            <button
+  onClick={() => setSelectedStatementCard(card.name)}
+  style={{
+    border: "none",
+    background: "none",
+    padding: 0,
+    fontWeight: "bold",
+    cursor: "pointer",
+    textDecoration: "underline",
+  }}
+>
+  {card.name}
+</button>
 
             <div>
               結帳日：
@@ -686,6 +732,61 @@ export default function DashboardPage() {
                 )
               )
             )}
+
+            {selectedStatementCard && (
+  <div
+    style={{
+      border: "1px solid #ddd",
+      padding: 12,
+      marginBottom: 20,
+      borderRadius: 8,
+    }}
+  >
+    <h3>{selectedStatementCard} 本期帳單明細</h3>
+
+    <button
+      onClick={() => setSelectedStatementCard("")}
+      style={{
+        padding: "6px 10px",
+        marginBottom: 12,
+      }}
+    >
+      關閉明細
+    </button>
+
+    {selectedStatementExpenses.length === 0 ? (
+      <p>本期沒有消費紀錄</p>
+    ) : (
+      selectedStatementExpenses.map((expense) => (
+        <div
+          key={expense.id}
+          style={{
+            padding: "8px 0",
+            borderBottom: "1px solid #eee",
+          }}
+        >
+          <strong>
+            <Link href={`/expenses/${expense.id}`}>
+              {expense.item}
+            </Link>
+          </strong>
+
+          <div>{expense.date || "-"}</div>
+
+          <div>
+            {expense.major_category || "-"}
+            {expense.category ? ` → ${expense.category}` : ""}
+          </div>
+
+          <div>
+            {expense.currency || ""}{" "}
+            {Number(expense.amount || 0).toFixed(2)}
+          </div>
+        </div>
+      ))
+    )}
+  </div>
+)}
           </div>
         ))
       )}
