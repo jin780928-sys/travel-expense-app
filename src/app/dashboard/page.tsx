@@ -357,6 +357,14 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
                         )}
 
                         <hr style={{ margin: "30px 0" }} />
+                      </div>
+                    )
+                  )}
+                </div>
+              )
+            )
+          )}
+
 <h2>信用卡支出統計</h2>
 
 {Object.keys(totalsByCard).length === 0 ? (
