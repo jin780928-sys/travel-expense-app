@@ -35,12 +35,17 @@ export default function DashboardPage() {
 
       const nextMonth = new Date(year, now.getMonth() + 1, 1);
       const nextYear = nextMonth.getFullYear();
-      const nextMonthText = String(nextMonth.getMonth() + 1).padStart(2, "0");
+      const nextMonthText = String(
+        nextMonth.getMonth() + 1
+      ).padStart(2, "0");
+
       const endDate = `${nextYear}-${nextMonthText}-01`;
 
       const { data, error } = await supabase
         .from("Expenses")
-        .select("id,date,amount,major_category,category,currency")
+        .select(
+          "id,date,amount,major_category,category,currency"
+        )
         .eq("expense_scope", "daily")
         .gte("date", startDate)
         .lt("date", endDate)
@@ -59,39 +64,54 @@ export default function DashboardPage() {
   }, []);
 
   const totalsByCurrency = useMemo(() => {
-    return expenses.reduce<Record<string, number>>((totals, expense) => {
-      const currency = expense.currency || "USD";
-      const amount = Number(expense.amount || 0);
+    return expenses.reduce<Record<string, number>>(
+      (totals, expense) => {
+        const currency = expense.currency || "USD";
+        const amount = Number(expense.amount || 0);
 
-      totals[currency] = (totals[currency] || 0) + amount;
+        totals[currency] =
+          (totals[currency] || 0) + amount;
+
+        return totals;
+      },
+      {}
+    );
+  }, [expenses]);
+
+  const totalsByCategory = useMemo(() => {
+    return expenses.reduce<
+      Record<
+        string,
+        Record<string, Record<string, number>>
+      >
+    >((totals, expense) => {
+      const majorCategory =
+        expense.major_category || "未分類";
+
+      const category =
+        expense.category || "未分類";
+
+      const currency =
+        expense.currency || "USD";
+
+      const amount =
+        Number(expense.amount || 0);
+
+      if (!totals[majorCategory]) {
+        totals[majorCategory] = {};
+      }
+
+      if (!totals[majorCategory][category]) {
+        totals[majorCategory][category] = {};
+      }
+
+      totals[majorCategory][category][currency] =
+        (totals[majorCategory][category][currency] || 0) +
+        amount;
 
       return totals;
     }, {});
   }, [expenses]);
-
-  const totalsByCategory = useMemo(() => {
-  return expenses.reduce<
-    Record<string, Record<string, Record<string, number>>>
-  >((totals, expense) => {
-    const majorCategory = expense.major_category || "未分類";
-    const category = expense.category || "未分類";
-    const currency = expense.currency || "USD";
-    const amount = Number(expense.amount || 0);
-
-    if (!totals[majorCategory]) {
-      totals[majorCategory] = {};
-    }
-
-    if (!totals[majorCategory][category]) {
-      totals[majorCategory][category] = {};
-    }
-
-    totals[majorCategory][category][currency] =
-      (totals[majorCategory][category][currency] || 0) + amount;
-
-    return totals;
-  }, {});
-}, [expenses]);
 
   return (
     <main
@@ -125,52 +145,49 @@ export default function DashboardPage() {
 
           <hr style={{ margin: "30px 0" }} />
 
-         <h2>依分類統計</h2>
+          <h2>依分類統計</h2>
 
-{Object.keys(totalsByCategory).length === 0 ? (
-  <p>目前沒有分類資料。</p>
-) : (
-  Object.entries(totalsByCategory).map(
-    ([majorCategory, subCategories]) => (
-      <div
-        key={majorCategory}
-        style={{
-          border: "1px solid #ccc",
-          borderRadius: 8,
-          padding: 14,
-          marginBottom: 16,
-        }}
-      >
-        <h3>{majorCategory}</h3>
+          {Object.keys(totalsByCategory).length === 0 ? (
+            <p>目前沒有分類資料。</p>
+          ) : (
+            Object.entries(totalsByCategory).map(
+              ([majorCategory, subCategories]) => (
+                <div
+                  key={majorCategory}
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: 8,
+                    padding: 14,
+                    marginBottom: 16,
+                  }}
+                >
+                  <h3>{majorCategory}</h3>
 
-        {Object.entries(subCategories).map(
-          ([category, currencies]) => (
-            <div
-              key={category}
-              style={{
-                marginLeft: 16,
-                marginBottom: 12,
-              }}
-            >
-              <strong>{category}</strong>
+                  {Object.entries(subCategories).map(
+                    ([category, currencies]) => (
+                      <div
+                        key={category}
+                        style={{
+                          marginLeft: 16,
+                          marginBottom: 12,
+                        }}
+                      >
+                        <strong>{category}</strong>
 
-              {Object.entries(currencies).map(
-                ([currency, total]) => (
-                  <p
-                    key={currency}
-                    style={{ marginLeft: 16 }}
-                  >
-                    {currency} {total.toFixed(2)}
-                  </p>
-                )
-              )}
-            </div>
-          )
-        )}
-      </div>
-    )
-  )
-)}
+                        {Object.entries(currencies).map(
+                          ([currency, total]) => (
+                            <p
+                              key={currency}
+                              style={{ marginLeft: 16 }}
+                            >
+                              {currency}{" "}
+                              {total.toFixed(2)}
+                            </p>
+                          )
+                        )}
+                      </div>
+                    )
+                  )}
                 </div>
               )
             )
