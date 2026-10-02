@@ -16,6 +16,9 @@ export default function EditExpensePage() {
   const [category, setCategory] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [cardName, setCardName] = useState("");
+  const [creditCards, setCreditCards] = useState<
+  { id: number; name: string }[]
+>([]);
   const [currency, setCurrency] = useState("USD");
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState("讀取中...");
@@ -85,6 +88,7 @@ const categoryOptions: Record<string, string[]> = {
 
     if (id) {
       loadExpense();
+      loadCreditCards();
     }
   }, [id]);
 
@@ -113,7 +117,26 @@ const categoryOptions: Record<string, string[]> = {
 
     router.push(`/expenses/${id}`);
   }
+async function loadCreditCards() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from("CreditCards")
+    .select("id,name")
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .order("name");
+
+  if (error) {
+    return;
+  }
+
+  setCreditCards(data || []);
+}
   return (
     <main
       style={{
@@ -240,12 +263,11 @@ const categoryOptions: Record<string, string[]> = {
       }}
     >
       <option value="">請選擇信用卡</option>
-      <option value="CSP">CSP</option>
-      <option value="Bilt">Bilt</option>
-      <option value="Citi AA Platinum">Citi AA Platinum</option>
-      <option value="Costco Visa">Costco Visa</option>
-      <option value="BOA Cash Rewards">BOA Cash Rewards</option>
-      <option value="Other">其他</option>
+     {creditCards.map((card) => (
+  <option key={card.id} value={card.name}>
+    {card.name}
+  </option>
+))}
     </select>
   </>
 )}
