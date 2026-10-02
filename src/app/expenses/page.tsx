@@ -96,7 +96,24 @@ export default function ExpensesPage() {
 )}
 
           {expense.payment_method && (
-  <p>付款方式：{expense.payment_method}</p>
+  <p>
+  付款方式：
+  {expense.payment_method === "cash"
+    ? "現金"
+    : expense.payment_method === "credit_card"
+    ? "信用卡"
+    : expense.payment_method === "debit_card"
+    ? "簽帳金融卡"
+    : expense.payment_method === "bank_transfer"
+    ? "銀行轉帳"
+    : expense.payment_method === "apple_pay"
+    ? "Apple Pay"
+    : expense.payment_method === "google_pay"
+    ? "Google Pay"
+    : expense.payment_method === "other"
+    ? "其他"
+    : expense.payment_method}
+</p>
 )}
 
 {expense.payment_method === "credit_card" && (
