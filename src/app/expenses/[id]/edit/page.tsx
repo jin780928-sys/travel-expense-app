@@ -15,6 +15,7 @@ export default function EditExpensePage() {
   const [majorCategory, setMajorCategory] = useState("");
   const [category, setCategory] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [cardName, setCardName] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState("讀取中...");
@@ -60,7 +61,7 @@ const categoryOptions: Record<string, string[]> = {
       const { data, error } = await supabase
         .from("Expenses")
         .select(
-  "item,amount,date,major_category,category,payment_method,currency,notes"
+  "item,amount,date,major_category,category,payment_method,card_name,currency,notes"
 )
         .eq("id", id)
         .single();
@@ -76,6 +77,7 @@ const categoryOptions: Record<string, string[]> = {
       setMajorCategory(data.major_category || "");
       setCategory(data.category || "");
       setPaymentMethod(data.payment_method || "");
+      setCardName(data.card_name || "");
       setCurrency(data.currency || "USD");
       setNotes(data.notes || "");
       setMessage("");
@@ -98,6 +100,7 @@ const categoryOptions: Record<string, string[]> = {
         major_category: majorCategory || null,
         category: category.trim() || null,
         payment_method: paymentMethod.trim() || null,
+        card_name: paymentMethod === "credit_card" ? cardName || null : null,
         currency,
         notes: notes.trim() || null,
       })
@@ -205,16 +208,47 @@ const categoryOptions: Record<string, string[]> = {
     ))}
 </select>
 
-          <input
-            placeholder="付款方式"
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            style={{
-              width: "100%",
-              padding: 10,
-              marginBottom: 12,
-            }}
-          />
+         <label>付款方式</label>
+<select
+  value={paymentMethod}
+  onChange={(e) => setPaymentMethod(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 12,
+  }}
+>
+  <option value="">請選擇付款方式</option>
+  <option value="cash">現金</option>
+  <option value="credit_card">信用卡</option>
+  <option value="debit_card">簽帳金融卡</option>
+  <option value="bank_transfer">銀行轉帳</option>
+  <option value="apple_pay">Apple Pay</option>
+  <option value="google_pay">Google Pay</option>
+  <option value="other">其他</option>
+</select>
+          {paymentMethod === "credit_card" && (
+  <>
+    <label>信用卡</label>
+    <select
+      value={cardName}
+      onChange={(e) => setCardName(e.target.value)}
+      style={{
+        width: "100%",
+        padding: 10,
+        marginBottom: 12,
+      }}
+    >
+      <option value="">請選擇信用卡</option>
+      <option value="CSP">CSP</option>
+      <option value="Bilt">Bilt</option>
+      <option value="Citi AA Platinum">Citi AA Platinum</option>
+      <option value="Costco Visa">Costco Visa</option>
+      <option value="BOA Cash Rewards">BOA Cash Rewards</option>
+      <option value="Other">其他</option>
+    </select>
+  </>
+)}
 
           <select
             value={currency}
