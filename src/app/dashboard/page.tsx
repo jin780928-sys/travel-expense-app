@@ -476,6 +476,7 @@ export default function DashboardPage() {
     card: CurrentCardStatement
   ) {
     setMessage(`正在處理：${card.name}`);
+    alert(`按鈕有觸發：${card.name}`);
     
     if (
       !card.periodStart ||
