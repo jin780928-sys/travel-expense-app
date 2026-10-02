@@ -6,6 +6,7 @@ import { supabase } from "../../lib/supabase";
 type Expense = {
   id: number;
   date: string | null;
+  item: string;
   amount: number | null;
   major_category: string | null;
   category: string | null;
@@ -58,8 +59,8 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
       const { data, error } = await supabase
         .from("Expenses")
         .select(
-          "id,date,amount,major_category,category,currency"
-        )
+  "id,date,item,amount,major_category,category,currency"
+)
         .eq("expense_scope", "daily")
         .gte("date", startDate)
         .lt("date", endDate)
@@ -239,6 +240,41 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
                             </p>
                           )
                         )}
+
+                        <hr style={{ margin: "30px 0" }} />
+
+<h2>本月花費明細</h2>
+
+{expenses.length === 0 ? (
+  <p>這個月份目前沒有花費紀錄。</p>
+) : (
+  expenses.map((expense) => (
+    <div
+      key={expense.id}
+      style={{
+        border: "1px solid #ccc",
+        borderRadius: 8,
+        padding: 14,
+        marginBottom: 12,
+      }}
+    >
+      <strong>{expense.item}</strong>
+
+      <p>日期：{expense.date || "未設定"}</p>
+
+      <p>
+        分類：
+        {expense.major_category || "未分類"}
+        {expense.category ? ` → ${expense.category}` : ""}
+      </p>
+
+      <p>
+        金額：{expense.currency || "USD"}{" "}
+        {Number(expense.amount || 0).toFixed(2)}
+      </p>
+    </div>
+  ))
+)}
                       </div>
                     )
                   )}
