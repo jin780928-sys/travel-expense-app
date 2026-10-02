@@ -74,6 +74,21 @@ async function addCard() {
   setMessage("新增成功");
   await loadCards();
 }
+  async function toggleCard(card: CreditCard) {
+  const { error } = await supabase
+    .from("CreditCards")
+    .update({
+      is_active: !card.is_active,
+    })
+    .eq("id", card.id);
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  await loadCards();
+}
   return (
     <main style={{ padding: 24 }}>
       <h1>信用卡管理</h1>
@@ -105,6 +120,15 @@ async function addCard() {
         <div key={card.id} style={{ marginBottom: 12 }}>
           <strong>{card.name}</strong>
           <div>{card.is_active ? "啟用" : "停用"}</div>
+          <button
+  onClick={() => toggleCard(card)}
+  style={{
+    padding: "6px 12px",
+    marginTop: 6,
+  }}
+>
+  {card.is_active ? "停用" : "啟用"}
+</button>
         </div>
       ))}
     </main>
