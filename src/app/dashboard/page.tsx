@@ -15,10 +15,18 @@ type Expense = {
   card_name: string | null;
 };
 
+type CreditCard = {
+  id: number;
+  name: string;
+  statement_day: number | null;
+  due_day: number | null;
+};
+
 export default function DashboardPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [message, setMessage] = useState("讀取中...");
   const [selectedCard, setSelectedCard] = useState("");
+  const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
 
   const now = new Date();
 
@@ -79,6 +87,7 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
     }
 
     loadExpenses();
+    loadCreditCards();
   }, [selectedYear, selectedMonth]);
 
   const totalsByCurrency = useMemo(() => {
@@ -152,6 +161,54 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
   );
 }, [expenses]);
 
+  const currentCardStatements = useMemo(() => {
+  return creditCards.map((card) => {
+    if (!card.statement_day) {
+      return {
+        ...card,
+        totals: {} as Record<string, number>,
+      };
+    }
+
+    const statementDay = card.statement_day;
+
+    const periodEnd = new Date(selectedYear, selectedMonth - 1, statementDay);
+
+    const periodStart = new Date(
+      selectedYear,
+      selectedMonth - 2,
+      statementDay + 1
+    );
+
+    const totals = expenses.reduce(
+      (result, expense) => {
+        if (expense.card_name !== card.name) return result;
+        if (!expense.date) return result;
+
+        const expenseDate = new Date(`${expense.date}T00:00:00`);
+
+        if (expenseDate < periodStart || expenseDate > periodEnd) {
+          return result;
+        }
+
+        const currency = expense.currency || "未指定";
+        const amount = Number(expense.amount || 0);
+
+        result[currency] = (result[currency] || 0) + amount;
+
+        return result;
+      },
+      {} as Record<string, number>
+    );
+
+    return {
+      ...card,
+      totals,
+    };
+  });
+}, [creditCards, expenses, selectedYear, selectedMonth]);
+  
+
   const filteredCardExpenses = useMemo(() => {
   if (!selectedCard) return [];
 
@@ -159,7 +216,27 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
     (expense) => expense.card_name === selectedCard
   );
 }, [expenses, selectedCard]);
-  
+
+  async function loadCreditCards() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from("CreditCards")
+    .select("id,name,statement_day,due_day")
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .order("name");
+
+  if (error) {
+    return;
+  }
+
+  setCreditCards(data || []);
+}
   return (
     <main
       style={{
@@ -361,6 +438,42 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
     )}
   </div>
 )}
+
+                        <h2>信用卡本期帳單</h2>
+
+{currentCardStatements.map((card) => (
+  <div
+    key={card.id}
+    style={{
+      border: "1px solid #ddd",
+      padding: 12,
+      marginBottom: 12,
+      borderRadius: 8,
+    }}
+  >
+    <strong>{card.name}</strong>
+
+    <div>
+      結帳日：
+      {card.statement_day ? `${card.statement_day} 日` : "未設定"}
+    </div>
+
+    <div>
+      繳款日：
+      {card.due_day ? `${card.due_day} 日` : "未設定"}
+    </div>
+
+    {Object.keys(card.totals).length === 0 ? (
+      <div>本期沒有消費</div>
+    ) : (
+      Object.entries(card.totals).map(([currency, total]) => (
+        <div key={currency}>
+          {currency}: {total.toFixed(2)}
+        </div>
+      ))
+    )}
+  </div>
+))}
 <h2>本月花費明細</h2>
 
 {expenses.length === 0 ? (
