@@ -21,6 +21,7 @@ export default function NewExpensePage() {
   const [majorCategory, setMajorCategory] = useState("");
   const [category, setCategory] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [cardName, setCardName] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [expenseScope, setExpenseScope] = useState("daily");
   const [tripId, setTripId] = useState("");
@@ -161,6 +162,7 @@ export default function NewExpensePage() {
         major_category: majorCategory || null,
         category: category.trim() || null,
         payment_method: paymentMethod.trim() || null,
+        card_name: paymentMethod === "credit_card" ? cardName || null : null,
         currency,
         expense_scope: expenseScope,
         trip_id: tripId ? Number(tripId) : null,
@@ -211,6 +213,7 @@ export default function NewExpensePage() {
     setMajorCategory("");
     setCategory("");
     setPaymentMethod("");
+    setCardName("");
     setCurrency("USD");
     setExpenseScope("daily");
     setTripId("");
@@ -312,17 +315,48 @@ export default function NewExpensePage() {
     ))}
 </select>
 
-      <input
-        placeholder="付款方式，例如：信用卡、現金"
-        value={paymentMethod}
-        onChange={(e) => setPaymentMethod(e.target.value)}
-        style={{
-          width: "100%",
-          padding: 10,
-          marginBottom: 12,
-        }}
-      />
+      <label>付款方式</label>
+<select
+  value={paymentMethod}
+  onChange={(e) => setPaymentMethod(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 12,
+  }}
+>
+  <option value="">請選擇付款方式</option>
+  <option value="cash">現金</option>
+  <option value="credit_card">信用卡</option>
+  <option value="debit_card">簽帳金融卡</option>
+  <option value="bank_transfer">銀行轉帳</option>
+  <option value="apple_pay">Apple Pay</option>
+  <option value="google_pay">Google Pay</option>
+  <option value="other">其他</option>
+</select>
 
+      {paymentMethod === "credit_card" && (
+  <>
+    <label>信用卡</label>
+    <select
+      value={cardName}
+      onChange={(e) => setCardName(e.target.value)}
+      style={{
+        width: "100%",
+        padding: 10,
+        marginBottom: 12,
+      }}
+    >
+      <option value="">請選擇信用卡</option>
+      <option value="CSP">CSP</option>
+      <option value="Bilt">Bilt</option>
+      <option value="Citi AA Platinum">Citi AA Platinum</option>
+      <option value="Costco Visa">Costco Visa</option>
+      <option value="BOA Cash Rewards">BOA Cash Rewards</option>
+      <option value="Other">其他</option>
+    </select>
+  </>
+)}
       <label>幣別</label>
       <select
         value={currency}
