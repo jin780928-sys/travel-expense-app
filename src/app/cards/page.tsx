@@ -16,6 +16,7 @@ export default function CardsPage() {
   const [statementDay, setStatementDay] = useState("");
   const [dueDay, setDueDay] = useState("");
   const [message, setMessage] = useState("讀取中...");
+  const [editingCardId, setEditingCardId] = useState<number | null>(null);
 
   useEffect(() => {
     loadCards();
@@ -96,6 +97,51 @@ await loadCards();
 
   await loadCards();
 }
+
+  function startEditCard(card: CreditCard) {
+  setEditingCardId(card.id);
+  setName(card.name);
+  setStatementDay(
+    card.statement_day ? String(card.statement_day) : ""
+  );
+  setDueDay(
+    card.due_day ? String(card.due_day) : ""
+  );
+  setMessage("");
+}
+
+  async function saveEditCard() {
+  if (!editingCardId) return;
+
+  if (!name.trim()) {
+    setMessage("請輸入信用卡名稱");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("CreditCards")
+    .update({
+      name: name.trim(),
+      statement_day: statementDay ? Number(statementDay) : null,
+      due_day: dueDay ? Number(dueDay) : null,
+    })
+    .eq("id", editingCardId);
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  setEditingCardId(null);
+  setName("");
+  setStatementDay("");
+  setDueDay("");
+  setMessage("修改成功");
+
+  await loadCards();
+}
+  
+  
   return (
     <main style={{ padding: 24 }}>
       <h1>信用卡管理</h1>
@@ -141,14 +187,34 @@ await loadCards();
 />
       
 <button
-  onClick={addCard}
+  onClick={editingCardId ? saveEditCard : addCard}
   style={{
     padding: "10px 16px",
     marginBottom: 20,
   }}
 >
-  新增信用卡
+  {editingCardId ? "儲存修改" : "新增信用卡"}
 </button>
+
+      {editingCardId && (
+  <button
+    onClick={() => {
+      setEditingCardId(null);
+      setName("");
+      setStatementDay("");
+      setDueDay("");
+      setMessage("");
+    }}
+    style={{
+      padding: "10px 16px",
+      marginLeft: 8,
+      marginBottom: 20,
+    }}
+  >
+    取消編輯
+  </button>
+)}
+      
       {message && <p>{message}</p>}
 
       {cards.map((card) => (
@@ -171,6 +237,18 @@ await loadCards();
 >
   {card.is_active ? "停用" : "啟用"}
 </button>
+
+          <button
+  onClick={() => startEditCard(card)}
+  style={{
+    padding: "6px 12px",
+    marginTop: 6,
+    marginLeft: 8,
+  }}
+>
+  編輯
+</button>
+          
         </div>
       ))}
     </main>
