@@ -20,6 +20,14 @@ type CreditCard = {
   name: string;
   statement_day: number | null;
   due_day: number | null;
+  
+};
+
+type CreditCardStatement = {
+  id: number;
+  card_id: number;
+  period_start: string;
+  period_end: string;
   is_paid: boolean;
 };
 
@@ -27,6 +35,9 @@ export default function DashboardPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [statementExpenses, setStatementExpenses] = useState<Expense[]>([]);
   const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
+  const [cardStatements, setCardStatements] = useState<
+  CreditCardStatement[]
+>([]);
 
   const [message, setMessage] = useState("讀取中...");
   const [selectedCard, setSelectedCard] = useState("");
@@ -152,8 +163,7 @@ export default function DashboardPage() {
   id,
   name,
   statement_day,
-  due_day,
-  is_paid
+  due_day
 `)
         .eq("user_id", user.id)
         .eq("is_active", true)
@@ -168,6 +178,27 @@ export default function DashboardPage() {
     setMessage("");
   }
 
+  const {
+  data: statementStatusData,
+  error: statementStatusError,
+} = await supabase
+  .from("CreditCardStatements")
+  .select(`
+    id,
+    card_id,
+    period_start,
+    period_end,
+    is_paid
+  `)
+  .eq("user_id", user.id);
+
+if (statementStatusError) {
+  setMessage(statementStatusError.message);
+  return;
+}
+
+setCardStatements(statementStatusData || []);
+  
   const totalsByCurrency = useMemo(() => {
     return expenses.reduce(
       (result, expense) => {
@@ -295,12 +326,21 @@ export default function DashboardPage() {
   const currentCardStatements = useMemo(() => {
     return creditCards.map((card) => {
       if (!card.statement_day) {
-        return {
-          ...card,
-          periodStart: null,
-          periodEnd: null,
-          totals: {} as Record<string, number>,
-        };
+        const statementStatus = cardStatements.find(
+  (statement) =>
+    statement.card_id === card.id &&
+    statement.period_start === startText &&
+    statement.period_end === endText
+);
+
+return {
+  ...card,
+  periodStart: startText,
+  periodEnd: endText,
+  totals,
+  statementStatusId: statementStatus?.id || null,
+  isPaid: statementStatus?.is_paid || false,
+};
       }
 
       const periodEnd = createSafeDate(
@@ -374,6 +414,7 @@ export default function DashboardPage() {
     });
   }, [
     creditCards,
+    cardStatements,
     statementExpenses,
     selectedYear,
     selectedMonth,
@@ -411,17 +452,56 @@ export default function DashboardPage() {
   currentCardStatements,
   statementExpenses,
 ]);
-  async function togglePaidStatus(card: CreditCard) {
-  const { error } = await supabase
-    .from("CreditCards")
-    .update({
-      is_paid: !card.is_paid,
-    })
-    .eq("id", card.id);
-
-  if (error) {
-    setMessage(error.message);
+  async function togglePaidStatus(
+  card: CreditCard & {
+    periodStart: string | null;
+    periodEnd: string | null;
+    statementStatusId: number | null;
+    isPaid: boolean;
+  }
+) {
+  if (!card.periodStart || !card.periodEnd) {
+    setMessage("這張信用卡尚未設定結帳日");
     return;
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    setMessage("請先登入");
+    return;
+  }
+
+  if (card.statementStatusId) {
+    const { error } = await supabase
+      .from("CreditCardStatements")
+      .update({
+        is_paid: !card.isPaid,
+      })
+      .eq("id", card.statementStatusId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+  } else {
+    const { error } = await supabase
+      .from("CreditCardStatements")
+      .insert({
+        card_id: card.id,
+        period_start: card.periodStart,
+        period_end: card.periodEnd,
+        is_paid: true,
+        user_id: user.id,
+      });
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
   }
 
   await loadDashboardData();
@@ -727,7 +807,7 @@ export default function DashboardPage() {
 
             <div>
   繳款狀態：
-  {card.is_paid ? "已繳" : "未繳"}
+  {card.isPaid ? "已繳" : "未繳"}
 </div>
 
             <button
@@ -738,7 +818,7 @@ export default function DashboardPage() {
     marginBottom: 8,
   }}
 >
-  {card.is_paid ? "標記未繳" : "標記已繳"}
+  {card.isPaid ? "標記未繳" : "標記已繳"}
 </button>
 
             {card.periodStart &&
