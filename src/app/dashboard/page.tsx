@@ -322,6 +322,16 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
   >
     <h3>{selectedCard} 消費明細</h3>
 
+    <button
+  onClick={() => setSelectedCard("")}
+  style={{
+    padding: "6px 10px",
+    marginBottom: 12,
+  }}
+>
+  關閉明細
+</button>
+
     {filteredCardExpenses.length === 0 ? (
       <p>沒有消費紀錄</p>
     ) : (
