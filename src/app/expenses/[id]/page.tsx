@@ -54,7 +54,7 @@ export default function ExpenseDetailPage() {
       const { data, error } = await supabase
         .from("Expenses")
         .select(
-  "id,date,item,amount,major_category,category,payment_method,currency,expense_scope,trip_id,paid_by,split_type,notes"
+  "id,date,item,amount,major_category,category,payment_method,currency,expense_scope,expense_scope,trip_id,paid_by,split_type,notes"
 )
         .select(`
   id,
