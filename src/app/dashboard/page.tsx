@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 
 type Expense = {
@@ -258,7 +259,11 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
         marginBottom: 12,
       }}
     >
-      <strong>{expense.item}</strong>
+      <strong>
+  <Link href={`/expenses/${expense.id}`}>
+    {expense.item}
+  </Link>
+</strong>
 
       <p>日期：{expense.date || "未設定"}</p>
 
