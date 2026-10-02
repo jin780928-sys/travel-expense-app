@@ -18,6 +18,7 @@ type Expense = {
 export default function DashboardPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [message, setMessage] = useState("讀取中...");
+  const [selectedCard, setSelectedCard] = useState("");
 
   const now = new Date();
 
@@ -151,6 +152,14 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
   );
 }, [expenses]);
 
+  const filteredCardExpenses = useMemo(() => {
+  if (!selectedCard) return [];
+
+  return expenses.filter(
+    (expense) => expense.card_name === selectedCard
+  );
+}, [expenses, selectedCard]);
+  
   return (
     <main
       style={{
@@ -280,7 +289,19 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
         borderRadius: 8,
       }}
     >
-      <strong>{cardName}</strong>
+      <button
+  onClick={() => setSelectedCard(cardName)}
+  style={{
+    border: "none",
+    background: "none",
+    padding: 0,
+    fontWeight: "bold",
+    cursor: "pointer",
+    textDecoration: "underline",
+  }}
+>
+  {cardName}
+</button>
 
       {Object.entries(totals).map(([currency, total]) => (
         <div key={currency}>
@@ -289,6 +310,46 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
       ))}
     </div>
   ))
+)}
+                        {selectedCard && (
+  <div
+    style={{
+      border: "1px solid #ddd",
+      padding: 12,
+      marginBottom: 20,
+      borderRadius: 8,
+    }}
+  >
+    <h3>{selectedCard} 消費明細</h3>
+
+    {filteredCardExpenses.length === 0 ? (
+      <p>沒有消費紀錄</p>
+    ) : (
+      filteredCardExpenses.map((expense) => (
+        <div
+          key={expense.id}
+          style={{
+            padding: "8px 0",
+            borderBottom: "1px solid #eee",
+          }}
+        >
+          <strong>{expense.item}</strong>
+
+          <div>{expense.date || "-"}</div>
+
+          <div>
+            {expense.major_category || "-"}
+            {expense.category ? ` → ${expense.category}` : ""}
+          </div>
+
+          <div>
+            {expense.currency || ""}{" "}
+            {Number(expense.amount || 0).toFixed(2)}
+          </div>
+        </div>
+      ))
+    )}
+  </div>
 )}
 <h2>本月花費明細</h2>
 
