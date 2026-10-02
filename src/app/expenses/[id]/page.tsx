@@ -13,6 +13,7 @@ type Expense = {
   major_category: string | null;
   category: string | null;
   payment_method: string | null;
+  card_name: string | null;
   currency: string | null;
   expense_scope: string | null;
   trip_id: number | null;
@@ -55,6 +56,21 @@ export default function ExpenseDetailPage() {
         .select(
   "id,date,item,amount,major_category,category,payment_method,currency,expense_scope,trip_id,paid_by,split_type,notes"
 )
+        .select(`
+  id,
+  date,
+  item,
+  amount,
+  major_category,
+  category,
+  payment_method,
+  card_name,
+  currency,
+  trip_id,
+  notes,
+  paid_by,
+  split_type
+`)
         .eq("id", id)
         .single();
 
@@ -188,6 +204,9 @@ export default function ExpenseDetailPage() {
 
           {expense.payment_method && (
             <p>付款方式：{expense.payment_method}</p>
+          {expense.payment_method === "credit_card" && (
+  <p>信用卡：{expense.card_name || "-"}</p>
+)}
           )}
 
           <p>
