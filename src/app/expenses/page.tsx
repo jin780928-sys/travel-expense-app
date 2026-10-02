@@ -96,10 +96,12 @@ export default function ExpensesPage() {
 )}
 
           {expense.payment_method && (
-            {expense.payment_method === "credit_card" && (
+  <p>付款方式：{expense.payment_method}</p>
+)}
+
+{expense.payment_method === "credit_card" && (
   <p>信用卡：{expense.card_name || "-"}</p>
 )}
-          )}
 
           <p>
             類型：
