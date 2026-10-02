@@ -20,7 +20,6 @@ type CreditCard = {
   name: string;
   statement_day: number | null;
   due_day: number | null;
-  
 };
 
 type CreditCardStatement = {
@@ -36,8 +35,8 @@ export default function DashboardPage() {
   const [statementExpenses, setStatementExpenses] = useState<Expense[]>([]);
   const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
   const [cardStatements, setCardStatements] = useState<
-  CreditCardStatement[]
->([]);
+    CreditCardStatement[]
+  >([]);
 
   const [message, setMessage] = useState("讀取中...");
   const [selectedCard, setSelectedCard] = useState("");
@@ -70,7 +69,6 @@ export default function DashboardPage() {
     }
 
     const month = String(selectedMonth).padStart(2, "0");
-
     const startDate = `${selectedYear}-${month}-01`;
 
     const nextMonthDate = new Date(
@@ -159,12 +157,12 @@ export default function DashboardPage() {
     const { data: cardData, error: cardError } =
       await supabase
         .from("CreditCards")
-.select(`
-  id,
-  name,
-  statement_day,
-  due_day
-`)
+        .select(`
+          id,
+          name,
+          statement_day,
+          due_day
+        `)
         .eq("user_id", user.id)
         .eq("is_active", true)
         .order("name");
@@ -176,29 +174,29 @@ export default function DashboardPage() {
 
     setCreditCards(cardData || []);
 
-const {
-  data: statementStatusData,
-  error: statementStatusError,
-} = await supabase
-  .from("CreditCardStatements")
-  .select(`
-    id,
-    card_id,
-    period_start,
-    period_end,
-    is_paid
-  `)
-  .eq("user_id", user.id);
+    const {
+      data: statementStatusData,
+      error: statementStatusError,
+    } = await supabase
+      .from("CreditCardStatements")
+      .select(`
+        id,
+        card_id,
+        period_start,
+        period_end,
+        is_paid
+      `)
+      .eq("user_id", user.id);
 
-if (statementStatusError) {
-  setMessage(statementStatusError.message);
-  return;
-}
+    if (statementStatusError) {
+      setMessage(statementStatusError.message);
+      return;
+    }
 
-setCardStatements(statementStatusData || []);
-setMessage("");
-}
-  
+    setCardStatements(statementStatusData || []);
+    setMessage("");
+  }
+
   const totalsByCurrency = useMemo(() => {
     return expenses.reduce(
       (result, expense) => {
@@ -326,21 +324,14 @@ setMessage("");
   const currentCardStatements = useMemo(() => {
     return creditCards.map((card) => {
       if (!card.statement_day) {
-        const statementStatus = cardStatements.find(
-  (statement) =>
-    statement.card_id === card.id &&
-    statement.period_start === startText &&
-    statement.period_end === endText
-);
-
-return {
-  ...card,
-  periodStart: startText,
-  periodEnd: endText,
-  totals,
-  statementStatusId: statementStatus?.id || null,
-  isPaid: statementStatus?.is_paid || false,
-};
+        return {
+          ...card,
+          periodStart: null,
+          periodEnd: null,
+          totals: {} as Record<string, number>,
+          statementStatusId: null as number | null,
+          isPaid: false,
+        };
       }
 
       const periodEnd = createSafeDate(
@@ -349,12 +340,11 @@ return {
         card.statement_day
       );
 
-      const previousStatementDate =
-        createSafeDate(
-          selectedYear,
-          selectedMonth - 2,
-          card.statement_day
-        );
+      const previousStatementDate = createSafeDate(
+        selectedYear,
+        selectedMonth - 2,
+        card.statement_day
+      );
 
       const periodStart = new Date(
         previousStatementDate
@@ -364,52 +354,59 @@ return {
         periodStart.getDate() + 1
       );
 
-      const startText =
-        formatDate(periodStart);
+      const startText = formatDate(periodStart);
+      const endText = formatDate(periodEnd);
 
-      const endText =
-        formatDate(periodEnd);
-
-      const totals =
-        statementExpenses.reduce(
-          (result, expense) => {
-            if (
-              expense.card_name !== card.name
-            ) {
-              return result;
-            }
-
-            if (!expense.date) {
-              return result;
-            }
-
-            if (
-              expense.date < startText ||
-              expense.date > endText
-            ) {
-              return result;
-            }
-
-            const currency =
-              expense.currency || "未指定";
-
-            const amount =
-              Number(expense.amount || 0);
-
-            result[currency] =
-              (result[currency] || 0) +
-              amount;
-
+      const totals = statementExpenses.reduce(
+        (result, expense) => {
+          if (
+            expense.card_name !== card.name
+          ) {
             return result;
-          },
-          {} as Record<string, number>
-        );
+          }
+
+          if (!expense.date) {
+            return result;
+          }
+
+          if (
+            expense.date < startText ||
+            expense.date > endText
+          ) {
+            return result;
+          }
+
+          const currency =
+            expense.currency || "未指定";
+
+          const amount =
+            Number(expense.amount || 0);
+
+          result[currency] =
+            (result[currency] || 0) +
+            amount;
+
+          return result;
+        },
+        {} as Record<string, number>
+      );
+
+      const statementStatus = cardStatements.find(
+        (statement) =>
+          statement.card_id === card.id &&
+          statement.period_start === startText &&
+          statement.period_end === endText
+      );
 
       return {
         ...card,
         periodStart: startText,
         periodEnd: endText,
         totals,
+        statementStatusId:
+          statementStatus?.id || null,
+        isPaid:
+          statementStatus?.is_paid || false,
       };
     });
   }, [
@@ -421,91 +418,107 @@ return {
   ]);
 
   const selectedStatementExpenses = useMemo(() => {
-  if (!selectedStatementCard) {
-    return [];
-  }
-
-  const card = currentCardStatements.find(
-    (item) => item.name === selectedStatementCard
-  );
-
-  if (!card || !card.periodStart || !card.periodEnd) {
-    return [];
-  }
-
-  return statementExpenses.filter((expense) => {
-    if (expense.card_name !== card.name) {
-      return false;
+    if (!selectedStatementCard) {
+      return [];
     }
 
-    if (!expense.date) {
-      return false;
-    }
-
-    return (
-      expense.date >= card.periodStart &&
-      expense.date <= card.periodEnd
+    const card = currentCardStatements.find(
+      (item) =>
+        item.name === selectedStatementCard
     );
-  });
-}, [
-  selectedStatementCard,
-  currentCardStatements,
-  statementExpenses,
-]);
+
+    if (
+      !card ||
+      !card.periodStart ||
+      !card.periodEnd
+    ) {
+      return [];
+    }
+
+    return statementExpenses.filter(
+      (expense) => {
+        if (
+          expense.card_name !== card.name
+        ) {
+          return false;
+        }
+
+        if (!expense.date) {
+          return false;
+        }
+
+        return (
+          expense.date >= card.periodStart &&
+          expense.date <= card.periodEnd
+        );
+      }
+    );
+  }, [
+    selectedStatementCard,
+    currentCardStatements,
+    statementExpenses,
+  ]);
+
   async function togglePaidStatus(
-  card: CreditCard & {
-    periodStart: string | null;
-    periodEnd: string | null;
-    statementStatusId: number | null;
-    isPaid: boolean;
-  }
-) {
-  if (!card.periodStart || !card.periodEnd) {
-    setMessage("這張信用卡尚未設定結帳日");
-    return;
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    setMessage("請先登入");
-    return;
-  }
-
-  if (card.statementStatusId) {
-    const { error } = await supabase
-      .from("CreditCardStatements")
-      .update({
-        is_paid: !card.isPaid,
-      })
-      .eq("id", card.statementStatusId)
-      .eq("user_id", user.id);
-
-    if (error) {
-      setMessage(error.message);
+    card: CreditCard & {
+      periodStart: string | null;
+      periodEnd: string | null;
+      statementStatusId: number | null;
+      isPaid: boolean;
+    }
+  ) {
+    if (
+      !card.periodStart ||
+      !card.periodEnd
+    ) {
+      setMessage(
+        "這張信用卡尚未設定結帳日"
+      );
       return;
     }
-  } else {
-    const { error } = await supabase
-      .from("CreditCardStatements")
-      .insert({
-        card_id: card.id,
-        period_start: card.periodStart,
-        period_end: card.periodEnd,
-        is_paid: true,
-        user_id: user.id,
-      });
 
-    if (error) {
-      setMessage(error.message);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("請先登入");
       return;
     }
+
+    if (card.statementStatusId) {
+      const { error } = await supabase
+        .from("CreditCardStatements")
+        .update({
+          is_paid: !card.isPaid,
+        })
+        .eq("id", card.statementStatusId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+    } else {
+      const { error } = await supabase
+        .from("CreditCardStatements")
+        .insert({
+          card_id: card.id,
+          period_start: card.periodStart,
+          period_end: card.periodEnd,
+          is_paid: true,
+          user_id: user.id,
+        });
+
+      if (error) {
+        setMessage(error.message);
+        return;
+      }
+    }
+
+    await loadDashboardData();
   }
 
-  await loadDashboardData();
-}
   return (
     <main
       style={{
@@ -534,16 +547,21 @@ return {
             padding: 10,
           }}
         >
-          {[2025, 2026, 2027, 2028, 2029, 2030].map(
-            (year) => (
-              <option
-                key={year}
-                value={year}
-              >
-                {year} 年
-              </option>
-            )
-          )}
+          {[
+            2025,
+            2026,
+            2027,
+            2028,
+            2029,
+            2030,
+          ].map((year) => (
+            <option
+              key={year}
+              value={year}
+            >
+              {year} 年
+            </option>
+          ))}
         </select>
 
         <select
@@ -622,7 +640,9 @@ return {
                   >
                     <strong>{category}</strong>
 
-                    {Object.entries(currencies).map(
+                    {Object.entries(
+                      currencies
+                    ).map(
                       ([currency, total]) => (
                         <p
                           key={currency}
@@ -671,7 +691,8 @@ return {
                   padding: 0,
                   fontWeight: "bold",
                   cursor: "pointer",
-                  textDecoration: "underline",
+                  textDecoration:
+                    "underline",
                 }}
               >
                 {cardName}
@@ -699,7 +720,9 @@ return {
             borderRadius: 8,
           }}
         >
-          <h3>{selectedCard} 消費明細</h3>
+          <h3>
+            {selectedCard} 消費明細
+          </h3>
 
           <button
             onClick={() =>
@@ -713,7 +736,8 @@ return {
             關閉明細
           </button>
 
-          {filteredCardExpenses.length === 0 ? (
+          {filteredCardExpenses.length ===
+          0 ? (
             <p>沒有消費紀錄</p>
           ) : (
             filteredCardExpenses.map(
@@ -741,7 +765,6 @@ return {
                   <div>
                     {expense.major_category ||
                       "-"}
-
                     {expense.category
                       ? ` → ${expense.category}`
                       : ""}
@@ -778,18 +801,23 @@ return {
             }}
           >
             <button
-  onClick={() => setSelectedStatementCard(card.name)}
-  style={{
-    border: "none",
-    background: "none",
-    padding: 0,
-    fontWeight: "bold",
-    cursor: "pointer",
-    textDecoration: "underline",
-  }}
->
-  {card.name}
-</button>
+              onClick={() =>
+                setSelectedStatementCard(
+                  card.name
+                )
+              }
+              style={{
+                border: "none",
+                background: "none",
+                padding: 0,
+                fontWeight: "bold",
+                cursor: "pointer",
+                textDecoration:
+                  "underline",
+              }}
+            >
+              {card.name}
+            </button>
 
             <div>
               結帳日：
@@ -805,22 +833,6 @@ return {
                 : "未設定"}
             </div>
 
-            <div>
-  繳款狀態：
-  {card.isPaid ? "已繳" : "未繳"}
-</div>
-
-            <button
-  onClick={() => togglePaidStatus(card)}
-  style={{
-    padding: "6px 10px",
-    marginTop: 8,
-    marginBottom: 8,
-  }}
->
-  {card.isPaid ? "標記未繳" : "標記已繳"}
-</button>
-
             {card.periodStart &&
               card.periodEnd && (
                 <div>
@@ -831,11 +843,35 @@ return {
                 </div>
               )}
 
+            <div>
+              繳款狀態：
+              {card.isPaid
+                ? "已繳"
+                : "未繳"}
+            </div>
+
+            <button
+              onClick={() =>
+                togglePaidStatus(card)
+              }
+              style={{
+                padding: "6px 10px",
+                marginTop: 8,
+                marginBottom: 8,
+              }}
+            >
+              {card.isPaid
+                ? "標記未繳"
+                : "標記已繳"}
+            </button>
+
             {Object.keys(card.totals).length ===
             0 ? (
               <div>本期沒有消費</div>
             ) : (
-              Object.entries(card.totals).map(
+              Object.entries(
+                card.totals
+              ).map(
                 ([currency, total]) => (
                   <div key={currency}>
                     {currency}:{" "}
@@ -844,63 +880,81 @@ return {
                 )
               )
             )}
-
-            {selectedStatementCard && (
-  <div
-    style={{
-      border: "1px solid #ddd",
-      padding: 12,
-      marginBottom: 20,
-      borderRadius: 8,
-    }}
-  >
-    <h3>{selectedStatementCard} 本期帳單明細</h3>
-
-    <button
-      onClick={() => setSelectedStatementCard("")}
-      style={{
-        padding: "6px 10px",
-        marginBottom: 12,
-      }}
-    >
-      關閉明細
-    </button>
-
-    {selectedStatementExpenses.length === 0 ? (
-      <p>本期沒有消費紀錄</p>
-    ) : (
-      selectedStatementExpenses.map((expense) => (
-        <div
-          key={expense.id}
-          style={{
-            padding: "8px 0",
-            borderBottom: "1px solid #eee",
-          }}
-        >
-          <strong>
-            <Link href={`/expenses/${expense.id}`}>
-              {expense.item}
-            </Link>
-          </strong>
-
-          <div>{expense.date || "-"}</div>
-
-          <div>
-            {expense.major_category || "-"}
-            {expense.category ? ` → ${expense.category}` : ""}
-          </div>
-
-          <div>
-            {expense.currency || ""}{" "}
-            {Number(expense.amount || 0).toFixed(2)}
-          </div>
-        </div>
-      ))
-    )}
-  </div>
-)}
           </div>
         ))
+      )}
+
+      {selectedStatementCard && (
+        <div
+          style={{
+            border: "1px solid #ddd",
+            padding: 12,
+            marginBottom: 20,
+            borderRadius: 8,
+          }}
+        >
+          <h3>
+            {selectedStatementCard}
+            {" "}本期帳單明細
+          </h3>
+
+          <button
+            onClick={() =>
+              setSelectedStatementCard("")
+            }
+            style={{
+              padding: "6px 10px",
+              marginBottom: 12,
+            }}
+          >
+            關閉明細
+          </button>
+
+          {selectedStatementExpenses.length ===
+          0 ? (
+            <p>本期沒有消費紀錄</p>
+          ) : (
+            selectedStatementExpenses.map(
+              (expense) => (
+                <div
+                  key={expense.id}
+                  style={{
+                    padding: "8px 0",
+                    borderBottom:
+                      "1px solid #eee",
+                  }}
+                >
+                  <strong>
+                    <Link
+                      href={`/expenses/${expense.id}`}
+                    >
+                      {expense.item}
+                    </Link>
+                  </strong>
+
+                  <div>
+                    {expense.date || "-"}
+                  </div>
+
+                  <div>
+                    {expense.major_category ||
+                      "-"}
+                    {expense.category
+                      ? ` → ${expense.category}`
+                      : ""}
+                  </div>
+
+                  <div>
+                    {expense.currency || ""}{" "}
+                    {Number(
+                      expense.amount || 0
+                    ).toFixed(2)}
+                  </div>
+                </div>
+              )
+            )
+          )}
+        </div>
       )}
 
       <hr style={{ margin: "30px 0" }} />
@@ -937,7 +991,6 @@ return {
               分類：
               {expense.major_category ||
                 "未分類"}
-
               {expense.category
                 ? ` → ${expense.category}`
                 : ""}
