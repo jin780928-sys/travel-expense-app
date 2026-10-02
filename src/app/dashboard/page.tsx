@@ -1038,8 +1038,8 @@ export default function DashboardPage() {
                 )
               )}
 
-              {editingPaidStatementId ===
-                card.statementStatusId && (
+              {card.statementStatusId !== null &&
+  editingPaidStatementId === card.statementStatusId && (
                 <div
                   style={{
                     marginTop: 10,
