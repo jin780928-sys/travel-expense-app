@@ -58,6 +58,8 @@ setUserEmail(session?.user?.email || "");
 
         <Link href="/expenses/new">➕ 新增花費</Link>
 
+        <Link href="/dashboard">📊 日常花費統計</Link>
+
         <Link href="/people">👥 人員管理</Link>
 
         {!loggedIn ? (
