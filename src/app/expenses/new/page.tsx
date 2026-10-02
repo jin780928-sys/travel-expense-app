@@ -18,11 +18,47 @@ export default function NewExpensePage() {
   const [date, setDate] = useState("");
   const [item, setItem] = useState("");
   const [amount, setAmount] = useState("");
+  const [majorCategory, setMajorCategory] = useState("");
   const [category, setCategory] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [currency, setCurrency] = useState("USD");
   const [expenseScope, setExpenseScope] = useState("daily");
   const [tripId, setTripId] = useState("");
+  const categoryOptions: Record<string, string[]> = {
+  餐飲: [
+    "早餐",
+    "午餐",
+    "晚餐",
+    "飲料",
+    "咖啡",
+    "零食",
+    "小吃／夜市",
+  ],
+  交通: [
+    "加油",
+    "Uber／計程車",
+    "大眾運輸",
+    "停車",
+    "租車",
+    "e-tag",
+    "停車費",
+  ],
+  住宿: ["飯店", "民宿", "Resort Fee"],
+  購物: [
+    "衣物",
+    "3C",
+    "紀念品",
+    "日用品",
+    "賣場",
+    "線上購物",
+  ],
+  "娛樂／旅遊": ["門票", "樂園", "Tour", "郵輪"],
+  居家: ["房租", "水電", "網路", "家用品"],
+  汽車: ["車貸／Lease", "保險", "維修保養", "洗車"],
+  其他: ["醫療", "禮物／伴手禮", "手續費", "其他"],
+  信用卡: ["回饋金"],
+  轉帳: ["信用卡繳費", "其他轉帳"],
+};
   useEffect(() => {
   const params = new URLSearchParams(window.location.search);
   const tripFromUrl = params.get("trip_id");
@@ -122,6 +158,7 @@ export default function NewExpensePage() {
         date: date || null,
         item: item.trim(),
         amount: Number(amount),
+        major_category: majorCategory || null,
         category: category.trim() || null,
         payment_method: paymentMethod.trim() || null,
         currency,
@@ -171,6 +208,7 @@ export default function NewExpensePage() {
     setDate("");
     setItem("");
     setAmount("");
+    setMajorCategory("");
     setCategory("");
     setPaymentMethod("");
     setCurrency("USD");
@@ -229,16 +267,50 @@ export default function NewExpensePage() {
         }}
       />
 
-      <input
-        placeholder="分類，例如：餐飲、交通、住宿"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        style={{
-          width: "100%",
-          padding: 10,
-          marginBottom: 12,
-        }}
-      />
+      <label>大分類</label>
+<select
+  value={majorCategory}
+  onChange={(e) => {
+    setMajorCategory(e.target.value);
+    setCategory("");
+  }}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 12,
+  }}
+>
+  <option value="">請選擇大分類</option>
+
+  {Object.keys(categoryOptions).map((major) => (
+    <option key={major} value={major}>
+      {major}
+    </option>
+  ))}
+</select>
+
+<label>小分類</label>
+<select
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+  disabled={!majorCategory}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 12,
+  }}
+>
+  <option value="">
+    {majorCategory ? "請選擇小分類" : "請先選擇大分類"}
+  </option>
+
+  {majorCategory &&
+    categoryOptions[majorCategory].map((sub) => (
+      <option key={sub} value={sub}>
+        {sub}
+      </option>
+    ))}
+</select>
 
       <input
         placeholder="付款方式，例如：信用卡、現金"
