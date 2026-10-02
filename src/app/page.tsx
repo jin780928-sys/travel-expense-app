@@ -62,6 +62,8 @@ setUserEmail(session?.user?.email || "");
 
         <Link href="/people">👥 人員管理</Link>
 
+        <Link href="/cards">💳 信用卡管理</Link>
+
         {!loggedIn ? (
           <Link href="/login">🔐 登入</Link>
         ) : (
