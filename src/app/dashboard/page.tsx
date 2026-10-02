@@ -20,6 +20,7 @@ type CreditCard = {
   name: string;
   statement_day: number | null;
   due_day: number | null;
+  is_paid: boolean;
 };
 
 export default function DashboardPage() {
@@ -147,12 +148,13 @@ export default function DashboardPage() {
     const { data: cardData, error: cardError } =
       await supabase
         .from("CreditCards")
-        .select(`
-          id,
-          name,
-          statement_day,
-          due_day
-        `)
+.select(`
+  id,
+  name,
+  statement_day,
+  due_day,
+  is_paid
+`)
         .eq("user_id", user.id)
         .eq("is_active", true)
         .order("name");
@@ -409,7 +411,21 @@ export default function DashboardPage() {
   currentCardStatements,
   statementExpenses,
 ]);
-  
+  async function togglePaidStatus(card: CreditCard) {
+  const { error } = await supabase
+    .from("CreditCards")
+    .update({
+      is_paid: !card.is_paid,
+    })
+    .eq("id", card.id);
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  await loadDashboardData();
+}
   return (
     <main
       style={{
@@ -708,6 +724,22 @@ export default function DashboardPage() {
                 ? `${card.due_day} 日`
                 : "未設定"}
             </div>
+
+            <div>
+  繳款狀態：
+  {card.is_paid ? "已繳" : "未繳"}
+</div>
+
+            <button
+  onClick={() => togglePaidStatus(card)}
+  style={{
+    padding: "6px 10px",
+    marginTop: 8,
+    marginBottom: 8,
+  }}
+>
+  {card.is_paid ? "標記未繳" : "標記已繳"}
+</button>
 
             {card.periodStart &&
               card.periodEnd && (
