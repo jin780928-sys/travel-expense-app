@@ -43,6 +43,12 @@ export default function DashboardPage() {
   const [selectedCard, setSelectedCard] = useState("");
   const [selectedStatementCard, setSelectedStatementCard] = useState("");
 
+  const [editingPaidStatementId, setEditingPaidStatementId] = useState<
+  number | null
+>(null);
+
+const [editingPaidDate, setEditingPaidDate] = useState("");
+
   const now = new Date();
 
   const [selectedYear, setSelectedYear] = useState(
@@ -466,7 +472,31 @@ export default function DashboardPage() {
       isPaid: boolean;
       paidDate: string | null;
     }
-  ) {
+  ) 
+
+    async function savePaidDate() {
+  if (!editingPaidStatementId) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("CreditCardStatements")
+    .update({
+      paid_date: editingPaidDate || null,
+    })
+    .eq("id", editingPaidStatementId);
+
+  if (error) {
+    setMessage(error.message);
+    return;
+  }
+
+  setEditingPaidStatementId(null);
+  setEditingPaidDate("");
+  await loadDashboardData();
+}
+  
+  {
     if (
       !card.periodStart ||
       !card.periodEnd
@@ -854,10 +884,28 @@ export default function DashboardPage() {
                 : "未繳"}
             </div>
 
-            {card.isPaid && (
-  <div>
-    實際繳款日：
-    {card.paidDate || "未記錄"}
+           {card.isPaid && (
+  <div style={{ marginTop: 6 }}>
+    <div>
+      實際繳款日：
+      {card.paidDate || "未記錄"}
+    </div>
+
+    {card.statementStatusId && (
+      <button
+        onClick={() => {
+          setEditingPaidStatementId(card.statementStatusId);
+          setEditingPaidDate(card.paidDate || "");
+        }}
+        style={{
+          padding: "6px 10px",
+          marginTop: 6,
+          marginBottom: 8,
+        }}
+      >
+        修改繳款日
+      </button>
+    )}
   </div>
 )}
 
@@ -891,6 +939,42 @@ export default function DashboardPage() {
                 )
               )
             )}
+{editingPaidStatementId === card.statementStatusId && (
+  <div style={{ marginTop: 10 }}>
+    <input
+      type="date"
+      value={editingPaidDate}
+      onChange={(e) => setEditingPaidDate(e.target.value)}
+      style={{
+        padding: 8,
+        marginRight: 8,
+      }}
+    />
+
+    <button
+      onClick={savePaidDate}
+      style={{
+        padding: "6px 10px",
+        marginRight: 8,
+      }}
+    >
+      儲存日期
+    </button>
+
+    <button
+      onClick={() => {
+        setEditingPaidStatementId(null);
+        setEditingPaidDate("");
+      }}
+      style={{
+        padding: "6px 10px",
+      }}
+    >
+      取消
+    </button>
+  </div>
+)}
+            
           </div>
         ))
       )}
