@@ -7,11 +7,14 @@ type CreditCard = {
   id: number;
   name: string;
   is_active: boolean;
+  statement_day: number | null;
+  due_day: number | null;
 };
-
 export default function CardsPage() {
   const [cards, setCards] = useState<CreditCard[]>([]);
   const [name, setName] = useState("");
+  const [statementDay, setStatementDay] = useState("");
+  const [dueDay, setDueDay] = useState("");
   const [message, setMessage] = useState("讀取中...");
 
   useEffect(() => {
@@ -30,7 +33,7 @@ export default function CardsPage() {
 
     const { data, error } = await supabase
       .from("CreditCards")
-      .select("id,name,is_active")
+.select("id,name,is_active,statement_day,due_day")
       .eq("user_id", user.id)
       .order("name");
 
@@ -60,10 +63,12 @@ async function addCard() {
   const { error } = await supabase
     .from("CreditCards")
     .insert({
-      name: name.trim(),
-      is_active: true,
-      user_id: user.id,
-    });
+  name: name.trim(),
+  is_active: true,
+  statement_day: statementDay ? Number(statementDay) : null,
+  due_day: dueDay ? Number(dueDay) : null,
+  user_id: user.id,
+});
 
   if (error) {
     setMessage(error.message);
@@ -71,8 +76,10 @@ async function addCard() {
   }
 
   setName("");
-  setMessage("新增成功");
-  await loadCards();
+setStatementDay("");
+setDueDay("");
+setMessage("新增成功");
+await loadCards();
 }
   async function toggleCard(card: CreditCard) {
   const { error } = await supabase
@@ -105,6 +112,34 @@ async function addCard() {
   }}
 />
 
+      <input
+  type="number"
+  min="1"
+  max="31"
+  placeholder="結帳日，例如 18"
+  value={statementDay}
+  onChange={(e) => setStatementDay(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 8,
+  }}
+/>
+
+      <input
+  type="number"
+  min="1"
+  max="31"
+  placeholder="繳款日，例如 25"
+  value={dueDay}
+  onChange={(e) => setDueDay(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 10,
+    marginBottom: 8,
+  }}
+/>
+      
 <button
   onClick={addCard}
   style={{
@@ -120,6 +155,13 @@ async function addCard() {
         <div key={card.id} style={{ marginBottom: 12 }}>
           <strong>{card.name}</strong>
           <div>{card.is_active ? "啟用" : "停用"}</div>
+          <div>
+  結帳日：{card.statement_day ? `${card.statement_day} 日` : "未設定"}
+</div>
+
+<div>
+  繳款日：{card.due_day ? `${card.due_day} 日` : "未設定"}
+</div>
           <button
   onClick={() => toggleCard(card)}
   style={{
