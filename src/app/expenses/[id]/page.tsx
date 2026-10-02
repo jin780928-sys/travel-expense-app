@@ -51,29 +51,26 @@ export default function ExpenseDetailPage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("Expenses")
-        .select(
-  "id,date,item,amount,major_category,category,payment_method,currency,expense_scope,expense_scope,trip_id,paid_by,split_type,notes"
-)
-        .select(`
-  id,
-  date,
-  item,
-  amount,
-  major_category,
-  category,
-  payment_method,
-  card_name,
-  currency,
-  trip_id,
-  notes,
-  paid_by,
-  split_type
-`)
-        .eq("id", id)
-        .single();
-
+     const { data, error } = await supabase
+  .from("Expenses")
+  .select(`
+    id,
+    date,
+    item,
+    amount,
+    major_category,
+    category,
+    payment_method,
+    card_name,
+    currency,
+    expense_scope,
+    trip_id,
+    notes,
+    paid_by,
+    split_type
+  `)
+  .eq("id", id)
+  .single();
       if (error) {
         setMessage("讀取花費失敗：" + error.message);
         return;
