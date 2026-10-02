@@ -12,6 +12,7 @@ type Expense = {
   major_category: string | null;
   category: string | null;
   payment_method: string | null;
+  card_name: string | null;
   currency: string | null;
   expense_scope: string | null;
   notes: string | null;
@@ -35,7 +36,7 @@ export default function ExpensesPage() {
       const { data, error } = await supabase
         .from("Expenses")
         .select(
-  "id,date,item,amount,major_category,category,payment_method,currency,expense_scope,notes"
+  "id,date,item,amount,major_category,category,payment_method,card_name,currency,expense_scope,notes"
 )
         .order("date", { ascending: false });
 
@@ -95,7 +96,9 @@ export default function ExpensesPage() {
 )}
 
           {expense.payment_method && (
-            <p>付款方式：{expense.payment_method}</p>
+            {expense.payment_method === "credit_card" && (
+  <p>信用卡：{expense.card_name || "-"}</p>
+)}
           )}
 
           <p>
