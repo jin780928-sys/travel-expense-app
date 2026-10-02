@@ -308,7 +308,13 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
           )}
 
           <hr style={{ margin: "30px 0" }} />
-
+ </div>
+                    )
+                  )}
+                </div>
+              )
+            )
+          )}
           <h2>依分類統計</h2>
 
           {Object.keys(totalsByCategory).length === 0 ? (
@@ -510,13 +516,7 @@ const endDate = `${nextYear}-${nextMonthText}-01`;
     </div>
   ))
 )}
-                      </div>
-                    )
-                  )}
-                </div>
-              )
-            )
-          )}
+                     
         </>
       )}
     </main>
