@@ -847,6 +847,44 @@ const nextDueStatement =
     return b.period_end.localeCompare(a.period_end);
   });
 }, [cardStatements]);
+
+  function getHistoricalStatementTotals(
+  statement: CreditCardStatement
+) {
+  const card = creditCards.find(
+    (item) =>
+      Number(item.id) ===
+      Number(statement.card_id)
+  );
+
+  if (!card) {
+    return {};
+  }
+
+  const totals: Record<string, number> = {};
+
+  for (const expense of statementExpenses) {
+    if (expense.card_name !== card.name) {
+      continue;
+    }
+
+    if (
+      expense.date < statement.period_start ||
+      expense.date > statement.period_end
+    ) {
+      continue;
+    }
+
+    const currency =
+      expense.currency || "USD";
+
+    totals[currency] =
+      (totals[currency] || 0) +
+      Number(expense.amount || 0);
+  }
+
+  return totals;
+}
   
   const selectedStatement =
     useMemo(() => {
@@ -2158,6 +2196,29 @@ const nextDueStatement =
               {" ～ "}
               {formatDate(statement.period_end)}
             </div>
+
+            {(() => {
+  const totals =
+    getHistoricalStatementTotals(statement);
+
+  return (
+    <div>
+      帳單金額：
+      {Object.keys(totals).length === 0 ? (
+        <span>0</span>
+      ) : (
+        Object.entries(totals).map(
+          ([currency, total], index) => (
+            <span key={currency}>
+              {index > 0 ? " / " : " "}
+              {currency} {total.toFixed(2)}
+            </span>
+          )
+        )
+      )}
+    </div>
+  );
+})()}
 
             <div>
               狀態：
