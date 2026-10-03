@@ -106,6 +106,16 @@ export default function DashboardPage() {
     loadDashboardData();
   }, [selectedYear, selectedMonth]);
 
+  useEffect(() => {
+  setHistoryVisibleCount(20);
+}, [
+  historyMonthFilter,
+  historyCardFilter,
+  historyStatusFilter,
+  historySort,
+  historySearch,
+]);
+
   function dateToString(date: Date) {
     const year = date.getFullYear();
     const month = String(
