@@ -968,12 +968,7 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                {Object.keys(
-                  card.totals
-                ).length === 0 ? (
-                  <div>
-                    本期沒有消費
-                  </div>
+               
                 ) : (
                   Object.entries(
                     card.totals
