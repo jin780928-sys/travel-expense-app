@@ -2338,6 +2338,20 @@ const nextDueStatement =
   已繳 {filteredHistorySummary.paid} 筆
   {" ｜ "}
   未繳 {filteredHistorySummary.unpaid} 筆
+  {" ｜ "}
+  總額：
+  {Object.keys(filteredHistoryTotals).length === 0 ? (
+    <span>0</span>
+  ) : (
+    Object.entries(filteredHistoryTotals).map(
+      ([currency, total], index) => (
+        <span key={currency}>
+          {index > 0 ? " / " : " "}
+          {currency} {total.toFixed(2)}
+        </span>
+      )
+    )
+  )}
 </div>
 
     <input
