@@ -2249,6 +2249,20 @@ const nextDueStatement =
   ))}
 </select>
 
+    <button
+  onClick={() => {
+    setHistoryMonthFilter("all");
+    setHistoryCardFilter("all");
+  }}
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 10px",
+  }}
+>
+  清除篩選
+</button>
+
     {filteredStatementHistory.length === 0 ? (
       <p>尚無歷史帳單</p>
     ) : (
