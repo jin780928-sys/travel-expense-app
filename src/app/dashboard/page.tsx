@@ -884,6 +884,19 @@ const nextDueStatement =
   );
 }, [statementHistory]);
 
+  const historyCountByCard = useMemo(() => {
+  const counts: Record<string, number> = {};
+
+  for (const statement of statementHistory) {
+    const cardId = String(statement.card_id);
+
+    counts[cardId] =
+      (counts[cardId] || 0) + 1;
+  }
+
+  return counts;
+}, [statementHistory]);
+
   const filteredStatementHistory = useMemo(() => {
   const keyword = historySearch.trim().toLowerCase();
 
@@ -3008,7 +3021,7 @@ link.download =
   borderRadius: 8,
 }}
     >
-      {card.name}
+      {card.name}（{historyCountByCard[String(card.id)] || 0}）
     </button>
   ))}
 </div>
