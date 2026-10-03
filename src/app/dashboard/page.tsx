@@ -717,7 +717,29 @@ export default function DashboardPage() {
           marginBottom: 10,
         }}
       >
-        <strong>{card.name}</strong>
+       <button
+  onClick={() => {
+    setSelectedStatementCard(card.name);
+
+    setTimeout(() => {
+      document
+        .getElementById("card-statements")
+        ?.scrollIntoView({
+          behavior: "smooth",
+        });
+    }, 0);
+  }}
+  style={{
+    border: "none",
+    background: "none",
+    padding: 0,
+    fontWeight: "bold",
+    cursor: "pointer",
+    textDecoration: "underline",
+  }}
+>
+  {card.name}
+</button>
 
         <div>
           {getDueStatus(card.due_day, card.isPaid)}
@@ -971,7 +993,7 @@ export default function DashboardPage() {
 
       <hr style={{ margin: "30px 0" }} />
 
-      <h2>信用卡本期帳單</h2>
+      <h2 id="card-statements">信用卡本期帳單</h2>
 
       {creditCards.length === 0 ? (
         <p>
