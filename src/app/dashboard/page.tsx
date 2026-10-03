@@ -648,6 +648,17 @@ export default function DashboardPage() {
       selectedMonth,
     ]);
 
+  const sortedCardStatements = useMemo(() => {
+  return [...currentCardStatements].sort(
+    (a, b) => {
+      const aDue = a.due_day ?? 99;
+      const bDue = b.due_day ?? 99;
+
+      return aDue - bDue;
+    }
+  );
+}, [currentCardStatements]);
+
   const unpaidStatements =
     useMemo(() => {
       const now = new Date();
@@ -1355,14 +1366,14 @@ export default function DashboardPage() {
   </strong>
 </p>
 
-        {currentCardStatements.length ===
-        0 ? (
+        {sortedCardStatements.length ===
+0 ? (
           <p>
             尚未設定信用卡
           </p>
         ) : (
-          currentCardStatements.map(
-            (card) => (
+          sortedCardStatements.map(
+  (card) => (
               <div
                 key={card.id}
                 style={{
