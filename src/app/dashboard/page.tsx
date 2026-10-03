@@ -730,6 +730,21 @@ export default function DashboardPage() {
       selectedMonth,
     ]);
 
+  const unpaidTotalsByCurrency = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  for (const card of unpaidStatements) {
+    for (const [currency, total] of Object.entries(
+      card.totals
+    )) {
+      totals[currency] =
+        (totals[currency] || 0) + total;
+    }
+  }
+
+  return totals;
+}, [unpaidStatements]);
+  
   const selectedStatement =
     useMemo(() => {
       if (!selectedStatementCard) {
@@ -997,6 +1012,27 @@ export default function DashboardPage() {
             ⚠️ 未繳帳單提醒
           </h2>
 
+          <div
+  style={{
+    marginBottom: 12,
+    fontWeight: "bold",
+  }}
+>
+  未繳總額：
+  {Object.keys(unpaidTotalsByCurrency).length === 0 ? (
+    <span>0</span>
+  ) : (
+    Object.entries(unpaidTotalsByCurrency).map(
+      ([currency, total], index) => (
+        <span key={currency}>
+          {index > 0 ? " / " : " "}
+          {currency} {total.toFixed(2)}
+        </span>
+      )
+    )
+  )}
+</div>
+          
           {unpaidStatements.map(
             (card) => (
               <div
