@@ -381,6 +381,44 @@ export default function DashboardPage() {
     return `已逾期 ${Math.abs(diffDays)} 天`;
   }
 
+  function getDueLevel(
+  dueDay: number | null,
+  isPaid: boolean
+) {
+  if (isPaid || !dueDay) {
+    return "normal";
+  }
+
+  const today = new Date();
+
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  const dueDate = createSafeDate(
+    selectedYear,
+    selectedMonth - 1,
+    dueDay
+  );
+
+  const diffMs =
+    dueDate.getTime() - todayOnly.getTime();
+
+  const diffDays =
+    Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return "overdue";
+  }
+
+  if (diffDays === 0) {
+    return "today";
+  }
+
+  return "soon";
+}
   const currentCardStatements = useMemo<
     CurrentCardStatement[]
   >(() => {
@@ -796,11 +834,19 @@ export default function DashboardPage() {
           {unpaidStatements.map(
             (card) => (
               <div
-                key={card.id}
-                style={{
-                  marginBottom: 10,
-                }}
-              >
+  key={card.id}
+  style={{
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 8,
+    background:
+      getDueLevel(card.due_day, card.isPaid) === "overdue"
+        ? "#ffe5e5"
+        : getDueLevel(card.due_day, card.isPaid) === "today"
+        ? "#fff1d6"
+        : "#fffbe6",
+  }}
+>
                 <button
                   onClick={() => {
                     setSelectedStatementCard(
