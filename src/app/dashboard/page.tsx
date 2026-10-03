@@ -84,6 +84,8 @@ export default function DashboardPage() {
   useState("all");
   const [historySort, setHistorySort] =
   useState("newest");
+  const [historySearch, setHistorySearch] =
+  useState("");
 
   const [
     selectedStatementCard,
@@ -871,6 +873,8 @@ const nextDueStatement =
 }, [statementHistory]);
 
   const filteredStatementHistory = useMemo(() => {
+  const keyword = historySearch.trim().toLowerCase();
+
   const filtered = statementHistory.filter((statement) => {
     const monthMatches =
       historyMonthFilter === "all" ||
@@ -889,10 +893,41 @@ const nextDueStatement =
       (historyStatusFilter === "unpaid" &&
         !statement.is_paid);
 
+    const card = creditCards.find(
+      (item) =>
+        Number(item.id) ===
+        Number(statement.card_id)
+    );
+
+    const expensesForStatement =
+      statementExpenses.filter((expense) => {
+        if (!card) {
+          return false;
+        }
+
+        return (
+          expense.card_name === card.name &&
+          expense.date >= statement.period_start &&
+          expense.date <= statement.period_end
+        );
+      });
+
+    const searchMatches =
+      keyword === "" ||
+      (card?.name || "")
+        .toLowerCase()
+        .includes(keyword) ||
+      expensesForStatement.some((expense) =>
+        expense.item
+          .toLowerCase()
+          .includes(keyword)
+      );
+
     return (
       monthMatches &&
       cardMatches &&
-      statusMatches
+      statusMatches &&
+      searchMatches
     );
   });
 
@@ -937,6 +972,7 @@ const nextDueStatement =
   historyCardFilter,
   historyStatusFilter,
   historySort,
+  historySearch,
   statementExpenses,
   creditCards,
 ]);
@@ -2278,6 +2314,22 @@ const nextDueStatement =
     <h2>
   📚 歷史帳單（{filteredStatementHistory.length} 筆）
 </h2>
+
+    <input
+  type="text"
+  value={historySearch}
+  onChange={(e) =>
+    setHistorySearch(e.target.value)
+  }
+  placeholder="搜尋信用卡名稱或消費項目"
+  style={{
+    width: "100%",
+    maxWidth: 360,
+    marginBottom: 12,
+    padding: "8px 10px",
+  }}
+/>
+    
 <div
   style={{
     marginBottom: 12,
@@ -2389,11 +2441,12 @@ const nextDueStatement =
 </select>
 
     <button
-  onClick={() => {
+ onClick={() => {
   setHistoryMonthFilter("all");
   setHistoryCardFilter("all");
   setHistoryStatusFilter("all");
   setHistorySort("newest");
+  setHistorySearch("");
 }}
   style={{
     marginLeft: 8,
