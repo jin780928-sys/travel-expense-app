@@ -1523,7 +1523,7 @@ if (!hasAmount) {
   {" ｜ "}
   已繳：{statementSummary.paid} 張
   {" ｜ "}
-  已繳進度：{paidProgress}%
+  已繳進度：{statementSummary.paid} / {statementSummary.total} 張（{paidProgress}%）
 </div>
 
           <div
