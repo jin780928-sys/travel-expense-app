@@ -782,7 +782,11 @@ if (!hasAmount) {
       selectedYear,
       selectedMonth,
     ]);
-
+const nextDueStatement =
+  unpaidStatements.length > 0
+    ? unpaidStatements[0]
+    : null;
+  
   const unpaidTotalsByCurrency = useMemo(() => {
   const totals: Record<string, number> = {};
 
@@ -1099,6 +1103,19 @@ if (!hasAmount) {
   ⚠️ 未繳帳單提醒（{unpaidStatements.length} 張）
 </h2>
 
+          {nextDueStatement && (
+  <div
+    style={{
+      marginBottom: 10,
+      fontWeight: "bold",
+    }}
+  >
+    最近要繳：
+    {nextDueStatement.name}
+    {" ｜ "}
+    {getDueDateText(nextDueStatement.due_day)}
+  </div>
+)}
           <div
   style={{
     marginBottom: 12,
