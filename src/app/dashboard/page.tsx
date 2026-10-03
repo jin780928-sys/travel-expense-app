@@ -381,6 +381,26 @@ export default function DashboardPage() {
     return `${year}/${month}/${day}`;
   }
 
+  function getDueDateText(
+  dueDay: number | null
+) {
+  if (!dueDay) {
+    return "未設定";
+  }
+
+  const dueDate = createSafeDate(
+    selectedYear,
+    selectedMonth - 1,
+    dueDay
+  );
+
+  return `${dueDate.getFullYear()}/${String(
+    dueDate.getMonth() + 1
+  ).padStart(2, "0")}/${String(
+    dueDate.getDate()
+  ).padStart(2, "0")}`;
+}
+  
   function getDueStatus(
     dueDay: number | null,
     isPaid: boolean
@@ -1453,6 +1473,11 @@ export default function DashboardPage() {
                     ? `每月 ${card.due_day} 日`
                     : "未設定"}
                 </div>
+
+                <div>
+  繳款截止：
+  {getDueDateText(card.due_day)}
+</div>
 
                 <div>
                   本期區間：
