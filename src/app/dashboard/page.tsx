@@ -74,8 +74,8 @@ export default function DashboardPage() {
   useState(false);
   const [showStatementHistory, setShowStatementHistory] =
   useState(false);
-  const [expandedHistoryId, setExpandedHistoryId] =
-  useState<number | string | null>(null);
+  const [expandedHistoryIds, setExpandedHistoryIds] =
+  useState<Array<number | string>>([]);
   const [historyMonthFilter, setHistoryMonthFilter] =
   useState("all");
   const [historyCardFilter, setHistoryCardFilter] =
@@ -2583,6 +2583,36 @@ const nextDueStatement =
   清除篩選
 </button>
 
+    <button
+  onClick={() =>
+    setExpandedHistoryIds(
+      filteredStatementHistory.map(
+        (statement) => statement.id
+      )
+    )
+  }
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 10px",
+  }}
+>
+  全部展開
+</button>
+
+    <button
+  onClick={() =>
+    setExpandedHistoryIds([])
+  }
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 10px",
+  }}
+>
+  全部收合
+</button>
+
     {filteredStatementHistory.length === 0 ? (
   <p>
     找不到符合目前搜尋／篩選條件的歷史帳單
@@ -2607,12 +2637,14 @@ const nextDueStatement =
           >
             <button
   onClick={() =>
-    setExpandedHistoryId(
-      expandedHistoryId === statement.id
-        ? null
-        : statement.id
-    )
-  }
+  setExpandedHistoryIds((current) =>
+    current.includes(statement.id)
+      ? current.filter(
+          (id) => id !== statement.id
+        )
+      : [...current, statement.id]
+  )
+}
   style={{
     fontWeight: "bold",
     cursor: "pointer",
@@ -2669,7 +2701,7 @@ const nextDueStatement =
                 : "未記錄"}
             </div>
 
-            {expandedHistoryId === statement.id && (
+            {expandedHistoryIds.includes(statement.id) && (
   <div
     style={{
       marginTop: 10,
