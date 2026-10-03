@@ -1066,6 +1066,8 @@ const nextDueStatement =
   ],
 ];
 
+    let exportedExpenseCount = 0;
+    
   for (const statement of filteredStatementHistory) {
   const card = creditCards.find(
     (item) =>
@@ -1101,7 +1103,10 @@ const nextDueStatement =
       "0",
     ]);
   } else {
+    
+    
     for (const expense of expensesForStatement) {
+      exportedExpenseCount += 1;
       rows.push([
         card?.name || "未知信用卡",
         statement.period_start,
@@ -1368,6 +1373,20 @@ rows.push([
     rows.push([
   "匯出筆數",
   `${filteredStatementHistory.length} 筆帳單`,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+    rows.push([
+  "消費明細筆數",
+  `${exportedExpenseCount} 筆`,
   "",
   "",
   "",
