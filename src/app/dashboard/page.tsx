@@ -2822,6 +2822,15 @@ link.download =
     <h2>
   📚 歷史帳單（{filteredStatementHistory.length} 筆）
 </h2>
+    <div
+  style={{
+    marginBottom: 12,
+    fontSize: 14,
+  }}
+>
+  目前顯示 {visibleStatementHistory.length} /{" "}
+  {filteredStatementHistory.length} 筆
+</div>
 
     <div
   style={{
