@@ -1194,6 +1194,15 @@ if (!hasAmount) {
                 </div>
 
                 <div
+  style={{
+    marginTop: 4,
+  }}
+>
+  繳款截止：
+  {getDueDateText(card.due_day)}
+</div>
+
+                <div
                   style={{
                     marginTop: 4,
                   }}
