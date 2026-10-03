@@ -1235,6 +1235,115 @@ for (const [currency, total] of Object.entries(
   ]);
 }
 
+    const exportCardName =
+  historyCardFilter === "all"
+    ? "全部信用卡"
+    : creditCards.find(
+        (card) =>
+          String(card.id) === historyCardFilter
+      )?.name || "未知信用卡";
+
+const exportMonth =
+  historyMonthFilter === "all"
+    ? "全部月份"
+    : historyMonthFilter;
+
+const exportStatus =
+  historyStatusFilter === "all"
+    ? "全部狀態"
+    : historyStatusFilter === "paid"
+    ? "已繳"
+    : "未繳";
+
+const exportSearch =
+  historySearch.trim() === ""
+    ? "無"
+    : historySearch.trim();
+
+    rows.push([
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+rows.push([
+  "篩選條件",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+rows.push([
+  "月份",
+  exportMonth,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+rows.push([
+  "信用卡",
+  exportCardName,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+rows.push([
+  "狀態",
+  exportStatus,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+rows.push([
+  "搜尋",
+  exportSearch,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+    
     const exportTime = new Date();
 
 const exportTimeText =
