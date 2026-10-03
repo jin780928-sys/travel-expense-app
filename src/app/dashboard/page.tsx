@@ -1119,6 +1119,68 @@ const nextDueStatement =
   }
 }
 
+    const csvTotals: Record<string, number> = {};
+
+for (const statement of filteredStatementHistory) {
+  const card = creditCards.find(
+    (item) =>
+      Number(item.id) ===
+      Number(statement.card_id)
+  );
+
+  if (!card) {
+    continue;
+  }
+
+  const expensesForStatement =
+    statementExpenses.filter((expense) => {
+      return (
+        expense.card_name === card.name &&
+        expense.date >= statement.period_start &&
+        expense.date <= statement.period_end
+      );
+    });
+
+  for (const expense of expensesForStatement) {
+    const currency =
+      expense.currency || "USD";
+
+    csvTotals[currency] =
+      (csvTotals[currency] || 0) +
+      Number(expense.amount || 0);
+  }
+}
+
+rows.push([
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+for (const [currency, total] of Object.entries(csvTotals)) {
+  rows.push([
+    "總計",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    currency,
+    total.toFixed(2),
+  ]);
+}
+    
   const csv = rows
     .map((row) =>
       row
