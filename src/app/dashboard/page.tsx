@@ -1120,6 +1120,8 @@ const nextDueStatement =
 }
 
     const csvTotals: Record<string, number> = {};
+    const csvPaidTotals: Record<string, number> = {};
+const csvUnpaidTotals: Record<string, number> = {};
 
 for (const statement of filteredStatementHistory) {
   const card = creditCards.find(
@@ -1149,6 +1151,17 @@ for (const statement of filteredStatementHistory) {
       (csvTotals[currency] || 0) +
       Number(expense.amount || 0);
   }
+
+  if (statement.is_paid) {
+  csvPaidTotals[currency] =
+    (csvPaidTotals[currency] || 0) +
+    Number(expense.amount || 0);
+} else {
+  csvUnpaidTotals[currency] =
+    (csvUnpaidTotals[currency] || 0) +
+    Number(expense.amount || 0);
+}
+  
 }
 
 rows.push([
@@ -1165,7 +1178,45 @@ rows.push([
   "",
 ]);
 
-for (const [currency, total] of Object.entries(csvTotals)) {
+for (const [currency, total] of Object.entries(
+  csvPaidTotals
+)) {
+  rows.push([
+    "已繳總計",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    currency,
+    total.toFixed(2),
+  ]);
+}
+
+for (const [currency, total] of Object.entries(
+  csvUnpaidTotals
+)) {
+  rows.push([
+    "未繳總計",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    currency,
+    total.toFixed(2),
+  ]);
+}
+
+for (const [currency, total] of Object.entries(
+  csvTotals
+)) {
   rows.push([
     "總計",
     "",
