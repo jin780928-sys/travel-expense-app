@@ -80,6 +80,8 @@ export default function DashboardPage() {
   useState("all");
   const [historyCardFilter, setHistoryCardFilter] =
   useState("all");
+  const [historyStatusFilter, setHistoryStatusFilter] =
+  useState("all");
 
   const [
     selectedStatementCard,
@@ -878,12 +880,24 @@ const nextDueStatement =
       String(statement.card_id) ===
         historyCardFilter;
 
-    return monthMatches && cardMatches;
+    const statusMatches =
+      historyStatusFilter === "all" ||
+      (historyStatusFilter === "paid" &&
+        statement.is_paid) ||
+      (historyStatusFilter === "unpaid" &&
+        !statement.is_paid);
+
+    return (
+      monthMatches &&
+      cardMatches &&
+      statusMatches
+    );
   });
 }, [
   statementHistory,
   historyMonthFilter,
   historyCardFilter,
+  historyStatusFilter,
 ]);
 
   const filteredHistoryTotals = useMemo(() => {
@@ -2293,11 +2307,28 @@ const nextDueStatement =
   ))}
 </select>
 
+    <select
+  value={historyStatusFilter}
+  onChange={(e) =>
+    setHistoryStatusFilter(e.target.value)
+  }
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 8px",
+  }}
+>
+  <option value="all">全部狀態</option>
+  <option value="unpaid">未繳</option>
+  <option value="paid">已繳</option>
+</select>
+
     <button
   onClick={() => {
-    setHistoryMonthFilter("all");
-    setHistoryCardFilter("all");
-  }}
+  setHistoryMonthFilter("all");
+  setHistoryCardFilter("all");
+  setHistoryStatusFilter("all");
+}}
   style={{
     marginLeft: 8,
     marginBottom: 12,
