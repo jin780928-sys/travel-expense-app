@@ -998,6 +998,18 @@ const nextDueStatement =
   statementExpenses,
   creditCards,
 ]);
+
+  const filteredHistorySummary = useMemo(() => {
+  return {
+    total: filteredStatementHistory.length,
+    paid: filteredStatementHistory.filter(
+      (statement) => statement.is_paid
+    ).length,
+    unpaid: filteredStatementHistory.filter(
+      (statement) => !statement.is_paid
+    ).length,
+  };
+}, [filteredStatementHistory]);
   
   function getHistoricalStatementTotals(
   statement: CreditCardStatement
@@ -2314,6 +2326,19 @@ const nextDueStatement =
     <h2>
   📚 歷史帳單（{filteredStatementHistory.length} 筆）
 </h2>
+
+    <div
+  style={{
+    marginBottom: 12,
+    fontWeight: "bold",
+  }}
+>
+  共 {filteredHistorySummary.total} 筆
+  {" ｜ "}
+  已繳 {filteredHistorySummary.paid} 筆
+  {" ｜ "}
+  未繳 {filteredHistorySummary.unpaid} 筆
+</div>
 
     <input
   type="text"
