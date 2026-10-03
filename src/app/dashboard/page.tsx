@@ -1364,6 +1364,20 @@ rows.push([
   "",
   "",
 ]);
+
+    rows.push([
+  "匯出筆數",
+  `${filteredStatementHistory.length} 筆帳單`,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
     
     const exportTime = new Date();
 
