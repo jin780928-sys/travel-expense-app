@@ -881,26 +881,6 @@ const nextDueStatement =
   historyMonthFilter,
 ]);
 
-  const filteredStatementHistory = useMemo(() => {
-  return statementHistory.filter((statement) => {
-    const monthMatches =
-      historyMonthFilter === "all" ||
-      statement.period_end.slice(0, 7) ===
-        historyMonthFilter;
-
-    const cardMatches =
-      historyCardFilter === "all" ||
-      String(statement.card_id) ===
-        historyCardFilter;
-
-    return monthMatches && cardMatches;
-  });
-}, [
-  statementHistory,
-  historyMonthFilter,
-  historyCardFilter,
-]);
-
   function getHistoricalStatementTotals(
   statement: CreditCardStatement
 ) {
