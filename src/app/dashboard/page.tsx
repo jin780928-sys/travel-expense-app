@@ -1234,6 +1234,47 @@ for (const [currency, total] of Object.entries(
     total.toFixed(2),
   ]);
 }
+
+    const exportTime = new Date();
+
+const exportTimeText =
+  `${exportTime.getFullYear()}/${String(
+    exportTime.getMonth() + 1
+  ).padStart(2, "0")}/${String(
+    exportTime.getDate()
+  ).padStart(2, "0")} ${String(
+    exportTime.getHours()
+  ).padStart(2, "0")}:${String(
+    exportTime.getMinutes()
+  ).padStart(2, "0")}`;
+
+rows.push([
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+rows.push([
+  "匯出時間",
+  exportTimeText,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
     
   const csv = rows
     .map((row) =>
