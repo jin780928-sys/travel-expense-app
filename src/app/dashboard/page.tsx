@@ -419,6 +419,49 @@ export default function DashboardPage() {
 
   return "soon";
 }
+
+  function getStatementBadge(
+  dueDay: number | null,
+  isPaid: boolean
+) {
+  if (isPaid) {
+    return "已繳";
+  }
+
+  if (!dueDay) {
+    return "未設定";
+  }
+
+  const today = new Date();
+
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  const dueDate = createSafeDate(
+    selectedYear,
+    selectedMonth - 1,
+    dueDay
+  );
+
+  const diffMs =
+    dueDate.getTime() - todayOnly.getTime();
+
+  const diffDays =
+    Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return "已逾期";
+  }
+
+  if (diffDays === 0) {
+    return "今天到期";
+  }
+
+  return "未繳";
+}
   const currentCardStatements = useMemo<
     CurrentCardStatement[]
   >(() => {
@@ -876,6 +919,26 @@ export default function DashboardPage() {
                 >
                   {card.name}
                 </button>
+
+                <span
+  style={{
+    marginLeft: 8,
+    padding: "3px 8px",
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: "bold",
+    background:
+      card.isPaid
+        ? "#e7f7ed"
+        : getDueLevel(card.due_day, card.isPaid) === "overdue"
+        ? "#ffe5e5"
+        : getDueLevel(card.due_day, card.isPaid) === "today"
+        ? "#fff1d6"
+        : "#fffbe6",
+  }}
+>
+  {getStatementBadge(card.due_day, card.isPaid)}
+</span>
 
                 <div
   style={{
