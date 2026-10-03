@@ -867,18 +867,23 @@ const nextDueStatement =
 }, [statementHistory]);
 
   const filteredStatementHistory = useMemo(() => {
-  if (historyMonthFilter === "all") {
-    return statementHistory;
-  }
-
-  return statementHistory.filter(
-    (statement) =>
+  return statementHistory.filter((statement) => {
+    const monthMatches =
+      historyMonthFilter === "all" ||
       statement.period_end.slice(0, 7) ===
-      historyMonthFilter
-  );
+        historyMonthFilter;
+
+    const cardMatches =
+      historyCardFilter === "all" ||
+      String(statement.card_id) ===
+        historyCardFilter;
+
+    return monthMatches && cardMatches;
+  });
 }, [
   statementHistory,
   historyMonthFilter,
+  historyCardFilter,
 ]);
 
   function getHistoricalStatementTotals(
