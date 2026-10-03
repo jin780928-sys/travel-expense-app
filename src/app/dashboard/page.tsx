@@ -2329,6 +2329,20 @@ const nextDueStatement =
     padding: "8px 10px",
   }}
 />
+
+    {historySearch.trim() !== "" && (
+  <div
+    style={{
+      marginBottom: 12,
+      fontSize: 14,
+    }}
+  >
+    搜尋：
+    <strong>{historySearch}</strong>
+    {" ｜ "}
+    結果 {filteredStatementHistory.length} 筆
+  </div>
+)}
     
 <div
   style={{
