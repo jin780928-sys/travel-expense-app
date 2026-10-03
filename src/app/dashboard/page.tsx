@@ -682,6 +682,13 @@ export default function DashboardPage() {
             return false;
           }
 
+          const hasAmount = Object.values(
+  card.totals
+).some((total) => total > 0);
+
+if (!hasAmount) {
+  return false;
+}
           const dueDate =
             createSafeDate(
               selectedYear,
