@@ -651,6 +651,10 @@ export default function DashboardPage() {
   const sortedCardStatements = useMemo(() => {
   return [...currentCardStatements].sort(
     (a, b) => {
+      if (a.isPaid !== b.isPaid) {
+        return a.isPaid ? 1 : -1;
+      }
+
       const aDue = a.due_day ?? 99;
       const bDue = b.due_day ?? 99;
 
