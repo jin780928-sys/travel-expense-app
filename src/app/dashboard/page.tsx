@@ -877,6 +877,27 @@ export default function DashboardPage() {
                   {card.name}
                 </button>
 
+                <div
+  style={{
+    marginTop: 8,
+    marginBottom: 8,
+    fontSize: 18,
+    fontWeight: "bold",
+  }}
+>
+  {Object.keys(card.totals).length === 0 ? (
+    <span>本期金額：0</span>
+  ) : (
+    Object.entries(card.totals).map(
+      ([currency, total]) => (
+        <div key={currency}>
+          本期金額：{currency} {total.toFixed(2)}
+        </div>
+      )
+    )
+  )}
+</div>
+
                 <div>
                   {getDueStatus(
                     card.due_day,
@@ -1327,27 +1348,7 @@ export default function DashboardPage() {
                 <div>
                   本期沒有消費
                 </div>
-              ) : (
-                Object.entries(
-                  card.totals
-                ).map(
-                  ([
-                    currency,
-                    total,
-                  ]) => (
-                    <div
-                      key={
-                        currency
-                      }
-                    >
-                      {currency}:{" "}
-                      {total.toFixed(
-                        2
-                      )}
-                    </div>
-                  )
-                )
-              )}
+              
 
               {card.statementStatusId !==
                 null &&
