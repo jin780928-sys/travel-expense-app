@@ -74,6 +74,8 @@ export default function DashboardPage() {
   useState(false);
   const [showStatementHistory, setShowStatementHistory] =
   useState(false);
+  const [expandedHistoryId, setExpandedHistoryId] =
+  useState<number | string | null>(null);
 
   const [
     selectedStatementCard,
@@ -2182,13 +2184,25 @@ const nextDueStatement =
               borderRadius: 8,
             }}
           >
-            <div
-              style={{
-                fontWeight: "bold",
-              }}
-            >
-              {card?.name || "未知信用卡"}
-            </div>
+            <button
+  onClick={() =>
+    setExpandedHistoryId(
+      expandedHistoryId === statement.id
+        ? null
+        : statement.id
+    )
+  }
+  style={{
+    fontWeight: "bold",
+    cursor: "pointer",
+    background: "none",
+    border: "none",
+    padding: 0,
+    textDecoration: "underline",
+  }}
+>
+  {card?.name || "未知信用卡"}
+</button>
 
             <div>
               帳單期間：
@@ -2233,6 +2247,66 @@ const nextDueStatement =
                 ? formatDate(statement.paid_date)
                 : "未記錄"}
             </div>
+
+            {expandedHistoryId === statement.id && (
+  <div
+    style={{
+      marginTop: 10,
+      paddingTop: 10,
+      borderTop: "1px solid #eee",
+    }}
+  >
+    <strong>消費明細</strong>
+
+    {statementExpenses.filter((expense) => {
+      if (!card) {
+        return false;
+      }
+
+      return (
+        expense.card_name === card.name &&
+        expense.date >= statement.period_start &&
+        expense.date <= statement.period_end
+      );
+    }).length === 0 ? (
+      <p>本期沒有消費</p>
+    ) : (
+      statementExpenses
+        .filter((expense) => {
+          if (!card) {
+            return false;
+          }
+
+          return (
+            expense.card_name === card.name &&
+            expense.date >= statement.period_start &&
+            expense.date <= statement.period_end
+          );
+        })
+        .map((expense) => (
+          <div
+            key={expense.id}
+            style={{
+              padding: "8px 0",
+              borderBottom: "1px solid #eee",
+            }}
+          >
+            <Link
+              href={`/expenses/${expense.id}`}
+            >
+              {expense.date} {expense.item}
+            </Link>
+
+            <div>
+              {expense.currency || "USD"}{" "}
+              {Number(expense.amount).toFixed(2)}
+            </div>
+          </div>
+        ))
+    )}
+  </div>
+)}
+            
           </div>
         );
       })
