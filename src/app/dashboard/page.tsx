@@ -2815,6 +2815,7 @@ link.download =
 
       {showStatementHistory && (
   <section
+    id="statement-history"
     style={{
       marginBottom: 30,
     }}
@@ -3297,6 +3298,23 @@ link.download =
     載入更多
   </button>
 )}
+
+    <button
+  onClick={() =>
+    document
+      .getElementById("statement-history")
+      ?.scrollIntoView({
+        behavior: "smooth",
+      })
+  }
+  style={{
+    marginTop: 12,
+    marginLeft: 8,
+    padding: "8px 12px",
+  }}
+>
+  ⬆️ 回到歷史帳單頂部
+</button>
   </section>
 )}
       
