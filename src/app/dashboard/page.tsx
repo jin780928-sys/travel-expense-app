@@ -1051,51 +1051,73 @@ const nextDueStatement =
 
   function exportHistoryCsv() {
   const rows = [
-    [
-      "信用卡",
-      "帳單開始日",
-      "帳單結束日",
-      "狀態",
-      "實際繳款日",
-      "幣別",
-      "帳單金額",
-    ],
-  ];
+  [
+    "信用卡",
+    "帳單開始日",
+    "帳單結束日",
+    "狀態",
+    "實際繳款日",
+    "消費日期",
+    "消費項目",
+    "大分類",
+    "小分類",
+    "幣別",
+    "消費金額",
+  ],
+];
 
   for (const statement of filteredStatementHistory) {
-    const card = creditCards.find(
-      (item) =>
-        Number(item.id) ===
-        Number(statement.card_id)
-    );
+  const card = creditCards.find(
+    (item) =>
+      Number(item.id) ===
+      Number(statement.card_id)
+  );
 
-    const totals =
-      getHistoricalStatementTotals(statement);
+  const expensesForStatement =
+    statementExpenses.filter((expense) => {
+      if (!card) {
+        return false;
+      }
 
-    if (Object.keys(totals).length === 0) {
+      return (
+        expense.card_name === card.name &&
+        expense.date >= statement.period_start &&
+        expense.date <= statement.period_end
+      );
+    });
+
+  if (expensesForStatement.length === 0) {
+    rows.push([
+      card?.name || "未知信用卡",
+      statement.period_start,
+      statement.period_end,
+      statement.is_paid ? "已繳" : "未繳",
+      statement.paid_date || "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "0",
+    ]);
+  } else {
+    for (const expense of expensesForStatement) {
       rows.push([
         card?.name || "未知信用卡",
         statement.period_start,
         statement.period_end,
         statement.is_paid ? "已繳" : "未繳",
         statement.paid_date || "",
-        "",
-        "0",
+        expense.date,
+        expense.item,
+        expense.major_category || "",
+        expense.category || "",
+        expense.currency || "USD",
+        Number(expense.amount).toFixed(2),
       ]);
-    } else {
-      for (const [currency, total] of Object.entries(totals)) {
-        rows.push([
-          card?.name || "未知信用卡",
-          statement.period_start,
-          statement.period_end,
-          statement.is_paid ? "已繳" : "未繳",
-          statement.paid_date || "",
-          currency,
-          total.toFixed(2),
-        ]);
-      }
     }
   }
+}
 
   const csv = rows
     .map((row) =>
