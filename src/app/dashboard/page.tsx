@@ -76,6 +76,8 @@ export default function DashboardPage() {
   useState(false);
   const [expandedHistoryId, setExpandedHistoryId] =
   useState<number | string | null>(null);
+  const [historyMonthFilter, setHistoryMonthFilter] =
+  useState("all");
 
   const [
     selectedStatementCard,
@@ -849,6 +851,33 @@ const nextDueStatement =
     return b.period_end.localeCompare(a.period_end);
   });
 }, [cardStatements]);
+
+  const historyMonthOptions = useMemo(() => {
+  const months = new Set<string>();
+
+  for (const statement of statementHistory) {
+    months.add(statement.period_end.slice(0, 7));
+  }
+
+  return Array.from(months).sort((a, b) =>
+    b.localeCompare(a)
+  );
+}, [statementHistory]);
+
+  const filteredStatementHistory = useMemo(() => {
+  if (historyMonthFilter === "all") {
+    return statementHistory;
+  }
+
+  return statementHistory.filter(
+    (statement) =>
+      statement.period_end.slice(0, 7) ===
+      historyMonthFilter
+  );
+}, [
+  statementHistory,
+  historyMonthFilter,
+]);
 
   function getHistoricalStatementTotals(
   statement: CreditCardStatement
@@ -2164,10 +2193,36 @@ const nextDueStatement =
   >
     <h2>📚 歷史帳單</h2>
 
-    {statementHistory.length === 0 ? (
+    <select
+  value={historyMonthFilter}
+  onChange={(e) =>
+    setHistoryMonthFilter(e.target.value)
+  }
+  style={{
+    marginBottom: 12,
+    padding: "6px 8px",
+  }}
+>
+  <option value="all">全部月份</option>
+
+  {historyMonthOptions.map((month) => {
+    const [year, monthNumber] = month.split("-");
+
+    return (
+      <option
+        key={month}
+        value={month}
+      >
+        {year} 年 {Number(monthNumber)} 月
+      </option>
+    );
+  })}
+</select>
+
+    {filteredStatementHistory.length === 0 ? (
       <p>尚無歷史帳單</p>
     ) : (
-      statementHistory.map((statement) => {
+      filteredStatementHistory.map((statement) => {
         const card = creditCards.find(
           (item) =>
             Number(item.id) ===
