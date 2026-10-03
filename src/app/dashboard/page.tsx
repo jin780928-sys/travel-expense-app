@@ -1144,22 +1144,25 @@ for (const statement of filteredStatementHistory) {
     });
 
   for (const expense of expensesForStatement) {
-    const currency =
-      expense.currency || "USD";
+  const currency =
+    expense.currency || "USD";
 
-    csvTotals[currency] =
-      (csvTotals[currency] || 0) +
-      Number(expense.amount || 0);
-  }
+  const amount =
+    Number(expense.amount || 0);
+
+  csvTotals[currency] =
+    (csvTotals[currency] || 0) +
+    amount;
 
   if (statement.is_paid) {
-  csvPaidTotals[currency] =
-    (csvPaidTotals[currency] || 0) +
-    Number(expense.amount || 0);
-} else {
-  csvUnpaidTotals[currency] =
-    (csvUnpaidTotals[currency] || 0) +
-    Number(expense.amount || 0);
+    csvPaidTotals[currency] =
+      (csvPaidTotals[currency] || 0) +
+      amount;
+  } else {
+    csvUnpaidTotals[currency] =
+      (csvUnpaidTotals[currency] || 0) +
+      amount;
+  }
 }
   
 }
