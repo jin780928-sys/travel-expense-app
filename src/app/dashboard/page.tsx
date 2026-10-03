@@ -1048,6 +1048,89 @@ const nextDueStatement =
 
   return totals;
 }
+
+  function exportHistoryCsv() {
+  const rows = [
+    [
+      "信用卡",
+      "帳單開始日",
+      "帳單結束日",
+      "狀態",
+      "實際繳款日",
+      "幣別",
+      "帳單金額",
+    ],
+  ];
+
+  for (const statement of filteredStatementHistory) {
+    const card = creditCards.find(
+      (item) =>
+        Number(item.id) ===
+        Number(statement.card_id)
+    );
+
+    const totals =
+      getHistoricalStatementTotals(statement);
+
+    if (Object.keys(totals).length === 0) {
+      rows.push([
+        card?.name || "未知信用卡",
+        statement.period_start,
+        statement.period_end,
+        statement.is_paid ? "已繳" : "未繳",
+        statement.paid_date || "",
+        "",
+        "0",
+      ]);
+    } else {
+      for (const [currency, total] of Object.entries(totals)) {
+        rows.push([
+          card?.name || "未知信用卡",
+          statement.period_start,
+          statement.period_end,
+          statement.is_paid ? "已繳" : "未繳",
+          statement.paid_date || "",
+          currency,
+          total.toFixed(2),
+        ]);
+      }
+    }
+  }
+
+  const csv = rows
+    .map((row) =>
+      row
+        .map((value) =>
+          `"${String(value).replace(/"/g, '""')}"`
+        )
+        .join(",")
+    )
+    .join("\n");
+
+  const blob = new Blob(
+    ["\uFEFF" + csv],
+    {
+      type: "text/csv;charset=utf-8;",
+    }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `statement-history-${selectedYear}-${String(
+    selectedMonth
+  ).padStart(2, "0")}.csv`;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
   
   const selectedStatement =
     useMemo(() => {
@@ -2611,6 +2694,17 @@ const nextDueStatement =
   }}
 >
   全部收合
+</button>
+
+    <button
+  onClick={exportHistoryCsv}
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 10px",
+  }}
+>
+  匯出 CSV
 </button>
 
     {filteredStatementHistory.length === 0 ? (
