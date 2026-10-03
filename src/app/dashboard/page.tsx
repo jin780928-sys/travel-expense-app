@@ -72,6 +72,8 @@ export default function DashboardPage() {
 
   const [showZeroBalanceCards, setShowZeroBalanceCards] =
   useState(false);
+  const [showStatementHistory, setShowStatementHistory] =
+  useState(false);
 
   const [
     selectedStatementCard,
@@ -835,6 +837,16 @@ const nextDueStatement =
 
   return totals;
 }, [sortedCardStatements]);
+
+  const statementHistory = useMemo(() => {
+  return [...cardStatements].sort((a, b) => {
+    if (a.period_end === b.period_end) {
+      return Number(b.id) - Number(a.id);
+    }
+
+    return b.period_end.localeCompare(a.period_end);
+  });
+}, [cardStatements]);
   
   const selectedStatement =
     useMemo(() => {
@@ -1522,6 +1534,23 @@ const nextDueStatement =
     ? "隱藏 0 元帳單"
     : "顯示 0 元帳單"}
 </button>
+
+        <button
+  onClick={() =>
+    setShowStatementHistory(
+      !showStatementHistory
+    )
+  }
+  style={{
+    marginLeft: 8,
+    marginBottom: 10,
+    padding: "6px 10px",
+  }}
+>
+  {showStatementHistory
+    ? "隱藏歷史帳單"
+    : "顯示歷史帳單"}
+</button>
         
         <p
   style={{
@@ -2086,6 +2115,70 @@ const nextDueStatement =
           )
         )}
       </section>
+
+      {showStatementHistory && (
+  <section
+    style={{
+      marginBottom: 30,
+    }}
+  >
+    <h2>📚 歷史帳單</h2>
+
+    {statementHistory.length === 0 ? (
+      <p>尚無歷史帳單</p>
+    ) : (
+      statementHistory.map((statement) => {
+        const card = creditCards.find(
+          (item) =>
+            Number(item.id) ===
+            Number(statement.card_id)
+        );
+
+        return (
+          <div
+            key={statement.id}
+            style={{
+              marginBottom: 12,
+              padding: 12,
+              border: "1px solid #ddd",
+              borderRadius: 8,
+            }}
+          >
+            <div
+              style={{
+                fontWeight: "bold",
+              }}
+            >
+              {card?.name || "未知信用卡"}
+            </div>
+
+            <div>
+              帳單期間：
+              {formatDate(statement.period_start)}
+              {" ～ "}
+              {formatDate(statement.period_end)}
+            </div>
+
+            <div>
+              狀態：
+              {statement.is_paid
+                ? "✅ 已繳"
+                : "⏳ 未繳"}
+            </div>
+
+            <div>
+              實際繳款日：
+              {statement.paid_date
+                ? formatDate(statement.paid_date)
+                : "未記錄"}
+            </div>
+          </div>
+        );
+      })
+    )}
+  </section>
+)}
+      
     </main>
   );
 }
