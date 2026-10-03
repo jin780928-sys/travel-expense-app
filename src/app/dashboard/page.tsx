@@ -2329,29 +2329,102 @@ const nextDueStatement =
 
     <div
   style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+    gap: 10,
     marginBottom: 12,
-    fontWeight: "bold",
   }}
 >
-  共 {filteredHistorySummary.total} 筆
-  {" ｜ "}
-  已繳 {filteredHistorySummary.paid} 筆
-  {" ｜ "}
-  未繳 {filteredHistorySummary.unpaid} 筆
-  {" ｜ "}
-  總額：
-  {Object.keys(filteredHistoryTotals).length === 0 ? (
-    <span>0</span>
-  ) : (
-    Object.entries(filteredHistoryTotals).map(
-      ([currency, total], index) => (
-        <span key={currency}>
-          {index > 0 ? " / " : " "}
-          {currency} {total.toFixed(2)}
-        </span>
-      )
-    )
-  )}
+  <div
+    style={{
+      padding: 12,
+      border: "1px solid #ddd",
+      borderRadius: 10,
+    }}
+  >
+    <div>📚 總筆數</div>
+    <div
+      style={{
+        marginTop: 4,
+        fontSize: 18,
+        fontWeight: "bold",
+      }}
+    >
+      {filteredHistorySummary.total} 筆
+    </div>
+  </div>
+
+  <div
+    style={{
+      padding: 12,
+      border: "1px solid #b7dfc3",
+      borderRadius: 10,
+      background: "#eef9f1",
+    }}
+  >
+    <div>✅ 已繳</div>
+    <div
+      style={{
+        marginTop: 4,
+        fontSize: 18,
+        fontWeight: "bold",
+      }}
+    >
+      {filteredHistorySummary.paid} 筆
+    </div>
+  </div>
+
+  <div
+    style={{
+      padding: 12,
+      border: "1px solid #f0d98a",
+      borderRadius: 10,
+      background: "#fffbe6",
+    }}
+  >
+    <div>⏳ 未繳</div>
+    <div
+      style={{
+        marginTop: 4,
+        fontSize: 18,
+        fontWeight: "bold",
+      }}
+    >
+      {filteredHistorySummary.unpaid} 筆
+    </div>
+  </div>
+
+  <div
+    style={{
+      padding: 12,
+      border: "1px solid #b8d7f0",
+      borderRadius: 10,
+      background: "#eef7ff",
+    }}
+  >
+    <div>💰 總額</div>
+
+    <div
+      style={{
+        marginTop: 4,
+        fontSize: 18,
+        fontWeight: "bold",
+      }}
+    >
+      {Object.keys(filteredHistoryTotals).length === 0 ? (
+        <span>0</span>
+      ) : (
+        Object.entries(filteredHistoryTotals).map(
+          ([currency, total], index) => (
+            <span key={currency}>
+              {index > 0 ? " / " : ""}
+              {currency} {total.toFixed(2)}
+            </span>
+          )
+        )
+      )}
+    </div>
+  </div>
 </div>
 
     <input
