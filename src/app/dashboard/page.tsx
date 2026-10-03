@@ -1477,6 +1477,20 @@ if (!hasAmount) {
   未繳：{statementSummary.unpaid} 張
   {" ｜ "}
   已繳：{statementSummary.paid} 張
+  {" ｜ "}
+  未繳總額：
+  {Object.keys(unpaidTotalsByCurrency).length === 0 ? (
+    <span>0</span>
+  ) : (
+    Object.entries(unpaidTotalsByCurrency).map(
+      ([currency, total], index) => (
+        <span key={currency}>
+          {index > 0 ? " / " : " "}
+          {currency} {total.toFixed(2)}
+        </span>
+      )
+    )
+  )}
 </div>
         
         {visibleCardStatements.length ===
