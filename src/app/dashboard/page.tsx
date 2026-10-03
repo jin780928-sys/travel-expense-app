@@ -1343,6 +1343,18 @@ export default function DashboardPage() {
           💳 信用卡本期帳單
         </h2>
 
+        <p
+  style={{
+    marginTop: 0,
+    marginBottom: 12,
+  }}
+>
+  目前帳單月份：
+  <strong>
+    {selectedYear} 年 {selectedMonth} 月
+  </strong>
+</p>
+
         {currentCardStatements.length ===
         0 ? (
           <p>
