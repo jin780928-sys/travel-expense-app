@@ -681,6 +681,25 @@ export default function DashboardPage() {
   showZeroBalanceCards,
 ]);
 
+  const statementSummary = useMemo(() => {
+  const cardsWithAmount = sortedCardStatements.filter(
+    (card) =>
+      Object.values(card.totals).some(
+        (total) => total > 0
+      )
+  );
+
+  return {
+    total: cardsWithAmount.length,
+    unpaid: cardsWithAmount.filter(
+      (card) => !card.isPaid
+    ).length,
+    paid: cardsWithAmount.filter(
+      (card) => card.isPaid
+    ).length,
+  };
+}, [sortedCardStatements]);
+  
   const unpaidStatements =
     useMemo(() => {
       const now = new Date();
@@ -1447,6 +1466,19 @@ if (!hasAmount) {
   </strong>
 </p>
 
+        <div
+  style={{
+    marginBottom: 12,
+    fontWeight: "bold",
+  }}
+>
+  本期有消費：{statementSummary.total} 張
+  {" ｜ "}
+  未繳：{statementSummary.unpaid} 張
+  {" ｜ "}
+  已繳：{statementSummary.paid} 張
+</div>
+        
         {visibleCardStatements.length ===
 0 ? (
           <p>
