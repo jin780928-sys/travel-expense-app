@@ -663,6 +663,14 @@ export default function DashboardPage() {
   );
 }, [currentCardStatements]);
 
+  const visibleCardStatements = useMemo(() => {
+  return sortedCardStatements.filter((card) =>
+    Object.values(card.totals).some(
+      (total) => total > 0
+    )
+  );
+}, [sortedCardStatements]);
+
   const unpaidStatements =
     useMemo(() => {
       const now = new Date();
@@ -1413,13 +1421,13 @@ if (!hasAmount) {
   </strong>
 </p>
 
-        {sortedCardStatements.length ===
+        {visibleCardStatements.length ===
 0 ? (
           <p>
             尚未設定信用卡
           </p>
         ) : (
-          sortedCardStatements.map(
+          visibleCardStatements.map(
   (card) => (
               <div
                 key={card.id}
