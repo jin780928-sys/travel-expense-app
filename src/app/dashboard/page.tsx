@@ -1504,59 +1504,64 @@ if (!hasAmount) {
   style={{
     marginBottom: 12,
     fontWeight: "bold",
+    lineHeight: 1.8,
   }}
 >
-  本期有消費：{statementSummary.total} 張
-  {" ｜ "}
-  未繳：{statementSummary.unpaid} 張
-  {" ｜ "}
-  已繳：{statementSummary.paid} 張
-  {" ｜ "}
-  未繳總額：
-  {Object.keys(unpaidTotalsByCurrency).length === 0 ? (
-    <span>0</span>
-  ) : (
-    Object.entries(unpaidTotalsByCurrency).map(
-      ([currency, total], index) => (
-        <span key={currency}>
-          {index > 0 ? " / " : " "}
-          {currency} {total.toFixed(2)}
-        </span>
+  <div>
+    本期有消費：{statementSummary.total} 張
+    {" ｜ "}
+    未繳：{statementSummary.unpaid} 張
+    {" ｜ "}
+    已繳：{statementSummary.paid} 張
+  </div>
+
+  <div>
+    未繳總額：
+    {Object.keys(unpaidTotalsByCurrency).length === 0 ? (
+      <span>0</span>
+    ) : (
+      Object.entries(unpaidTotalsByCurrency).map(
+        ([currency, total], index) => (
+          <span key={currency}>
+            {index > 0 ? " / " : " "}
+            {currency} {total.toFixed(2)}
+          </span>
+        )
       )
-    )
-  )}
+    )}
 
-  {" ｜ "}
+    {" ｜ "}
 
-  已繳總額：
-  {Object.keys(paidTotalsByCurrency).length === 0 ? (
-    <span>0</span>
-  ) : (
-    Object.entries(paidTotalsByCurrency).map(
-      ([currency, total], index) => (
-        <span key={currency}>
-          {index > 0 ? " / " : " "}
-          {currency} {total.toFixed(2)}
-        </span>
+    已繳總額：
+    {Object.keys(paidTotalsByCurrency).length === 0 ? (
+      <span>0</span>
+    ) : (
+      Object.entries(paidTotalsByCurrency).map(
+        ([currency, total], index) => (
+          <span key={currency}>
+            {index > 0 ? " / " : " "}
+            {currency} {total.toFixed(2)}
+          </span>
+        )
       )
-    )
-  )}
+    )}
 
-          {" ｜ "}
+    {" ｜ "}
 
-本期總額：
-{Object.keys(statementTotalsByCurrency).length === 0 ? (
-  <span>0</span>
-) : (
-  Object.entries(statementTotalsByCurrency).map(
-    ([currency, total], index) => (
-      <span key={currency}>
-        {index > 0 ? " / " : " "}
-        {currency} {total.toFixed(2)}
-      </span>
-    )
-  )
-)}
+    本期總額：
+    {Object.keys(statementTotalsByCurrency).length === 0 ? (
+      <span>0</span>
+    ) : (
+      Object.entries(statementTotalsByCurrency).map(
+        ([currency, total], index) => (
+          <span key={currency}>
+            {index > 0 ? " / " : " "}
+            {currency} {total.toFixed(2)}
+          </span>
+        )
+      )
+    )}
+  </div>
 </div>
         
         {visibleCardStatements.length ===
