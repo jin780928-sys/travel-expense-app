@@ -886,6 +886,28 @@ const nextDueStatement =
   historyCardFilter,
 ]);
 
+  const filteredHistoryTotals = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  for (const statement of filteredStatementHistory) {
+    const statementTotals =
+      getHistoricalStatementTotals(statement);
+
+    for (const [currency, total] of Object.entries(
+      statementTotals
+    )) {
+      totals[currency] =
+        (totals[currency] || 0) + total;
+    }
+  }
+
+  return totals;
+}, [
+  filteredStatementHistory,
+  statementExpenses,
+  creditCards,
+]);
+  
   function getHistoricalStatementTotals(
   statement: CreditCardStatement
 ) {
@@ -2201,7 +2223,27 @@ const nextDueStatement =
     <h2>
   📚 歷史帳單（{filteredStatementHistory.length} 筆）
 </h2>
-
+<div
+  style={{
+    marginBottom: 12,
+    fontWeight: "bold",
+  }}
+>
+  篩選總額：
+  {Object.keys(filteredHistoryTotals).length === 0 ? (
+    <span>0</span>
+  ) : (
+    Object.entries(filteredHistoryTotals).map(
+      ([currency, total], index) => (
+        <span key={currency}>
+          {index > 0 ? " / " : " "}
+          {currency} {total.toFixed(2)}
+        </span>
+      )
+    )
+  )}
+</div>
+    
     <select
   value={historyMonthFilter}
   onChange={(e) =>
