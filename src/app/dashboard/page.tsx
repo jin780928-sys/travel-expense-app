@@ -2233,11 +2233,18 @@ link.download =
 </button>
 
         <button
-  onClick={() =>
-    setShowStatementHistory(
-      !showStatementHistory
-    )
+  onClick={() => {
+  const nextValue =
+    !showStatementHistory;
+
+  setShowStatementHistory(
+    nextValue
+  );
+
+  if (!nextValue) {
+    setExpandedHistoryIds([]);
   }
+}}
   style={{
     marginLeft: 8,
     marginBottom: 10,
