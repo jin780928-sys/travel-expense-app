@@ -1524,12 +1524,13 @@ if (!hasAmount) {
   }}
 >
   <div
-    style={{
-      padding: 12,
-      border: "1px solid #ddd",
-      borderRadius: 10,
-    }}
-  >
+  style={{
+    padding: 12,
+    border: "1px solid #f0d98a",
+    borderRadius: 10,
+    background: "#fffbe6",
+  }}
+>
     <div>未繳總額</div>
 
     <div
@@ -1554,13 +1555,14 @@ if (!hasAmount) {
     </div>
   </div>
 
-  <div
-    style={{
-      padding: 12,
-      border: "1px solid #ddd",
-      borderRadius: 10,
-    }}
-  >
+ <div
+  style={{
+    padding: 12,
+    border: "1px solid #b7dfc3",
+    borderRadius: 10,
+    background: "#eef9f1",
+  }}
+>
     <div>已繳總額</div>
 
     <div
@@ -1585,13 +1587,14 @@ if (!hasAmount) {
     </div>
   </div>
 
-  <div
-    style={{
-      padding: 12,
-      border: "1px solid #ddd",
-      borderRadius: 10,
-    }}
-  >
+ <div
+  style={{
+    padding: 12,
+    border: "1px solid #b8d7f0",
+    borderRadius: 10,
+    background: "#eef7ff",
+  }}
+>
     <div>本期總額</div>
 
     <div
