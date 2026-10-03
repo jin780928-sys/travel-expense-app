@@ -2948,6 +2948,51 @@ link.download =
   </div>
 </div>
 
+    <div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 12,
+  }}
+>
+  <button
+    onClick={() =>
+      setHistoryCardFilter("all")
+    }
+    style={{
+      padding: "6px 10px",
+      fontWeight:
+        historyCardFilter === "all"
+          ? "bold"
+          : "normal",
+    }}
+  >
+    全部信用卡
+  </button>
+
+  {creditCards.map((card) => (
+    <button
+      key={card.id}
+      onClick={() =>
+        setHistoryCardFilter(
+          String(card.id)
+        )
+      }
+      style={{
+        padding: "6px 10px",
+        fontWeight:
+          historyCardFilter ===
+          String(card.id)
+            ? "bold"
+            : "normal",
+      }}
+    >
+      {card.name}
+    </button>
+  ))}
+</div>
+    
     <input
   type="text"
   value={historySearch}
