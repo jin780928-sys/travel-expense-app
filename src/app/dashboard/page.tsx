@@ -70,6 +70,9 @@ export default function DashboardPage() {
     string | null
   >(null);
 
+  const [showZeroBalanceCards, setShowZeroBalanceCards] =
+  useState(false);
+
   const [
     selectedStatementCard,
     setSelectedStatementCard,
@@ -664,12 +667,19 @@ export default function DashboardPage() {
 }, [currentCardStatements]);
 
   const visibleCardStatements = useMemo(() => {
+  if (showZeroBalanceCards) {
+    return sortedCardStatements;
+  }
+
   return sortedCardStatements.filter((card) =>
     Object.values(card.totals).some(
       (total) => total > 0
     )
   );
-}, [sortedCardStatements]);
+}, [
+  sortedCardStatements,
+  showZeroBalanceCards,
+]);
 
   const unpaidStatements =
     useMemo(() => {
@@ -1409,6 +1419,22 @@ if (!hasAmount) {
           💳 信用卡本期帳單
         </h2>
 
+        <button
+  onClick={() =>
+    setShowZeroBalanceCards(
+      !showZeroBalanceCards
+    )
+  }
+  style={{
+    marginBottom: 10,
+    padding: "6px 10px",
+  }}
+>
+  {showZeroBalanceCards
+    ? "隱藏 0 元帳單"
+    : "顯示 0 元帳單"}
+</button>
+        
         <p
   style={{
     marginTop: 0,
