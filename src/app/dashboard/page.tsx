@@ -2472,8 +2472,10 @@ const nextDueStatement =
 </button>
 
     {filteredStatementHistory.length === 0 ? (
-      <p>尚無歷史帳單</p>
-    ) : (
+  <p>
+    找不到符合目前搜尋／篩選條件的歷史帳單
+  </p>
+) : (
       filteredStatementHistory.map((statement) => {
         const card = creditCards.find(
           (item) =>
