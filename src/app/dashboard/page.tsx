@@ -78,6 +78,8 @@ export default function DashboardPage() {
   useState<number | string | null>(null);
   const [historyMonthFilter, setHistoryMonthFilter] =
   useState("all");
+  const [historyCardFilter, setHistoryCardFilter] =
+  useState("all");
 
   const [
     selectedStatementCard,
@@ -877,6 +879,26 @@ const nextDueStatement =
 }, [
   statementHistory,
   historyMonthFilter,
+]);
+
+  const filteredStatementHistory = useMemo(() => {
+  return statementHistory.filter((statement) => {
+    const monthMatches =
+      historyMonthFilter === "all" ||
+      statement.period_end.slice(0, 7) ===
+        historyMonthFilter;
+
+    const cardMatches =
+      historyCardFilter === "all" ||
+      String(statement.card_id) ===
+        historyCardFilter;
+
+    return monthMatches && cardMatches;
+  });
+}, [
+  statementHistory,
+  historyMonthFilter,
+  historyCardFilter,
 ]);
 
   function getHistoricalStatementTotals(
@@ -2217,6 +2239,29 @@ const nextDueStatement =
       </option>
     );
   })}
+</select>
+
+    <select
+  value={historyCardFilter}
+  onChange={(e) =>
+    setHistoryCardFilter(e.target.value)
+  }
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 8px",
+  }}
+>
+  <option value="all">全部信用卡</option>
+
+  {creditCards.map((card) => (
+    <option
+      key={card.id}
+      value={String(card.id)}
+    >
+      {card.name}
+    </option>
+  ))}
 </select>
 
     {filteredStatementHistory.length === 0 ? (
