@@ -807,6 +807,21 @@ if (!hasAmount) {
 
   return totals;
 }, [sortedCardStatements]);
+
+  const statementTotalsByCurrency = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  for (const card of sortedCardStatements) {
+    for (const [currency, total] of Object.entries(
+      card.totals
+    )) {
+      totals[currency] =
+        (totals[currency] || 0) + total;
+    }
+  }
+
+  return totals;
+}, [sortedCardStatements]);
   
   const selectedStatement =
     useMemo(() => {
@@ -1526,6 +1541,22 @@ if (!hasAmount) {
       )
     )
   )}
+
+          {" ｜ "}
+
+本期總額：
+{Object.keys(statementTotalsByCurrency).length === 0 ? (
+  <span>0</span>
+) : (
+  Object.entries(statementTotalsByCurrency).map(
+    ([currency, total], index) => (
+      <span key={currency}>
+        {index > 0 ? " / " : " "}
+        {currency} {total.toFixed(2)}
+      </span>
+    )
+  )
+)}
 </div>
         
         {visibleCardStatements.length ===
