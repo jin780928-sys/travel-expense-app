@@ -479,10 +479,38 @@ export default function DashboardPage() {
   ]);
 
   const unpaidStatements = useMemo(() => {
-  return currentCardStatements.filter(
-    (card) => !card.isPaid
+  const today = new Date();
+
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
   );
-}, [currentCardStatements]);
+
+  return currentCardStatements.filter((card) => {
+    if (card.isPaid || !card.due_day) {
+      return false;
+    }
+
+    const dueDate = createSafeDate(
+      selectedYear,
+      selectedMonth - 1,
+      card.due_day
+    );
+
+    const diffMs =
+      dueDate.getTime() - todayOnly.getTime();
+
+    const diffDays =
+      Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    return diffDays <= 7;
+  });
+}, [
+  currentCardStatements,
+  selectedYear,
+  selectedMonth,
+]);
 
   const selectedStatementExpenses = useMemo(() => {
     if (!selectedStatementCard) {
