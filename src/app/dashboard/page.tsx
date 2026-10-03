@@ -86,6 +86,8 @@ export default function DashboardPage() {
   useState("newest");
   const [historySearch, setHistorySearch] =
   useState("");
+  const [historyVisibleCount, setHistoryVisibleCount] =
+  useState(20);
 
   const [
     selectedStatementCard,
@@ -975,6 +977,16 @@ const nextDueStatement =
   historySearch,
   statementExpenses,
   creditCards,
+]);
+
+  const visibleStatementHistory = useMemo(() => {
+  return filteredStatementHistory.slice(
+    0,
+    historyVisibleCount
+  );
+}, [
+  filteredStatementHistory,
+  historyVisibleCount,
 ]);
 
   const filteredHistoryTotals = useMemo(() => {
@@ -3103,7 +3115,7 @@ link.download =
     找不到符合目前搜尋／篩選條件的歷史帳單
   </p>
 ) : (
-      filteredStatementHistory.map((statement) => {
+      visibleStatementHistory.map((statement) => {
         const card = creditCards.find(
           (item) =>
             Number(item.id) ===
@@ -3249,6 +3261,23 @@ link.download =
         );
       })
     )}
+
+    {historyVisibleCount <
+  filteredStatementHistory.length && (
+  <button
+    onClick={() =>
+      setHistoryVisibleCount(
+        (count) => count + 20
+      )
+    }
+    style={{
+      marginTop: 12,
+      padding: "8px 12px",
+    }}
+  >
+    載入更多
+  </button>
+)}
   </section>
 )}
       
