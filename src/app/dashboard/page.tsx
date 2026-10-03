@@ -2393,6 +2393,7 @@ const nextDueStatement =
   setHistoryMonthFilter("all");
   setHistoryCardFilter("all");
   setHistoryStatusFilter("all");
+  setHistorySort("newest");
 }}
   style={{
     marginLeft: 8,
