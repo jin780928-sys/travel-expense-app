@@ -322,6 +322,55 @@ export default function DashboardPage() {
     );
   }
 
+  function getDueStatus(
+  dueDay: number | null,
+  isPaid: boolean
+) {
+  if (isPaid) {
+    return "已完成繳款";
+  }
+
+  if (!dueDay) {
+    return "未設定繳款日";
+  }
+
+  const today = new Date();
+
+  const dueDate = createSafeDate(
+    selectedYear,
+    selectedMonth - 1,
+    dueDay
+  );
+
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  const dueOnly = new Date(
+    dueDate.getFullYear(),
+    dueDate.getMonth(),
+    dueDate.getDate()
+  );
+
+  const diffMs =
+    dueOnly.getTime() - todayOnly.getTime();
+
+  const diffDays =
+    Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays > 0) {
+    return `距離繳款日還有 ${diffDays} 天`;
+  }
+
+  if (diffDays === 0) {
+    return "今天到期";
+  }
+
+  return `已逾期 ${Math.abs(diffDays)} 天`;
+}
+  
   const currentCardStatements = useMemo<
     CurrentCardStatement[]
   >(() => {
@@ -958,6 +1007,10 @@ export default function DashboardPage() {
                   ? "已繳"
                   : "未繳"}
               </div>
+
+              <div>
+  {getDueStatus(card.due_day, card.isPaid)}
+</div>
 
               {card.isPaid && (
                 <div
