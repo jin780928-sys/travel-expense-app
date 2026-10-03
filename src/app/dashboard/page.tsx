@@ -2233,7 +2233,8 @@ link.download =
 </button>
 
         <button
-  onClick={() => {
+ 
+          onClick={() => {
   const nextValue =
     !showStatementHistory;
 
@@ -2243,8 +2244,15 @@ link.download =
 
   if (!nextValue) {
     setExpandedHistoryIds([]);
+    setHistoryMonthFilter("all");
+    setHistoryCardFilter("all");
+    setHistoryStatusFilter("all");
+    setHistorySort("newest");
+    setHistorySearch("");
+    setHistoryVisibleCount(20);
   }
 }}
+          
   style={{
     marginLeft: 8,
     marginBottom: 10,
