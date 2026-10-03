@@ -62,9 +62,7 @@ export default function DashboardPage() {
   const now = new Date();
 
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(
-    now.getMonth() + 1
-  );
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
 
   useEffect(() => {
     loadDashboardData();
@@ -230,10 +228,17 @@ export default function DashboardPage() {
   const totalsByCategory = useMemo(() => {
     return expenses.reduce(
       (result, expense) => {
-        const major = expense.major_category || "未分類";
-        const sub = expense.category || "未分類";
-        const currency = expense.currency || "未指定";
-        const amount = Number(expense.amount || 0);
+        const major =
+          expense.major_category || "未分類";
+
+        const sub =
+          expense.category || "未分類";
+
+        const currency =
+          expense.currency || "未指定";
+
+        const amount =
+          Number(expense.amount || 0);
 
         if (!result[major]) {
           result[major] = {};
@@ -262,8 +267,11 @@ export default function DashboardPage() {
           return result;
         }
 
-        const currency = expense.currency || "未指定";
-        const amount = Number(expense.amount || 0);
+        const currency =
+          expense.currency || "未指定";
+
+        const amount =
+          Number(expense.amount || 0);
 
         if (!result[expense.card_name]) {
           result[expense.card_name] = {};
@@ -323,54 +331,56 @@ export default function DashboardPage() {
   }
 
   function getDueStatus(
-  dueDay: number | null,
-  isPaid: boolean
-) {
-  if (isPaid) {
-    return "已完成繳款";
+    dueDay: number | null,
+    isPaid: boolean
+  ) {
+    if (isPaid) {
+      return "已完成繳款";
+    }
+
+    if (!dueDay) {
+      return "未設定繳款日";
+    }
+
+    const today = new Date();
+
+    const dueDate = createSafeDate(
+      selectedYear,
+      selectedMonth - 1,
+      dueDay
+    );
+
+    const todayOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+    const dueOnly = new Date(
+      dueDate.getFullYear(),
+      dueDate.getMonth(),
+      dueDate.getDate()
+    );
+
+    const diffMs =
+      dueOnly.getTime() - todayOnly.getTime();
+
+    const diffDays =
+      Math.ceil(
+        diffMs / (1000 * 60 * 60 * 24)
+      );
+
+    if (diffDays > 0) {
+      return `距離繳款日還有 ${diffDays} 天`;
+    }
+
+    if (diffDays === 0) {
+      return "今天到期";
+    }
+
+    return `已逾期 ${Math.abs(diffDays)} 天`;
   }
 
-  if (!dueDay) {
-    return "未設定繳款日";
-  }
-
-  const today = new Date();
-
-  const dueDate = createSafeDate(
-    selectedYear,
-    selectedMonth - 1,
-    dueDay
-  );
-
-  const todayOnly = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
-
-  const dueOnly = new Date(
-    dueDate.getFullYear(),
-    dueDate.getMonth(),
-    dueDate.getDate()
-  );
-
-  const diffMs =
-    dueOnly.getTime() - todayOnly.getTime();
-
-  const diffDays =
-    Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 0) {
-    return `距離繳款日還有 ${diffDays} 天`;
-  }
-
-  if (diffDays === 0) {
-    return "今天到期";
-  }
-
-  return `已逾期 ${Math.abs(diffDays)} 天`;
-}
-  
   const currentCardStatements = useMemo<
     CurrentCardStatement[]
   >(() => {
@@ -479,66 +489,66 @@ export default function DashboardPage() {
   ]);
 
   const unpaidStatements = useMemo(() => {
-  const today = new Date();
+    const today = new Date();
 
-  const todayOnly = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
+    const todayOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
 
-  return currentCardStatements.filter((card) => {
-    if (card.isPaid || !card.due_day) {
-      return false;
-    const unpaidStatements = useMemo(() => {
-  const today = new Date();
+    return currentCardStatements
+      .filter((card) => {
+        if (
+          card.isPaid ||
+          !card.due_day
+        ) {
+          return false;
+        }
 
-  const todayOnly = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
+        const dueDate = createSafeDate(
+          selectedYear,
+          selectedMonth - 1,
+          card.due_day
+        );
 
-  return currentCardStatements
-    .filter((card) => {
-      if (card.isPaid || !card.due_day) {
-        return false;
-      }
+        const diffMs =
+          dueDate.getTime() -
+          todayOnly.getTime();
 
-      const dueDate = createSafeDate(
-        selectedYear,
-        selectedMonth - 1,
-        card.due_day
-      );
+        const diffDays =
+          Math.ceil(
+            diffMs /
+              (1000 * 60 * 60 * 24)
+          );
 
-      const diffMs =
-        dueDate.getTime() - todayOnly.getTime();
+        return diffDays <= 7;
+      })
+      .sort((a, b) => {
+        const dueDateA =
+          createSafeDate(
+            selectedYear,
+            selectedMonth - 1,
+            a.due_day!
+          );
 
-      const diffDays =
-        Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        const dueDateB =
+          createSafeDate(
+            selectedYear,
+            selectedMonth - 1,
+            b.due_day!
+          );
 
-      return diffDays <= 7;
-    })
-    .sort((a, b) => {
-      const dueDateA = createSafeDate(
-        selectedYear,
-        selectedMonth - 1,
-        a.due_day!
-      );
-
-      const dueDateB = createSafeDate(
-        selectedYear,
-        selectedMonth - 1,
-        b.due_day!
-      );
-
-      return dueDateA.getTime() - dueDateB.getTime();
-    });
-}, [
-  currentCardStatements,
-  selectedYear,
-  selectedMonth,
-]);
+        return (
+          dueDateA.getTime() -
+          dueDateB.getTime()
+        );
+      });
+  }, [
+    currentCardStatements,
+    selectedYear,
+    selectedMonth,
+  ]);
 
   const selectedStatementExpenses = useMemo(() => {
     if (!selectedStatementCard) {
@@ -586,8 +596,6 @@ export default function DashboardPage() {
   async function togglePaidStatus(
     card: CurrentCardStatement
   ) {
-    
-    
     if (
       !card.periodStart ||
       !card.periodEnd
@@ -608,43 +616,52 @@ export default function DashboardPage() {
     }
 
     if (card.statementStatusId) {
-      const { error } = await supabase
-        .from("CreditCardStatements")
-        .update({
-          is_paid: !card.isPaid,
-          paid_date: card.isPaid
-            ? null
-            : new Date()
-                .toISOString()
-                .slice(0, 10),
-        })
-        .eq("id", card.statementStatusId)
-        .eq("user_id", user.id);
+      const { error } =
+        await supabase
+          .from(
+            "CreditCardStatements"
+          )
+          .update({
+            is_paid: !card.isPaid,
+            paid_date: card.isPaid
+              ? null
+              : new Date()
+                  .toISOString()
+                  .slice(0, 10),
+          })
+          .eq(
+            "id",
+            card.statementStatusId
+          )
+          .eq("user_id", user.id);
 
       if (error) {
         setMessage(error.message);
-        alert(`新增帳單狀態失敗：${error.message}`);
         return;
       }
     } else {
-      const { error } = await supabase
-        .from("CreditCardStatements")
-        .insert({
-          card_id: card.id,
-          period_start: card.periodStart,
-          period_end: card.periodEnd,
-          is_paid: true,
-          paid_date: new Date()
-            .toISOString()
-            .slice(0, 10),
-          user_id: user.id,
-        });
+      const { error } =
+        await supabase
+          .from(
+            "CreditCardStatements"
+          )
+          .insert({
+            card_id: card.id,
+            period_start:
+              card.periodStart,
+            period_end:
+              card.periodEnd,
+            is_paid: true,
+            paid_date: new Date()
+              .toISOString()
+              .slice(0, 10),
+            user_id: user.id,
+          });
 
       if (error) {
-  setMessage(error.message);
-  alert(`新增帳單狀態失敗：${error.message}`);
-  return;
-}
+        setMessage(error.message);
+        return;
+      }
     }
 
     await loadDashboardData();
@@ -664,14 +681,20 @@ export default function DashboardPage() {
       return;
     }
 
-    const { error } = await supabase
-      .from("CreditCardStatements")
-      .update({
-        paid_date:
-          editingPaidDate || null,
-      })
-      .eq("id", editingPaidStatementId)
-      .eq("user_id", user.id);
+    const { error } =
+      await supabase
+        .from(
+          "CreditCardStatements"
+        )
+        .update({
+          paid_date:
+            editingPaidDate || null,
+        })
+        .eq(
+          "id",
+          editingPaidStatementId
+        )
+        .eq("user_id", user.id);
 
     if (error) {
       setMessage(error.message);
@@ -708,7 +731,9 @@ export default function DashboardPage() {
               Number(e.target.value)
             )
           }
-          style={{ padding: 10 }}
+          style={{
+            padding: 10,
+          }}
         >
           {[
             2025,
@@ -734,7 +759,9 @@ export default function DashboardPage() {
               Number(e.target.value)
             )
           }
-          style={{ padding: 10 }}
+          style={{
+            padding: 10,
+          }}
         >
           {Array.from(
             { length: 12 },
@@ -756,73 +783,106 @@ export default function DashboardPage() {
       </p>
 
       {unpaidStatements.length > 0 && (
-  <div
-    style={{
-      border: "1px solid #ddd",
-      padding: 14,
-      marginBottom: 20,
-      borderRadius: 8,
-    }}
-  >
-    <h2>未繳帳單提醒</h2>
+        <div
+          style={{
+            border: "1px solid #ddd",
+            padding: 14,
+            marginBottom: 20,
+            borderRadius: 8,
+          }}
+        >
+          <h2>未繳帳單提醒</h2>
 
-    {unpaidStatements.map((card) => (
-      <div
-        key={card.id}
-        style={{
-          marginBottom: 10,
-        }}
-      >
-       <button
-  onClick={() => {
-    setSelectedStatementCard(card.name);
+          {unpaidStatements.map(
+            (card) => (
+              <div
+                key={card.id}
+                style={{
+                  marginBottom: 10,
+                }}
+              >
+                <button
+                  onClick={() => {
+                    setSelectedStatementCard(
+                      card.name
+                    );
 
-    setTimeout(() => {
-      document
-        .getElementById("card-statements")
-        ?.scrollIntoView({
-          behavior: "smooth",
-        });
-    }, 0);
-  }}
-  style={{
-    border: "none",
-    background: "none",
-    padding: 0,
-    fontWeight: "bold",
-    cursor: "pointer",
-    textDecoration: "underline",
-  }}
->
-  {card.name}
-</button>
+                    setTimeout(() => {
+                      document
+                        .getElementById(
+                          "card-statements"
+                        )
+                        ?.scrollIntoView({
+                          behavior:
+                            "smooth",
+                        });
+                    }, 0);
+                  }}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    padding: 0,
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    textDecoration:
+                      "underline",
+                  }}
+                >
+                  {card.name}
+                </button>
 
-        <div>
-          {getDueStatus(card.due_day, card.isPaid)}
+                <div>
+                  {getDueStatus(
+                    card.due_day,
+                    card.isPaid
+                  )}
+                </div>
+
+                {Object.keys(
+                  card.totals
+                ).length === 0 ? (
+                  <div>
+                    本期沒有消費
+                  </div>
+                ) : (
+                  Object.entries(
+                    card.totals
+                  ).map(
+                    ([
+                      currency,
+                      total,
+                    ]) => (
+                      <div
+                        key={
+                          currency
+                        }
+                      >
+                        {currency}{" "}
+                        {total.toFixed(
+                          2
+                        )}
+                      </div>
+                    )
+                  )
+                )}
+              </div>
+            )
+          )}
         </div>
+      )}
 
-        {Object.keys(card.totals).length === 0 ? (
-  <div>本期沒有消費</div>
-) : (
-  Object.entries(card.totals).map(([currency, total]) => (
-    <div key={currency}>
-      {currency} {total.toFixed(2)}
-    </div>
-  ))
-)}
-      </div>
-    ))}
-  </div>
-)}
-
-      {message && <p>{message}</p>}
+      {message && (
+        <p>{message}</p>
+      )}
 
       <h2>本月總花費</h2>
 
       {Object.keys(
         totalsByCurrency
       ).length === 0 ? (
-        <p>本月目前沒有日常花費。</p>
+        <p>
+          本月目前沒有日常花費。
+        </p>
       ) : (
         Object.entries(
           totalsByCurrency
@@ -836,7 +896,11 @@ export default function DashboardPage() {
         )
       )}
 
-      <hr style={{ margin: "30px 0" }} />
+      <hr
+        style={{
+          margin: "30px 0",
+        }}
+      />
 
       <h2>依分類統計</h2>
 
@@ -896,7 +960,8 @@ export default function DashboardPage() {
                             currency
                           }
                           style={{
-                            marginLeft: 16,
+                            marginLeft:
+                              16,
                           }}
                         >
                           {currency}{" "}
@@ -914,14 +979,22 @@ export default function DashboardPage() {
         )
       )}
 
-      <hr style={{ margin: "30px 0" }} />
+      <hr
+        style={{
+          margin: "30px 0",
+        }}
+      />
 
-      <h2>信用卡支出統計</h2>
+      <h2>
+        信用卡支出統計
+      </h2>
 
       {Object.keys(
         totalsByCard
       ).length === 0 ? (
-        <p>本月沒有信用卡支出。</p>
+        <p>
+          本月沒有信用卡支出。
+        </p>
       ) : (
         Object.entries(
           totalsByCard
@@ -981,14 +1054,16 @@ export default function DashboardPage() {
       {selectedCard && (
         <div
           style={{
-            border: "1px solid #ddd",
+            border:
+              "1px solid #ddd",
             padding: 12,
             marginBottom: 20,
             borderRadius: 8,
           }}
         >
           <h3>
-            {selectedCard} 消費明細
+            {selectedCard}
+            {" "}消費明細
           </h3>
 
           <button
@@ -1011,7 +1086,9 @@ export default function DashboardPage() {
             filteredCardExpenses.map(
               (expense) => (
                 <div
-                  key={expense.id}
+                  key={
+                    expense.id
+                  }
                   style={{
                     padding:
                       "8px 0",
@@ -1057,9 +1134,15 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <hr style={{ margin: "30px 0" }} />
+      <hr
+        style={{
+          margin: "30px 0",
+        }}
+      />
 
-      <h2 id="card-statements">信用卡本期帳單</h2>
+      <h2 id="card-statements">
+        信用卡本期帳單
+      </h2>
 
       {creditCards.length === 0 ? (
         <p>
@@ -1131,8 +1214,11 @@ export default function DashboardPage() {
               </div>
 
               <div>
-  {getDueStatus(card.due_day, card.isPaid)}
-</div>
+                {getDueStatus(
+                  card.due_day,
+                  card.isPaid
+                )}
+              </div>
 
               {card.isPaid && (
                 <div
@@ -1217,61 +1303,63 @@ export default function DashboardPage() {
                 )
               )}
 
-              {card.statementStatusId !== null &&
-  editingPaidStatementId === card.statementStatusId && (
-                <div
-                  style={{
-                    marginTop: 10,
-                  }}
-                >
-                  <input
-                    type="date"
-                    value={
-                      editingPaidDate
-                    }
-                    onChange={(e) =>
-                      setEditingPaidDate(
-                        e.target.value
-                      )
-                    }
+              {card.statementStatusId !==
+                null &&
+                editingPaidStatementId ===
+                  card.statementStatusId && (
+                  <div
                     style={{
-                      padding: 8,
-                      marginRight: 8,
-                    }}
-                  />
-
-                  <button
-                    onClick={
-                      savePaidDate
-                    }
-                    style={{
-                      padding:
-                        "6px 10px",
-                      marginRight: 8,
+                      marginTop: 10,
                     }}
                   >
-                    儲存日期
-                  </button>
+                    <input
+                      type="date"
+                      value={
+                        editingPaidDate
+                      }
+                      onChange={(e) =>
+                        setEditingPaidDate(
+                          e.target.value
+                        )
+                      }
+                      style={{
+                        padding: 8,
+                        marginRight: 8,
+                      }}
+                    />
 
-                  <button
-                    onClick={() => {
-                      setEditingPaidStatementId(
-                        null
-                      );
+                    <button
+                      onClick={
+                        savePaidDate
+                      }
+                      style={{
+                        padding:
+                          "6px 10px",
+                        marginRight: 8,
+                      }}
+                    >
+                      儲存日期
+                    </button>
 
-                      setEditingPaidDate(
-                        ""
-                      );
-                    }}
-                    style={{
-                      padding:
-                        "6px 10px",
-                    }}
-                  >
-                    取消
-                  </button>
-                </div>
-              )}
+                    <button
+                      onClick={() => {
+                        setEditingPaidStatementId(
+                          null
+                        );
+
+                        setEditingPaidDate(
+                          ""
+                        );
+                      }}
+                      style={{
+                        padding:
+                          "6px 10px",
+                      }}
+                    >
+                      取消
+                    </button>
+                  </div>
+                )}
             </div>
           )
         )
@@ -1280,15 +1368,16 @@ export default function DashboardPage() {
       {selectedStatementCard && (
         <div
           style={{
-            border: "1px solid #ddd",
+            border:
+              "1px solid #ddd",
             padding: 12,
             marginBottom: 20,
             borderRadius: 8,
           }}
         >
           <h3>
-            {selectedStatementCard}{" "}
-            本期帳單明細
+            {selectedStatementCard}
+            {" "}本期帳單明細
           </h3>
 
           <button
@@ -1315,7 +1404,9 @@ export default function DashboardPage() {
             selectedStatementExpenses.map(
               (expense) => (
                 <div
-                  key={expense.id}
+                  key={
+                    expense.id
+                  }
                   style={{
                     padding:
                       "8px 0",
@@ -1361,7 +1452,11 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <hr style={{ margin: "30px 0" }} />
+      <hr
+        style={{
+          margin: "30px 0",
+        }}
+      />
 
       <h2>本月花費明細</h2>
 
@@ -1399,6 +1494,7 @@ export default function DashboardPage() {
               分類：
               {expense.major_category ||
                 "未分類"}
+
               {expense.category
                 ? ` → ${expense.category}`
                 : ""}
