@@ -82,6 +82,8 @@ export default function DashboardPage() {
   useState("all");
   const [historyStatusFilter, setHistoryStatusFilter] =
   useState("all");
+  const [historySort, setHistorySort] =
+  useState("newest");
 
   const [
     selectedStatementCard,
@@ -869,7 +871,7 @@ const nextDueStatement =
 }, [statementHistory]);
 
   const filteredStatementHistory = useMemo(() => {
-  return statementHistory.filter((statement) => {
+  const filtered = statementHistory.filter((statement) => {
     const monthMatches =
       historyMonthFilter === "all" ||
       statement.period_end.slice(0, 7) ===
@@ -893,11 +895,50 @@ const nextDueStatement =
       statusMatches
     );
   });
+
+  return [...filtered].sort((a, b) => {
+    if (historySort === "oldest") {
+      return a.period_end.localeCompare(
+        b.period_end
+      );
+    }
+
+    if (historySort === "amount_desc") {
+      const aTotals =
+        getHistoricalStatementTotals(a);
+
+      const bTotals =
+        getHistoricalStatementTotals(b);
+
+      const aAmount = Object.values(
+        aTotals
+      ).reduce(
+        (sum, total) => sum + total,
+        0
+      );
+
+      const bAmount = Object.values(
+        bTotals
+      ).reduce(
+        (sum, total) => sum + total,
+        0
+      );
+
+      return bAmount - aAmount;
+    }
+
+    return b.period_end.localeCompare(
+      a.period_end
+    );
+  });
 }, [
   statementHistory,
   historyMonthFilter,
   historyCardFilter,
   historyStatusFilter,
+  historySort,
+  statementExpenses,
+  creditCards,
 ]);
 
   const filteredHistoryTotals = useMemo(() => {
@@ -2321,6 +2362,30 @@ const nextDueStatement =
   <option value="all">全部狀態</option>
   <option value="unpaid">未繳</option>
   <option value="paid">已繳</option>
+</select>
+
+    <select
+  value={historySort}
+  onChange={(e) =>
+    setHistorySort(e.target.value)
+  }
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "6px 8px",
+  }}
+>
+  <option value="newest">
+    最新帳單優先
+  </option>
+
+  <option value="oldest">
+    最舊帳單優先
+  </option>
+
+  <option value="amount_desc">
+    金額高到低
+  </option>
 </select>
 
     <button
