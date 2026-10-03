@@ -974,34 +974,31 @@ export default function DashboardPage() {
                   }}
                 >
                   {Object.keys(
-                    card.totals
-                  ).length === 0 ? (
-                    <span>
-                      本期金額：0
-                    </span>
-                  ) : (
-                    Object.entries(
-                      card.totals
-                    ).map(
-                      ([
-                        currency,
-                        total,
-                      ]) => (
-                        <div
-                          key={
-                            currency
-                          }
-                        >
-                          本期金額：
-                          {
-                            currency
-                          }{" "}
-                          {total.toFixed(
-                            2
-                          )}
-                        </div>
+  card.totals
+).length === 0 ? (
+  <span>
+    本期金額：0
+  </span>
+) : (
+  Object.entries(
+    card.totals
+  ).map(
+    ([
+      currency,
+      total,
+    ]) => (
+      <div
+        key={currency}
+      >
+        本期金額：
+        {currency}{" "}
+        {total.toFixed(2)}
+      </div>
+    )
+  )
+)}
 
-                        <button
+<button
   onClick={() =>
     togglePaidStatus(card)
   }
