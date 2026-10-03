@@ -2198,7 +2198,9 @@ const nextDueStatement =
       marginBottom: 30,
     }}
   >
-    <h2>📚 歷史帳單</h2>
+    <h2>
+  📚 歷史帳單（{filteredStatementHistory.length} 筆）
+</h2>
 
     <select
   value={historyMonthFilter}
