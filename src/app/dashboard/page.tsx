@@ -772,6 +772,16 @@ export default function DashboardPage() {
         <div>
           {getDueStatus(card.due_day, card.isPaid)}
         </div>
+
+        {Object.keys(card.totals).length === 0 ? (
+  <div>本期沒有消費</div>
+) : (
+  Object.entries(card.totals).map(([currency, total]) => (
+    <div key={currency}>
+      {currency} {total.toFixed(2)}
+    </div>
+  ))
+)}
       </div>
     ))}
   </div>
