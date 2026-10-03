@@ -92,10 +92,10 @@ export default function DashboardPage() {
     const month = String(
       date.getMonth() + 1
     ).padStart(2, "0");
-    const day = String(date.getDate()).padStart(
-      2,
-      "0"
-    );
+
+    const day = String(
+      date.getDate()
+    ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   }
@@ -173,7 +173,10 @@ export default function DashboardPage() {
           "date",
           dateToString(monthStart)
         )
-        .lte("date", dateToString(monthEnd))
+        .lte(
+          "date",
+          dateToString(monthEnd)
+        )
         .order("date", {
           ascending: false,
         }),
@@ -197,7 +200,10 @@ export default function DashboardPage() {
           "date",
           dateToString(previousMonthStart)
         )
-        .lte("date", dateToString(monthEnd))
+        .lte(
+          "date",
+          dateToString(monthEnd)
+        )
         .order("date", {
           ascending: false,
         }),
@@ -244,7 +250,9 @@ export default function DashboardPage() {
     }
 
     if (cardResult.error) {
-      setMessage(cardResult.error.message);
+      setMessage(
+        cardResult.error.message
+      );
       return;
     }
 
@@ -302,6 +310,7 @@ export default function DashboardPage() {
     for (const expense of expenses) {
       const category =
         expense.major_category || "未分類";
+
       const currency =
         expense.currency || "USD";
 
@@ -328,7 +337,9 @@ export default function DashboardPage() {
         continue;
       }
 
-      const cardName = expense.card_name;
+      const cardName =
+        expense.card_name;
+
       const currency =
         expense.currency || "USD";
 
@@ -344,18 +355,22 @@ export default function DashboardPage() {
     return totals;
   }, [expenses]);
 
-  const filteredCardExpenses = useMemo(() => {
-    if (!selectedCard) {
-      return [];
-    }
+  const filteredCardExpenses =
+    useMemo(() => {
+      if (!selectedCard) {
+        return [];
+      }
 
-    return expenses.filter(
-      (expense) =>
-        expense.card_name === selectedCard
-    );
-  }, [expenses, selectedCard]);
+      return expenses.filter(
+        (expense) =>
+          expense.card_name ===
+          selectedCard
+      );
+    }, [expenses, selectedCard]);
 
-  function formatDate(dateString: string) {
+  function formatDate(
+    dateString: string
+  ) {
     if (!dateString) {
       return "";
     }
@@ -549,9 +564,12 @@ export default function DashboardPage() {
           number
         > = {};
 
-        for (const expense of statementExpenses) {
+        for (
+          const expense of statementExpenses
+        ) {
           if (
-            expense.card_name !== card.name
+            expense.card_name !==
+            card.name
           ) {
             continue;
           }
@@ -568,13 +586,17 @@ export default function DashboardPage() {
 
           totals[currency] =
             (totals[currency] || 0) +
-            Number(expense.amount || 0);
+            Number(
+              expense.amount || 0
+            );
         }
 
         const statementStatus =
           cardStatements.find(
             (statement) =>
-              Number(statement.card_id) ===
+              Number(
+                statement.card_id
+              ) ===
                 Number(card.id) &&
               statement.period_start ===
                 periodStart &&
@@ -588,7 +610,8 @@ export default function DashboardPage() {
           periodEnd,
           totals,
           statementStatusId:
-            statementStatus?.id ?? null,
+            statementStatus?.id ??
+            null,
           isPaid:
             statementStatus?.is_paid ??
             false,
@@ -605,64 +628,72 @@ export default function DashboardPage() {
       selectedMonth,
     ]);
 
-  const unpaidStatements = useMemo(() => {
-    const now = new Date();
+  const unpaidStatements =
+    useMemo(() => {
+      const now = new Date();
 
-    const todayOnly = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
+      const todayOnly = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      );
 
-    return currentCardStatements
-      .filter((card) => {
-        if (
-          card.isPaid ||
-          !card.due_day
-        ) {
-          return false;
-        }
+      return currentCardStatements
+        .filter((card) => {
+          if (
+            card.isPaid ||
+            !card.due_day
+          ) {
+            return false;
+          }
 
-        const dueDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1,
-          card.due_day
-        );
+          const dueDate =
+            createSafeDate(
+              selectedYear,
+              selectedMonth - 1,
+              card.due_day
+            );
 
-        const diffMs =
-          dueDate.getTime() -
-          todayOnly.getTime();
+          const diffMs =
+            dueDate.getTime() -
+            todayOnly.getTime();
 
-        const diffDays = Math.ceil(
-          diffMs /
-            (1000 * 60 * 60 * 24)
-        );
+          const diffDays =
+            Math.ceil(
+              diffMs /
+                (1000 *
+                  60 *
+                  60 *
+                  24)
+            );
 
-        return diffDays <= 7;
-      })
-      .sort((a, b) => {
-        const aDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1,
-          a.due_day || 1
-        );
+          return diffDays <= 7;
+        })
+        .sort((a, b) => {
+          const aDate =
+            createSafeDate(
+              selectedYear,
+              selectedMonth - 1,
+              a.due_day || 1
+            );
 
-        const bDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1,
-          b.due_day || 1
-        );
+          const bDate =
+            createSafeDate(
+              selectedYear,
+              selectedMonth - 1,
+              b.due_day || 1
+            );
 
-        return (
-          aDate.getTime() -
-          bDate.getTime()
-        );
-      });
-  }, [
-    currentCardStatements,
-    selectedYear,
-    selectedMonth,
-  ]);
+          return (
+            aDate.getTime() -
+            bDate.getTime()
+          );
+        });
+    }, [
+      currentCardStatements,
+      selectedYear,
+      selectedMonth,
+    ]);
 
   const selectedStatement =
     useMemo(() => {
@@ -735,33 +766,41 @@ export default function DashboardPage() {
     if (
       card.statementStatusId !== null
     ) {
-      const { error } = await supabase
-        .from("CreditCardStatements")
-        .update({
-          is_paid: newPaidStatus,
-          paid_date: paidDate,
-        })
-        .eq(
-          "id",
-          card.statementStatusId
-        );
+      const { error } =
+        await supabase
+          .from(
+            "CreditCardStatements"
+          )
+          .update({
+            is_paid:
+              newPaidStatus,
+            paid_date: paidDate,
+          })
+          .eq(
+            "id",
+            card.statementStatusId
+          );
 
       if (error) {
         setMessage(error.message);
         return;
       }
     } else {
-      const { error } = await supabase
-        .from("CreditCardStatements")
-        .insert({
-          card_id: card.id,
-          period_start:
-            card.periodStart,
-          period_end: card.periodEnd,
-          is_paid: true,
-          paid_date: paidDate,
-          user_id: user.id,
-        });
+      const { error } =
+        await supabase
+          .from(
+            "CreditCardStatements"
+          )
+          .insert({
+            card_id: card.id,
+            period_start:
+              card.periodStart,
+            period_end:
+              card.periodEnd,
+            is_paid: true,
+            paid_date: paidDate,
+            user_id: user.id,
+          });
 
       if (error) {
         setMessage(error.message);
@@ -769,7 +808,10 @@ export default function DashboardPage() {
       }
     }
 
-    setEditingPaidStatementId(null);
+    setEditingPaidStatementId(
+      null
+    );
+
     setEditingPaidDate("");
 
     await loadDashboardData();
@@ -779,33 +821,44 @@ export default function DashboardPage() {
     statementId: number | string
   ) {
     if (!editingPaidDate) {
-      setMessage("請選擇繳款日期");
+      setMessage(
+        "請選擇繳款日期"
+      );
       return;
     }
 
-    const { error } = await supabase
-      .from("CreditCardStatements")
-      .update({
-        paid_date: editingPaidDate,
-      })
-      .eq("id", statementId);
+    const { error } =
+      await supabase
+        .from(
+          "CreditCardStatements"
+        )
+        .update({
+          paid_date:
+            editingPaidDate,
+        })
+        .eq("id", statementId);
 
     if (error) {
       setMessage(error.message);
       return;
     }
 
-    setEditingPaidStatementId(null);
+    setEditingPaidStatementId(
+      null
+    );
+
     setEditingPaidDate("");
 
     await loadDashboardData();
   }
 
-  const years = [];
+  const years: number[] = [];
 
   for (
-    let year = today.getFullYear() - 2;
-    year <= today.getFullYear() + 2;
+    let year =
+      today.getFullYear() - 2;
+    year <=
+    today.getFullYear() + 2;
     year++
   ) {
     years.push(year);
@@ -819,7 +872,9 @@ export default function DashboardPage() {
         padding: 20,
       }}
     >
-      <h1>📊 記帳 Dashboard</h1>
+      <h1>
+        📊 記帳 Dashboard
+      </h1>
 
       <p>
         <Link href="/">
@@ -838,7 +893,9 @@ export default function DashboardPage() {
           value={selectedYear}
           onChange={(e) =>
             setSelectedYear(
-              Number(e.target.value)
+              Number(
+                e.target.value
+              )
             )
           }
         >
@@ -856,13 +913,16 @@ export default function DashboardPage() {
           value={selectedMonth}
           onChange={(e) =>
             setSelectedMonth(
-              Number(e.target.value)
+              Number(
+                e.target.value
+              )
             )
           }
         >
           {Array.from(
             { length: 12 },
-            (_, index) => index + 1
+            (_, index) =>
+              index + 1
           ).map((month) => (
             <option
               key={month}
@@ -886,13 +946,15 @@ export default function DashboardPage() {
         <p>{message}</p>
       )}
 
-      {unpaidStatements.length > 0 && (
+      {unpaidStatements.length >
+        0 && (
         <section
           style={{
             marginTop: 20,
             marginBottom: 30,
             padding: 16,
-            border: "1px solid #ddd",
+            border:
+              "1px solid #ddd",
             borderRadius: 10,
           }}
         >
@@ -930,16 +992,21 @@ export default function DashboardPage() {
                       card.name
                     );
 
-                    setTimeout(() => {
-                      document
-                        .getElementById(
-                          "card-statements"
-                        )
-                        ?.scrollIntoView({
-                          behavior:
-                            "smooth",
-                        });
-                    }, 50);
+                    setTimeout(
+                      () => {
+                        document
+                          .getElementById(
+                            "card-statements"
+                          )
+                          ?.scrollIntoView(
+                            {
+                              behavior:
+                                "smooth",
+                            }
+                          );
+                      },
+                      50
+                    );
                   }}
                   style={{
                     fontWeight:
@@ -969,53 +1036,60 @@ export default function DashboardPage() {
                 </div>
 
                 <div
-  style={{
-    marginTop: 4,
-  }}
->
-  {Object.keys(
-    card.totals
-  ).length === 0 ? (
-    <span>
-      本期金額：0
-    </span>
-  ) : (
-    Object.entries(
-      card.totals
-    ).map(
-      ([
-        currency,
-        total,
-      ]) => (
-        <div
-          key={currency}
-        >
-          本期金額：
-          {currency}{" "}
-          {total.toFixed(2)}
-        </div>
-      )
-    )
-  )}
-</div>
+                  style={{
+                    marginTop: 4,
+                  }}
+                >
+                  {Object.keys(
+                    card.totals
+                  ).length === 0 ? (
+                    <span>
+                      本期金額：0
+                    </span>
+                  ) : (
+                    Object.entries(
+                      card.totals
+                    ).map(
+                      ([
+                        currency,
+                        total,
+                      ]) => (
+                        <div
+                          key={
+                            currency
+                          }
+                        >
+                          本期金額：
+                          {
+                            currency
+                          }{" "}
+                          {total.toFixed(
+                            2
+                          )}
+                        </div>
+                      )
+                    )
+                  )}
+                </div>
 
-<button
-  onClick={() =>
-    togglePaidStatus(card)
-  }
-  style={{
-    marginTop: 8,
-    padding: "6px 10px",
-  }}
->
-  標記已繳
-</button>
-
-</div>
-)
-)}
-</section>
-)}
+                <button
+                  onClick={() =>
+                    togglePaidStatus(
+                      card
+                    )
+                  }
+                  style={{
+                    marginTop: 8,
+                    padding:
+                      "6px 10px",
+                  }}
+                >
+                  標記已繳
+                </button>
+              </div>
+            )
+          )}
+        </section>
       )}
 
       <section
@@ -1023,12 +1097,16 @@ export default function DashboardPage() {
           marginBottom: 30,
         }}
       >
-        <h2>本月支出總額</h2>
+        <h2>
+          本月支出總額
+        </h2>
 
         {Object.keys(
           totalsByCurrency
         ).length === 0 ? (
-          <p>本月沒有支出</p>
+          <p>
+            本月沒有支出
+          </p>
         ) : (
           Object.entries(
             totalsByCurrency
@@ -1041,7 +1119,8 @@ export default function DashboardPage() {
                 key={currency}
                 style={{
                   fontSize: 20,
-                  fontWeight: "bold",
+                  fontWeight:
+                    "bold",
                   marginBottom: 6,
                 }}
               >
@@ -1116,7 +1195,9 @@ export default function DashboardPage() {
           marginBottom: 30,
         }}
       >
-        <h2>信用卡支出</h2>
+        <h2>
+          信用卡支出
+        </h2>
 
         {Object.keys(
           totalsByCard
@@ -1189,7 +1270,9 @@ export default function DashboardPage() {
                     }}
                   >
                     {filteredCardExpenses.map(
-                      (expense) => (
+                      (
+                        expense
+                      ) => (
                         <div
                           key={
                             expense.id
@@ -1321,7 +1404,8 @@ export default function DashboardPage() {
                     marginTop: 8,
                     marginBottom: 8,
                     fontSize: 18,
-                    fontWeight: "bold",
+                    fontWeight:
+                      "bold",
                   }}
                 >
                   {Object.keys(
@@ -1539,7 +1623,9 @@ export default function DashboardPage() {
                       </p>
                     ) : (
                       selectedStatementExpenses.map(
-                        (expense) => (
+                        (
+                          expense
+                        ) => (
                           <div
                             key={
                               expense.id
@@ -1584,53 +1670,61 @@ export default function DashboardPage() {
       </section>
 
       <section>
-        <h2>本月支出明細</h2>
+        <h2>
+          本月支出明細
+        </h2>
 
         {expenses.length === 0 ? (
           <p>沒有資料</p>
         ) : (
-          expenses.map((expense) => (
-            <div
-              key={expense.id}
-              style={{
-                padding: "10px 0",
-                borderBottom:
-                  "1px solid #ddd",
-              }}
-            >
-              <Link
-                href={`/expenses/${expense.id}`}
+          expenses.map(
+            (expense) => (
+              <div
+                key={expense.id}
+                style={{
+                  padding:
+                    "10px 0",
+                  borderBottom:
+                    "1px solid #ddd",
+                }}
               >
-                <strong>
-                  {expense.date}{" "}
-                  {expense.item}
-                </strong>
-              </Link>
+                <Link
+                  href={`/expenses/${expense.id}`}
+                >
+                  <strong>
+                    {expense.date}{" "}
+                    {expense.item}
+                  </strong>
+                </Link>
 
-              <div>
-                {expense.major_category ||
-                  "未分類"}
-                {expense.category
-                  ? ` / ${expense.category}`
-                  : ""}
-              </div>
-
-              <div>
-                {expense.currency ||
-                  "USD"}{" "}
-                {Number(
-                  expense.amount
-                ).toFixed(2)}
-              </div>
-
-              {expense.card_name && (
                 <div>
-                  💳{" "}
-                  {expense.card_name}
+                  {expense.major_category ||
+                    "未分類"}
+
+                  {expense.category
+                    ? ` / ${expense.category}`
+                    : ""}
                 </div>
-              )}
-            </div>
-          ))
+
+                <div>
+                  {expense.currency ||
+                    "USD"}{" "}
+                  {Number(
+                    expense.amount
+                  ).toFixed(2)}
+                </div>
+
+                {expense.card_name && (
+                  <div>
+                    💳{" "}
+                    {
+                      expense.card_name
+                    }
+                  </div>
+                )}
+              </div>
+            )
+          )
         )}
       </section>
     </main>
