@@ -1009,8 +1009,8 @@ export default function DashboardPage() {
           }}
         >
           <h2>
-            ⚠️ 未繳帳單提醒
-          </h2>
+  ⚠️ 未繳帳單提醒（{unpaidStatements.length} 張）
+</h2>
 
           <div
   style={{
