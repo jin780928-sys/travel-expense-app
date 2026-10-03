@@ -1127,7 +1127,8 @@ const nextDueStatement =
     const csvTotals: Record<string, number> = {};
     const csvPaidTotals: Record<string, number> = {};
 const csvUnpaidTotals: Record<string, number> = {};
-
+const csvExpenseCounts: Record<string, number> = {};
+    
 for (const statement of filteredStatementHistory) {
   const card = creditCards.find(
     (item) =>
@@ -1158,6 +1159,9 @@ for (const statement of filteredStatementHistory) {
   csvTotals[currency] =
     (csvTotals[currency] || 0) +
     amount;
+
+    csvExpenseCounts[currency] =
+  (csvExpenseCounts[currency] || 0) + 1;
 
   if (statement.is_paid) {
     csvPaidTotals[currency] =
@@ -1240,6 +1244,29 @@ for (const [currency, total] of Object.entries(
   ]);
 }
 
+    for (const [currency, total] of Object.entries(
+  csvTotals
+)) {
+  const count =
+    csvExpenseCounts[currency] || 0;
+
+  const average =
+    count === 0 ? 0 : total / count;
+
+  rows.push([
+    "平均每筆消費",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    currency,
+    average.toFixed(2),
+  ]);
+}
     const exportCardName =
   historyCardFilter === "all"
     ? "全部信用卡"
