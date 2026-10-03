@@ -969,34 +969,35 @@ export default function DashboardPage() {
                 </div>
 
                 <div
-                  style={{
-                    marginTop: 4,
-                  }}
-                >
-                  {Object.keys(
-  card.totals
-).length === 0 ? (
-  <span>
-    本期金額：0
-  </span>
-) : (
-  Object.entries(
+  style={{
+    marginTop: 4,
+  }}
+>
+  {Object.keys(
     card.totals
-  ).map(
-    ([
-      currency,
-      total,
-    ]) => (
-      <div
-        key={currency}
-      >
-        本期金額：
-        {currency}{" "}
-        {total.toFixed(2)}
-      </div>
+  ).length === 0 ? (
+    <span>
+      本期金額：0
+    </span>
+  ) : (
+    Object.entries(
+      card.totals
+    ).map(
+      ([
+        currency,
+        total,
+      ]) => (
+        <div
+          key={currency}
+        >
+          本期金額：
+          {currency}{" "}
+          {total.toFixed(2)}
+        </div>
+      )
     )
-  )
-)}
+  )}
+</div>
 
 <button
   onClick={() =>
@@ -1009,12 +1010,12 @@ export default function DashboardPage() {
 >
   標記已繳
 </button>
-                
-                    
-              </div>
-            )
-          )}
-        </section>
+
+</div>
+)
+)}
+</section>
+)}
       )}
 
       <section
