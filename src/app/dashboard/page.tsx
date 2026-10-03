@@ -1000,6 +1000,19 @@ export default function DashboardPage() {
                             2
                           )}
                         </div>
+
+                        <button
+  onClick={() =>
+    togglePaidStatus(card)
+  }
+  style={{
+    marginTop: 8,
+    padding: "6px 10px",
+  }}
+>
+  標記已繳
+</button>
+                
                       )
                     )
                   )}
