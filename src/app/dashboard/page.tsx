@@ -478,6 +478,12 @@ export default function DashboardPage() {
     selectedMonth,
   ]);
 
+  const unpaidStatements = useMemo(() => {
+  return currentCardStatements.filter(
+    (card) => !card.isPaid
+  );
+}, [currentCardStatements]);
+
   const selectedStatementExpenses = useMemo(() => {
     if (!selectedStatementCard) {
       return [];
@@ -692,6 +698,34 @@ export default function DashboardPage() {
         {selectedYear} 年{" "}
         {selectedMonth} 月日常花費
       </p>
+
+      {unpaidStatements.length > 0 && (
+  <div
+    style={{
+      border: "1px solid #ddd",
+      padding: 14,
+      marginBottom: 20,
+      borderRadius: 8,
+    }}
+  >
+    <h2>未繳帳單提醒</h2>
+
+    {unpaidStatements.map((card) => (
+      <div
+        key={card.id}
+        style={{
+          marginBottom: 10,
+        }}
+      >
+        <strong>{card.name}</strong>
+
+        <div>
+          {getDueStatus(card.due_day, card.isPaid)}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
 
       {message && <p>{message}</p>}
 
