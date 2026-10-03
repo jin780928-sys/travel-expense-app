@@ -1531,7 +1531,7 @@ if (!hasAmount) {
     background: "#fffbe6",
   }}
 >
-    <div>未繳總額</div>
+    <div>⏳ 未繳總額</div>
 
     <div
       style={{
@@ -1563,7 +1563,7 @@ if (!hasAmount) {
     background: "#eef9f1",
   }}
 >
-    <div>已繳總額</div>
+    <div>✅ 已繳總額</div>
 
     <div
       style={{
@@ -1595,7 +1595,7 @@ if (!hasAmount) {
     background: "#eef7ff",
   }}
 >
-    <div>本期總額</div>
+    <div>💳 本期總額</div>
 
     <div
       style={{
