@@ -699,6 +699,15 @@ export default function DashboardPage() {
     ).length,
   };
 }, [sortedCardStatements]);
+
+  const paidProgress =
+  statementSummary.total === 0
+    ? 0
+    : Math.round(
+        (statementSummary.paid /
+          statementSummary.total) *
+          100
+      );
   
   const unpaidStatements =
     useMemo(() => {
@@ -1508,12 +1517,33 @@ if (!hasAmount) {
   }}
 >
   <div>
-    本期有消費：{statementSummary.total} 張
-    {" ｜ "}
-    未繳：{statementSummary.unpaid} 張
-    {" ｜ "}
-    已繳：{statementSummary.paid} 張
-  </div>
+  本期有消費：{statementSummary.total} 張
+  {" ｜ "}
+  未繳：{statementSummary.unpaid} 張
+  {" ｜ "}
+  已繳：{statementSummary.paid} 張
+  {" ｜ "}
+  已繳進度：{paidProgress}%
+</div>
+
+          <div
+  style={{
+    marginTop: 8,
+    height: 12,
+    background: "#eee",
+    borderRadius: 999,
+    overflow: "hidden",
+  }}
+>
+  <div
+    style={{
+      width: `${paidProgress}%`,
+      height: "100%",
+      background: "#b7dfc3",
+      transition: "width 0.3s ease",
+    }}
+  />
+</div>
 
   <div
   style={{
