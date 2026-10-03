@@ -1260,6 +1260,13 @@ const exportSearch =
     ? "無"
     : historySearch.trim();
 
+    const exportSort =
+  historySort === "newest"
+    ? "最新帳單優先"
+    : historySort === "oldest"
+    ? "最舊帳單優先"
+    : "金額高到低";
+
     rows.push([
   "",
   "",
@@ -1333,6 +1340,20 @@ rows.push([
 rows.push([
   "搜尋",
   exportSearch,
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+]);
+
+    rows.push([
+  "排序",
+  exportSort,
   "",
   "",
   "",
