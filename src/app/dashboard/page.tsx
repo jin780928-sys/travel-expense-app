@@ -788,6 +788,25 @@ if (!hasAmount) {
 
   return totals;
 }, [unpaidStatements]);
+
+  const paidTotalsByCurrency = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  for (const card of sortedCardStatements) {
+    if (!card.isPaid) {
+      continue;
+    }
+
+    for (const [currency, total] of Object.entries(
+      card.totals
+    )) {
+      totals[currency] =
+        (totals[currency] || 0) + total;
+    }
+  }
+
+  return totals;
+}, [sortedCardStatements]);
   
   const selectedStatement =
     useMemo(() => {
@@ -1483,6 +1502,22 @@ if (!hasAmount) {
     <span>0</span>
   ) : (
     Object.entries(unpaidTotalsByCurrency).map(
+      ([currency, total], index) => (
+        <span key={currency}>
+          {index > 0 ? " / " : " "}
+          {currency} {total.toFixed(2)}
+        </span>
+      )
+    )
+  )}
+
+  {" ｜ "}
+
+  已繳總額：
+  {Object.keys(paidTotalsByCurrency).length === 0 ? (
+    <span>0</span>
+  ) : (
+    Object.entries(paidTotalsByCurrency).map(
       ([currency, total], index) => (
         <span key={currency}>
           {index > 0 ? " / " : " "}
