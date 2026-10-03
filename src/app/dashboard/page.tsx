@@ -1119,9 +1119,31 @@ const nextDueStatement =
   const link = document.createElement("a");
 
   link.href = url;
-  link.download = `statement-history-${selectedYear}-${String(
-    selectedMonth
-  ).padStart(2, "0")}.csv`;
+  const selectedCardName =
+  historyCardFilter === "all"
+    ? "all-cards"
+    : creditCards.find(
+        (card) =>
+          String(card.id) === historyCardFilter
+      )?.name || "card";
+
+const fileMonth =
+  historyMonthFilter === "all"
+    ? "all-months"
+    : historyMonthFilter;
+
+const fileStatus =
+  historyStatusFilter === "all"
+    ? "all-status"
+    : historyStatusFilter;
+
+const safeCardName = selectedCardName.replace(
+  /[\\/:*?"<>|]/g,
+  "-"
+);
+
+link.download =
+  `statement-history-${fileMonth}-${safeCardName}-${fileStatus}.csv`;
 
   document.body.appendChild(link);
 
