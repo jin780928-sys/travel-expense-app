@@ -2961,12 +2961,21 @@ link.download =
       setHistoryCardFilter("all")
     }
     style={{
-      padding: "6px 10px",
-      fontWeight:
-        historyCardFilter === "all"
-          ? "bold"
-          : "normal",
-    }}
+  padding: "6px 10px",
+  fontWeight:
+    historyCardFilter === "all"
+      ? "bold"
+      : "normal",
+  background:
+    historyCardFilter === "all"
+      ? "#eef7ff"
+      : "white",
+  border:
+    historyCardFilter === "all"
+      ? "1px solid #b8d7f0"
+      : "1px solid #ddd",
+  borderRadius: 8,
+}}
   >
     全部信用卡
   </button>
@@ -2980,13 +2989,24 @@ link.download =
         )
       }
       style={{
-        padding: "6px 10px",
-        fontWeight:
-          historyCardFilter ===
-          String(card.id)
-            ? "bold"
-            : "normal",
-      }}
+  padding: "6px 10px",
+  fontWeight:
+    historyCardFilter ===
+    String(card.id)
+      ? "bold"
+      : "normal",
+  background:
+    historyCardFilter ===
+    String(card.id)
+      ? "#eef7ff"
+      : "white",
+  border:
+    historyCardFilter ===
+    String(card.id)
+      ? "1px solid #b8d7f0"
+      : "1px solid #ddd",
+  borderRadius: 8,
+}}
     >
       {card.name}
     </button>
