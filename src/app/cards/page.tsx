@@ -443,7 +443,18 @@ await loadCards();
   {getCurrentStatementPeriodText(card)}
 </div>
 
-          <div>
+          <div
+  style={{
+    display: "inline-block",
+    marginTop: 6,
+    padding: "4px 8px",
+    borderRadius: 6,
+    background:
+      getCurrentStatementStatusText(card).includes("已結帳")
+        ? "#eef9f1"
+        : "#eef7ff",
+  }}
+>
   {getCurrentStatementStatusText(card)}
 </div>
           
