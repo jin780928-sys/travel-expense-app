@@ -150,7 +150,29 @@ await loadCards();
 
   await loadCards();
 }
-  
+
+  function getCurrentDueDateText(card: CreditCard) {
+  if (!card.due_day) {
+    return "未設定";
+  }
+
+  const now = new Date();
+
+  const offset =
+    card.due_month_offset ?? 1;
+
+  const dueDate = new Date(
+    now.getFullYear(),
+    now.getMonth() + offset,
+    card.due_day
+  );
+
+  return `${dueDate.getFullYear()}/${String(
+    dueDate.getMonth() + 1
+  ).padStart(2, "0")}/${String(
+    dueDate.getDate()
+  ).padStart(2, "0")}`;
+}
   
   return (
     <main style={{ padding: 24 }}>
@@ -268,6 +290,11 @@ await loadCards();
       ? `每月 ${card.statement_day} 日結帳，下下個月 ${card.due_day} 日繳款`
       : `每月 ${card.statement_day} 日結帳，次月 ${card.due_day} 日繳款`
     : "未完整設定"}
+</div>
+
+          <div>
+  本期繳款日：
+  {getCurrentDueDateText(card)}
 </div>
           
           <button
