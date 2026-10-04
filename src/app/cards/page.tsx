@@ -156,16 +156,21 @@ await loadCards();
     return "未設定";
   }
 
-  const now = new Date();
+  const statementEndDate =
+  getCurrentStatementEndDate(card);
 
-  const offset =
-    card.due_month_offset ?? 1;
+if (!statementEndDate) {
+  return "未設定";
+}
 
-  const dueDate = new Date(
-    now.getFullYear(),
-    now.getMonth() + offset,
-    card.due_day
-  );
+const offset =
+  card.due_month_offset ?? 1;
+
+const dueDate = new Date(
+  statementEndDate.getFullYear(),
+  statementEndDate.getMonth() + offset,
+  card.due_day
+);
 
   return `${dueDate.getFullYear()}/${String(
     dueDate.getMonth() + 1
@@ -187,14 +192,21 @@ await loadCards();
     now.getDate()
   );
 
-  const offset =
-    card.due_month_offset ?? 1;
+  const statementEndDate =
+  getCurrentStatementEndDate(card);
 
-  const dueDate = new Date(
-    now.getFullYear(),
-    now.getMonth() + offset,
-    card.due_day
-  );
+if (!statementEndDate) {
+  return "未設定繳款日";
+}
+
+const offset =
+  card.due_month_offset ?? 1;
+
+const dueDate = new Date(
+  statementEndDate.getFullYear(),
+  statementEndDate.getMonth() + offset,
+  card.due_day
+);
 
   const diffMs =
     dueDate.getTime() -
@@ -229,14 +241,21 @@ await loadCards();
     now.getDate()
   );
 
-  const offset =
-    card.due_month_offset ?? 1;
+  const statementEndDate =
+  getCurrentStatementEndDate(card);
 
-  const dueDate = new Date(
-    now.getFullYear(),
-    now.getMonth() + offset,
-    card.due_day
-  );
+if (!statementEndDate) {
+  return "normal";
+}
+
+const offset =
+  card.due_month_offset ?? 1;
+
+const dueDate = new Date(
+  statementEndDate.getFullYear(),
+  statementEndDate.getMonth() + offset,
+  card.due_day
+);
 
   const diffMs =
     dueDate.getTime() -
@@ -258,14 +277,14 @@ await loadCards();
   return "soon";
 }
 
-  function getCurrentStatementPeriodText(card: CreditCard) {
+  function getCurrentStatementEndDate(card: CreditCard) {
   if (!card.statement_day) {
-    return "未設定";
+    return null;
   }
 
   const now = new Date();
 
-  const endDate = new Date(
+  const currentMonthStatementDate = new Date(
     now.getFullYear(),
     now.getMonth(),
     Math.min(
@@ -278,7 +297,13 @@ await loadCards();
     )
   );
 
-  const previousMonthEnd = new Date(
+  // 本月結帳日已經到或已經過
+  if (now >= currentMonthStatementDate) {
+    return currentMonthStatementDate;
+  }
+
+  // 本月還沒到結帳日 → 目前仍屬於上個月已結帳的帳單
+  return new Date(
     now.getFullYear(),
     now.getMonth() - 1,
     Math.min(
@@ -286,6 +311,27 @@ await loadCards();
       new Date(
         now.getFullYear(),
         now.getMonth(),
+        0
+      ).getDate()
+    )
+  );
+}
+  function getCurrentStatementPeriodText(card: CreditCard) {
+  const endDate =
+    getCurrentStatementEndDate(card);
+
+  if (!endDate || !card.statement_day) {
+    return "未設定";
+  }
+
+  const previousMonthEnd = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth() - 1,
+    Math.min(
+      card.statement_day,
+      new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
         0
       ).getDate()
     )
