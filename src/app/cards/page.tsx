@@ -260,12 +260,14 @@ await loadCards();
 </div>
 
           <div>
-  繳款月份：
-  {card.due_month_offset === 0
-    ? "結帳當月"
-    : card.due_month_offset === 2
-    ? "下下個月"
-    : "下個月"}
+  規則：
+  {card.statement_day && card.due_day
+    ? card.due_month_offset === 0
+      ? `每月 ${card.statement_day} 日結帳，當月 ${card.due_day} 日繳款`
+      : card.due_month_offset === 2
+      ? `每月 ${card.statement_day} 日結帳，下下個月 ${card.due_day} 日繳款`
+      : `每月 ${card.statement_day} 日結帳，次月 ${card.due_day} 日繳款`
+    : "未完整設定"}
 </div>
           
           <button
