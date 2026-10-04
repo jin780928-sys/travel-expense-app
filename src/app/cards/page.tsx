@@ -303,6 +303,22 @@ await loadCards();
 
   return `${formatDate(startDate)} ～ ${formatDate(endDate)}`;
 }
+
+  function getCurrentStatementStatusText(card: CreditCard) {
+  if (!card.statement_day) {
+    return "未設定結帳日";
+  }
+
+  const now = new Date();
+
+  const currentDay = now.getDate();
+
+  if (currentDay >= card.statement_day) {
+    return "✅ 本期已結帳";
+  }
+
+  return "⏳ 本期尚未結帳";
+}
   
   return (
     <main style={{ padding: 24 }}>
@@ -425,6 +441,10 @@ await loadCards();
           <div>
   本期帳單區間：
   {getCurrentStatementPeriodText(card)}
+</div>
+
+          <div>
+  {getCurrentStatementStatusText(card)}
 </div>
           
           <div>
