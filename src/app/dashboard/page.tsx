@@ -888,14 +888,74 @@ const nextDueStatement =
   const counts: Record<string, number> = {};
 
   for (const statement of statementHistory) {
-    const cardId = String(statement.card_id);
+    const monthMatches =
+      historyMonthFilter === "all" ||
+      statement.period_end.slice(0, 7) ===
+        historyMonthFilter;
 
-    counts[cardId] =
-      (counts[cardId] || 0) + 1;
+    const statusMatches =
+      historyStatusFilter === "all" ||
+      (historyStatusFilter === "paid" &&
+        statement.is_paid) ||
+      (historyStatusFilter === "unpaid" &&
+        !statement.is_paid);
+
+    const card = creditCards.find(
+      (item) =>
+        Number(item.id) ===
+        Number(statement.card_id)
+    );
+
+    const expensesForStatement =
+      statementExpenses.filter((expense) => {
+        if (!card) {
+          return false;
+        }
+
+        return (
+          expense.card_name === card.name &&
+          expense.date >= statement.period_start &&
+          expense.date <= statement.period_end
+        );
+      });
+
+    const keyword =
+      historySearch.trim().toLowerCase();
+
+    const searchMatches =
+      keyword === "" ||
+      (card?.name || "")
+        .toLowerCase()
+        .includes(keyword) ||
+      expensesForStatement.some((expense) =>
+        expense.item
+          .toLowerCase()
+          .includes(keyword)
+      );
+
+    if (
+      monthMatches &&
+      statusMatches &&
+      searchMatches
+    ) {
+      const cardId = String(
+        statement.card_id
+      );
+
+      counts[cardId] =
+        (counts[cardId] || 0) + 1;
+    }
   }
 
   return counts;
-}, [statementHistory]);
+}, [
+  statementHistory,
+  historyMonthFilter,
+  historyStatusFilter,
+  historySearch,
+  creditCards,
+  statementExpenses,
+]);
 
   const filteredStatementHistory = useMemo(() => {
   const keyword = historySearch.trim().toLowerCase();
