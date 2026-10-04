@@ -419,6 +419,17 @@ await loadCards();
         <div key={card.id} style={{ marginBottom: 12 }}>
           <strong>{card.name}</strong>
           <div>{card.is_active ? "啟用" : "停用"}</div>
+
+          <div
+  style={{
+    marginTop: 10,
+    marginBottom: 6,
+    fontWeight: "bold",
+  }}
+>
+  帳單設定
+</div>
+          
           <div>
   結帳日：{card.statement_day ? `${card.statement_day} 日` : "未設定"}
 </div>
@@ -438,6 +449,16 @@ await loadCards();
     : "未完整設定"}
 </div>
 
+          <div
+  style={{
+    marginTop: 12,
+    marginBottom: 6,
+    fontWeight: "bold",
+  }}
+>
+  本期狀態
+</div>
+          
           <div>
   本期帳單區間：
   {getCurrentStatementPeriodText(card)}
