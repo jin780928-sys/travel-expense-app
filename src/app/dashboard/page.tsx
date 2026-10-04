@@ -20,6 +20,7 @@ type CreditCard = {
   name: string;
   statement_day: number | null;
   due_day: number | null;
+  due_month_offset: number | null;
 };
 
 type CreditCardStatement = {
@@ -234,14 +235,15 @@ export default function DashboardPage() {
 
       supabase
         .from("CreditCards")
-        .select(
-          `
-          id,
-          name,
-          statement_day,
-          due_day
-        `
-        )
+.select(
+  `
+  id,
+  name,
+  statement_day,
+  due_day,
+  due_month_offset
+`
+)
         .eq("is_active", true)
         .order("name"),
 
@@ -406,29 +408,34 @@ export default function DashboardPage() {
   }
 
   function getDueDateText(
-    dueDay: number | null
-  ) {
-    if (!dueDay) {
-      return "未設定";
-    }
-
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1,
-      dueDay
-    );
-
-    return `${dueDate.getFullYear()}/${String(
-      dueDate.getMonth() + 1
-    ).padStart(2, "0")}/${String(
-      dueDate.getDate()
-    ).padStart(2, "0")}`;
+  dueDay: number | null,
+  dueMonthOffset: number | null = 1
+) {
+  if (!dueDay) {
+    return "未設定";
   }
 
+  const offset =
+    dueMonthOffset ?? 1;
+
+  const dueDate = createSafeDate(
+    selectedYear,
+    selectedMonth - 1 + offset,
+    dueDay
+  );
+
+  return `${dueDate.getFullYear()}/${String(
+    dueDate.getMonth() + 1
+  ).padStart(2, "0")}/${String(
+    dueDate.getDate()
+  ).padStart(2, "0")}`;
+}
+
   function getDueStatus(
-    dueDay: number | null,
-    isPaid: boolean
-  ) {
+  dueDay: number | null,
+  isPaid: boolean,
+  dueMonthOffset: number | null = 1
+) {
     if (isPaid) {
       return "✅ 已完成繳款";
     }
@@ -474,9 +481,10 @@ export default function DashboardPage() {
   }
 
   function getDueLevel(
-    dueDay: number | null,
-    isPaid: boolean
-  ) {
+  dueDay: number | null,
+  isPaid: boolean,
+  dueMonthOffset: number | null = 1
+) {
     if (isPaid || !dueDay) {
       return "normal";
     }
@@ -489,11 +497,14 @@ export default function DashboardPage() {
       now.getDate()
     );
 
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1,
-      dueDay
-    );
+   const offset =
+  dueMonthOffset ?? 1;
+
+const dueDate = createSafeDate(
+  selectedYear,
+  selectedMonth - 1 + offset,
+  dueDay
+);
 
     const diffMs =
       dueDate.getTime() -
@@ -515,10 +526,11 @@ export default function DashboardPage() {
     return "soon";
   }
 
-  function getStatementBadge(
-    dueDay: number | null,
-    isPaid: boolean
-  ) {
+ function getStatementBadge(
+  dueDay: number | null,
+  isPaid: boolean,
+  dueMonthOffset: number | null = 1
+) {
     if (isPaid) {
       return "已繳";
     }
@@ -535,11 +547,14 @@ export default function DashboardPage() {
       now.getDate()
     );
 
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1,
-      dueDay
-    );
+   const offset =
+  dueMonthOffset ?? 1;
+
+const dueDate = createSafeDate(
+  selectedYear,
+  selectedMonth - 1 + offset,
+  dueDay
+);
 
     const diffMs =
       dueDate.getTime() -
@@ -776,12 +791,15 @@ export default function DashboardPage() {
             return false;
           }
 
-          const dueDate =
-            createSafeDate(
-              selectedYear,
-              selectedMonth - 1,
-              card.due_day
-            );
+          const offset =
+  card.due_month_offset ?? 1;
+
+const dueDate =
+  createSafeDate(
+    selectedYear,
+    selectedMonth - 1 + offset,
+    card.due_day
+  );
 
           const diffMs =
             dueDate.getTime() -
@@ -799,19 +817,25 @@ export default function DashboardPage() {
           return diffDays <= 7;
         })
         .sort((a, b) => {
-          const aDate =
-            createSafeDate(
-              selectedYear,
-              selectedMonth - 1,
-              a.due_day || 1
-            );
+          const aOffset =
+  a.due_month_offset ?? 1;
 
-          const bDate =
-            createSafeDate(
-              selectedYear,
-              selectedMonth - 1,
-              b.due_day || 1
-            );
+const bOffset =
+  b.due_month_offset ?? 1;
+
+const aDate =
+  createSafeDate(
+    selectedYear,
+    selectedMonth - 1 + aOffset,
+    a.due_day || 1
+  );
+
+const bDate =
+  createSafeDate(
+    selectedYear,
+    selectedMonth - 1 + bOffset,
+    b.due_day || 1
+  );
 
           return (
             aDate.getTime() -
@@ -2254,8 +2278,9 @@ export default function DashboardPage() {
               }
               {" ｜ "}
               {getDueDateText(
-                nextDueStatement.due_day
-              )}
+  nextDueStatement.due_day,
+  nextDueStatement.due_month_offset
+)}
             </div>
           )}
 
@@ -2309,16 +2334,18 @@ export default function DashboardPage() {
                   padding: 10,
                   borderRadius: 8,
                   background:
-                    getDueLevel(
-                      card.due_day,
-                      card.isPaid
-                    ) ===
+                   getDueLevel(
+  card.due_day,
+  card.isPaid,
+  card.due_month_offset
+) ===
                     "overdue"
                       ? "#ffe5e5"
                       : getDueLevel(
-                          card.due_day,
-                          card.isPaid
-                        ) ===
+  card.due_day,
+  card.isPaid,
+  card.due_month_offset
+) ===
                         "today"
                       ? "#fff1d6"
                       : "#fffbe6",
@@ -2369,9 +2396,10 @@ export default function DashboardPage() {
                   }}
                 >
                   {getDueStatus(
-                    card.due_day,
-                    card.isPaid
-                  )}
+  card.due_day,
+  card.isPaid,
+  card.due_month_offset
+)}
                 </div>
 
                 <div
@@ -2381,8 +2409,9 @@ export default function DashboardPage() {
                 >
                   繳款截止：
                   {getDueDateText(
-                    card.due_day
-                  )}
+  card.due_day,
+  card.due_month_offset
+)}
                 </div>
 
                 <div
@@ -3073,9 +3102,10 @@ export default function DashboardPage() {
                     }}
                   >
                     {getStatementBadge(
-                      card.due_day,
-                      card.isPaid
-                    )}
+  card.due_day,
+  card.isPaid,
+  card.due_month_offset
+)}
                   </span>
                 </div>
 
@@ -3167,9 +3197,10 @@ export default function DashboardPage() {
 
                 <div>
                   {getDueStatus(
-                    card.due_day,
-                    card.isPaid
-                  )}
+  card.due_day,
+  card.isPaid,
+  card.due_month_offset
+)}
                 </div>
 
                 {card.isPaid && (
