@@ -257,6 +257,52 @@ await loadCards();
 
   return "soon";
 }
+
+  function getCurrentStatementPeriodText(card: CreditCard) {
+  if (!card.statement_day) {
+    return "未設定";
+  }
+
+  const now = new Date();
+
+  const endDate = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    Math.min(
+      card.statement_day,
+      new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        0
+      ).getDate()
+    )
+  );
+
+  const previousMonthEnd = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    Math.min(
+      card.statement_day,
+      new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        0
+      ).getDate()
+    )
+  );
+
+  const startDate = new Date(previousMonthEnd);
+  startDate.setDate(startDate.getDate() + 1);
+
+  const formatDate = (date: Date) =>
+    `${date.getFullYear()}/${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}/${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
+
+  return `${formatDate(startDate)} ～ ${formatDate(endDate)}`;
+}
   
   return (
     <main style={{ padding: 24 }}>
@@ -376,6 +422,11 @@ await loadCards();
     : "未完整設定"}
 </div>
 
+          <div>
+  本期帳單區間：
+  {getCurrentStatementPeriodText(card)}
+</div>
+          
           <div>
   本期繳款日：
   {getCurrentDueDateText(card)}
