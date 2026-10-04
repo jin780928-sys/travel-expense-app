@@ -1104,6 +1104,24 @@ export default function DashboardPage() {
       statementExpenses,
     ]);
 
+  useEffect(() => {
+  if (historyCardFilter === "all") {
+    return;
+  }
+
+  const count =
+    historyCountByCard[
+      historyCardFilter
+    ] || 0;
+
+  if (count === 0) {
+    setHistoryCardFilter("all");
+  }
+}, [
+  historyCardFilter,
+  historyCountByCard,
+]);
+
   const filteredStatementHistory =
     useMemo(() => {
       const keyword =
