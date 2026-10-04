@@ -9,12 +9,14 @@ type CreditCard = {
   is_active: boolean;
   statement_day: number | null;
   due_day: number | null;
+  due_month_offset: number | null;
 };
 export default function CardsPage() {
   const [cards, setCards] = useState<CreditCard[]>([]);
   const [name, setName] = useState("");
   const [statementDay, setStatementDay] = useState("");
   const [dueDay, setDueDay] = useState("");
+  const [dueMonthOffset, setDueMonthOffset] = useState("1");
   const [message, setMessage] = useState("讀取中...");
   const [editingCardId, setEditingCardId] = useState<number | null>(null);
 
@@ -34,7 +36,7 @@ export default function CardsPage() {
 
     const { data, error } = await supabase
       .from("CreditCards")
-.select("id,name,is_active,statement_day,due_day")
+.select("id,name,is_active,statement_day,due_day,due_month_offset")
       .eq("user_id", user.id)
       .order("name");
 
@@ -68,6 +70,8 @@ async function addCard() {
   is_active: true,
   statement_day: statementDay ? Number(statementDay) : null,
   due_day: dueDay ? Number(dueDay) : null,
+      due_month_offset:
+  Number(dueMonthOffset),
   user_id: user.id,
 });
 
@@ -79,6 +83,7 @@ async function addCard() {
   setName("");
 setStatementDay("");
 setDueDay("");
+  setDueMonthOffset("1");
 setMessage("新增成功");
 await loadCards();
 }
@@ -107,6 +112,9 @@ await loadCards();
   setDueDay(
     card.due_day ? String(card.due_day) : ""
   );
+    setDueMonthOffset(
+  String(card.due_month_offset ?? 1)
+);
   setMessage("");
 }
 
@@ -124,6 +132,8 @@ await loadCards();
       name: name.trim(),
       statement_day: statementDay ? Number(statementDay) : null,
       due_day: dueDay ? Number(dueDay) : null,
+      due_month_offset:
+  Number(dueMonthOffset),
     })
     .eq("id", editingCardId);
 
@@ -185,6 +195,26 @@ await loadCards();
     marginBottom: 8,
   }}
 />
+
+      <select
+  value={dueMonthOffset}
+  onChange={(e) =>
+    setDueMonthOffset(e.target.value)
+  }
+  style={{
+    marginLeft: 8,
+  }}
+>
+  <option value="0">
+    結帳當月繳
+  </option>
+  <option value="1">
+    下個月繳
+  </option>
+  <option value="2">
+    下下個月繳
+  </option>
+</select>
       
 <button
   onClick={editingCardId ? saveEditCard : addCard}
@@ -228,6 +258,16 @@ await loadCards();
 <div>
   繳款日：{card.due_day ? `${card.due_day} 日` : "未設定"}
 </div>
+
+          <div>
+  繳款月份：
+  {card.due_month_offset === 0
+    ? "結帳當月"
+    : card.due_month_offset === 2
+    ? "下下個月"
+    : "下個月"}
+</div>
+          
           <button
   onClick={() => toggleCard(card)}
   style={{
