@@ -3429,6 +3429,7 @@ export default function DashboardPage() {
                 return (
                   <button
                     key={card.id}
+                    disabled={count === 0}
                     onClick={() =>
                       setHistoryCardFilter(
                         String(
@@ -3464,7 +3465,9 @@ export default function DashboardPage() {
                           : 1,
 
                       cursor:
-                        "pointer",
+  count === 0
+    ? "not-allowed"
+    : "pointer",
                     }}
                   >
                     {card.name}（
