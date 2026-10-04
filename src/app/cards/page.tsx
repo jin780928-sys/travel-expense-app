@@ -215,6 +215,48 @@ await loadCards();
 
   return `⚠️ 已逾期 ${Math.abs(diffDays)} 天`;
 }
+
+  function getCurrentDueLevel(card: CreditCard) {
+  if (!card.due_day) {
+    return "normal";
+  }
+
+  const now = new Date();
+
+  const todayOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const offset =
+    card.due_month_offset ?? 1;
+
+  const dueDate = new Date(
+    now.getFullYear(),
+    now.getMonth() + offset,
+    card.due_day
+  );
+
+  const diffMs =
+    dueDate.getTime() -
+    todayOnly.getTime();
+
+  const diffDays = Math.ceil(
+    diffMs /
+      (1000 * 60 * 60 * 24)
+  );
+
+  if (diffDays < 0) {
+    return "overdue";
+  }
+
+  if (diffDays === 0) {
+    return "today";
+  }
+
+  return "soon";
+}
   
   return (
     <main style={{ padding: 24 }}>
@@ -339,7 +381,22 @@ await loadCards();
   {getCurrentDueDateText(card)}
 </div>
 
-          <div>
+          <div
+  style={{
+    display: "inline-block",
+    marginTop: 6,
+    padding: "4px 8px",
+    borderRadius: 6,
+    background:
+      getCurrentDueLevel(card) === "overdue"
+        ? "#ffe5e5"
+        : getCurrentDueLevel(card) === "today"
+        ? "#fff1d6"
+        : getCurrentDueLevel(card) === "soon"
+        ? "#fffbe6"
+        : "transparent",
+  }}
+>
   {getCurrentDueStatusText(card)}
 </div>
           
