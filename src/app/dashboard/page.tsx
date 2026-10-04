@@ -3053,37 +3053,26 @@ link.download =
     全部信用卡
   </button>
 
-  {creditCards.map((card) => (
-    <button
-      key={card.id}
-      onClick={() =>
-        setHistoryCardFilter(
-          String(card.id)
-        )
-      }
-      style={{
+  style={{
   padding: "6px 10px",
   fontWeight:
-    historyCardFilter ===
-    String(card.id)
+    historyCardFilter === String(card.id)
       ? "bold"
       : "normal",
   background:
-    historyCardFilter ===
-    String(card.id)
+    historyCardFilter === String(card.id)
       ? "#eef7ff"
       : "white",
   border:
-    historyCardFilter ===
-    String(card.id)
+    historyCardFilter === String(card.id)
       ? "1px solid #b8d7f0"
       : "1px solid #ddd",
   borderRadius: 8,
+  opacity:
+    (historyCountByCard[String(card.id)] || 0) === 0
+      ? 0.4
+      : 1,
 }}
-    >
-      {card.name}（{historyCountByCard[String(card.id)] || 0}）
-    </button>
-  ))}
 </div>
     
     <input
