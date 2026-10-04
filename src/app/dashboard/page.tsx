@@ -431,6 +431,23 @@ export default function DashboardPage() {
   ).padStart(2, "0")}`;
 }
 
+  function getDueMonthText(
+  dueMonthOffset: number | null = 1
+) {
+  const offset =
+    dueMonthOffset ?? 1;
+
+  const dueDate = new Date(
+    selectedYear,
+    selectedMonth - 1 + offset,
+    1
+  );
+
+  return `${dueDate.getFullYear()}/${String(
+    dueDate.getMonth() + 1
+  ).padStart(2, "0")}`;
+}
+
   function getDueStatus(
   dueDay: number | null,
   isPaid: boolean,
@@ -3172,6 +3189,19 @@ const bDate =
                   )}
                 </div>
 
+                <div>
+  帳單月份：
+  {selectedYear}/{String(
+    selectedMonth
+  ).padStart(2, "0")}
+</div>
+                <div>
+  繳款月份：
+  {getDueMonthText(
+    card.due_month_offset
+  )}
+</div>
+                
                 <div>
                   本期區間：
                   {card.periodStart &&
