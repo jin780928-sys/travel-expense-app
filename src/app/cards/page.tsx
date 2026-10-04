@@ -351,15 +351,28 @@ const dueDate = new Date(
 }
 
   function getCurrentStatementStatusText(card: CreditCard) {
-  if (!card.statement_day) {
+  const statementEndDate =
+    getCurrentStatementEndDate(card);
+
+  if (!statementEndDate) {
     return "未設定結帳日";
   }
 
   const now = new Date();
 
-  const currentDay = now.getDate();
+  const todayOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
 
-  if (currentDay >= card.statement_day) {
+  const endDateOnly = new Date(
+    statementEndDate.getFullYear(),
+    statementEndDate.getMonth(),
+    statementEndDate.getDate()
+  );
+
+  if (todayOnly >= endDateOnly) {
     return "✅ 本期已結帳";
   }
 
