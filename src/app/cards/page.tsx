@@ -173,6 +173,48 @@ await loadCards();
     dueDate.getDate()
   ).padStart(2, "0")}`;
 }
+
+  function getCurrentDueStatusText(card: CreditCard) {
+  if (!card.due_day) {
+    return "未設定繳款日";
+  }
+
+  const now = new Date();
+
+  const todayOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const offset =
+    card.due_month_offset ?? 1;
+
+  const dueDate = new Date(
+    now.getFullYear(),
+    now.getMonth() + offset,
+    card.due_day
+  );
+
+  const diffMs =
+    dueDate.getTime() -
+    todayOnly.getTime();
+
+  const diffDays = Math.ceil(
+    diffMs /
+      (1000 * 60 * 60 * 24)
+  );
+
+  if (diffDays > 0) {
+    return `距離繳款還有 ${diffDays} 天`;
+  }
+
+  if (diffDays === 0) {
+    return "⚠️ 今天到期";
+  }
+
+  return `⚠️ 已逾期 ${Math.abs(diffDays)} 天`;
+}
   
   return (
     <main style={{ padding: 24 }}>
@@ -295,6 +337,10 @@ await loadCards();
           <div>
   本期繳款日：
   {getCurrentDueDateText(card)}
+</div>
+
+          <div>
+  {getCurrentDueStatusText(card)}
 </div>
           
           <button
