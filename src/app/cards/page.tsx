@@ -698,7 +698,14 @@ const todayOnly = new Date(
   本期帳單區間：
   {getCurrentStatementPeriodText(card)}
 </div>
-
+<hr
+  style={{
+    marginTop: 14,
+    marginBottom: 12,
+    border: "none",
+    borderTop: "1px solid #eee",
+  }}
+/>
           <div
   style={{
     marginTop: 12,
