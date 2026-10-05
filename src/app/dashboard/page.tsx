@@ -3565,10 +3565,18 @@ export default function DashboardPage() {
                           color: "#666",
                         }}
                       >
-                        {statement.period_end.slice(
-                          0,
-                          7
-                        )}
+                        {Number(
+  statement.period_end.slice(
+    0,
+    4
+  )
+)} 年{" "}
+{Number(
+  statement.period_end.slice(
+    5,
+    7
+  )
+)} 月
                       </span>
 
                       <span
