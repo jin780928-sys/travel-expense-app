@@ -651,8 +651,24 @@ const todayOnly = new Date(
       {message && <p>{message}</p>}
 
       {cards.map((card) => (
-        <div key={card.id} style={{ marginBottom: 12 }}>
-          <strong>{card.name}</strong>
+        <div
+  key={card.id}
+  style={{
+    marginBottom: 18,
+    padding: 16,
+    border: "1px solid #ddd",
+    borderRadius: 10,
+  }}
+>
+          <div
+  style={{
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 6,
+  }}
+>
+  {card.name}
+</div>
           <div>{card.is_active ? "啟用" : "停用"}</div>
 
           <div
