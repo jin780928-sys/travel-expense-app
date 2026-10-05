@@ -3239,6 +3239,24 @@ const bDate =
                   </div>
 
               {/* 修正 style 的位置與語法 */}
+                <div
+  style={{
+    marginTop: 10,
+    padding: 10,
+    background: "#fafafa",
+    borderRadius: 8,
+    lineHeight: 1.7,
+  }}
+                  >
+  <div
+    style={{
+      fontWeight: "bold",
+      marginBottom: 4,
+    }}
+  >
+    繳款狀態
+  </div>
+                  
                   <div
                     style={{
                       marginTop: 6,
@@ -3265,6 +3283,7 @@ const bDate =
                       marginTop: 8,
                     }}
                   >
+                    </div>
                     <div>
                       實際繳款日：
                       {card.paidDate ||
