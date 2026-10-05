@@ -119,7 +119,7 @@ await loadCards();
 }
 
   async function saveEditCard() {
-  if (!editingCardID) return;
+  if (!editingCardId) return;
 
   if (!name.trim()) {
     setMessage("請輸入信用卡名稱");
@@ -135,14 +135,14 @@ await loadCards();
       due_month_offset:
   Number(dueMonthOffset),
     })
-    .eq("id", editingCardID);
+    .eq("id", editingCardId);
 
   if (error) {
     setMessage(error.message);
     return;
   }
 
-  setEditingCardID(null);
+  setEditingCardId(null);
   setName("");
   setStatementDay("");
   setDueDay("");
