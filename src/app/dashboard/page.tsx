@@ -3283,39 +3283,39 @@ const bDate =
                       marginTop: 8,
                     }}
                   >
-             
-{/* 這是修正後的區塊 */}
+             {/* 實際繳款日 */}
                   <div
                     style={{
-                      
                       marginTop: 8,
-                      }}
+                    }}
                   >
                     實際繳款日：
                     {card.paidDate || "未記錄"}
                   </div>
-               {card.statementStatusId !==
-                      null && (
-                      <button
-                        onClick={() => {
-                          setEditingPaidStatementId(
-                            card.statementStatusId
-                          );
 
-                          setEditingPaidDate(
-                            card.paidDate ||
-                              ""
-                          );
+                  {/* 編輯實際繳款日的按鈕 */}
+                    {card.statementStatusId !== null && (
+                    <button
+                      onClick={() => {
+                        setEditingPaidStatementId(
+                          card.statementStatusId
+                        );
+
+                        setEditingPaidDate(
+                          card.paidDate || ""
+                        );
+                      }}
+                      style={{
+                        padding: "6px 10px",
+                        marginTop: 6,
+                        marginBottom: 8,
+                        cursor: "pointer",
                         }}
-                        style={{
-                          padding:
-                            "6px 10px",
-                          marginTop: 6,
-                          marginBottom: 8,
-                        }}
-                      >
-                        修改繳款日
-                      </button>
+                    >
+                      ✏️ 修改繳款日
+                    </button>
+                  
+
                     )}
                   </div>
                 )}
