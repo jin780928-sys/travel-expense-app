@@ -3517,6 +3517,9 @@ export default function DashboardPage() {
   ? "1px solid #ddd"
   : "1px solid #f3b3b3",
                       borderRadius: 8,
+                      background: statement.is_paid
+  ? "white"
+  : "#fff8f8",
                     }}
                   >
                     <div
