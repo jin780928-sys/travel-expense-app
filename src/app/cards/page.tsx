@@ -399,6 +399,54 @@ const dueDate = new Date(
 
   return "已進入下一期";
 }
+
+  function getNextStatementLevel(card: CreditCard) {
+  if (!card.statement_day) {
+    return "normal";
+  }
+const currentStatementEndDate =
+    getCurrentStatementEndDate(card);
+
+  if (!currentStatementEndDate) {
+    return "normal";
+  }
+    const nextStatementDate = new Date(
+    currentStatementEndDate.getFullYear(),
+    currentStatementEndDate.getMonth() + 1,
+    Math.min(
+      card.statement_day,
+      new Date(
+        currentStatementEndDate.getFullYear(),
+        currentStatementEndDate.getMonth() + 2,
+        0
+      ).getDate()
+    )
+  );
+
+  const now = new Date();
+const todayOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+    const diffMs =
+    nextStatementDate.getTime() -
+    todayOnly.getTime();
+
+  const diffDays = Math.ceil(
+    diffMs /
+      (1000 * 60 * 60 * 24)
+  );
+    if (diffDays === 0) {
+    return "today";
+  }
+
+  if (diffDays > 0 && diffDays <= 7) {
+    return "soon";
+  }
+
+  return "normal";
+}
   
   function getCurrentStatementPeriodText(card: CreditCard) {
   const endDate =
@@ -611,7 +659,24 @@ const dueDate = new Date(
   {getNextStatementDateText(card)}
 </div>
 
-          <div>
+          <div
+  style={{
+    display: "inline-block",
+    marginTop: 6,
+    padding: "4px 8px",
+    borderRadius: 6,
+    background:
+      getNextStatementLevel(card) === "today"
+        ? "#fff1d6"
+        : getNextStatementLevel(card) === "soon"
+        ? "#fffbe6"
+        : "#eef7ff",
+  }}
+>
+  {getNextStatementStatusText(card)}
+</div>
+      
+      <div>
   {getNextStatementStatusText(card)}
 </div>
 
