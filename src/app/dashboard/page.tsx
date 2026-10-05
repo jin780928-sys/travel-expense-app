@@ -3464,7 +3464,7 @@ const bDate =
               </div>
             )
           )
-        )}
+        
       </section>
 
       {showStatementHistory && (
