@@ -735,9 +735,7 @@ const todayOnly = new Date(
   {getNextStatementStatusText(card)}
 </div>
       
-      <div>
-  {getNextStatementStatusText(card)}
-</div>
+      
 
           <div
   style={{
