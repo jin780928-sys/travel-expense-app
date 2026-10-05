@@ -3224,17 +3224,17 @@ const bDate =
   )}
 </div>
                 
-                <div></div>
-                  本期區間：
-                  {card.periodStart &&
-                  card.periodEnd
-                    ? `${formatDate(
-                        card.periodStart
-                      )} ～ ${formatDate(
-                        card.periodEnd
-                      )}`
-                    : "未設定"}
-                </div>
+                <div>
+    本期區間：
+    {card.periodStart &&
+    card.periodEnd
+      ? `${formatDate(
+          card.periodStart
+        )} ～ ${formatDate(
+          card.periodEnd
+        )}`
+      : "未設定"}
+  </div>
 
                 <div>
                   style={{
