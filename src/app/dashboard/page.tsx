@@ -3284,7 +3284,15 @@ const bDate =
                     }}
                   >
                     </div>
-                    <div>
+
+ </div>
+style={{
+                      marginTop: 8,
+                    }}
+                  >
+                    </div>
+                  
+                  <div>
                       實際繳款日：
                       {card.paidDate ||
                         "未記錄"}
