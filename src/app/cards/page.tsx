@@ -671,7 +671,8 @@ const todayOnly = new Date(
   style={{
     display: "flex",
     flexWrap: "wrap",
-    
+    gap: 8,
+    marginTop: 8,
     marginBottom: 8,
   }}
 >
@@ -686,8 +687,26 @@ const todayOnly = new Date(
       cursor: "pointer",
     }}
   >
-              <button
-    onClick={/* 保留你原本的 onClick */}
+              ✏️ 編輯
+  </button>
+
+  {/* 啟用 / 停用按鈕放這裡 */}
+
+            <button
+    onClick={async () => {
+      const { error } = await supabase
+        .from("CreditCards")
+        .update({
+          is_active: !card.is_active,
+        })
+        .eq("id", card.id);
+       if (error) {
+        setMessage(error.message);
+        return;
+      }
+
+      await loadCards();
+    }}
     style={{
       padding: "6px 12px",
       borderRadius: 8,
@@ -704,8 +723,9 @@ const todayOnly = new Date(
         : "#2f6b3b",
     }}
   >
-                {card.is_active ? "停用" : "啟用"}
+    {card.is_active ? "停用" : "啟用"}
   </button>
+</div>
 </div>
 
   {editingCardId === card.id && (
