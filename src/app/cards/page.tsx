@@ -927,7 +927,7 @@ const todayOnly = new Date(
       
       
 
-         <div
+       <div
   style={{
     display: "inline-block",
     marginTop: 6,
@@ -936,24 +936,21 @@ const todayOnly = new Date(
     background: getCurrentStatementStatusText(card).includes(
       "已結帳"
     )
-       ? "#eef9f1"
+      ? "#eef9f1"
       : "#eef7ff",
   }}
 >
   {getCurrentStatementStatusText(card)}
 </div>
-          
-         <div style={{ marginTop: 6 }}>
+    <div
+  style={{
+    marginTop: 6,
+  }}
+>
   本期繳款日：
   {getCurrentDueDateText(card)}
 </div>
-
-  <div>
-  本期繳款日：
-  {getCurrentDueDateText(card)}
-</div>
-
-          <div
+  <div
   style={{
     display: "inline-block",
     marginTop: 6,
@@ -969,7 +966,7 @@ const todayOnly = new Date(
         : "transparent",
   }}
 >
-           {getCurrentDueStatusText(card)}
+    {getCurrentDueStatusText(card)}
 </div>
 
 <hr
@@ -980,7 +977,6 @@ const todayOnly = new Date(
     borderTop: "1px solid #eee",
   }}
 />
-
   <div
   style={{
     marginTop: 12,
@@ -1008,54 +1004,16 @@ const todayOnly = new Date(
     background:
       getNextStatementLevel(card) === "today"
         ? "#fff1d6"
-        : getNextStatementLevel(card) === "soon"
+      : getNextStatementLevel(card) === "soon"
         ? "#fffbe6"
         : "#eef7ff",
   }}
 >
   {getNextStatementStatusText(card)}
 </div>
-          
-          <button
-  onClick={() => toggleCard(card)}
-  style={{
-  padding: "6px 12px",
- 
-  borderRadius: 8,
-  fontWeight: "bold",
-  cursor: "pointer",
-    border: card.is_active
-    ? "1px solid #efb7b7"
-    : "1px solid #b7dfc3",
-
-  background: card.is_active
-    ? "#ffecec"
-    : "#eef9f1",
-
-  color: card.is_active
-    ? "#a33"
-    : "#2f6b3b",
-}}
->
-  {card.is_active ? "停用" : "啟用"}
-</button>
-
-         <button
-  onClick={() => startEditCard(card)}
-  style={{
-    padding: "6px 12px",
-    border: "1px solid #b8d7f0",
-    borderRadius: 8,
-    background: "#eef7ff",
-    fontWeight: "bold",
-    cursor: "pointer",
-  }}
->
-  ✏️ 編輯
-</button>
-          
-        </div>
-      ))}
-    </main>
-  );
+</div>
+))}
+</div>
+</main>
+);
 }
