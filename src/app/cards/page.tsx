@@ -669,7 +669,24 @@ const todayOnly = new Date(
 >
   {card.name}
 </div>
-          <div>{card.is_active ? "啟用" : "停用"}</div>
+          <div
+  style={{
+    display: "inline-block",
+    marginBottom: 8,
+    padding: "3px 8px",
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: "bold",
+    background: card.is_active
+      ? "#eef9f1"
+      : "#f1f1f1",
+    color: card.is_active
+      ? "#2f6b3b"
+      : "#666",
+  }}
+>
+  {card.is_active ? "啟用" : "停用"}
+</div>
 
           <div
   style={{
