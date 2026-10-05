@@ -3283,22 +3283,18 @@ const bDate =
                       marginTop: 8,
                     }}
                   >
-                    </div>
-
- </div>
-style={{
+             
+{/* 這是修正後的區塊 */}
+                  <div
+                    style={{
+                      
                       marginTop: 8,
-                    }}
+                      }}
                   >
-                    </div>
-                  
-                  <div>
-                      實際繳款日：
-                      {card.paidDate ||
-                        "未記錄"}
-                    </div>
-
-                    {card.statementStatusId !==
+                    實際繳款日：
+                    {card.paidDate || "未記錄"}
+                  </div>
+               {card.statementStatusId !==
                       null && (
                       <button
                         onClick={() => {
