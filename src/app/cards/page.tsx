@@ -104,7 +104,7 @@ await loadCards();
 }
 
   function startEditCard(card: CreditCard) {
-  setEditingCardID(card.id);
+  setEditingCardId(card.id);
   setName(card.name);
   setStatementDay(
     card.statement_day ? String(card.statement_day) : ""
