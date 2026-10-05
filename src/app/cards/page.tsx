@@ -347,6 +347,50 @@ const dueDate = new Date(
   ).padStart(2, "0")}`;
 }
 
+  function getNextDueDateText(card: CreditCard) {
+  if (!card.statement_day || !card.due_day) {
+    return "未設定";
+  }
+    const currentStatementEndDate =
+    getCurrentStatementEndDate(card);
+
+  if (!currentStatementEndDate) {
+    return "未設定";
+  }
+    const nextStatementDate = new Date(
+    currentStatementEndDate.getFullYear(),
+    currentStatementEndDate.getMonth() + 1,
+    Math.min(
+      card.statement_day,
+      new Date(
+        currentStatementEndDate.getFullYear(),
+        currentStatementEndDate.getMonth() + 2,
+        0
+      ).getDate()
+    )
+  );
+
+  const offset =
+    card.due_month_offset ?? 1;
+    const nextDueDate = new Date(
+    nextStatementDate.getFullYear(),
+    nextStatementDate.getMonth() + offset,
+    Math.min(
+      card.due_day,
+      new Date(
+        nextStatementDate.getFullYear(),
+        nextStatementDate.getMonth() + offset + 1,
+        0
+      ).getDate()
+    )
+  );
+    return `${nextDueDate.getFullYear()}/${String(
+    nextDueDate.getMonth() + 1
+  ).padStart(2, "0")}/${String(
+    nextDueDate.getDate()
+  ).padStart(2, "0")}`;
+}
+
   function getNextStatementStatusText(card: CreditCard) {
   if (!card.statement_day) {
     return "未設定結帳日";
@@ -657,6 +701,11 @@ const todayOnly = new Date(
           <div>
   下一期結帳日：
   {getNextStatementDateText(card)}
+</div>
+
+          <div>
+  下一期預計繳款日：
+  {getNextDueDateText(card)}
 </div>
 
           <div
