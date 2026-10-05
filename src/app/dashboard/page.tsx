@@ -3416,73 +3416,56 @@ const bDate =
 
                     {selectedStatementExpenses.length ===
                     0 ? (
-                      <p>
-                        本期沒有消費
-                      </p>
-                    ) : (
-                      selectedStatementExpenses.map(
-                        (
-                          expense
-                        ) => (
-                          <div
-                            key={
-                              expense.id
-                            }
-                            style={{
-                              padding:
-                                "8px 0",
-                              borderBottom:
-                                "1px solid #eee",
-                            }}
-                          >
-                            <Link
-                              href={`/expenses/${expense.id}`}
-                            >
-                              {
-                                expense.date
-                              }{" "}
-                              {
-                                expense.item
-                              }
-                            </Link>
 
-                            <div>
-                              {expense.currency ||
-                                "USD"}{" "}
-                              {Number(
-                                expense.amount
-                              ).toFixed(
-                                2
-                              )}
-                            </div>
-                          </div>
-                        )
-                      )
-                    )}
-                  </div>
-                )}
-              </div>
-           );
-          })
-        )}
-      </section>
-
-              {/* ==================== 📚 歷史帳單區段 ==================== */}
-      {showStatementHistory && (
-        <section
-          id="statement-history"
-          style={{
-            marginBottom: 30,
-          }
+<p>
+  本期沒有消費
+</p>
+) : (
+  selectedStatementExpenses.map(
+    (expense) => (
+      <div
+        key={expense.id}
+        style={{
+          padding: "8px 0",
+          borderBottom: "1px solid #eee",
+        }}
         >
-          <h2>
-            📚 歷史帳單（
-            {
-              filteredStatementHistory.length
-            }{" "}
-            筆）
-          </h2>
+        <Link
+          href={`/expenses/${expense.id}`}
+        >
+          {expense.date}{" "}
+          {expense.item}
+        </Link>
+        <div>
+          {expense.currency || "USD"}{" "}
+          {Number(
+            expense.amount
+          ).toFixed(2)}
+        </div>
+      </div>
+       )
+  )
+)}
+</div>
+)}
+</div>
+))
+)}
+</section>
+              {showStatementHistory && (
+  <section
+    id="statement-history"
+    style={{
+      marginBottom: 30,
+    }}
+  >
 
+    <h2>
+      📚 歷史帳單（
+      {filteredStatementHistory.length} 筆）
+    </h2>
+
+                      
           <div
             style={{
               marginBottom: 12,
