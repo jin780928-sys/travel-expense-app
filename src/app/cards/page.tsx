@@ -104,7 +104,7 @@ await loadCards();
 }
 
   function startEditCard(card: CreditCard) {
-  setEditingCardId(card.id);
+  setEditingCardID(card.id);
   setName(card.name);
   setStatementDay(
     card.statement_day ? String(card.statement_day) : ""
@@ -119,7 +119,7 @@ await loadCards();
 }
 
   async function saveEditCard() {
-  if (!editingCardId) return;
+  if (!editingCardID) return;
 
   if (!name.trim()) {
     setMessage("請輸入信用卡名稱");
@@ -135,14 +135,14 @@ await loadCards();
       due_month_offset:
   Number(dueMonthOffset),
     })
-    .eq("id", editingCardId);
+    .eq("id", editingCardID);
 
   if (error) {
     setMessage(error.message);
     return;
   }
 
-  setEditingCardId(null);
+  setEditingCardID(null);
   setName("");
   setStatementDay("");
   setDueDay("");
