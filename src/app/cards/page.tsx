@@ -670,19 +670,43 @@ const todayOnly = new Date(
           <div
   style={{
     display: "flex",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 6,
+    flexWrap: "wrap",
+    
+    marginBottom: 8,
   }}
 >
-            <div
+            <button
+    onClick={() => startEditCard(card)}
     style={{
-      fontSize: 20,
+      padding: "6px 12px",
+      border: "1px solid #b8d7f0",
+      borderRadius: 8,
+      background: "#eef7ff",
       fontWeight: "bold",
+      cursor: "pointer",
     }}
   >
-    {card.name}
-  </div>
+              <button
+    onClick={/* 保留你原本的 onClick */}
+    style={{
+      padding: "6px 12px",
+      borderRadius: 8,
+      fontWeight: "bold",
+      cursor: "pointer",
+      border: card.is_active
+        ? "1px solid #efb7b7"
+        : "1px solid #b7dfc3",
+      background: card.is_active
+        ? "#ffecec"
+        : "#eef9f1",
+      color: card.is_active
+        ? "#a33"
+        : "#2f6b3b",
+    }}
+  >
+                {card.is_active ? "停用" : "啟用"}
+  </button>
+</div>
 
   {editingCardId === card.id && (
     <span
@@ -850,8 +874,7 @@ const todayOnly = new Date(
   onClick={() => toggleCard(card)}
   style={{
   padding: "6px 12px",
-  marginTop: 8,
-  marginLeft: 8,
+ 
   borderRadius: 8,
   fontWeight: "bold",
   cursor: "pointer",
@@ -875,7 +898,6 @@ const todayOnly = new Date(
   onClick={() => startEditCard(card)}
   style={{
     padding: "6px 12px",
-    marginTop: 8,
     border: "1px solid #b8d7f0",
     borderRadius: 8,
     background: "#eef7ff",
