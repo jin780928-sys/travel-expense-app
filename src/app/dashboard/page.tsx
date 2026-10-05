@@ -3606,8 +3606,13 @@ export default function DashboardPage() {
                         lineHeight: 1.7,
                       }}
                     >
-                      <div>
-                        帳單金額：
+                      <div
+  style={{
+    fontSize: 18,
+    fontWeight: "bold",
+  }}
+>
+  帳單金額：
                         {Object.keys(
                           totals
                         ).length === 0 ? (
