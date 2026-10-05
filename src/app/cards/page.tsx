@@ -669,12 +669,35 @@ const todayOnly = new Date(
 >
           <div
   style={{
-    fontSize: 20,
-    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
     marginBottom: 6,
   }}
 >
-  {card.name}
+            <div
+    style={{
+      fontSize: 20,
+      fontWeight: "bold",
+    }}
+  >
+    {card.name}
+  </div>
+
+  {editingCardID === card.id && (
+    <span
+      style={{
+        padding: "3px 8px",
+        borderRadius: 999,
+        fontSize: 12,
+        fontWeight: "bold",
+        background: "#eef7ff",
+        color: "#356b99",
+      }}
+    >
+      編輯中
+    </span>
+  )}
 </div>
           <div
   style={{
