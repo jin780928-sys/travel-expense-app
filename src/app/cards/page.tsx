@@ -662,7 +662,7 @@ const todayOnly = new Date(
     : "1px solid #ddd",
     borderRadius: 10,
     background:
-  editingCardID === card.id
+  editingCardId === card.id
     ? "#f7fbff"
     : "white",
   }}
