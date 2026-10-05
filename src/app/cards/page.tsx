@@ -698,6 +698,16 @@ const todayOnly = new Date(
   本期帳單區間：
   {getCurrentStatementPeriodText(card)}
 </div>
+
+          <div
+  style={{
+    marginTop: 12,
+    marginBottom: 6,
+    fontWeight: "bold",
+  }}
+>
+  下一期
+</div>
           <div>
   下一期結帳日：
   {getNextStatementDateText(card)}
