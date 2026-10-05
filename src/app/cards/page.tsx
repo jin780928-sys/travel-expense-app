@@ -661,6 +661,10 @@ const todayOnly = new Date(
     ? "2px solid #8bbce5"
     : "1px solid #ddd",
     borderRadius: 10,
+    background:
+  editingCardID === card.id
+    ? "#f7fbff"
+    : "white",
   }}
 >
           <div
