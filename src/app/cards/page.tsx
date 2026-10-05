@@ -927,22 +927,28 @@ const todayOnly = new Date(
       
       
 
-          <div
+         <div
   style={{
     display: "inline-block",
     marginTop: 6,
     padding: "4px 8px",
     borderRadius: 6,
-    background:
-      getCurrentStatementStatusText(card).includes("已結帳")
-        ? "#eef9f1"
-        : "#eef7ff",
+    background: getCurrentStatementStatusText(card).includes(
+      "已結帳"
+    )
+       ? "#eef9f1"
+      : "#eef7ff",
   }}
 >
   {getCurrentStatementStatusText(card)}
 </div>
           
-          <div>
+         <div style={{ marginTop: 6 }}>
+  本期繳款日：
+  {getCurrentDueDateText(card)}
+</div>
+
+  <div>
   本期繳款日：
   {getCurrentDueDateText(card)}
 </div>
@@ -963,7 +969,51 @@ const todayOnly = new Date(
         : "transparent",
   }}
 >
-  {getCurrentDueStatusText(card)}
+           {getCurrentDueStatusText(card)}
+</div>
+
+<hr
+  style={{
+    marginTop: 14,
+    marginBottom: 12,
+    border: "none",
+    borderTop: "1px solid #eee",
+  }}
+/>
+
+  <div
+  style={{
+    marginTop: 12,
+    marginBottom: 6,
+    fontWeight: "bold",
+  }}
+>
+  下一期
+</div>
+  <div>
+  下一期結帳日：
+  {getNextStatementDateText(card)}
+</div>
+
+<div>
+  下一期預計繳款日：
+  {getNextDueDateText(card)}
+</div>
+  <div
+  style={{
+    display: "inline-block",
+    marginTop: 6,
+    padding: "4px 8px",
+    borderRadius: 6,
+    background:
+      getNextStatementLevel(card) === "today"
+        ? "#fff1d6"
+        : getNextStatementLevel(card) === "soon"
+        ? "#fffbe6"
+        : "#eef7ff",
+  }}
+>
+  {getNextStatementStatusText(card)}
 </div>
           
           <button
