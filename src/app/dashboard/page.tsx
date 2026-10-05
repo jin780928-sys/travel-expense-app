@@ -3076,7 +3076,14 @@ const bDate =
                   borderRadius: 10,
                 }}
               >
-                <div>
+                <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+  }}
+>
                   <button
                     onClick={() =>
                       setSelectedStatementCard(
@@ -3099,7 +3106,7 @@ const bDate =
 
                   <span
                     style={{
-                      marginLeft: 8,
+                      
                       padding:
                         "3px 8px",
                       borderRadius: 999,
@@ -3136,7 +3143,7 @@ const bDate =
                   style={{
                     marginTop: 8,
                     marginBottom: 8,
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight:
                       "bold",
                   }}
@@ -3195,6 +3202,15 @@ const bDate =
                   )}
                 </div>
 
+                <div
+  style={{
+    marginTop: 10,
+    padding: 10,
+    background: "#fafafa",
+    borderRadius: 8,
+    lineHeight: 1.7,
+  }}
+>
                 <div>
   帳單月份：
   {selectedYear}/{String(
@@ -3208,7 +3224,7 @@ const bDate =
   )}
 </div>
                 
-                <div>
+                </div>
                   本期區間：
                   {card.periodStart &&
                   card.periodEnd
