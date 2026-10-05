@@ -44,7 +44,7 @@ type CurrentCardStatement = CreditCard & {
 export default function DashboardPage() {
   const today = new Date();
 
-  const [selectedYear, setSelectedYear] = useState(
+const [selectedYear, setSelectedYear] = useState(
     today.getFullYear()
   );
 
@@ -52,12 +52,12 @@ export default function DashboardPage() {
     today.getMonth() + 1
   );
 
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+const [expenses, setExpenses] = useState<Expense[]>([]);
   const [statementExpenses, setStatementExpenses] = useState<
     Expense[]
   >([]);
 
-  const [creditCards, setCreditCards] = useState<
+const [creditCards, setCreditCards] = useState<
     CreditCard[]
   >([]);
 
@@ -65,21 +65,21 @@ export default function DashboardPage() {
     CreditCardStatement[]
   >([]);
 
-  const [message, setMessage] = useState("");
+const [message, setMessage] = useState("");
 
   const [selectedCard, setSelectedCard] = useState<
     string | null
   >(null);
 
-  const [showZeroBalanceCards, setShowZeroBalanceCards] =
+const [showZeroBalanceCards, setShowZeroBalanceCards] =
     useState(false);
 
-  const [
+const [
     selectedStatementCard,
     setSelectedStatementCard,
   ] = useState<string | null>(null);
 
-  const [
+const [
     editingPaidStatementId,
     setEditingPaidStatementId,
   ] = useState<number | string | null>(null);
@@ -87,31 +87,31 @@ export default function DashboardPage() {
   const [editingPaidDate, setEditingPaidDate] =
     useState("");
 
-  const [showStatementHistory, setShowStatementHistory] =
+const [showStatementHistory, setShowStatementHistory] =
     useState(false);
 
   const [expandedHistoryIds, setExpandedHistoryIds] =
     useState<Array<number | string>>([]);
 
-  const [historyMonthFilter, setHistoryMonthFilter] =
+const [historyMonthFilter, setHistoryMonthFilter] =
     useState("all");
 
   const [historyCardFilter, setHistoryCardFilter] =
     useState("all");
 
-  const [historyStatusFilter, setHistoryStatusFilter] =
+const [historyStatusFilter, setHistoryStatusFilter] =
     useState("all");
 
   const [historySort, setHistorySort] =
     useState("newest");
 
-  const [historySearch, setHistorySearch] =
+const [historySearch, setHistorySearch] =
     useState("");
 
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
-  useEffect(() => {
+useEffect(() => {
     loadDashboardData();
   }, [selectedYear, selectedMonth]);
 
@@ -125,21 +125,21 @@ export default function DashboardPage() {
     historySearch,
   ]);
 
-  function dateToString(date: Date) {
+function dateToString(date: Date) {
     const year = date.getFullYear();
 
     const month = String(
       date.getMonth() + 1
     ).padStart(2, "0");
 
-    const day = String(
+  const day = String(
       date.getDate()
     ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   }
 
-  function createSafeDate(
+function createSafeDate(
     year: number,
     monthIndex: number,
     day: number
@@ -150,17 +150,28 @@ export default function DashboardPage() {
       0
     ).getDate();
 
-    return new Date(
+  return new Date(
       year,
       monthIndex,
       Math.min(day, lastDay)
     );
   }
 
+  function formatDate(dateString: string) {
+    if (!dateString) {
+      return "";
+    }
+
+  const [year, month, day] =
+      dateString.split("-");
+
+    return `${year}/${month}/${day}`;
+  }
+
   async function loadDashboardData() {
     setMessage("載入中...");
 
-    const {
+  const {
       data: { user },
     } = await supabase.auth.getUser();
 
@@ -169,7 +180,7 @@ export default function DashboardPage() {
       return;
     }
 
-    const monthStart = new Date(
+  const monthStart = new Date(
       selectedYear,
       selectedMonth - 1,
       1
@@ -181,7 +192,7 @@ export default function DashboardPage() {
       0
     );
 
-    const [
+  const [
       monthlyExpenseResult,
       statementExpenseResult,
       cardResult,
@@ -189,9 +200,8 @@ export default function DashboardPage() {
     ] = await Promise.all([
       supabase
         .from("Expenses")
-        .select(
-          `
-          id,
+        .select(`
+        id,
           date,
           item,
           amount,
@@ -199,25 +209,17 @@ export default function DashboardPage() {
           category,
           currency,
           card_name
-        `
-        )
-        .eq("expense_scope", "daily")
-        .gte(
-          "date",
-          dateToString(monthStart)
-        )
-        .lte(
-          "date",
-          dateToString(monthEnd)
-        )
+        `)
+    .eq("expense_scope", "daily")
+        .gte("date", dateToString(monthStart))
+        .lte("date", dateToString(monthEnd))
         .order("date", {
           ascending: false,
         }),
 
-      supabase
+    supabase
         .from("Expenses")
-        .select(
-          `
+        .select(`
           id,
           date,
           item,
@@ -226,85 +228,70 @@ export default function DashboardPage() {
           category,
           currency,
           card_name
-        `
-        )
-        .eq("expense_scope", "daily")
+        `)
+    .eq("expense_scope", "daily")
         .order("date", {
           ascending: false,
         }),
 
-      supabase
+    supabase
         .from("CreditCards")
-.select(
-  `
-  id,
-  name,
-  statement_day,
-  due_day,
-  due_month_offset
-`
-)
+        .select(`
+          id,
+          name,
+          statement_day,
+          due_day,
+          due_month_offset
+        `)
         .eq("is_active", true)
         .order("name"),
 
-      supabase
+     supabase
         .from("CreditCardStatements")
-        .select(
-          `
+        .select(`
           id,
           card_id,
           period_start,
           period_end,
           is_paid,
           paid_date
-        `
-        ),
+        `),
     ]);
 
-    if (monthlyExpenseResult.error) {
-      setMessage(
-        monthlyExpenseResult.error.message
-      );
+  if (monthlyExpenseResult.error) {
+      setMessage(monthlyExpenseResult.error.message);
       return;
     }
 
-    if (statementExpenseResult.error) {
-      setMessage(
-        statementExpenseResult.error.message
-      );
+
+  if (statementExpenseResult.error) {
+      setMessage(statementExpenseResult.error.message);
       return;
     }
 
     if (cardResult.error) {
-      setMessage(
-        cardResult.error.message
-      );
+      setMessage(cardResult.error.message);
       return;
     }
 
-    if (statementResult.error) {
-      setMessage(
-        statementResult.error.message
-      );
+  if (statementResult.error) {
+      setMessage(statementResult.error.message);
       return;
     }
 
     setExpenses(
-      (monthlyExpenseResult.data ||
-        []) as Expense[]
+      (monthlyExpenseResult.data || []) as Expense[]
     );
 
-    setStatementExpenses(
-      (statementExpenseResult.data ||
-        []) as Expense[]
+  setStatementExpenses(
+      (statementExpenseResult.data || []) as Expense[]
     );
 
     setCreditCards(
-      (cardResult.data ||
-        []) as CreditCard[]
+      (cardResult.data || []) as CreditCard[]
     );
 
-    setCardStatements(
+  setCardStatements(
       (statementResult.data ||
         []) as CreditCardStatement[]
     );
@@ -312,14 +299,14 @@ export default function DashboardPage() {
     setMessage("");
   }
 
-  const totalsByCurrency = useMemo(() => {
+ const totalsByCurrency = useMemo(() => {
     const totals: Record<string, number> = {};
 
     for (const expense of expenses) {
       const currency =
         expense.currency || "USD";
 
-      totals[currency] =
+   totals[currency] =
         (totals[currency] || 0) +
         Number(expense.amount || 0);
     }
@@ -327,7 +314,7 @@ export default function DashboardPage() {
     return totals;
   }, [expenses]);
 
-  const totalsByCategory = useMemo(() => {
+const totalsByCategory = useMemo(() => {
     const totals: Record<
       string,
       Record<string, number>
@@ -337,14 +324,14 @@ export default function DashboardPage() {
       const category =
         expense.major_category || "未分類";
 
-      const currency =
+  const currency =
         expense.currency || "USD";
 
       if (!totals[category]) {
         totals[category] = {};
       }
 
-      totals[category][currency] =
+  totals[category][currency] =
         (totals[category][currency] || 0) +
         Number(expense.amount || 0);
     }
@@ -352,13 +339,13 @@ export default function DashboardPage() {
     return totals;
   }, [expenses]);
 
-  const totalsByCard = useMemo(() => {
+const totalsByCard = useMemo(() => {
     const totals: Record<
       string,
       Record<string, number>
     > = {};
 
-    for (const expense of expenses) {
+                             for (const expense of expenses) {
       if (!expense.card_name) {
         continue;
       }
@@ -366,14 +353,14 @@ export default function DashboardPage() {
       const cardName =
         expense.card_name;
 
-      const currency =
+  const currency =
         expense.currency || "USD";
 
       if (!totals[cardName]) {
         totals[cardName] = {};
       }
 
-      totals[cardName][currency] =
+  totals[cardName][currency] =
         (totals[cardName][currency] || 0) +
         Number(expense.amount || 0);
     }
@@ -381,7 +368,7 @@ export default function DashboardPage() {
     return totals;
   }, [expenses]);
 
-  const filteredCardExpenses =
+const filteredCardExpenses =
     useMemo(() => {
       if (!selectedCard) {
         return [];
@@ -389,70 +376,57 @@ export default function DashboardPage() {
 
       return expenses.filter(
         (expense) =>
-          expense.card_name ===
-          selectedCard
-      );
+          expense.card_name === selectedCard
+        );
     }, [expenses, selectedCard]);
 
-  function formatDate(
-    dateString: string
+  function getDueDateText(
+    dueDay: number | null,
+    dueMonthOffset: number | null = 1
   ) {
-    if (!dateString) {
-      return "";
+    if (!dueDay) {
+      return "未設定";
     }
 
-    const [year, month, day] =
-      dateString.split("-");
+  const offset =
+      dueMonthOffset ?? 1;
 
-    return `${year}/${month}/${day}`;
+    const dueDate = createSafeDate(
+      selectedYear,
+      selectedMonth - 1 + offset,
+      dueDay
+    );
+
+   return `${dueDate.getFullYear()}/${String(
+      dueDate.getMonth() + 1
+    ).padStart(2, "0")}/${String(
+      dueDate.getDate()
+    ).padStart(2, "0")}`;
   }
 
-  function getDueDateText(
-  dueDay: number | null,
-  dueMonthOffset: number | null = 1
-) {
-  if (!dueDay) {
-    return "未設定";
+
+function getDueMonthText(
+    dueMonthOffset: number | null = 1
+  ) {
+    const offset =
+      dueMonthOffset ?? 1;
+
+    const dueDate = new Date(
+      selectedYear,
+      selectedMonth - 1 + offset,
+      1
+    );
+
+  return `${dueDate.getFullYear()}/${String(
+      dueDate.getMonth() + 1
+    ).padStart(2, "0")}`;
   }
-
-  const offset =
-    dueMonthOffset ?? 1;
-
-  const dueDate = createSafeDate(
-    selectedYear,
-    selectedMonth - 1 + offset,
-    dueDay
-  );
-
-  return `${dueDate.getFullYear()}/${String(
-    dueDate.getMonth() + 1
-  ).padStart(2, "0")}/${String(
-    dueDate.getDate()
-  ).padStart(2, "0")}`;
-}
-
-  function getDueMonthText(
-  dueMonthOffset: number | null = 1
-) {
-  const offset =
-    dueMonthOffset ?? 1;
-
-  const dueDate = new Date(
-    selectedYear,
-    selectedMonth - 1 + offset,
-    1
-  );
-
-  return `${dueDate.getFullYear()}/${String(
-    dueDate.getMonth() + 1
-  ).padStart(2, "0")}`;
-}
 
   function getDueStatus(
-  dueDay: number | null,
-  isPaid: boolean,
-  dueMonthOffset: number | null = 1
-) {
+    dueDay: number | null,
+    isPaid: boolean,
+    dueMonthOffset: number | null = 1
+  ) {
     if (isPaid) {
       return "✅ 已完成繳款";
     }
@@ -469,13 +443,16 @@ export default function DashboardPage() {
       now.getDate()
     );
 
+  const offset =
+      dueMonthOffset ?? 1;
+
     const dueDate = createSafeDate(
       selectedYear,
-      selectedMonth - 1,
+      selectedMonth - 1 + offset,
       dueDay
     );
 
-    const diffMs =
+  const diffMs =
       dueDate.getTime() -
       todayOnly.getTime();
 
@@ -484,7 +461,7 @@ export default function DashboardPage() {
         (1000 * 60 * 60 * 24)
     );
 
-    if (diffDays > 0) {
+  if (diffDays > 0) {
       return `距離繳款日還有 ${diffDays} 天`;
     }
 
@@ -497,16 +474,16 @@ export default function DashboardPage() {
     )} 天`;
   }
 
-  function getDueLevel(
-  dueDay: number | null,
-  isPaid: boolean,
-  dueMonthOffset: number | null = 1
-) {
+function getDueLevel(
+    dueDay: number | null,
+    isPaid: boolean,
+    dueMonthOffset: number | null = 1
+  ) {
     if (isPaid || !dueDay) {
       return "normal";
     }
 
-    const now = new Date();
+  const now = new Date();
 
     const todayOnly = new Date(
       now.getFullYear(),
@@ -514,20 +491,20 @@ export default function DashboardPage() {
       now.getDate()
     );
 
-   const offset =
-  dueMonthOffset ?? 1;
+    const offset =
+      dueMonthOffset ?? 1;
 
-const dueDate = createSafeDate(
-  selectedYear,
-  selectedMonth - 1 + offset,
-  dueDay
-);
+  const dueDate = createSafeDate(
+      selectedYear,
+      selectedMonth - 1 + offset,
+      dueDay
+    );
 
     const diffMs =
       dueDate.getTime() -
       todayOnly.getTime();
 
-    const diffDays = Math.ceil(
+  const diffDays = Math.ceil(
       diffMs /
         (1000 * 60 * 60 * 24)
     );
@@ -540,19 +517,19 @@ const dueDate = createSafeDate(
       return "today";
     }
 
-    return "soon";
+   return "soon";
   }
 
- function getStatementBadge(
-  dueDay: number | null,
-  isPaid: boolean,
-  dueMonthOffset: number | null = 1
-) {
+  function getStatementBadge(
+    dueDay: number | null,
+    isPaid: boolean,
+    dueMonthOffset: number | null = 1
+  ) {
     if (isPaid) {
       return "已繳";
     }
 
-    if (!dueDay) {
+  if (!dueDay) {
       return "未設定";
     }
 
@@ -564,16 +541,16 @@ const dueDate = createSafeDate(
       now.getDate()
     );
 
-   const offset =
-  dueMonthOffset ?? 1;
+  const offset =
+      dueMonthOffset ?? 1;
 
-const dueDate = createSafeDate(
-  selectedYear,
-  selectedMonth - 1 + offset,
-  dueDay
-);
+    const dueDate = createSafeDate(
+      selectedYear,
+      selectedMonth - 1 + offset,
+      dueDay
+    );
 
-    const diffMs =
+  const diffMs =
       dueDate.getTime() -
       todayOnly.getTime();
 
@@ -586,14 +563,14 @@ const dueDate = createSafeDate(
       return "已逾期";
     }
 
-    if (diffDays === 0) {
+  if (diffDays === 0) {
       return "今天到期";
     }
 
     return "未繳";
   }
 
-  const currentCardStatements =
+const currentCardStatements =
     useMemo<CurrentCardStatement[]>(() => {
       return creditCards.map((card) => {
         if (!card.statement_day) {
@@ -608,20 +585,20 @@ const dueDate = createSafeDate(
           };
         }
 
-        const endDate = createSafeDate(
+                             const endDate = createSafeDate(
           selectedYear,
           selectedMonth - 1,
           card.statement_day
         );
 
-        const previousEndDate =
+                             const previousEndDate =
           createSafeDate(
             selectedYear,
             selectedMonth - 2,
             card.statement_day
           );
 
-        const startDate =
+                             const startDate =
           new Date(previousEndDate);
 
         startDate.setDate(
@@ -631,7 +608,7 @@ const dueDate = createSafeDate(
         const periodStart =
           dateToString(startDate);
 
-        const periodEnd =
+                             const periodEnd =
           dateToString(endDate);
 
         const totals: Record<
@@ -639,7 +616,7 @@ const dueDate = createSafeDate(
           number
         > = {};
 
-        for (
+                             for (
           const expense of statementExpenses
         ) {
           if (
@@ -649,7 +626,7 @@ const dueDate = createSafeDate(
             continue;
           }
 
-          if (
+        if (
             expense.date < periodStart ||
             expense.date > periodEnd
           ) {
@@ -659,19 +636,15 @@ const dueDate = createSafeDate(
           const currency =
             expense.currency || "USD";
 
-          totals[currency] =
+        totals[currency] =
             (totals[currency] || 0) +
-            Number(
-              expense.amount || 0
-            );
+            Number(expense.amount || 0);
         }
 
-        const statementStatus =
+                             const statementStatus =
           cardStatements.find(
             (statement) =>
-              Number(
-                statement.card_id
-              ) ===
+              Number(statement.card_id) ===
                 Number(card.id) &&
               statement.period_start ===
                 periodStart &&
@@ -679,23 +652,21 @@ const dueDate = createSafeDate(
                 periodEnd
           );
 
-        return {
+                             return {
           ...card,
           periodStart,
           periodEnd,
           totals,
           statementStatusId:
-            statementStatus?.id ??
-            null,
+                               statementStatus?.id ?? null,
           isPaid:
-            statementStatus?.is_paid ??
-            false,
+            statementStatus?.is_paid ?? false,
           paidDate:
-            statementStatus?.paid_date ??
-            null,
+            statementStatus?.paid_date ?? null,
         };
       });
-    }, [
+
+                                    }, [
       creditCards,
       cardStatements,
       statementExpenses,
@@ -703,7 +674,7 @@ const dueDate = createSafeDate(
       selectedMonth,
     ]);
 
-  const sortedCardStatements =
+const sortedCardStatements =
     useMemo(() => {
       return [...currentCardStatements].sort(
         (a, b) => {
@@ -711,7 +682,7 @@ const dueDate = createSafeDate(
             return a.isPaid ? 1 : -1;
           }
 
-          const aDue =
+        const aDue =
             a.due_day ?? 99;
 
           const bDue =
@@ -722,13 +693,13 @@ const dueDate = createSafeDate(
       );
     }, [currentCardStatements]);
 
-  const visibleCardStatements =
+const visibleCardStatements =
     useMemo(() => {
       if (showZeroBalanceCards) {
         return sortedCardStatements;
       }
 
-      return sortedCardStatements.filter(
+            return sortedCardStatements.filter(
         (card) =>
           Object.values(
             card.totals
@@ -741,7 +712,7 @@ const dueDate = createSafeDate(
       showZeroBalanceCards,
     ]);
 
-  const statementSummary =
+const statementSummary =
     useMemo(() => {
       const cardsWithAmount =
         sortedCardStatements.filter(
@@ -753,7 +724,7 @@ const dueDate = createSafeDate(
             )
         );
 
-      return {
+             return {
         total:
           cardsWithAmount.length,
 
@@ -762,14 +733,14 @@ const dueDate = createSafeDate(
             (card) => !card.isPaid
           ).length,
 
-        paid:
+               paid:
           cardsWithAmount.filter(
             (card) => card.isPaid
           ).length,
       };
     }, [sortedCardStatements]);
 
-  const paidProgress =
+const paidProgress =
     statementSummary.total === 0
       ? 0
       : Math.round(
@@ -778,7 +749,7 @@ const dueDate = createSafeDate(
             100
         );
 
-  const unpaidStatements =
+const unpaidStatements =
     useMemo(() => {
       const now = new Date();
 
@@ -788,7 +759,7 @@ const dueDate = createSafeDate(
         now.getDate()
       );
 
-      return currentCardStatements
+            return currentCardStatements
         .filter((card) => {
           if (
             card.isPaid ||
@@ -797,7 +768,7 @@ const dueDate = createSafeDate(
             return false;
           }
 
-          const hasAmount =
+                 const hasAmount =
             Object.values(
               card.totals
             ).some(
@@ -808,21 +779,22 @@ const dueDate = createSafeDate(
             return false;
           }
 
-          const offset =
-  card.due_month_offset ?? 1;
 
-const dueDate =
-  createSafeDate(
-    selectedYear,
-    selectedMonth - 1 + offset,
-    card.due_day
-  );
+                const offset =
+            card.due_month_offset ?? 1;
 
-          const diffMs =
+          const dueDate =
+            createSafeDate(
+              selectedYear,
+              selectedMonth - 1 + offset,
+              card.due_day
+            );
+
+                const diffMs =
             dueDate.getTime() -
             todayOnly.getTime();
 
-          const diffDays =
+                const diffDays =
             Math.ceil(
               diffMs /
                 (1000 *
@@ -830,30 +802,30 @@ const dueDate =
                   60 *
                   24)
             );
-
-          return diffDays <= 7;
+return diffDays <= 7;
         })
         .sort((a, b) => {
           const aOffset =
-  a.due_month_offset ?? 1;
+            a.due_month_offset ?? 1;
 
-const bOffset =
-  b.due_month_offset ?? 1;
+          const bOffset =
+            b.due_month_offset ?? 1;
 
-const aDate =
-  createSafeDate(
-    selectedYear,
-    selectedMonth - 1 + aOffset,
-    a.due_day || 1
-  );
+              const aDate =
+            createSafeDate(
+              selectedYear,
+              selectedMonth - 1 + aOffset,
+              a.due_day || 1
+            );
 
-const bDate =
-  createSafeDate(
-    selectedYear,
-    selectedMonth - 1 + bOffset,
-    b.due_day || 1
-  );
+              const bDate =
+            createSafeDate(
+              selectedYear,
+              selectedMonth - 1 + bOffset,
+              b.due_day || 1
+            );
 
+              
           return (
             aDate.getTime() -
             bDate.getTime()
@@ -865,7 +837,7 @@ const bDate =
       selectedMonth,
     ]);
 
-  const nextDueStatement =
+const nextDueStatement =
     unpaidStatements.length > 0
       ? unpaidStatements[0]
       : null;
@@ -877,14 +849,14 @@ const bDate =
         number
       > = {};
 
-      for (
+            for (
         const card of unpaidStatements
       ) {
         for (
           const [
             currency,
             total,
-          ] of Object.entries(
+            ] of Object.entries(
             card.totals
           )
         ) {
@@ -894,7 +866,7 @@ const bDate =
         }
       }
 
-      return totals;
+             return totals;
     }, [unpaidStatements]);
 
   const paidTotalsByCurrency =
@@ -904,14 +876,15 @@ const bDate =
         number
       > = {};
 
-      for (
+            for (
         const card of sortedCardStatements
       ) {
         if (!card.isPaid) {
           continue;
         }
 
-        for (
+
+      for (
           const [
             currency,
             total,
@@ -925,7 +898,7 @@ const bDate =
         }
       }
 
-      return totals;
+            return totals;
     }, [sortedCardStatements]);
 
   const statementTotalsByCurrency =
@@ -935,7 +908,7 @@ const bDate =
         number
       > = {};
 
-      for (
+            for (
         const card of sortedCardStatements
       ) {
         for (
@@ -945,7 +918,7 @@ const bDate =
           ] of Object.entries(
             card.totals
           )
-        ) {
+           ) {
           totals[currency] =
             (totals[currency] || 0) +
             total;
@@ -955,13 +928,54 @@ const bDate =
       return totals;
     }, [sortedCardStatements]);
 
-  const statementHistory =
+const selectedStatement =
+    useMemo(() => {
+      if (!selectedStatementCard) {
+        return null;
+      }
+      return (
+        currentCardStatements.find(
+          (card) =>
+            card.name ===
+            selectedStatementCard
+        ) || null
+      );
+    }, [
+      currentCardStatements,
+      selectedStatementCard,
+    ]);
+
+  const selectedStatementExpenses =
+    useMemo(() => {
+      if (
+        !selectedStatement ||
+        !selectedStatement.periodStart ||
+        !selectedStatement.periodEnd
+      ) {
+        return [];
+      }
+
+            return statementExpenses.filter(
+        (expense) =>
+          expense.card_name ===
+            selectedStatement.name &&
+          expense.date >=
+          selectedStatement.periodStart! &&
+          expense.date <=
+            selectedStatement.periodEnd!
+      );
+    }, [
+      selectedStatement,
+      statementExpenses,
+    ]);
+
+const statementHistory =
     useMemo(() => {
       return [
         ...cardStatements,
       ].sort((a, b) => {
         if (
-          a.period_end ===
+           a.period_end ===
           b.period_end
         ) {
           return (
@@ -970,20 +984,20 @@ const bDate =
           );
         }
 
-        return b.period_end.localeCompare(
+             return b.period_end.localeCompare(
           a.period_end
         );
       });
     }, [cardStatements]);
 
-  const historyMonthOptions =
+const historyMonthOptions =
     useMemo(() => {
       const months =
         new Set<string>();
 
       for (
         const statement of statementHistory
-      ) {
+        ) {
         months.add(
           statement.period_end.slice(
             0,
@@ -994,14 +1008,15 @@ const bDate =
 
       return Array.from(
         months
-      ).sort((a, b) =>
+
+        ).sort((a, b) =>
         b.localeCompare(a)
       );
     }, [statementHistory]);
 
   function getHistoricalStatementTotals(
     statement: CreditCardStatement
-  ) {
+    ) {
     const card = creditCards.find(
       (item) =>
         Number(item.id) ===
@@ -1012,7 +1027,7 @@ const bDate =
       return {};
     }
 
-    const totals: Record<
+  const totals: Record<
       string,
       number
     > = {};
@@ -1036,7 +1051,7 @@ const bDate =
         continue;
       }
 
-      const currency =
+    const currency =
         expense.currency || "USD";
 
       totals[currency] =
@@ -1047,14 +1062,14 @@ const bDate =
     return totals;
   }
 
-  const historyCountByCard =
+const historyCountByCard =
     useMemo(() => {
       const counts: Record<
         string,
         number
       > = {};
 
-      const keyword =
+            const keyword =
         historySearch
           .trim()
           .toLowerCase();
@@ -1062,7 +1077,8 @@ const bDate =
       for (
         const statement of statementHistory
       ) {
-        const monthMatches =
+
+      const monthMatches =
           historyMonthFilter ===
             "all" ||
           statement.period_end.slice(
@@ -1070,7 +1086,7 @@ const bDate =
             7
           ) === historyMonthFilter;
 
-        const statusMatches =
+      const statusMatches =
           historyStatusFilter ===
             "all" ||
           (historyStatusFilter ===
@@ -1080,7 +1096,7 @@ const bDate =
             "unpaid" &&
             !statement.is_paid);
 
-        const card =
+      const card =
           creditCards.find(
             (item) =>
               Number(item.id) ===
@@ -1089,37 +1105,36 @@ const bDate =
               )
           );
 
-        const expensesForStatement =
+      const expensesForStatement =
           statementExpenses.filter(
             (expense) => {
               if (!card) {
                 return false;
               }
 
-              return (
+            return (
                 expense.card_name ===
                   card.name &&
                 expense.date >=
                   statement.period_start &&
-                expense.date <=
+              expense.date <=
                   statement.period_end
               );
             }
           );
-
         const searchMatches =
           keyword === "" ||
           (card?.name || "")
             .toLowerCase()
             .includes(keyword) ||
           expensesForStatement.some(
-            (expense) =>
+             (expense) =>
               expense.item
                 .toLowerCase()
                 .includes(keyword)
           );
 
-        if (
+      if (
           monthMatches &&
           statusMatches &&
           searchMatches
@@ -1129,14 +1144,14 @@ const bDate =
               statement.card_id
             );
 
-          counts[cardId] =
+        counts[cardId] =
             (counts[cardId] || 0) +
             1;
         }
       }
 
       return counts;
-    }, [
+      }, [
       statementHistory,
       historyMonthFilter,
       historyStatusFilter,
@@ -1145,60 +1160,60 @@ const bDate =
       statementExpenses,
     ]);
 
-  useEffect(() => {
-  if (historyCardFilter === "all") {
-    return;
-  }
+useEffect(() => {
+    if (historyCardFilter === "all") {
+      return;
+    }
 
-  const count =
-    historyCountByCard[
-      historyCardFilter
-    ] || 0;
+    const count =
+      historyCountByCard[
+        historyCardFilter
+      ] || 0;
 
-  if (count === 0) {
-    setHistoryCardFilter("all");
-  }
-}, [
-  historyCardFilter,
-  historyCountByCard,
-]);
+          if (count === 0) {
+      setHistoryCardFilter("all");
+    }
+  }, [
+    historyCardFilter,
+    historyCountByCard,
+  ]);
 
-  const filteredStatementHistory =
+const filteredStatementHistory =
     useMemo(() => {
       const keyword =
         historySearch
           .trim()
           .toLowerCase();
 
-      const filtered =
+            const filtered =
         statementHistory.filter(
           (statement) => {
             const monthMatches =
               historyMonthFilter ===
-                "all" ||
+               "all" ||
               statement.period_end.slice(
                 0,
                 7
               ) === historyMonthFilter;
 
-            const cardMatches =
+          const cardMatches =
               historyCardFilter ===
                 "all" ||
               String(
                 statement.card_id
               ) === historyCardFilter;
 
-            const statusMatches =
+          const statusMatches =
               historyStatusFilter ===
                 "all" ||
               (historyStatusFilter ===
                 "paid" &&
-                statement.is_paid) ||
+               statement.is_paid) ||
               (historyStatusFilter ===
                 "unpaid" &&
                 !statement.is_paid);
 
-            const card =
+          const card =
               creditCards.find(
                 (item) =>
                   Number(item.id) ===
@@ -1207,19 +1222,19 @@ const bDate =
                   )
               );
 
-            const expensesForStatement =
+          const expensesForStatement =
               statementExpenses.filter(
                 (expense) => {
                   if (!card) {
                     return false;
                   }
 
-                  return (
+                return (
                     expense.card_name ===
                       card.name &&
                     expense.date >=
                       statement.period_start &&
-                    expense.date <=
+                  expense.date <=
                       statement.period_end
                   );
                 }
@@ -1269,7 +1284,6 @@ const bDate =
               getHistoricalStatementTotals(
                 b
               );
-
             const aAmount =
               Object.values(
                 aTotals
@@ -1279,7 +1293,7 @@ const bDate =
                 0
               );
 
-            const bAmount =
+          const bAmount =
               Object.values(
                 bTotals
               ).reduce(
@@ -1288,14 +1302,14 @@ const bDate =
                 0
               );
 
-            return (
+          return (
               bAmount - aAmount
             );
           }
 
           return b.period_end.localeCompare(
             a.period_end
-          );
+            );
         }
       );
     }, [
@@ -1309,7 +1323,7 @@ const bDate =
       creditCards,
     ]);
 
-  const visibleStatementHistory =
+const visibleStatementHistory =
     useMemo(() => {
       return filteredStatementHistory.slice(
         0,
@@ -1327,7 +1341,7 @@ const bDate =
         number
       > = {};
 
-      for (
+            for (
         const statement of filteredStatementHistory
       ) {
         const statementTotals =
@@ -1335,7 +1349,7 @@ const bDate =
             statement
           );
 
-        for (
+      for (
           const [
             currency,
             total,
@@ -1343,7 +1357,7 @@ const bDate =
             statementTotals
           )
         ) {
-          totals[currency] =
+        totals[currency] =
             (totals[currency] || 0) +
             total;
         }
@@ -1359,6 +1373,7 @@ const bDate =
   const filteredHistorySummary =
     useMemo(() => {
       return {
+
         total:
           filteredStatementHistory.length,
 
@@ -1376,49 +1391,7 @@ const bDate =
       };
     }, [filteredStatementHistory]);
 
-  const selectedStatement =
-    useMemo(() => {
-      if (!selectedStatementCard) {
-        return null;
-      }
-
-      return (
-        currentCardStatements.find(
-          (card) =>
-            card.name ===
-            selectedStatementCard
-        ) || null
-      );
-    }, [
-      currentCardStatements,
-      selectedStatementCard,
-    ]);
-
-  const selectedStatementExpenses =
-    useMemo(() => {
-      if (
-        !selectedStatement ||
-        !selectedStatement.periodStart ||
-        !selectedStatement.periodEnd
-      ) {
-        return [];
-      }
-
-      return statementExpenses.filter(
-        (expense) =>
-          expense.card_name ===
-            selectedStatement.name &&
-          expense.date >=
-            selectedStatement.periodStart! &&
-          expense.date <=
-            selectedStatement.periodEnd!
-      );
-    }, [
-      selectedStatement,
-      statementExpenses,
-    ]);
-
-  async function togglePaidStatus(
+async function togglePaidStatus(
     card: CurrentCardStatement
   ) {
     if (
@@ -1428,7 +1401,7 @@ const bDate =
       return;
     }
 
-    const {
+   const {
       data: { user },
     } = await supabase.auth.getUser();
 
@@ -1437,7 +1410,7 @@ const bDate =
       return;
     }
 
-    const newPaidStatus =
+  const newPaidStatus =
       !card.isPaid;
 
     const paidDate =
@@ -1445,7 +1418,7 @@ const bDate =
         ? dateToString(new Date())
         : null;
 
-    if (
+  if (
       card.statementStatusId !==
       null
     ) {
@@ -1454,7 +1427,8 @@ const bDate =
           .from(
             "CreditCardStatements"
           )
-          .update({
+
+  .update({
             is_paid:
               newPaidStatus,
             paid_date: paidDate,
@@ -1464,10 +1438,8 @@ const bDate =
             card.statementStatusId
           );
 
-      if (error) {
-        setMessage(
-          error.message
-        );
+  if (error) {
+        setMessage(error.message);
         return;
       }
     } else {
@@ -1475,7 +1447,7 @@ const bDate =
         await supabase
           .from(
             "CreditCardStatements"
-          )
+            )
           .insert({
             card_id: card.id,
             period_start:
@@ -1488,11 +1460,9 @@ const bDate =
           });
 
       if (error) {
-        setMessage(
-          error.message
-        );
+        setMessage(error.message);
         return;
-      }
+        }
     }
 
     setEditingPaidStatementId(
@@ -1504,7 +1474,8 @@ const bDate =
     await loadDashboardData();
   }
 
-  async function savePaidDate(
+
+async function savePaidDate(
     statementId:
       | number
       | string
@@ -1512,7 +1483,7 @@ const bDate =
     if (!editingPaidDate) {
       setMessage(
         "請選擇繳款日期"
-      );
+        );
       return;
     }
 
@@ -1521,7 +1492,8 @@ const bDate =
         .from(
           "CreditCardStatements"
         )
-        .update({
+
+  .update({
           paid_date:
             editingPaidDate,
         })
@@ -1530,10 +1502,8 @@ const bDate =
           statementId
         );
 
-    if (error) {
-      setMessage(
-        error.message
-      );
+  if (error) {
+      setMessage(error.message);
       return;
     }
 
@@ -1541,7 +1511,7 @@ const bDate =
       null
     );
 
-    setEditingPaidDate("");
+  setEditingPaidDate("");
 
     await loadDashboardData();
   }
@@ -1565,7 +1535,7 @@ const bDate =
 
     let exportedExpenseCount = 0;
 
-    for (
+  for (
       const statement of filteredStatementHistory
     ) {
       const card =
@@ -1577,19 +1547,19 @@ const bDate =
             )
         );
 
-      const expensesForStatement =
+    const expensesForStatement =
         statementExpenses.filter(
           (expense) => {
             if (!card) {
               return false;
             }
 
-            return (
+          return (
               expense.card_name ===
                 card.name &&
               expense.date >=
                 statement.period_start &&
-              expense.date <=
+            expense.date <=
                 statement.period_end
             );
           }
@@ -1608,7 +1578,7 @@ const bDate =
             ? "已繳"
             : "未繳",
           statement.paid_date ||
-            "",
+          "",
           "",
           "",
           "",
@@ -1623,7 +1593,7 @@ const bDate =
           exportedExpenseCount +=
             1;
 
-          rows.push([
+         rows.push([
             card?.name ||
               "未知信用卡",
             statement.period_start,
@@ -1632,14 +1602,14 @@ const bDate =
               ? "已繳"
               : "未繳",
             statement.paid_date ||
-              "",
+           "",
             expense.date,
             expense.item,
             expense.major_category ||
               "",
             expense.category ||
               "",
-            expense.currency ||
+           expense.currency ||
               "USD",
             Number(
               expense.amount
@@ -1649,7 +1619,7 @@ const bDate =
       }
     }
 
-    const csvTotals: Record<
+  const csvTotals: Record<
       string,
       number
     > = {};
@@ -1659,7 +1629,7 @@ const bDate =
       number
     > = {};
 
-    const csvUnpaidTotals: Record<
+  const csvUnpaidTotals: Record<
       string,
       number
     > = {};
@@ -1669,7 +1639,7 @@ const bDate =
       number
     > = {};
 
-    for (
+  for (
       const statement of filteredStatementHistory
     ) {
       const card =
@@ -1681,27 +1651,24 @@ const bDate =
             )
         );
 
-      if (!card) {
+    if (!card) {
         continue;
       }
 
       const expensesForStatement =
         statementExpenses.filter(
-          (expense) => {
-            return (
-              expense.card_name ===
-                card.name &&
-              expense.date >=
-                statement.period_start &&
-              expense.date <=
-                statement.period_end
-            );
-          }
+          (expense) =>
+            expense.card_name ===
+              card.name &&
+            expense.date >=
+              statement.period_start &&
+            expense.date <=
+              statement.period_end
         );
 
       for (
         const expense of expensesForStatement
-      ) {
+        ) {
         const currency =
           expense.currency || "USD";
 
@@ -1710,7 +1677,7 @@ const bDate =
             expense.amount || 0
           );
 
-        csvTotals[currency] =
+    csvTotals[currency] =
           (csvTotals[currency] ||
             0) + amount;
 
@@ -1726,14 +1693,14 @@ const bDate =
         ) {
           csvPaidTotals[
             currency
-          ] =
+            ] =
             (csvPaidTotals[
               currency
             ] || 0) + amount;
         } else {
           csvUnpaidTotals[
             currency
-          ] =
+            ] =
             (csvUnpaidTotals[
               currency
             ] || 0) + amount;
@@ -1742,7 +1709,7 @@ const bDate =
     }
 
     rows.push([
-      "",
+       "",
       "",
       "",
       "",
@@ -1782,7 +1749,7 @@ const bDate =
       const [
         currency,
         total,
-      ] of Object.entries(
+        ] of Object.entries(
         csvUnpaidTotals
       )
     ) {
@@ -1824,7 +1791,7 @@ const bDate =
       ]);
     }
 
-    for (
+  for (
       const [
         currency,
         total,
@@ -1832,7 +1799,7 @@ const bDate =
         csvTotals
       )
     ) {
-      const count =
+    const count =
         csvExpenseCounts[
           currency
         ] || 0;
@@ -1840,7 +1807,7 @@ const bDate =
       const average =
         count === 0
           ? 0
-          : total / count;
+        : total / count;
 
       rows.push([
         "平均每筆消費",
@@ -1857,15 +1824,13 @@ const bDate =
       ]);
     }
 
-    const exportCardName =
+  const exportCardName =
       historyCardFilter ===
       "all"
         ? "全部信用卡"
         : creditCards.find(
             (card) =>
-              String(
-                card.id
-              ) ===
+              String(card.id) ===
               historyCardFilter
           )?.name ||
           "未知信用卡";
@@ -1880,7 +1845,7 @@ const bDate =
       historyStatusFilter ===
       "all"
         ? "全部狀態"
-        : historyStatusFilter ===
+      : historyStatusFilter ===
           "paid"
         ? "已繳"
         : "未繳";
@@ -1891,7 +1856,7 @@ const bDate =
         ? "無"
         : historySearch.trim();
 
-    const exportSort =
+  const exportSort =
       historySort === "newest"
         ? "最新帳單優先"
         : historySort ===
@@ -1899,7 +1864,7 @@ const bDate =
         ? "最舊帳單優先"
         : "金額高到低";
 
-    rows.push([
+  rows.push([
       "",
       "",
       "",
@@ -1913,7 +1878,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "篩選條件",
       "",
       "",
@@ -1927,7 +1892,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "月份",
       exportMonth,
       "",
@@ -1941,7 +1906,8 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+
+  rows.push([
       "信用卡",
       exportCardName,
       "",
@@ -1955,7 +1921,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "狀態",
       exportStatus,
       "",
@@ -1969,7 +1935,8 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+
+  rows.push([
       "搜尋",
       exportSearch,
       "",
@@ -1983,7 +1950,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "排序",
       exportSort,
       "",
@@ -1997,7 +1964,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "匯出筆數",
       `${filteredStatementHistory.length} 筆帳單`,
       "",
@@ -2011,7 +1978,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "消費明細筆數",
       `${exportedExpenseCount} 筆`,
       "",
@@ -2025,14 +1992,13 @@ const bDate =
       "",
     ]);
 
-    const exportTime =
+  const exportTime =
       new Date();
 
     const exportTimeText =
       `${exportTime.getFullYear()}/${String(
-        exportTime.getMonth() +
-          1
-      ).padStart(
+        exportTime.getMonth() + 1
+        ).padStart(
         2,
         "0"
       )}/${String(
@@ -2040,7 +2006,7 @@ const bDate =
       ).padStart(
         2,
         "0"
-      )} ${String(
+        )} ${String(
         exportTime.getHours()
       ).padStart(
         2,
@@ -2050,7 +2016,7 @@ const bDate =
       ).padStart(
         2,
         "0"
-      )}`;
+        )}`;
 
     rows.push([
       "",
@@ -2066,7 +2032,7 @@ const bDate =
       "",
     ]);
 
-    rows.push([
+  rows.push([
       "匯出時間",
       exportTimeText,
       "",
@@ -2080,7 +2046,7 @@ const bDate =
       "",
     ]);
 
-    const csv = rows
+  const csv = rows
       .map((row) =>
         row
           .map(
@@ -2092,7 +2058,7 @@ const bDate =
                 '""'
               )}"`
           )
-          .join(",")
+           .join(",")
       )
       .join("\n");
 
@@ -2104,7 +2070,7 @@ const bDate =
       }
     );
 
-    const url =
+  const url =
       URL.createObjectURL(
         blob
       );
@@ -2116,45 +2082,43 @@ const bDate =
 
     link.href = url;
 
-    const selectedCardName =
+  const selectedCardName =
       historyCardFilter ===
       "all"
         ? "all-cards"
         : creditCards.find(
             (card) =>
-              String(
-                card.id
-              ) ===
+               String(card.id) ===
               historyCardFilter
           )?.name ||
           "card";
 
-    const fileMonth =
+  const fileMonth =
       historyMonthFilter ===
       "all"
         ? "all-months"
         : historyMonthFilter;
 
-    const fileStatus =
+  const fileStatus =
       historyStatusFilter ===
       "all"
         ? "all-status"
         : historyStatusFilter;
 
-    const safeCardName =
+  const safeCardName =
       selectedCardName.replace(
         /[\\/:*?"<>|]/g,
         "-"
       );
 
-    link.download =
+   link.download =
       `statement-history-${fileMonth}-${safeCardName}-${fileStatus}.csv`;
 
     document.body.appendChild(
       link
     );
 
-    link.click();
+  link.click();
 
     document.body.removeChild(
       link
@@ -2163,7 +2127,7 @@ const bDate =
     URL.revokeObjectURL(url);
   }
 
-  const years: number[] = [];
+const years: number[] = [];
 
   for (
     let year =
@@ -2175,7 +2139,7 @@ const bDate =
     years.push(year);
   }
 
-  return (
+return (
     <main
       style={{
         maxWidth: 900,
@@ -2183,6 +2147,7 @@ const bDate =
         padding: 20,
       }}
     >
+
       <h1>
         📊 記帳 Dashboard
       </h1>
@@ -2190,7 +2155,7 @@ const bDate =
       <p>
         <Link href="/">
           ← 回首頁
-        </Link>
+           </Link>
       </p>
 
       <div
@@ -2232,6 +2197,7 @@ const bDate =
             )
           }
         >
+
           {Array.from(
             { length: 12 },
             (_, index) =>
@@ -2249,7 +2215,7 @@ const bDate =
         </select>
       </div>
 
-      <p>
+       <p>
         目前查看：
         <strong>
           {selectedYear} 年{" "}
@@ -2257,7 +2223,7 @@ const bDate =
         </strong>
       </p>
 
-      {message && (
+       {message && (
         <p>{message}</p>
       )}
 
@@ -2273,6 +2239,7 @@ const bDate =
             borderRadius: 10,
           }}
         >
+
           <h2>
             ⚠️ 未繳帳單提醒（
             {
@@ -2295,9 +2262,9 @@ const bDate =
               }
               {" ｜ "}
               {getDueDateText(
-  nextDueStatement.due_day,
-  nextDueStatement.due_month_offset
-)}
+              nextDueStatement.due_day,
+                nextDueStatement.due_month_offset
+              )}
             </div>
           )}
 
@@ -2332,12 +2299,12 @@ const bDate =
                       : " "}
                     {
                       currency
-                    }{" "}
+                      }{" "}
                     {total.toFixed(
                       2
                     )}
                   </span>
-                )
+                  )
               )
             )}
           </div>
@@ -2351,23 +2318,24 @@ const bDate =
                   padding: 10,
                   borderRadius: 8,
                   background:
-                   getDueLevel(
-  card.due_day,
-  card.isPaid,
-  card.due_month_offset
-) ===
+                    getDueLevel(
+                      card.due_day,
+                      card.isPaid,
+                      card.due_month_offset
+                    ) ===
                     "overdue"
-                      ? "#ffe5e5"
+                  ? "#ffe5e5"
                       : getDueLevel(
-  card.due_day,
-  card.isPaid,
-  card.due_month_offset
-) ===
+                          card.due_day,
+                          card.isPaid,
+                          card.due_month_offset
+                        ) ===
                         "today"
                       ? "#fff1d6"
                       : "#fffbe6",
                 }}
               >
+
                 <button
                   onClick={() => {
                     setSelectedStatementCard(
@@ -2385,7 +2353,8 @@ const bDate =
                               behavior:
                                 "smooth",
                             }
-                          );
+
+                            );
                       },
                       50
                     );
@@ -2412,11 +2381,12 @@ const bDate =
                     marginTop: 4,
                   }}
                 >
+
                   {getDueStatus(
-  card.due_day,
-  card.isPaid,
-  card.due_month_offset
-)}
+                    card.due_day,
+                    card.isPaid,
+                    card.due_month_offset
+                  )}
                 </div>
 
                 <div
@@ -2424,11 +2394,12 @@ const bDate =
                     marginTop: 4,
                   }}
                 >
+
                   繳款截止：
                   {getDueDateText(
-  card.due_day,
-  card.due_month_offset
-)}
+                    card.due_day,
+                    card.due_month_offset
+                  )}
                 </div>
 
                 <div
@@ -2450,7 +2421,7 @@ const bDate =
                       ([
                         currency,
                         total,
-                      ]) => (
+                        ]) => (
                         <div
                           key={
                             currency
@@ -2463,7 +2434,7 @@ const bDate =
                           {total.toFixed(
                             2
                           )}
-                        </div>
+                          </div>
                       )
                     )
                   )}
@@ -2474,7 +2445,7 @@ const bDate =
                     togglePaidStatus(
                       card
                     )
-                  }
+                    }
                   style={{
                     marginTop: 8,
                     padding:
@@ -2505,7 +2476,7 @@ const bDate =
             本月沒有支出
           </p>
         ) : (
-          Object.entries(
+        Object.entries(
             totalsByCurrency
           ).map(
             ([
@@ -2559,7 +2530,7 @@ const bDate =
                     "1px solid #ddd",
                   borderRadius: 8,
                 }}
-              >
+                >
                 <strong>
                   {category}
                 </strong>
@@ -2585,7 +2556,7 @@ const bDate =
                 )}
               </div>
             )
-          )
+             )
         )}
       </section>
 
@@ -2612,7 +2583,7 @@ const bDate =
               cardName,
               currencies,
             ]) => (
-              <div
+               <div
                 key={
                   cardName
                 }
@@ -2632,7 +2603,7 @@ const bDate =
                         ? null
                         : cardName
                     )
-                  }
+                     }
                   style={{
                     fontWeight:
                       "bold",
@@ -2640,6 +2611,7 @@ const bDate =
                       "pointer",
                   }}
                 >
+
                   {cardName}
                 </button>
 
@@ -2648,14 +2620,14 @@ const bDate =
                 ).map(
                   ([
                     currency,
-                    total,
+                     total,
                   ]) => (
                     <div
                       key={
                         currency
                       }
                     >
-                      {currency}:{" "}
+                       {currency}:{" "}
                       {total.toFixed(
                         2
                       )}
@@ -2663,14 +2635,15 @@ const bDate =
                   )
                 )}
 
-                {selectedCard ===
+                 {selectedCard ===
                   cardName && (
                   <div
                     style={{
                       marginTop: 10,
                     }}
                   >
-                    {filteredCardExpenses.map(
+
+                     {filteredCardExpenses.map(
                       (
                         expense
                       ) => (
@@ -2685,6 +2658,7 @@ const bDate =
                               "1px solid #eee",
                           }}
                         >
+
                           <Link
                             href={`/expenses/${expense.id}`}
                           >
@@ -2697,13 +2671,13 @@ const bDate =
                           </Link>{" "}
                           —{" "}
                           {expense.currency ||
-                            "USD"}{" "}
+                             "USD"}{" "}
                           {Number(
                             expense.amount
                           ).toFixed(
                             2
                           )}
-                        </div>
+                          </div>
                       )
                     )}
                   </div>
@@ -2713,29 +2687,30 @@ const bDate =
           )
         )}
       </section>
-
       <section
         id="card-statements"
         style={{
           marginBottom: 30,
         }}
-      >
-       <h2>
-  💳 信用卡本期帳單（共 {visibleCardStatements.length} 張｜未繳{" "}
-  {
-    visibleCardStatements.filter(
-      (card) => !card.isPaid
-    ).length
-  }{" "}
-  張）
-</h2>
+
+        >
+        <h2>
+          💳 信用卡本期帳單（共{" "}
+          {visibleCardStatements.length} 張｜未繳{" "}
+          {
+            visibleCardStatements.filter(
+              (card) => !card.isPaid
+              ).length
+          }{" "}
+          張）
+        </h2>
 
         <button
           onClick={() =>
             setShowZeroBalanceCards(
               !showZeroBalanceCards
             )
-          }
+            }
           style={{
             marginBottom: 10,
             padding:
@@ -2769,7 +2744,7 @@ const bDate =
                 "all"
               );
 
-              setHistoryStatusFilter(
+               setHistoryStatusFilter(
                 "all"
               );
 
@@ -2797,6 +2772,7 @@ const bDate =
             ? "隱藏歷史帳單"
             : "顯示歷史帳單"}
         </button>
+
 
         <p
           style={{
@@ -2849,6 +2825,7 @@ const bDate =
             張（{paidProgress}%）
           </div>
 
+
           <div
             style={{
               marginTop: 8,
@@ -2860,6 +2837,7 @@ const bDate =
                 "hidden",
             }}
           >
+
             <div
               style={{
                 width: `${paidProgress}%`,
@@ -2873,7 +2851,7 @@ const bDate =
             />
           </div>
 
-          <div
+           <div
             style={{
               display: "grid",
               gridTemplateColumns:
@@ -2890,7 +2868,7 @@ const bDate =
                 borderRadius: 10,
                 background:
                   "#fffbe6",
-              }}
+                }}
             >
               <div>
                 ⏳ 未繳總額
@@ -2939,7 +2917,7 @@ const bDate =
               </div>
             </div>
 
-            <div
+             <div
               style={{
                 padding: 12,
                 border:
@@ -2949,7 +2927,8 @@ const bDate =
                   "#eef9f1",
               }}
             >
-              <div>
+
+               <div>
                 ✅ 已繳總額
               </div>
 
@@ -2973,7 +2952,7 @@ const bDate =
                     ([
                       currency,
                       total,
-                    ], index) => (
+                      ], index) => (
                       <span
                         key={
                           currency
@@ -2996,7 +2975,7 @@ const bDate =
               </div>
             </div>
 
-            <div
+             <div
               style={{
                 padding: 12,
                 border:
@@ -3006,7 +2985,8 @@ const bDate =
                   "#eef7ff",
               }}
             >
-              <div>
+
+               <div>
                 💳 本期總額
               </div>
 
@@ -3021,7 +3001,7 @@ const bDate =
                 {Object.keys(
                   statementTotalsByCurrency
                 ).length ===
-                0 ? (
+                  0 ? (
                   <span>0</span>
                 ) : (
                   Object.entries(
@@ -3042,13 +3022,13 @@ const bDate =
                           : ""}
                         {
                           currency
-                        }{" "}
+                          }{" "}
                         {total.toFixed(
                           2
                         )}
                       </span>
                     )
-                  )
+                     )
                 )}
               </div>
             </div>
@@ -3071,19 +3051,19 @@ const bDate =
                   border:
                     selectedStatementCard ===
                     card.name
-                      ? "2px solid #777"
+                     ? "2px solid #777"
                       : "1px solid #ddd",
                   borderRadius: 10,
                 }}
               >
                 <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 8,
-  }}
->
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 8,
+                  }}
+                >
                   <button
                     onClick={() =>
                       setSelectedStatementCard(
@@ -3092,7 +3072,7 @@ const bDate =
                           ? null
                           : card.name
                       )
-                    }
+                      }
                     style={{
                       fontSize: 17,
                       fontWeight:
@@ -3106,7 +3086,6 @@ const bDate =
 
                   <span
                     style={{
-                      
                       padding:
                         "3px 8px",
                       borderRadius: 999,
@@ -3115,16 +3094,18 @@ const bDate =
                         "bold",
                       background:
                         card.isPaid
-                          ? "#e7f7ed"
+                        ? "#e7f7ed"
                           : getDueLevel(
                               card.due_day,
-                              card.isPaid
-                            ) ===
+                              card.isPaid,
+                              card.due_month_offset
+                             ) ===
                             "overdue"
                           ? "#ffe5e5"
                           : getDueLevel(
                               card.due_day,
-                              card.isPaid
+                              card.isPaid,
+                            card.due_month_offset
                             ) ===
                             "today"
                           ? "#fff1d6"
@@ -3132,10 +3113,10 @@ const bDate =
                     }}
                   >
                     {getStatementBadge(
-  card.due_day,
-  card.isPaid,
-  card.due_month_offset
-)}
+                      card.due_day,
+                      card.isPaid,
+                      card.due_month_offset
+                    )}
                   </span>
                 </div>
 
@@ -3178,7 +3159,7 @@ const bDate =
                         </div>
                       )
                     )
-                  )}
+                    )}
                 </div>
 
                 <div>
@@ -3195,14 +3176,6 @@ const bDate =
                     : "未設定"}
                 </div>
 
-              <div>
-                  繳款截止：
-                  {getDueDateText(
-                    card.due_day
-                  )}
-                </div>
-
-                {/* 灰色背景資訊區塊 */}
                 <div
                   style={{
                     marginTop: 10,
@@ -3212,21 +3185,33 @@ const bDate =
                     lineHeight: 1.7,
                   }}
                 >
-                  
-                <div>
+                  <div>
                     帳單月份：
-                    {selectedYear}/{String(
+                    {selectedYear}/
+                    {String(
                       selectedMonth
-                    ).padStart(2, "0")}
+                    ).padStart(
+                      2,
+                      "0"
+                    )}
                   </div>
-                  
-              <div>
+
+                  <div>
                     繳款月份：
                     {getDueMonthText(
                       card.due_month_offset
                     )}
                   </div>
-                <div>
+
+                  <div>
+                    繳款截止：
+                    {getDueDateText(
+                      card.due_day,
+                      card.due_month_offset
+                    )}
+                  </div>
+
+                  <div>
                     本期區間：
                     {card.periodStart &&
                     card.periodEnd
@@ -3237,94 +3222,88 @@ const bDate =
                         )}`
                       : "未設定"}
                   </div>
+                </div>
 
-              {/* 修正 style 的位置與語法 */}
                 <div
-  style={{
-    marginTop: 10,
-    padding: 10,
-    background: "#fafafa",
-    borderRadius: 8,
-    lineHeight: 1.7,
-  }}
-                  >
-  <div
-    style={{
-      fontWeight: "bold",
-      marginBottom: 4,
-    }}
-  >
-    繳款狀態
-  </div>
-                  
+                  style={{
+                    marginTop: 10,
+                    padding: 10,
+                    background: "#fafafa",
+                    borderRadius: 8,
+                    lineHeight: 1.7,
+                  }}
+                >
                   <div
                     style={{
-                      marginTop: 6,
+                      fontWeight: "bold",
+                      marginBottom: 4,
                     }}
-                    >
+                  >
+                    繳款狀態
+                  </div>
+
+                  <div>
                     狀態：
                     {card.isPaid
                       ? "✅ 已繳"
                       : "⏳ 未繳"}
                   </div>
-                </div> {/* 補上這個灰色區塊的關閉標籤 */}
 
-                <div>
-                  {getDueStatus(
-  card.due_day,
-  card.isPaid,
-  card.due_month_offset
-)}
-                </div>
 
-                {card.isPaid && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                    }}
-                  >
-             {/* 實際繳款日 */}
-                  <div
-                    style={{
-                      marginTop: 8,
-                    }}
-                  >
-                    實際繳款日：
-                    {card.paidDate || "未記錄"}
-                  </div>
-
-                  {/* 編輯實際繳款日的按鈕 */}
-                    {card.statementStatusId !== null && (
-                    <button
-                      onClick={() => {
-                        setEditingPaidStatementId(
-                          card.statementStatusId
-                        );
-
-                        setEditingPaidDate(
-                          card.paidDate || ""
-                        );
-                      }}
-                      style={{
-                        padding: "6px 10px",
-                        marginTop: 6,
-                        marginBottom: 8,
-                        cursor: "pointer",
-                        }}
-                    >
-                      ✏️ 修改繳款日
-                    </button>
-                  
-
+                  <div>
+                    {getDueStatus(
+                      card.due_day,
+                      card.isPaid,
+                      card.due_month_offset
                     )}
                   </div>
-                )}
+
+                  {card.isPaid && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                      }}
+                    >
+                      <div>
+
+                        實際繳款日：
+                        {card.paidDate ||
+                          "未記錄"}
+                      </div>
+
+                      {card.statementStatusId !==
+                        null && (
+                          <button
+                          onClick={() => {
+                            setEditingPaidStatementId(
+                              card.statementStatusId
+                            );
+
+
+                            setEditingPaidDate(
+                              card.paidDate ||
+                                ""
+                            );
+                          }}
+                          style={{
+                            padding:
+                              "6px 10px",
+                            marginTop: 6,
+                            marginBottom: 8,
+                          }}
+                        >
+                          修改繳款日
+                        </button>
+                          )}
+                    </div>
+                  )}
+                </div>
 
                 <button
                   onClick={() =>
                     togglePaidStatus(
                       card
-                    )
+                      )
                   }
                   disabled={
                     !card.periodStart ||
@@ -3358,32 +3337,32 @@ const bDate =
                         }
                         onChange={(e) =>
                           setEditingPaidDate(
-                            e.target
-                              .value
+                            e.target.value
                           )
                         }
                       />
 
-                      <button
+                       <button
                         onClick={() =>
                           savePaidDate(
                             card.statementStatusId!
                           )
                         }
-                        style={{
+                         style={{
                           marginLeft: 8,
                           padding:
                             "6px 10px",
                         }}
                       >
                         儲存
-                      </button>
+                         </button>
 
                       <button
                         onClick={() => {
                           setEditingPaidStatementId(
                             null
                           );
+
 
                           setEditingPaidDate(
                             ""
@@ -3416,56 +3395,72 @@ const bDate =
 
                     {selectedStatementExpenses.length ===
                     0 ? (
+                      <p>
+                        本期沒有消費
+                        </p>
+                    ) : (
+                      selectedStatementExpenses.map(
+                        (
+                          expense
+                        ) => (
+                          <div
+                            key={
+                              expense.id
+                            }
+                            style={{
+                              padding:
+                                "8px 0",
+                              borderBottom:
+                                "1px solid #eee",
+                            }}
+                          >
+                            <Link
+                              href={`/expenses/${expense.id}`}
+                            >
+                              {
+                                expense.date
+                              }{" "}
+                              {
+                                expense.item
+                              }
+                            </Link>
 
-<p>
-  本期沒有消費
-</p>
-) : (
-  selectedStatementExpenses.map(
-    (expense) => (
-      <div
-        key={expense.id}
-        style={{
-          padding: "8px 0",
-          borderBottom: "1px solid #eee",
-        }}
+                            <div>
+                              {expense.currency ||
+                                "USD"}{" "}
+                              {Number(
+                                expense.amount
+                            ).toFixed(
+                                2
+                              )}
+                            </div>
+                          </div>
+                        )
+                         )
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          )
+           )}
+      </section>
+
+      {showStatementHistory && (
+        <section
+          id="statement-history"
+          style={{
+            marginBottom: 30,
+          }}
         >
-        <Link
-          href={`/expenses/${expense.id}`}
-        >
-          {expense.date}{" "}
-          {expense.item}
-        </Link>
-        <div>
-          {expense.currency || "USD"}{" "}
-          {Number(
-            expense.amount
-          ).toFixed(2)}
-        </div>
-      </div>
-       )
-  )
-)}
-</div>
-)}
-</div>
-))
-)}
-</section>
-              {showStatementHistory && (
-  <section
-    id="statement-history"
-    style={{
-      marginBottom: 30,
-    }}
-  >
+          <h2>
+            📚 歷史帳單（
+            {
+              filteredStatementHistory.length
+            }{" "}
+            筆）
+          </h2>
 
-    <h2>
-      📚 歷史帳單（
-      {filteredStatementHistory.length} 筆）
-    </h2>
-
-                      
           <div
             style={{
               marginBottom: 12,
@@ -3499,26 +3494,22 @@ const bDate =
               }
               style={{
                 padding:
-                  "6px 10px",
-
+                   "6px 10px",
                 fontWeight:
                   historyCardFilter ===
                   "all"
                     ? "bold"
                     : "normal",
-
                 background:
                   historyCardFilter ===
                   "all"
                     ? "#eef7ff"
                     : "white",
-
                 border:
                   historyCardFilter ===
                   "all"
                     ? "1px solid #b8d7f0"
                     : "1px solid #ddd",
-
                 borderRadius: 8,
               }}
             >
@@ -3531,17 +3522,20 @@ const bDate =
                   historyCountByCard[
                     String(
                       card.id
-                    )
+                      )
                   ] || 0;
 
                 const isActive =
                   historyCardFilter ===
                   String(card.id);
 
-                return (
+                 return (
                   <button
                     key={card.id}
-                    disabled={count === 0}
+                    disabled={
+                      count === 0
+                    }
+
                     onClick={() =>
                       setHistoryCardFilter(
                         String(
@@ -3552,36 +3546,30 @@ const bDate =
                     style={{
                       padding:
                         "6px 10px",
-
                       fontWeight:
                         isActive
                           ? "bold"
                           : "normal",
-
                       background:
                         isActive
                           ? "#eef7ff"
                           : "white",
-
                       border:
                         isActive
-                          ? "1px solid #b8d7f0"
+                         ? "1px solid #b8d7f0"
                           : "1px solid #ddd",
-
                       borderRadius:
                         8,
-
                       opacity:
                         count === 0
                           ? 0.4
-                          : 1,
-
+                        : 1,
                       cursor:
-  count === 0
-    ? "not-allowed"
-    : "pointer",
+                        count === 0
+                          ? "not-allowed"
+                          : "pointer",
                     }}
-                  >
+                    >
                     {card.name}（
                     {count}）
                   </button>
@@ -3596,7 +3584,7 @@ const bDate =
             onChange={(e) =>
               setHistorySearch(
                 e.target.value
-              )
+                )
             }
             placeholder="搜尋信用卡名稱或消費項目"
             style={{
@@ -3614,7 +3602,7 @@ const bDate =
               style={{
                 marginBottom: 12,
                 fontSize: 14,
-              }}
+                }}
             >
               搜尋：
               <strong>
@@ -3638,6 +3626,7 @@ const bDate =
               marginBottom: 12,
             }}
           >
+
             <div
               style={{
                 padding: 12,
@@ -3646,6 +3635,7 @@ const bDate =
                 borderRadius: 10,
               }}
             >
+
               <div>
                 📚 總筆數
               </div>
@@ -3675,6 +3665,7 @@ const bDate =
                   "#eef9f1",
               }}
             >
+
               <div>
                 ✅ 已繳
               </div>
@@ -3686,7 +3677,7 @@ const bDate =
                   fontWeight:
                     "bold",
                 }}
-              >
+                >
                 {
                   filteredHistorySummary.paid
                 }{" "}
@@ -3720,7 +3711,7 @@ const bDate =
                   filteredHistorySummary.unpaid
                 }{" "}
                 筆
-              </div>
+                </div>
             </div>
 
             <div
@@ -3761,7 +3752,7 @@ const bDate =
                       <span
                         key={
                           currency
-                        }
+                          }
                       >
                         {index >
                         0
@@ -3774,7 +3765,7 @@ const bDate =
                           2
                         )}
                       </span>
-                    )
+                      )
                   )
                 )}
               </div>
@@ -3794,7 +3785,7 @@ const bDate =
             ).length === 0 ? (
               <span>0</span>
             ) : (
-              Object.entries(
+            Object.entries(
                 filteredHistoryTotals
               ).map(
                 ([
@@ -3808,7 +3799,7 @@ const bDate =
                   >
                     {index >
                     0
-                      ? " / "
+                       ? " / "
                       : " "}
                     {
                       currency
@@ -3817,7 +3808,7 @@ const bDate =
                       2
                     )}
                   </span>
-                )
+                  )
               )
             )}
           </div>
@@ -3835,14 +3826,14 @@ const bDate =
               marginBottom: 12,
               padding:
                 "6px 8px",
-            }}
+              }}
           >
             <option value="all">
               全部月份
             </option>
 
             {historyMonthOptions.map(
-              (month) => {
+            (month) => {
                 const [
                   year,
                   monthNumber,
@@ -3850,8 +3841,7 @@ const bDate =
                   month.split(
                     "-"
                   );
-
-                return (
+              return (
                   <option
                     key={
                       month
@@ -3871,7 +3861,7 @@ const bDate =
             )}
           </select>
 
-          <select
+           <select
             value={
               historyCardFilter
             }
@@ -3880,14 +3870,14 @@ const bDate =
                 e.target.value
               )
             }
-            style={{
+             style={{
               marginLeft: 8,
               marginBottom: 12,
               padding:
                 "6px 8px",
             }}
           >
-            <option value="all">
+             <option value="all">
               全部信用卡
             </option>
 
@@ -3905,7 +3895,7 @@ const bDate =
                     card.name
                   }
                 </option>
-              )
+                )
             )}
           </select>
 
@@ -3928,7 +3918,6 @@ const bDate =
             <option value="all">
               全部狀態
             </option>
-
             <option value="unpaid">
               未繳
             </option>
@@ -3937,7 +3926,6 @@ const bDate =
               已繳
             </option>
           </select>
-
           <select
             value={historySort}
             onChange={(e) =>
@@ -3945,6 +3933,7 @@ const bDate =
                 e.target.value
               )
             }
+
             style={{
               marginLeft: 8,
               marginBottom: 12,
@@ -3952,6 +3941,7 @@ const bDate =
                 "6px 8px",
             }}
           >
+
             <option value="newest">
               最新帳單優先
             </option>
@@ -3969,7 +3959,7 @@ const bDate =
             onClick={() => {
               setHistoryMonthFilter(
                 "all"
-              );
+                 );
 
               setHistoryCardFilter(
                 "all"
@@ -3993,7 +3983,8 @@ const bDate =
               padding:
                 "6px 10px",
             }}
-          >
+
+            >
             清除篩選
           </button>
 
@@ -4024,6 +4015,7 @@ const bDate =
                 []
               )
             }
+
             style={{
               marginLeft: 8,
               marginBottom: 12,
@@ -4038,7 +4030,7 @@ const bDate =
             onClick={
               exportHistoryCsv
             }
-            style={{
+             style={{
               marginLeft: 8,
               marginBottom: 12,
               padding:
@@ -4076,14 +4068,14 @@ const bDate =
             <p>
               找不到符合目前搜尋／篩選條件的歷史帳單
             </p>
-          ) : (
+            ) : (
             visibleStatementHistory.map(
               (
                 statement
               ) => {
                 const card =
                   creditCards.find(
-                    (item) =>
+                     (item) =>
                       Number(
                         item.id
                       ) ===
@@ -4100,22 +4092,20 @@ const bDate =
                 const statementDetailExpenses =
                   statementExpenses.filter(
                     (expense) => {
-                      if (
-                        !card
-                      ) {
+                      if (!card) {
                         return false;
                       }
+
 
                       return (
                         expense.card_name ===
                           card.name &&
                         expense.date >=
-                          statement.period_start &&
+                        statement.period_start &&
                         expense.date <=
                           statement.period_end
                       );
-                    }
-                  );
+                    });
 
                 return (
                   <div
@@ -4129,7 +4119,7 @@ const bDate =
                         "1px solid #ddd",
                       borderRadius: 8,
                     }}
-                  >
+                    >
                     <button
                       onClick={() =>
                         setExpandedHistoryIds(
@@ -4142,16 +4132,17 @@ const bDate =
                               ? current.filter(
                                   (
                                     id
-                                  ) =>
+                                     ) =>
                                     id !==
                                     statement.id
                                 )
                               : [
-                                  ...current,
+                                 ...current,
                                   statement.id,
                                 ]
                         )
                       }
+
                       style={{
                         fontWeight:
                           "bold",
@@ -4162,7 +4153,7 @@ const bDate =
                         border:
                           "none",
                         padding: 0,
-                        textDecoration:
+                         textDecoration:
                           "underline",
                       }}
                     >
@@ -4189,11 +4180,11 @@ const bDate =
                       0 ? (
                         <span>
                           0
-                        </span>
+                          </span>
                       ) : (
                         Object.entries(
                           totals
-                        ).map(
+                          ).map(
                           ([
                             currency,
                             total,
@@ -4211,7 +4202,7 @@ const bDate =
                                 currency
                               }{" "}
                               {total.toFixed(
-                                2
+                               2
                               )}
                             </span>
                           )
@@ -4233,7 +4224,7 @@ const bDate =
                             statement.paid_date
                           )
                         : "未記錄"}
-                    </div>
+                      </div>
 
                     {expandedHistoryIds.includes(
                       statement.id
@@ -4255,11 +4246,11 @@ const bDate =
                           <p>
                             本期沒有消費
                           </p>
-                        ) : (
+                          ) : (
                           statementDetailExpenses.map(
                             (
                               expense
-                            ) => (
+                              ) => (
                               <div
                                 key={
                                   expense.id
@@ -4269,7 +4260,7 @@ const bDate =
                                     "8px 0",
                                   borderBottom:
                                     "1px solid #eee",
-                                }}
+                                  }}
                               >
                                 <Link
                                   href={`/expenses/${expense.id}`}
@@ -4280,7 +4271,7 @@ const bDate =
                                   {
                                     expense.item
                                   }
-                                </Link>
+                                  </Link>
 
                                 <div>
                                   {expense.currency ||
@@ -4288,12 +4279,12 @@ const bDate =
                                   {Number(
                                     expense.amount
                                   ).toFixed(
-                                    2
+                                2
                                   )}
                                 </div>
                               </div>
                             )
-                          )
+                            )
                         )}
                       </div>
                     )}
@@ -4311,13 +4302,13 @@ const bDate =
                   (count) =>
                     count + 20
                 )
-              }
+                }
               style={{
                 marginTop: 12,
                 padding:
                   "8px 12px",
               }}
-            >
+              >
               載入更多
             </button>
           )}
@@ -4329,14 +4320,14 @@ const bDate =
           <button
             onClick={() =>
               document
-                .getElementById(
+              .getElementById(
                   "statement-history"
                 )
                 ?.scrollIntoView(
                   {
                     behavior:
                       "smooth",
-                  }
+                    }
                 )
             }
             style={{
@@ -4350,7 +4341,6 @@ const bDate =
           </button>
         </section>
       )}
-
       <section>
         <h2>
           本月支出明細
@@ -4369,7 +4359,7 @@ const bDate =
                     "10px 0",
                   borderBottom:
                     "1px solid #ddd",
-                }}
+                  }}
               >
                 <Link
                   href={`/expenses/${expense.id}`}
@@ -4379,7 +4369,6 @@ const bDate =
                     {expense.item}
                   </strong>
                 </Link>
-
                 <div>
                   {expense.major_category ||
                     "未分類"}
@@ -4387,13 +4376,13 @@ const bDate =
                   {expense.category
                     ? ` / ${expense.category}`
                     : ""}
-                </div>
+                  </div>
 
                 <div>
                   {expense.currency ||
                     "USD"}{" "}
                   {Number(
-                    expense.amount
+                expense.amount
                   ).toFixed(2)}
                 </div>
 
@@ -4413,3 +4402,5 @@ const bDate =
     </main>
   );
 }
+
+                  
