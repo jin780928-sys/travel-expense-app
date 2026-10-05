@@ -346,6 +346,59 @@ const dueDate = new Date(
     nextStatementDate.getDate()
   ).padStart(2, "0")}`;
 }
+
+  function getNextStatementStatusText(card: CreditCard) {
+  if (!card.statement_day) {
+    return "未設定結帳日";
+  }
+    const currentStatementEndDate =
+    getCurrentStatementEndDate(card);
+
+  if (!currentStatementEndDate) {
+    return "未設定結帳日";
+  }
+    const nextStatementDate = new Date(
+    currentStatementEndDate.getFullYear(),
+    currentStatementEndDate.getMonth() + 1,
+    Math.min(
+      card.statement_day,
+      new Date(
+        currentStatementEndDate.getFullYear(),
+        currentStatementEndDate.getMonth() + 2,
+        0
+      ).getDate()
+    )
+  );
+    const now = new Date();
+
+  const todayOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+    const nextDateOnly = new Date(
+    nextStatementDate.getFullYear(),
+    nextStatementDate.getMonth(),
+    nextStatementDate.getDate()
+  );
+    const diffMs =
+    nextDateOnly.getTime() -
+    todayOnly.getTime();
+
+  const diffDays = Math.ceil(
+    diffMs /
+      (1000 * 60 * 60 * 24)
+  );
+    if (diffDays > 0) {
+    return `距離下一期結帳還有 ${diffDays} 天`;
+  }
+
+  if (diffDays === 0) {
+    return "📅 今天結帳";
+  }
+
+  return "已進入下一期";
+}
   
   function getCurrentStatementPeriodText(card: CreditCard) {
   const endDate =
@@ -556,6 +609,10 @@ const dueDate = new Date(
           <div>
   下一期結帳日：
   {getNextStatementDateText(card)}
+</div>
+
+          <div>
+  {getNextStatementStatusText(card)}
 </div>
 
           <div
