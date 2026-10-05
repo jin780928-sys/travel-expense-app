@@ -651,202 +651,278 @@ const todayOnly = new Date(
       {message && <p>{message}</p>}
 
       {cards.map((card) => (
-        <div
+
+  <div
   key={card.id}
   style={{
     marginBottom: 18,
     padding: 16,
     border:
-  editingCardId === card.id
-    ? "2px solid #8bbce5"
-    : "1px solid #ddd",
+      editingCardId === card.id
+        ? "2px solid #8bbce5"
+        : "1px solid #ddd",
     borderRadius: 10,
     background:
-  editingCardId === card.id
-    ? "#f7fbff"
-    : "white",
+      editingCardId === card.id
+        ? "#f7fbff"
+        : "white",
   }}
 >
-          <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 8,
-    marginBottom: 8,
-  }}
->
-            <button
-    onClick={() => startEditCard(card)}
+     {/* 卡名 */}
+  <div
     style={{
-      padding: "6px 12px",
-      border: "1px solid #b8d7f0",
-      borderRadius: 8,
-      background: "#eef7ff",
-      fontWeight: "bold",
-      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: 8,
+      marginBottom: 6,
     }}
   >
-              ✏️ 編輯
-  </button>
-
-  {/* 啟用 / 停用按鈕放這裡 */}
-
-            <button
-    onClick={async () => {
-      const { error } = await supabase
-        .from("CreditCards")
-        .update({
-          is_active: !card.is_active,
-        })
-        .eq("id", card.id);
-       if (error) {
-        setMessage(error.message);
-        return;
-      }
-
-      await loadCards();
-    }}
-    style={{
-      padding: "6px 12px",
-      borderRadius: 8,
-      fontWeight: "bold",
-      cursor: "pointer",
-      border: card.is_active
-        ? "1px solid #efb7b7"
-        : "1px solid #b7dfc3",
-      background: card.is_active
-        ? "#ffecec"
-        : "#eef9f1",
-      color: card.is_active
-        ? "#a33"
-        : "#2f6b3b",
-    }}
-  >
-    {card.is_active ? "停用" : "啟用"}
-  </button>
-</div>
-</div>
-
-  {editingCardId === card.id && (
-    <span
+    <div
       style={{
-        padding: "3px 8px",
-        borderRadius: 999,
-        fontSize: 12,
+        fontSize: 20,
         fontWeight: "bold",
-        background: "#eef7ff",
-        color: "#356b99",
       }}
     >
-      編輯中
-    </span>
-  )}
-</div>
-          <div
-  style={{
-    display: "inline-block",
-    marginBottom: 8,
-    padding: "3px 8px",
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: "bold",
-    background: card.is_active
-      ? "#eef9f1"
-      : "#f1f1f1",
-    color: card.is_active
-      ? "#2f6b3b"
-      : "#666",
-  }}
->
-  {card.is_active ? "啟用" : "停用"}
-</div>
+      {card.name}
+    </div>
+    {editingCardId === card.id && (
+      <span
+        style={{
+          padding: "3px 8px",
+          borderRadius: 999,
+          fontSize: 12,
+          fontWeight: "bold",
+          background: "#eef7ff",
+          color: "#356b99",
+        }}
+      >
+        編輯中
+      </span>
+    )}
+  </div>
 
-          <div
-  style={{
-    marginTop: 10,
-    marginBottom: 6,
-    fontWeight: "bold",
-  }}
->
-  帳單設定
-</div>
-          
-          <div>
-  結帳日：{card.statement_day ? `${card.statement_day} 日` : "未設定"}
-</div>
+  {/* 啟用狀態 */}
+  <div
+    style={{
+      display: "inline-block",
+      marginBottom: 8,
+      padding: "3px 8px",
+      borderRadius: 999,
+      fontSize: 12,
+      fontWeight: "bold",
+      background: card.is_active
+        ? "#eef9f1"
+        : "#f1f1f1",
+      color: card.is_active
+        ? "#2f6b3b"
+        : "#666",
+    }}
+  >
+     {card.is_active ? "啟用" : "停用"}
+  </div>
 
-<div>
-  繳款日：{card.due_day ? `${card.due_day} 日` : "未設定"}
-</div>
+  {/* 操作按鈕 */}
+  <div
+    style={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 8,
+      marginTop: 8,
+      marginBottom: 12,
+    }}
+  >
+    <button
+      onClick={() => startEditCard(card)}
+      style={{
+        padding: "6px 12px",
+        border: "1px solid #b8d7f0",
+        borderRadius: 8,
+        background: "#eef7ff",
+        fontWeight: "bold",
+        cursor: "pointer",
+      }}
+    >
+      ✏️ 編輯
+    </button>
 
-          <div>
-  規則：
-  {card.statement_day && card.due_day
-    ? card.due_month_offset === 0
-      ? `每月 ${card.statement_day} 日結帳，當月 ${card.due_day} 日繳款`
+    <button
+      onClick={async () => {
+        const { error } = await supabase
+          .from("CreditCards")
+          .update({
+            is_active: !card.is_active,
+            })
+          .eq("id", card.id);
+
+        if (error) {
+          setMessage(error.message);
+          return;
+        }
+
+        await loadCards();
+      }}
+      style={{
+        padding: "6px 12px",
+        borderRadius: 8,
+        fontWeight: "bold",
+        cursor: "pointer",
+        border: card.is_active
+          ? "1px solid #efb7b7"
+          : "1px solid #b7dfc3",
+        background: card.is_active
+          ? "#ffecec"
+          : "#eef9f1",
+        color: card.is_active
+          ? "#a33"
+          : "#2f6b3b",
+      }}
+    >
+      {card.is_active ? "停用" : "啟用"}
+    </button>
+  </div>
+    {/* 帳單設定 */}
+  <div
+    style={{
+      marginTop: 10,
+      marginBottom: 6,
+      fontWeight: "bold",
+    }}
+  >
+    帳單設定
+    </div>
+
+  <div>
+    結帳日：
+    {card.statement_day
+      ? `每月 ${card.statement_day} 日`
+      : "未設定"}
+  </div>
+    <div>
+    繳款日：
+    {card.due_day
+      ? `每月 ${card.due_day} 日`
+      : "未設定"}
+  </div>
+
+  <div>
+    繳款月份：
+    {card.due_month_offset === 0
+      ? "結帳當月"
       : card.due_month_offset === 2
+      ? "下下個月"
+      : "下個月"}
+  </div>
+
+    <div>
+    規則：
+    {card.statement_day && card.due_day
+      ? card.due_month_offset === 0
+        ? `每月 ${card.statement_day} 日結帳，當月 ${card.due_day} 日繳款`
+        : card.due_month_offset === 2
       ? `每月 ${card.statement_day} 日結帳，下下個月 ${card.due_day} 日繳款`
-      : `每月 ${card.statement_day} 日結帳，次月 ${card.due_day} 日繳款`
-    : "未完整設定"}
-</div>
+        : `每月 ${card.statement_day} 日結帳，次月 ${card.due_day} 日繳款`
+      : "未完整設定"}
+  </div>
+{/* 本期狀態 */}
+  <div
+    style={{
+      marginTop: 12,
+      marginBottom: 6,
+      fontWeight: "bold",
+    }}
+  >
+    本期狀態
+    </div>
 
-          <div
-  style={{
-    marginTop: 12,
-    marginBottom: 6,
-    fontWeight: "bold",
-  }}
->
-  本期狀態
-</div>
-          
-          <div>
-  本期帳單區間：
-  {getCurrentStatementPeriodText(card)}
-</div>
-<hr
-  style={{
-    marginTop: 14,
-    marginBottom: 12,
-    border: "none",
-    borderTop: "1px solid #eee",
-  }}
-/>
-          <div
-  style={{
-    marginTop: 12,
-    marginBottom: 6,
-    fontWeight: "bold",
-  }}
->
-  下一期
-</div>
-          <div>
-  下一期結帳日：
-  {getNextStatementDateText(card)}
-</div>
+  <div>
+    本期帳單區間：
+    {getCurrentStatementPeriodText(card)}
+  </div>
 
-          <div>
-  下一期預計繳款日：
-  {getNextDueDateText(card)}
-</div>
-
-          <div
-  style={{
-    display: "inline-block",
-    marginTop: 6,
-    padding: "4px 8px",
-    borderRadius: 6,
-    background:
-      getNextStatementLevel(card) === "today"
-        ? "#fff1d6"
-        : getNextStatementLevel(card) === "soon"
-        ? "#fffbe6"
+  <div
+    style={{
+      display: "inline-block",
+      marginTop: 6,
+      padding: "4px 8px",
+      borderRadius: 6,
+      background: getCurrentStatementStatusText(card).includes(
+        "已結帳"
+        )
+        ? "#eef9f1"
         : "#eef7ff",
-  }}
->
-  {getNextStatementStatusText(card)}
+    }}
+  >
+    {getCurrentStatementStatusText(card)}
+  </div>
+
+  <div style={{ marginTop: 6 }}>
+    本期繳款日：
+    {getCurrentDueDateText(card)}
+  </div>
+    <div
+    style={{
+      display: "inline-block",
+      marginTop: 6,
+      padding: "4px 8px",
+      borderRadius: 6,
+      background:
+        getCurrentDueLevel(card) === "overdue"
+          ? "#ffe5e5"
+          : getCurrentDueLevel(card) === "today"
+          ? "#fff1d6"
+          : getCurrentDueLevel(card) === "soon"
+          ? "#fffbe6"
+          : "transparent",
+    }}
+       >
+    {getCurrentDueStatusText(card)}
+  </div>
+
+  {/* 下一期 */}
+  <hr
+    style={{
+      marginTop: 14,
+      marginBottom: 12,
+      border: "none",
+      borderTop: "1px solid #eee",
+    }}
+  />
+    <div
+    style={{
+      marginTop: 12,
+      marginBottom: 6,
+      fontWeight: "bold",
+    }}
+  >
+    下一期
+  </div>
+
+    <div>
+    下一期結帳日：
+    {getNextStatementDateText(card)}
+  </div>
+
+  <div>
+    下一期預計繳款日：
+    {getNextDueDateText(card)}
+  </div>
+
+    <div
+    style={{
+      display: "inline-block",
+      marginTop: 6,
+      padding: "4px 8px",
+      borderRadius: 6,
+      background:
+        getNextStatementLevel(card) === "today"
+          ? "#fff1d6"
+          : getNextStatementLevel(card) === "soon"
+          ? "#fffbe6"
+          : "#eef7ff",
+    }}
+  >
+    {getNextStatementStatusText(card)}
+  </div>
 </div>
       
       
