@@ -656,7 +656,10 @@ const todayOnly = new Date(
   style={{
     marginBottom: 18,
     padding: 16,
-    border: "1px solid #ddd",
+    border:
+  editingId === card.id
+    ? "2px solid #8bbce5"
+    : "1px solid #ddd",
     borderRadius: 10,
   }}
 >
