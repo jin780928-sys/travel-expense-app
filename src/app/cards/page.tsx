@@ -819,9 +819,24 @@ const todayOnly = new Date(
           <button
   onClick={() => toggleCard(card)}
   style={{
-    padding: "6px 12px",
-    marginTop: 6,
-  }}
+  padding: "6px 12px",
+  marginTop: 8,
+  marginLeft: 8,
+  borderRadius: 8,
+  fontWeight: "bold",
+  cursor: "pointer",
+    border: card.is_active
+    ? "1px solid #efb7b7"
+    : "1px solid #b7dfc3",
+
+  background: card.is_active
+    ? "#ffecec"
+    : "#eef9f1",
+
+  color: card.is_active
+    ? "#a33"
+    : "#2f6b3b",
+}}
 >
   {card.is_active ? "停用" : "啟用"}
 </button>
