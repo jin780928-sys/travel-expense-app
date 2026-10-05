@@ -2650,10 +2650,11 @@ export default function DashboardPage() {
                 marginBottom: 16,
                 padding: 14,
                 border:
-                  selectedStatementCard ===
-                  card.name
-                    ? "2px solid #777"
-                    : "1px solid #ddd",
+  selectedStatementCard === card.name
+    ? "2px solid #777"
+    : card.isPaid
+    ? "1px solid #ddd"
+    : "1px solid #f3b3b3",
                 borderRadius: 10,
               }}
             >
