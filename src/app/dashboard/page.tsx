@@ -3586,9 +3586,9 @@ export default function DashboardPage() {
                           fontSize: 12,
                           fontWeight: "bold",
                           background:
-                            statement.is_paid
-                              ? "#e7f7ed"
-                              : "#fffbe6",
+  statement.is_paid
+    ? "#e7f7ed"
+    : "#ffe5e5",
                         }}
                       >
                         {statement.is_paid
