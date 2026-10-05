@@ -3240,7 +3240,7 @@ const bDate =
                   style={{
                     marginTop: 6,
                   }}
-                >
+                
                   狀態：
                   {card.isPaid
                     ? "✅ 已繳"
