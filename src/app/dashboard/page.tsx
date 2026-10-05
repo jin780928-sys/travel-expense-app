@@ -4120,46 +4120,75 @@ return (
                       borderRadius: 8,
                     }}
                     >
-                    <button
-                      onClick={() =>
-                        setExpandedHistoryIds(
-                          (
-                            current
-                          ) =>
-                            current.includes(
-                              statement.id
-                            )
-                              ? current.filter(
-                                  (
-                                    id
-                                     ) =>
-                                    id !==
-                                    statement.id
-                                )
-                              : [
-                                 ...current,
-                                  statement.id,
-                                ]
-                        )
-                      }
+                    <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 8,
+  }}
+>
+                      <button
+    onClick={() =>
+      setExpandedHistoryIds(
+        (current) =>
+          current.includes(
+            statement.id
+          )
+          ? current.filter(
+                (id) =>
+                  id !==
+                  statement.id
+              )
+            : [
+                ...current,
+                statement.id,
+              ]
+      )
+    }
+                        style={{
+      fontWeight: "bold",
+      cursor: "pointer",
+      background: "none",
+      border: "none",
+      padding: 0,
+      textDecoration:
+        "underline",
+                          }}
+  >
+    {card?.name ||
+      "未知信用卡"}
+  </button>
 
-                      style={{
-                        fontWeight:
-                          "bold",
-                        cursor:
-                          "pointer",
-                        background:
-                          "none",
-                        border:
-                          "none",
-                        padding: 0,
-                         textDecoration:
-                          "underline",
-                      }}
-                    >
-                      {card?.name ||
-                        "未知信用卡"}
-                    </button>
+  <span
+    style={{
+      fontSize: 13,
+      color: "#666",
+    }}
+  >
+    {statement.period_end.slice(
+      0,
+      7
+    )}
+  </span>
+                      <span
+    style={{
+      padding: "3px 8px",
+      borderRadius: 999,
+      fontSize: 12,
+      fontWeight: "bold",
+      background:
+        statement.is_paid
+          ? "#e7f7ed"
+          : "#fffbe6",
+    }}
+  >
+    {statement.is_paid
+      ? "✅ 已繳"
+      : "⏳ 未繳"}
+  </span>
+</div>
 
                     <div
   style={{
