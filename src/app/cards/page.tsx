@@ -826,15 +826,19 @@ const todayOnly = new Date(
   {card.is_active ? "停用" : "啟用"}
 </button>
 
-          <button
+         <button
   onClick={() => startEditCard(card)}
   style={{
     padding: "6px 12px",
-    marginTop: 6,
-    marginLeft: 8,
+    marginTop: 8,
+    border: "1px solid #b8d7f0",
+    borderRadius: 8,
+    background: "#eef7ff",
+    fontWeight: "bold",
+    cursor: "pointer",
   }}
 >
-  編輯
+  ✏️ 編輯
 </button>
           
         </div>
