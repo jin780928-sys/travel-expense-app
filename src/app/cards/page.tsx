@@ -316,6 +316,37 @@ const dueDate = new Date(
     )
   );
 }
+
+
+  function getNextStatementDateText(card: CreditCard) {
+  if (!card.statement_day) {
+    return "未設定";
+  }
+    const currentStatementEndDate =
+    getCurrentStatementEndDate(card);
+
+  if (!currentStatementEndDate) {
+    return "未設定";
+  }
+    const nextStatementDate = new Date(
+    currentStatementEndDate.getFullYear(),
+    currentStatementEndDate.getMonth() + 1,
+    Math.min(
+      card.statement_day,
+      new Date(
+        currentStatementEndDate.getFullYear(),
+        currentStatementEndDate.getMonth() + 2,
+        0
+      ).getDate()
+    )
+  );
+    return `${nextStatementDate.getFullYear()}/${String(
+    nextStatementDate.getMonth() + 1
+  ).padStart(2, "0")}/${String(
+    nextStatementDate.getDate()
+  ).padStart(2, "0")}`;
+}
+  
   function getCurrentStatementPeriodText(card: CreditCard) {
   const endDate =
     getCurrentStatementEndDate(card);
@@ -521,6 +552,10 @@ const dueDate = new Date(
           <div>
   本期帳單區間：
   {getCurrentStatementPeriodText(card)}
+</div>
+          <div>
+  下一期結帳日：
+  {getNextStatementDateText(card)}
 </div>
 
           <div
