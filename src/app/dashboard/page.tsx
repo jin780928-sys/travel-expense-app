@@ -3195,57 +3195,61 @@ const bDate =
                     : "未設定"}
                 </div>
 
-                <div>
+              <div>
                   繳款截止：
                   {getDueDateText(
                     card.due_day
                   )}
                 </div>
 
+                {/* 灰色背景資訊區塊 */}
                 <div
-  style={{
-    marginTop: 10,
-    padding: 10,
-    background: "#fafafa",
-    borderRadius: 8,
-    lineHeight: 1.7,
-  }}
->
-                <div>
-  帳單月份：
-  {selectedYear}/{String(
-    selectedMonth
-  ).padStart(2, "0")}
-</div>
-                <div>
-  繳款月份：
-  {getDueMonthText(
-    card.due_month_offset
-  )}
-</div>
-                
-                <div>
-    本期區間：
-    {card.periodStart &&
-    card.periodEnd
-      ? `${formatDate(
-          card.periodStart
-        )} ～ ${formatDate(
-          card.periodEnd
-        )}`
-      : "未設定"}
-  </div>
-
-                <div>
                   style={{
-                    marginTop: 6,
+                    marginTop: 10,
+                    padding: 10,
+                    background: "#fafafa",
+                    borderRadius: 8,
+                    lineHeight: 1.7,
                   }}
-                
-                  狀態：
-                  {card.isPaid
-                    ? "✅ 已繳"
-                    : "⏳ 未繳"}
-                </div>
+                >
+                  
+                <div>
+                    帳單月份：
+                    {selectedYear}/{String(
+                      selectedMonth
+                    ).padStart(2, "0")}
+                  </div>
+                  
+              <div>
+                    繳款月份：
+                    {getDueMonthText(
+                      card.due_month_offset
+                    )}
+                  </div>
+                <div>
+                    本期區間：
+                    {card.periodStart &&
+                    card.periodEnd
+                      ? `${formatDate(
+                          card.periodStart
+                        )} ～ ${formatDate(
+                          card.periodEnd
+                        )}`
+                      : "未設定"}
+                  </div>
+
+              {/* 修正 style 的位置與語法 */}
+                  <div
+                    style={{
+                      marginTop: 6,
+                    }}
+                    >
+                    狀態：
+                    {card.isPaid
+                      ? "✅ 已繳"
+                      : "⏳ 未繳"}
+                  </div>
+                </div> {/* 補上這個灰色區塊的關閉標籤 */}
 
                 <div>
                   {getDueStatus(
