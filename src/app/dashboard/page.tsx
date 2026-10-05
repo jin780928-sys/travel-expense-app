@@ -2655,6 +2655,9 @@ export default function DashboardPage() {
     : card.isPaid
     ? "1px solid #ddd"
     : "1px solid #f3b3b3",
+                background: card.isPaid
+  ? "white"
+  : "#fff8f8",
                 borderRadius: 10,
               }}
             >
