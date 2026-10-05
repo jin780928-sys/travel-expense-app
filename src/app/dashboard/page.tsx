@@ -2720,8 +2720,14 @@ const bDate =
           marginBottom: 30,
         }}
       >
-        <h2>
-  💳 信用卡本期帳單（{visibleCardStatements.length} 張）
+       <h2>
+  💳 信用卡本期帳單（共 {visibleCardStatements.length} 張｜未繳{" "}
+  {
+    visibleCardStatements.filter(
+      (card) => !card.isPaid
+    ).length
+  }{" "}
+  張）
 </h2>
 
         <button
