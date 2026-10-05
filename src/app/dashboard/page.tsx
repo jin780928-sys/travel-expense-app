@@ -2721,8 +2721,8 @@ const bDate =
         }}
       >
         <h2>
-          💳 信用卡本期帳單
-        </h2>
+  💳 信用卡本期帳單（{visibleCardStatements.length} 張）
+</h2>
 
         <button
           onClick={() =>
