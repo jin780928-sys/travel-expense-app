@@ -3236,7 +3236,7 @@ const bDate =
                     : "未設定"}
                 </div>
 
-                <div
+                <div>
                   style={{
                     marginTop: 6,
                   }}
