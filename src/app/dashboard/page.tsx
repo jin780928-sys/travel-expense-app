@@ -3554,8 +3554,9 @@ export default function DashboardPage() {
                             "underline",
                         }}
                       >
-                        {card?.name ||
-                          "未知信用卡"}
+                        {isExpanded ? "▼ " : "▶ "}
+{card?.name ||
+  "未知信用卡"}
                       </button>
 
                       <span
