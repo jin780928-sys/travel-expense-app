@@ -684,7 +684,7 @@ const todayOnly = new Date(
     {card.name}
   </div>
 
-  {editingCardID === card.id && (
+  {editingCardId === card.id && (
     <span
       style={{
         padding: "3px 8px",
