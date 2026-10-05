@@ -3462,9 +3462,9 @@ const bDate =
                   </div>
                 )}
               </div>
-            )
+            ))
           )
-        
+        ){}
       </section>
 
       {showStatementHistory && (
@@ -3472,7 +3472,7 @@ const bDate =
           id="statement-history"
           style={{
             marginBottom: 30,
-          }}
+          }
         >
           <h2>
             📚 歷史帳單（
