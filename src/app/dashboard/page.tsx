@@ -4190,7 +4190,7 @@ return (
   </span>
 </div>
 
-                    <div
+                  <div
   style={{
     marginTop: 10,
     padding: 10,
@@ -4199,6 +4199,47 @@ return (
     lineHeight: 1.7,
   }}
 >
+                    <div>
+    帳單金額：
+    {Object.keys(totals).length === 0 ? (
+      <span>0</span>
+    ) : (
+      Object.entries(totals).map(
+        ([currency, total], index) => (
+          <span key={currency}>
+            {index > 0 ? " / " : " "}
+            {currency}{" "}
+            {total.toFixed(2)}
+          </span>
+        )
+      )
+    )}
+  </div>
+                    {expandedHistoryIds.includes(
+    statement.id
+  ) && (
+    <>
+      <div>
+        帳單期間：
+        {formatDate(
+      statement.period_start
+        )}
+        {" ～ "}
+        {formatDate(
+          statement.period_end
+        )}
+      </div>
+      <div>
+        實際繳款日：
+        {statement.paid_date
+          ? formatDate(
+              statement.paid_date
+            )
+          : "未記錄"}
+      </div>
+    </>
+  )}
+</div>
 
                       <div>
     帳單期間：
