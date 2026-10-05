@@ -3513,7 +3513,9 @@ export default function DashboardPage() {
                     style={{
                       marginBottom: 12,
                       padding: 12,
-                      border: "1px solid #ddd",
+                      border: statement.is_paid
+  ? "1px solid #ddd"
+  : "1px solid #f3b3b3",
                       borderRadius: 8,
                     }}
                   >
