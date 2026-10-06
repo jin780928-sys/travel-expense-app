@@ -108,7 +108,7 @@ export default function DashboardPage() {
   useState("all");
 
   const [monthlyExpenseCardFilter, setMonthlyExpenseCardFilter] =
-  React.useState("all");;
+  React.useState("all");
 
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
