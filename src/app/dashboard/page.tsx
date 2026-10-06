@@ -374,27 +374,35 @@ export default function DashboardPage() {
     monthlyExpenseSearch
       .trim()
       .toLowerCase();
-
-  if (keyword === "") {
-    return expenses;
-  }
-return expenses.filter((expense) => {
-    return (
+    return expenses.filter((expense) => {
+    const matchesSearch =
+      keyword === "" ||
       expense.item
         .toLowerCase()
         .includes(keyword) ||
       (expense.major_category || "")
-      .toLowerCase()
+        .toLowerCase()
         .includes(keyword) ||
       (expense.category || "")
         .toLowerCase()
         .includes(keyword) ||
       (expense.card_name || "")
-      .toLowerCase()
-        .includes(keyword)
+        .toLowerCase()
+        .includes(keyword);
+      const matchesCategory =
+      monthlyExpenseCategoryFilter === "all" ||
+      expense.major_category ===
+        monthlyExpenseCategoryFilter;
+      return (
+      matchesSearch &&
+      matchesCategory
     );
   });
-}, [expenses, monthlyExpenseSearch]);
+}, [
+    expenses,
+  monthlyExpenseSearch,
+  monthlyExpenseCategoryFilter,
+]);
 
   function getDueDateText(
     dueDay: number | null,
@@ -3940,6 +3948,28 @@ return expenses.filter((expense) => {
     padding: "8px 10px",
   }}
 />
+
+       value={monthlyExpenseCategoryFilter}
+  onChange={(e) =>
+    setMonthlyExpenseCategoryFilter(
+      e.target.value
+    )
+  }
+       style={{
+    marginBottom: 12,
+    padding: "8px 10px",
+  }}
+>
+       <option value="all">全部分類</option>
+  <option value="餐飲">餐飲</option>
+  <option value="交通">交通</option>
+  <option value="住宿">住宿</option>
+  <option value="購物">購物</option>
+       <option value="娛樂旅遊">娛樂旅遊</option>
+  <option value="居家">居家</option>
+  <option value="汽車">汽車</option>
+  <option value="其他">其他</option>
+</select>
 
         {filteredMonthlyExpenses.length === 0 ? (
   <p>
