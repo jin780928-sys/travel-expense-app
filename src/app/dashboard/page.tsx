@@ -2743,230 +2743,102 @@ export default function DashboardPage() {
   {getDueDateText(card.due_day, card.due_month_offset)}
 </div>
 
-{selectedStatementCard === card.name && (
-  <>
-    <div>
-      結帳日：
-      {card.statement_day ? `每月 ${card.statement_day} 日` : "未設定"}
-    </div>
+{/* 確保 selectedStatementCard === card.name 展開時才顯示以下內容 */}
+              {selectedStatementCard === card.name && (
+                <>
+                  <div>
+                    結帳日：
 
-    <div>
-      繳款日：
-      {card.due_day ? `每月 ${card.due_day} 日` : "未設定"}
-    </div>
-    <div
-      style={{
-        marginTop: 10,
-        padding: 10,
-        background: "#fafafa",
-        borderRadius: 8,
-        lineHeight: 1.7,
-      }}
-    >
-      <div>
-        帳單月份：
-        {selectedYear}/{String(selectedMonth).padStart(2, "0")}
-      </div>
+                    {card.statement_day
+                      ? `每月 ${card.statement_day} 日`
+                      : "未設定"}
+                  </div>
 
-      <div>
-        繳款月份：
-        {getDueMonthText(card.due_month_offset)}
-      </div>
-      <div>
-        本期區間：
-        {card.periodStart && card.periodEnd
-          ? `${formatDate(card.periodStart)} ～ ${formatDate(card.periodEnd)}`
-          : "未設定"}
-      </div>
-    </div>
-    <div
-      style={{
-        marginTop: 10,
-        padding: 10,
-        background: "#fafafa",
-        borderRadius: 8,
-        lineHeight: 1.7,
-      }}
-      >
-      <div
-        style={{
-          fontWeight: "bold",
-          marginBottom: 4,
-        }}
-      >
-        繳款狀態
-      </div>
-      {/* 修正：將狀態放入對應的區塊與條件渲染中 */}
-      <div>
-        狀態：
-        {card.isPaid ? "✅ 已繳" : "⏳ 未繳"}
-      </div>
-                <div>
-                  {getDueStatus(
-                    card.due_day,
-                    card.isPaid,
-                    card.due_month_offset
-                  )}
-                </div>
-
-                {card.isPaid && (
+                  <div>
+                    繳款日：
+                    {card.due_day
+                      ? `每月 ${card.due_day} 日`
+                      : "未設定"}
+                  </div>
                   <div
                     style={{
-                      marginTop: 8,
+                      marginTop: 10,
+                      padding: 10,
+                      background: "#fafafa",
+                      borderRadius: 8,
+                      lineHeight: 1.7,
                     }}
                   >
                     <div>
-                      實際繳款日：
-                      {card.paidDate ||
-                        "未記錄"}
+                      帳單月份：
+                      {selectedYear}/
+                      {String(selectedMonth).padStart(2, "0")}
                     </div>
 
-                    {card.statementStatusId !==
-                      null && (
-                      <button
-                        onClick={() => {
-                          setEditingPaidStatementId(
-                            card.statementStatusId
-                          );
+                    <div>
+                      繳款月份：
+                      {getDueMonthText(card.due_month_offset)}
+                    </div>
 
-                          setEditingPaidDate(
-                            card.paidDate || ""
-                          );
-                        }}
-                        style={{
-                          padding: "6px 10px",
-                          marginTop: 6,
-                          marginBottom: 8,
-                        }}
-                      >
-                        修改繳款日
-                      </button>
-                    )}
+                    <div>
+                      本期區間：
+                      {card.periodStart && card.periodEnd
+                        ? `${formatDate(card.periodStart)} ～ ${formatDate(card.periodEnd)}`
+                        : "未設定"}
+                    </div>
                   </div>
-                )}
-              </div>
-
-              <button
-                onClick={() =>
-                  togglePaidStatus(card)
-                }
-                disabled={
-                  !card.periodStart ||
-                  !card.periodEnd
-                }
-                style={{
-                  padding: "6px 10px",
-                  marginTop: 8,
-                  marginBottom: 8,
-                }}
-              >
-                {card.isPaid
-                  ? "標記未繳"
-                  : "標記已繳"}
-              </button>
-
-              {card.statementStatusId !==
-                null &&
-                editingPaidStatementId ===
-                  card.statementStatusId && (
                   <div
                     style={{
-                      marginTop: 8,
+                      marginTop: 10,
+                      padding: 10,
+                      background: "#fafafa",
+                      borderRadius: 8,
+                      lineHeight: 1.7,
                     }}
                   >
-                    <input
-                      type="date"
-                      value={
-                        editingPaidDate
-                      }
-                      onChange={(e) =>
-                        setEditingPaidDate(
-                          e.target.value
-                        )
-                      }
-                    />
-
-                    <button
-                      onClick={() =>
-                        savePaidDate(
-                          card.statementStatusId!
-                        )
-                      }
-                      style={{
-                        marginLeft: 8,
-                        padding: "6px 10px",
-                      }}
-                    >
-                      儲存
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setEditingPaidStatementId(
-                          null
-                        );
-
-                        setEditingPaidDate("");
-                      }}
-                      style={{
-                        marginLeft: 6,
-                        padding: "6px 10px",
-                      }}
-                    >
-                      取消
-                    </button>
+                    <div style={{ fontWeight: "bold", marginBottom: 4 }}>
+                      繳款狀態
+                    </div>
+                    <div>
+                      狀態：
+                      {card.isPaid ? "✅ 已繳" : "⏳ 未繳"}
+                    </div>
                   </div>
-                )}
-
-              {selectedStatementCard ===
-                card.name && (
-                <div
-                  style={{
-                    marginTop: 14,
-                    paddingTop: 10,
-                    borderTop:
-                      "1px solid #ddd",
-                  }}
-                >
-                  <strong>
-                    本期消費明細
-                  </strong>
-
-                  {selectedStatementExpenses.length ===
-                  0 ? (
-                    <p>本期沒有消費</p>
-                  ) : (
-                    selectedStatementExpenses.map(
-                      (expense) => (
+                  {/* 消費明細區塊 */}
+                  <div
+                    style={{
+                      marginTop: 14,
+                      paddingTop: 10,
+                      borderTop: "1px solid #ddd",
+                    }}
+                  >
+                    <strong>本期消費明細</strong>
+                    {selectedStatementExpenses.length === 0 ? (
+                      <p>本期沒有消費</p>
+                    ) : (
+                      selectedStatementExpenses.map((expense) => (
                         <div
                           key={expense.id}
                           style={{
                             padding: "8px 0",
-                            borderBottom:
-                              "1px solid #eee",
+                            borderBottom: "1px solid #eee",
                           }}
                         >
-                          <Link
-                            href={`/expenses/${expense.id}`}
-                          >
-                            {expense.date}{" "}
-                            {expense.item}
+                          <Link href={`/expenses/${expense.id}`}>
+                            {expense.date} {expense.item}
                           </Link>
 
                           <div>
-                            {expense.currency ||
-                              "USD"}{" "}
-                            {Number(
-                              expense.amount
-                            ).toFixed(2)}
+                            {expense.currency || "USD"}{" "}
+                            {Number(expense.amount).toFixed(2)}
                           </div>
                         </div>
-                      )
-                    )
-                  )}
-                </div>
-              )}
-            </div>
+                      ))
+                    )}
+                    </div>
+                </>
+              )} {/* 結束 selectedStatementCard === card.name 的判斷 */}
+            </div> {/* 結束個別卡片的外層容器 div */}
           ))
         )}
       </section>
