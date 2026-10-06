@@ -2747,6 +2747,16 @@ export default function DashboardPage() {
               </div>
 
               <div>
+                  繳款截止：
+                  {getDueDateText(
+                    card.due_day,
+                    card.due_month_offset
+                  )}
+                </div>
+              {selectedStatementCard === card.name && (
+  <>
+    
+              <div>
                 結帳日：
                 {card.statement_day
                   ? `每月 ${card.statement_day} 日`
@@ -2784,13 +2794,7 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <div>
-                  繳款截止：
-                  {getDueDateText(
-                    card.due_day,
-                    card.due_month_offset
-                  )}
-                </div>
+                
 
                 <div>
                   本期區間：
@@ -2822,6 +2826,8 @@ export default function DashboardPage() {
                 >
                   繳款狀態
                 </div>
+                  </>
+)}
 
                 <div>
                   狀態：
