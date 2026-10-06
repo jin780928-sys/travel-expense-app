@@ -2427,14 +2427,23 @@ export default function DashboardPage() {
         )}
       </section>
 
-      <section
-        id="card-statements"
-        style={{
-          marginBottom: 30,
-        }}
-      >
-        <h2>
-          💳 信用卡本期帳單（共{" "}
+     <section
+  id="card-statements"
+  style={{
+    marginBottom: 30,
+    padding: 16,
+    border: "1px solid #ddd",
+    borderRadius: 12,
+    background: "white",
+  }}
+>
+        <h2
+  style={{
+    marginTop: 0,
+    marginBottom: 12,
+  }}
+>
+  💳 信用卡本期帳單（共{" "}
           {visibleCardStatements.length} 張｜未繳{" "}
           {
             visibleCardStatements.filter(
