@@ -4215,65 +4215,32 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     ))}
   </select>
 
-         <label
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
+         <input
+  type="date"
+  value={monthlyExpenseStartDate}
+  onChange={(e) =>
+    setMonthlyExpenseStartDate(
+      e.target.value
+    )
+  }
+
+           style={{
+    padding: "8px 10px",
   }}
->
-           <span
-    style={{
-      fontSize: 14,
-      color: "#666",
-    }}
-  >
-    開始日期
-  </span>
+/>
 
-            <input
-    type="date"
-    value={monthlyExpenseStartDate}
-    onChange={(e) =>
-      setMonthlyExpenseStartDate(
-        e.target.value
-      )
-    }
-              style={{
-      padding: "8px 10px",
-    }}
-  />
-</label>
-
-<label
+<input
+  type="date"
+  value={monthlyExpenseEndDate}
+  onChange={(e) =>
+    setMonthlyExpenseEndDate(
+      e.target.value
+    )
+  }
   style={{
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
+    padding: "8px 10px",
   }}
->
-  <span
-    style={{
-      fontSize: 14,
-      color: "#666",
-    }}
-  >
-    結束日期
-    </span>
-
-  <input
-    type="date"
-    value={monthlyExpenseEndDate}
-    onChange={(e) =>
-      setMonthlyExpenseEndDate(
-        e.target.value
-      )
-    }
-    style={{
-      padding: "8px 10px",
-    }}
-  />
-</label>
+/>
          <select
   value={monthlyExpenseSort}
   onChange={(e) =>
