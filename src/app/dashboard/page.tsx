@@ -3665,21 +3665,38 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section>
-        <h2>本月支出明細</h2>
+      <section
+  style={{
+    marginBottom: 30,
+    padding: 16,
+    border: "1px solid #ddd",
+    borderRadius: 12,
+    background: "white",
+  }}
+>
+  <h2
+  style={{
+    marginTop: 0,
+    marginBottom: 12,
+  }}
+>
+  本月支出明細
+</h2>
 
         {expenses.length === 0 ? (
           <p>沒有資料</p>
         ) : (
           expenses.map((expense) => (
-            <div
-              key={expense.id}
-              style={{
-                padding: "10px 0",
-                borderBottom:
-                  "1px solid #ddd",
-              }}
-            >
+          <div
+  key={expense.id}
+  style={{
+    marginBottom: 10,
+    padding: 12,
+    border: "1px solid #eee",
+    borderRadius: 10,
+    background: "#fafafa",
+  }}
+>
               <Link
                 href={`/expenses/${expense.id}`}
               >
