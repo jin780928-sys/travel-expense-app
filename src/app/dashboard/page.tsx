@@ -2196,6 +2196,68 @@ export default function DashboardPage() {
 </div>
 </section>
 
+     <div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 24,
+  }}
+>
+       <button
+    onClick={() =>
+      document
+        .getElementById(
+          "card-statements"
+        )
+        ?.scrollIntoView({
+          behavior: "smooth",
+        })
+        }
+    style={{
+      padding: "8px 12px",
+    }}
+  >
+    💳 本期帳單
+  </button>
+
+       <button
+  onClick={() => {
+    setShowStatementHistory(true);
+    setTimeout(() => {
+      document
+        .getElementById(
+          "statement-history"
+        )
+        ?.scrollIntoView({
+          behavior: "smooth",
+          });
+    }, 50);
+  }}
+  style={{
+    padding: "8px 12px",
+  }}
+>
+  📚 歷史帳單
+</button>
+
+       <button
+  onClick={() =>
+    document
+      .getElementById(
+        "monthly-expenses"
+        )
+      ?.scrollIntoView({
+        behavior: "smooth",
+      })
+  }
+  style={{
+    padding: "8px 12px",
+  }}
+>
+  🧾 本月支出明細
+</button>
+</div>
       {message && <p>{message}</p>}
 
       {unpaidStatements.length > 0 && (
@@ -3809,7 +3871,8 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section
+     <section
+  id="monthly-expenses"
   style={{
     marginBottom: 30,
     padding: 16,
