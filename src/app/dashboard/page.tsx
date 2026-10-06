@@ -2086,6 +2086,91 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     URL.revokeObjectURL(url);
   }
 
+      function exportMonthlyExpensesCsv() {
+  const rows: string[][] = [
+    [
+      "日期",
+      "項目",
+      "大分類",
+      "小分類",
+      "幣別",
+      "金額",
+      "信用卡",
+    ],
+    ];
+
+  for (const expense of filteredMonthlyExpenses) {
+    rows.push([
+      expense.date,
+      expense.item,
+      expense.major_category || "",
+      expense.category || "",
+      expense.currency || "USD",
+      Number(expense.amount).toFixed(2),
+      expense.card_name || "",
+    ]);
+  }
+
+  rows.push([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
+
+  for (const [currency, total] of Object.entries(
+    filteredMonthlyTotals
+  )) {
+    rows.push([
+      "篩選後總額",
+      "",
+      "",
+      "",
+      currency,
+      total.toFixed(2),
+      "",
+    ]);
+  }
+
+        const csv = rows
+    .map((row) =>
+      row
+        .map(
+          (value) =>
+            `"${String(value).replace(/"/g, '""')}"`
+        )
+        .join(",")
+    )
+    .join("\n");
+        const blob = new Blob(
+    ["\uFEFF" + csv],
+    {
+      type: "text/csv;charset=utf-8;",
+    }
+  );
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+        link.href = url;
+
+  link.download =
+    `monthly-expenses-${selectedYear}-${String(
+      selectedMonth
+    ).padStart(2, "0")}.csv`;
+
+  document.body.appendChild(link);
+
+        link.click();
+
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+}
+
   const years: number[] = [];
 
   for (
@@ -4173,6 +4258,15 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   }}
 >
   清除篩選
+</button>
+
+         <button
+  onClick={exportMonthlyExpensesCsv}
+  style={{
+    padding: "8px 12px",
+  }}
+>
+  匯出 CSV
 </button>
         
 </div>
