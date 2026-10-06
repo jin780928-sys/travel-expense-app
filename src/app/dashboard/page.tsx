@@ -110,6 +110,12 @@ export default function DashboardPage() {
   const [monthlyExpenseCardFilter, setMonthlyExpenseCardFilter] =
   useState("all");
 
+  const [monthlyExpenseStartDate, setMonthlyExpenseStartDate] =
+  useState("");
+
+const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
+  useState("");
+
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
@@ -377,7 +383,6 @@ export default function DashboardPage() {
     monthlyExpenseSearch
       .trim()
       .toLowerCase();
-
    return expenses.filter((expense) => {
     const matchesSearch =
       keyword === "" ||
@@ -385,7 +390,7 @@ export default function DashboardPage() {
         .toLowerCase()
         .includes(keyword) ||
       (expense.major_category || "")
-        .toLowerCase()
+    .toLowerCase()
         .includes(keyword) ||
       (expense.category || "")
         .toLowerCase()
@@ -393,23 +398,35 @@ export default function DashboardPage() {
       (expense.card_name || "")
         .toLowerCase()
         .includes(keyword);
-
      const matchesCategory =
       monthlyExpenseCategoryFilter === "all" ||
       expense.major_category ===
         monthlyExpenseCategoryFilter;
 
+     
      const matchesCard =
       monthlyExpenseCardFilter === "all" ||
       (monthlyExpenseCardFilter === "non-card"
         ? !expense.card_name
         : expense.card_name ===
           monthlyExpenseCardFilter);
-
+     
+     const matchesStartDate =
+      monthlyExpenseStartDate === "" ||
+      expense.date >=
+        monthlyExpenseStartDate;
+     
+     const matchesEndDate =
+      monthlyExpenseEndDate === "" ||
+      expense.date <=
+        monthlyExpenseEndDate;
+     
      return (
       matchesSearch &&
       matchesCategory &&
-      matchesCard
+      matchesCard &&
+      matchesStartDate &&
+      matchesEndDate
     );
   });
 }, [
@@ -417,6 +434,8 @@ export default function DashboardPage() {
   monthlyExpenseSearch,
   monthlyExpenseCategoryFilter,
   monthlyExpenseCardFilter,
+  monthlyExpenseStartDate,
+  monthlyExpenseEndDate,
 ]);
 
             const filteredMonthlyTotals = useMemo(() => {
@@ -4061,12 +4080,40 @@ export default function DashboardPage() {
     ))}
   </select>
 
+         <input
+  type="date"
+  value={monthlyExpenseStartDate}
+  onChange={(e) =>
+    setMonthlyExpenseStartDate(
+      e.target.value
+    )
+  }
+           style={{
+    padding: "8px 10px",
+  }}
+/>
+
+<input
+  type="date"
+  value={monthlyExpenseEndDate}
+  onChange={(e) =>
+    setMonthlyExpenseEndDate(
+      e.target.value
+    )
+  }
+  style={{
+    padding: "8px 10px",
+  }}
+/>
+
          <button
   onClick={() => {
-    setMonthlyExpenseSearch("");
-    setMonthlyExpenseCategoryFilter("all");
-    setMonthlyExpenseCardFilter("all");
-  }}
+  setMonthlyExpenseSearch("");
+  setMonthlyExpenseCategoryFilter("all");
+  setMonthlyExpenseCardFilter("all");
+  setMonthlyExpenseStartDate("");
+  setMonthlyExpenseEndDate("");
+}}
            style={{
     padding: "8px 12px",
   }}
