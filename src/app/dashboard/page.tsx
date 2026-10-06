@@ -116,6 +116,9 @@ export default function DashboardPage() {
 const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   useState("");
 
+  const [monthlyExpenseSort, setMonthlyExpenseSort] =
+  useState("date_desc");
+
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
@@ -383,44 +386,44 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     monthlyExpenseSearch
       .trim()
       .toLowerCase();
-   return expenses.filter((expense) => {
+   const filtered = expenses.filter((expense) => {
     const matchesSearch =
       keyword === "" ||
       expense.item
         .toLowerCase()
         .includes(keyword) ||
       (expense.major_category || "")
-    .toLowerCase()
-        .includes(keyword) ||
+        .toLowerCase()
+     .includes(keyword) ||
       (expense.category || "")
         .toLowerCase()
         .includes(keyword) ||
       (expense.card_name || "")
         .toLowerCase()
         .includes(keyword);
+
      const matchesCategory =
       monthlyExpenseCategoryFilter === "all" ||
       expense.major_category ===
         monthlyExpenseCategoryFilter;
 
-     
      const matchesCard =
       monthlyExpenseCardFilter === "all" ||
       (monthlyExpenseCardFilter === "non-card"
         ? !expense.card_name
         : expense.card_name ===
           monthlyExpenseCardFilter);
-     
+
      const matchesStartDate =
       monthlyExpenseStartDate === "" ||
       expense.date >=
         monthlyExpenseStartDate;
-     
-     const matchesEndDate =
+
+    const matchesEndDate =
       monthlyExpenseEndDate === "" ||
       expense.date <=
         monthlyExpenseEndDate;
-     
+
      return (
       matchesSearch &&
       matchesCategory &&
@@ -429,13 +432,36 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       matchesEndDate
     );
   });
-}, [
-   expenses,
+
+   return [...filtered].sort((a, b) => {
+    if (monthlyExpenseSort === "date_asc") {
+      return a.date.localeCompare(b.date);
+    }
+
+     if (monthlyExpenseSort === "amount_desc") {
+      return (
+        Number(b.amount) -
+        Number(a.amount)
+      );
+    }
+
+     if (monthlyExpenseSort === "amount_asc") {
+      return (
+        Number(a.amount) -
+        Number(b.amount)
+      );
+    }
+
+    return b.date.localeCompare(a.date);
+  });
+   }, [
+  expenses,
   monthlyExpenseSearch,
   monthlyExpenseCategoryFilter,
   monthlyExpenseCardFilter,
   monthlyExpenseStartDate,
   monthlyExpenseEndDate,
+  monthlyExpenseSort,
 ]);
 
             const filteredMonthlyTotals = useMemo(() => {
@@ -4106,6 +4132,33 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   }}
 />
 
+         <select
+  value={monthlyExpenseSort}
+  onChange={(e) =>
+    setMonthlyExpenseSort(
+      e.target.value
+    )
+  }
+  style={{
+    padding: "8px 10px",
+  }}
+           >
+  <option value="date_desc">
+    日期新到舊
+  </option>
+
+  <option value="date_asc">
+    日期舊到新
+  </option>
+
+  <option value="amount_desc">
+    金額高到低
+  </option>
+
+  <option value="amount_asc">
+    金額低到高
+  </option>
+</select>
          <button
   onClick={() => {
   setMonthlyExpenseSearch("");
@@ -4113,6 +4166,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   setMonthlyExpenseCardFilter("all");
   setMonthlyExpenseStartDate("");
   setMonthlyExpenseEndDate("");
+  setMonthlyExpenseSort("date_desc");
 }}
            style={{
     padding: "8px 12px",
