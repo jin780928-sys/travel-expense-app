@@ -1984,13 +1984,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <main
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: 20,
-      }}
-    >
+   <main
+  id="dashboard-top"
+  style={{
+    maxWidth: 900,
+    margin: "0 auto",
+    padding: 20,
+  }}
+>
       <h1>📊 記帳 Dashboard</h1>
 
       <p>
@@ -3939,6 +3940,36 @@ export default function DashboardPage() {
           ))
         )}
       </section>
+
+     <button
+  onClick={() =>
+    document
+      .getElementById(
+        "dashboard-top"
+      )
+      ?.scrollIntoView({
+        behavior: "smooth",
+      })
+    }
+  style={{
+    position: "fixed",
+    right: 20,
+    bottom: 20,
+    width: 44,
+    height: 44,
+    borderRadius: "50%",
+    border: "1px solid #ddd",
+    background: "white",
+    cursor: "pointer",
+    fontSize: 18,
+    boxShadow:
+      "0 2px 8px rgba(0,0,0,0.12)",
+  }}
+       aria-label="返回頂部"
+  title="返回頂部"
+>
+  ↑
+</button>
     </main>
   );
 }
