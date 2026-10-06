@@ -107,6 +107,9 @@ export default function DashboardPage() {
   const [monthlyExpenseCategoryFilter, setMonthlyExpenseCategoryFilter] =
   useState("all");
 
+  const [monthlyExpenseCardFilter, setMonthlyExpenseCardFilter] =
+  useState("all");
+
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
@@ -369,12 +372,13 @@ export default function DashboardPage() {
     );
   }, [expenses, selectedCard]);
 
-  const filteredMonthlyExpenses = useMemo(() => {
+ const filteredMonthlyExpenses = useMemo(() => {
   const keyword =
     monthlyExpenseSearch
       .trim()
       .toLowerCase();
-    return expenses.filter((expense) => {
+
+   return expenses.filter((expense) => {
     const matchesSearch =
       keyword === "" ||
       expense.item
@@ -389,19 +393,30 @@ export default function DashboardPage() {
       (expense.card_name || "")
         .toLowerCase()
         .includes(keyword);
-      const matchesCategory =
+
+     const matchesCategory =
       monthlyExpenseCategoryFilter === "all" ||
       expense.major_category ===
         monthlyExpenseCategoryFilter;
-      return (
+
+     const matchesCard =
+      monthlyExpenseCardFilter === "all" ||
+      (monthlyExpenseCardFilter === "non-card"
+        ? !expense.card_name
+        : expense.card_name ===
+          monthlyExpenseCardFilter);
+
+     return (
       matchesSearch &&
-      matchesCategory
+      matchesCategory &&
+      matchesCard
     );
   });
 }, [
-    expenses,
+   expenses,
   monthlyExpenseSearch,
   monthlyExpenseCategoryFilter,
+  monthlyExpenseCardFilter,
 ]);
 
   function getDueDateText(
@@ -3959,6 +3974,38 @@ export default function DashboardPage() {
       padding: "8px 10px",
     }}
   >
+
+
+         <select
+  value={monthlyExpenseCardFilter}
+  onChange={(e) =>
+    setMonthlyExpenseCardFilter(
+      e.target.value
+    )
+    }
+  style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "8px 10px",
+  }}
+>
+  <option value="all">
+    全部付款方式
+  </option>
+
+           <option value="non-card">
+    非信用卡支出
+  </option>
+
+  {creditCards.map((card) => (
+    <option
+      key={card.id}
+      value={card.name}
+      >
+      {card.name}
+    </option>
+  ))}
+</select>
          <option value="all">
       全部分類
     </option>
