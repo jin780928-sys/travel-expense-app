@@ -3946,7 +3946,18 @@ export default function DashboardPage() {
   >
     本月支出明細
   </h2>
-       <input
+
+
+       <div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 10,
+    alignItems: "center",
+    marginBottom: 12,
+  }}
+>
+         <input
     type="text"
     value={monthlyExpenseSearch}
     onChange={(e) =>
@@ -3954,15 +3965,14 @@ export default function DashboardPage() {
         e.target.value
       )
     }
-         placeholder="搜尋項目、分類或信用卡"
+           placeholder="搜尋項目、分類或信用卡"
     style={{
       width: "100%",
       maxWidth: 360,
-      marginBottom: 12,
       padding: "8px 10px",
     }}
   />
-       <select
+          <select
     value={monthlyExpenseCategoryFilter}
     onChange={(e) =>
       setMonthlyExpenseCategoryFilter(
@@ -3970,43 +3980,10 @@ export default function DashboardPage() {
       )
     }
     style={{
-      marginBottom: 12,
       padding: "8px 10px",
     }}
   >
-
-
-         <select
-  value={monthlyExpenseCardFilter}
-  onChange={(e) =>
-    setMonthlyExpenseCardFilter(
-      e.target.value
-    )
-    }
-  style={{
-    marginLeft: 8,
-    marginBottom: 12,
-    padding: "8px 10px",
-  }}
->
-  <option value="all">
-    全部付款方式
-  </option>
-
-           <option value="non-card">
-    非信用卡支出
-  </option>
-
-  {creditCards.map((card) => (
-    <option
-      key={card.id}
-      value={card.name}
-      >
-      {card.name}
-    </option>
-  ))}
-</select>
-         <option value="all">
+            <option value="all">
       全部分類
     </option>
 
@@ -4021,7 +3998,7 @@ export default function DashboardPage() {
     <option value="住宿">
       住宿
     </option>
-         <option value="購物">
+            <option value="購物">
       購物
     </option>
 
@@ -4036,41 +4013,53 @@ export default function DashboardPage() {
     <option value="汽車">
       汽車
     </option>
-         <option value="其他">
+            <option value="其他">
       其他
     </option>
   </select>
 
-       <select
-  value={monthlyExpenseCardFilter}
-  onChange={(e) =>
-    setMonthlyExpenseCardFilter(
-      e.target.value
-    )
-  }
-         style={{
-    marginLeft: 8,
-    marginBottom: 12,
-    padding: "8px 10px",
+  <select
+    value={monthlyExpenseCardFilter}
+    onChange={(e) =>
+      setMonthlyExpenseCardFilter(
+        e.target.value
+      )
+    }
+    style={{
+      padding: "8px 10px",
+    }}
+  >
+    <option value="all">
+      全部付款方式
+    </option>
+
+    <option value="non-card">
+      非信用卡支出
+    </option>
+
+    {creditCards.map((card) => (
+      <option
+        key={card.id}
+        value={card.name}
+      >
+        {card.name}
+      </option>
+    ))}
+  </select>
+
+         <button
+  onClick={() => {
+    setMonthlyExpenseSearch("");
+    setMonthlyExpenseCategoryFilter("all");
+    setMonthlyExpenseCardFilter("all");
+  }}
+           style={{
+    padding: "8px 12px",
   }}
 >
-         <option value="all">
-    全部付款方式
-  </option>
-
-  <option value="non-card">
-    非信用卡支出
-  </option>
-         {creditCards.map((card) => (
-    <option
-      key={card.id}
-      value={card.name}
-    >
-      {card.name}
-    </option>
-  ))}
-</select>
-
+  清除篩選
+</button>
+</div>
   {filteredMonthlyExpenses.length ===
   0 ? (
     <p>
