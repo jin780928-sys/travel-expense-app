@@ -101,29 +101,33 @@ export default function DashboardPage() {
 
   const [historySearch, setHistorySearch] = useState("");
 
-  const [monthlyExpenseSearch, setMonthlyExpenseSearch] =
-  useState("");
-
-  const [monthlyExpenseCategoryFilter, setMonthlyExpenseCategoryFilter] =
-  useState("all");
-
-  const [monthlyExpenseCardFilter, setMonthlyExpenseCardFilter] =
-  useState("all");
-
-  const [monthlyExpenseStartDate, setMonthlyExpenseStartDate] =
-  useState("");
-
-const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
-  useState("");
-
-  const [monthlyExpenseSort, setMonthlyExpenseSort] =
-  useState("date_desc");
-
-  const [monthlyExpenseVisibleCount, setMonthlyExpenseVisibleCount] =
-  useState(20);
-
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
+
+  const [monthlyExpenseSearch, setMonthlyExpenseSearch] =
+    useState("");
+
+  const [
+    monthlyExpenseCategoryFilter,
+    setMonthlyExpenseCategoryFilter,
+  ] = useState("all");
+
+  const [monthlyExpenseCardFilter, setMonthlyExpenseCardFilter] =
+    useState("all");
+
+  const [monthlyExpenseStartDate, setMonthlyExpenseStartDate] =
+    useState("");
+
+  const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
+    useState("");
+
+  const [monthlyExpenseSort, setMonthlyExpenseSort] =
+    useState("date_desc");
+
+  const [
+    monthlyExpenseVisibleCount,
+    setMonthlyExpenseVisibleCount,
+  ] = useState(20);
 
   useEffect(() => {
     loadDashboardData();
@@ -140,15 +144,15 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   ]);
 
   useEffect(() => {
-  setMonthlyExpenseVisibleCount(20);
-}, [
-  monthlyExpenseSearch,
-  monthlyExpenseCategoryFilter,
+    setMonthlyExpenseVisibleCount(20);
+  }, [
+    monthlyExpenseSearch,
+    monthlyExpenseCategoryFilter,
     monthlyExpenseCardFilter,
-  monthlyExpenseStartDate,
-  monthlyExpenseEndDate,
-  monthlyExpenseSort,
-]);
+    monthlyExpenseStartDate,
+    monthlyExpenseEndDate,
+    monthlyExpenseSort,
+  ]);
 
   function dateToString(date: Date) {
     const year = date.getFullYear();
@@ -395,112 +399,106 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     );
   }, [expenses, selectedCard]);
 
- const filteredMonthlyExpenses = useMemo(() => {
-  const keyword =
-    monthlyExpenseSearch
-      .trim()
-      .toLowerCase();
-   const filtered = expenses.filter((expense) => {
-    const matchesSearch =
-      keyword === "" ||
-      expense.item
-        .toLowerCase()
-        .includes(keyword) ||
-      (expense.major_category || "")
-        .toLowerCase()
-     .includes(keyword) ||
-      (expense.category || "")
-        .toLowerCase()
-        .includes(keyword) ||
-      (expense.card_name || "")
-        .toLowerCase()
-        .includes(keyword);
+  const filteredMonthlyExpenses = useMemo(() => {
+    const keyword =
+      monthlyExpenseSearch
+        .trim()
+        .toLowerCase();
 
-     const matchesCategory =
-      monthlyExpenseCategoryFilter === "all" ||
-      expense.major_category ===
-        monthlyExpenseCategoryFilter;
+    const filtered = expenses.filter((expense) => {
+      const matchesSearch =
+        keyword === "" ||
+        expense.item
+          .toLowerCase()
+          .includes(keyword) ||
+        (expense.major_category || "")
+          .toLowerCase()
+          .includes(keyword) ||
+        (expense.category || "")
+          .toLowerCase()
+          .includes(keyword) ||
+        (expense.card_name || "")
+          .toLowerCase()
+          .includes(keyword);
 
-     const matchesCard =
-      monthlyExpenseCardFilter === "all" ||
-      (monthlyExpenseCardFilter === "non-card"
-        ? !expense.card_name
-        : expense.card_name ===
-          monthlyExpenseCardFilter);
+      const matchesCategory =
+        monthlyExpenseCategoryFilter === "all" ||
+        expense.major_category ===
+          monthlyExpenseCategoryFilter;
 
-     const matchesStartDate =
-      monthlyExpenseStartDate === "" ||
-      expense.date >=
-        monthlyExpenseStartDate;
+      const matchesCard =
+        monthlyExpenseCardFilter === "all" ||
+        (monthlyExpenseCardFilter === "non-card"
+          ? !expense.card_name
+          : expense.card_name ===
+            monthlyExpenseCardFilter);
 
-    const matchesEndDate =
-      monthlyExpenseEndDate === "" ||
-      expense.date <=
-        monthlyExpenseEndDate;
+      const matchesStartDate =
+        monthlyExpenseStartDate === "" ||
+        expense.date >= monthlyExpenseStartDate;
 
-     return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesCard &&
-      matchesStartDate &&
-      matchesEndDate
-    );
-  });
+      const matchesEndDate =
+        monthlyExpenseEndDate === "" ||
+        expense.date <= monthlyExpenseEndDate;
 
-   return [...filtered].sort((a, b) => {
-    if (monthlyExpenseSort === "date_asc") {
-      return a.date.localeCompare(b.date);
-    }
-
-     if (monthlyExpenseSort === "amount_desc") {
       return (
-        Number(b.amount) -
-        Number(a.amount)
+        matchesSearch &&
+        matchesCategory &&
+        matchesCard &&
+        matchesStartDate &&
+        matchesEndDate
       );
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (monthlyExpenseSort === "date_asc") {
+        return a.date.localeCompare(b.date);
+      }
+
+      if (monthlyExpenseSort === "amount_desc") {
+        return Number(b.amount) - Number(a.amount);
+      }
+
+      if (monthlyExpenseSort === "amount_asc") {
+        return Number(a.amount) - Number(b.amount);
+      }
+
+      return b.date.localeCompare(a.date);
+    });
+  }, [
+    expenses,
+    monthlyExpenseSearch,
+    monthlyExpenseCategoryFilter,
+    monthlyExpenseCardFilter,
+    monthlyExpenseStartDate,
+    monthlyExpenseEndDate,
+    monthlyExpenseSort,
+  ]);
+
+  const filteredMonthlyTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+
+    for (const expense of filteredMonthlyExpenses) {
+      const currency =
+        expense.currency || "USD";
+
+      totals[currency] =
+        (totals[currency] || 0) +
+        Number(expense.amount || 0);
     }
 
-     if (monthlyExpenseSort === "amount_asc") {
-      return (
-        Number(a.amount) -
-        Number(b.amount)
-      );
-    }
-
-    return b.date.localeCompare(a.date);
-  });
-   }, [
-  expenses,
-  monthlyExpenseSearch,
-  monthlyExpenseCategoryFilter,
-  monthlyExpenseCardFilter,
-  monthlyExpenseStartDate,
-  monthlyExpenseEndDate,
-  monthlyExpenseSort,
-]);
-
-            const filteredMonthlyTotals = useMemo(() => {
-  const totals: Record<string, number> = {};
-
-  for (const expense of filteredMonthlyExpenses) {
-    const currency =
-      expense.currency || "USD";
-    totals[currency] =
-      (totals[currency] || 0) +
-      Number(expense.amount || 0);
-  }
-
-  return totals;
-}, [filteredMonthlyExpenses]);
+    return totals;
+  }, [filteredMonthlyExpenses]);
 
   const visibleMonthlyExpenses = useMemo(() => {
-  return filteredMonthlyExpenses.slice(
-    0,
-    monthlyExpenseVisibleCount
+    return filteredMonthlyExpenses.slice(
+      0,
+      monthlyExpenseVisibleCount
     );
-}, [
-  filteredMonthlyExpenses,
-  monthlyExpenseVisibleCount,
-]);
+  }, [
+    filteredMonthlyExpenses,
+    monthlyExpenseVisibleCount,
+  ]);
 
   function getDueDateText(
     dueDay: number | null,
@@ -707,12 +705,11 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           card.statement_day
         );
 
-        const previousEndDate =
-          createSafeDate(
-            selectedYear,
-            selectedMonth - 2,
-            card.statement_day
-          );
+        const previousEndDate = createSafeDate(
+          selectedYear,
+          selectedMonth - 2,
+          card.statement_day
+        );
 
         const startDate =
           new Date(previousEndDate);
@@ -727,15 +724,11 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         const periodEnd =
           dateToString(endDate);
 
-        const totals: Record<
-          string,
-          number
-        > = {};
+        const totals: Record<string, number> = {};
 
         for (const expense of statementExpenses) {
           if (
-            expense.card_name !==
-            card.name
+            expense.card_name !== card.name
           ) {
             continue;
           }
@@ -891,25 +884,20 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         const offset =
           card.due_month_offset ?? 1;
 
-        const dueDate =
-          createSafeDate(
-            selectedYear,
-            selectedMonth - 1 + offset,
-            card.due_day
-          );
+        const dueDate = createSafeDate(
+          selectedYear,
+          selectedMonth - 1 + offset,
+          card.due_day
+        );
 
         const diffMs =
           dueDate.getTime() -
           todayOnly.getTime();
 
-        const diffDays =
-          Math.ceil(
-            diffMs /
-              (1000 *
-                60 *
-                60 *
-                24)
-          );
+        const diffDays = Math.ceil(
+          diffMs /
+            (1000 * 60 * 60 * 24)
+        );
 
         return diffDays <= 7;
       })
@@ -920,19 +908,17 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         const bOffset =
           b.due_month_offset ?? 1;
 
-        const aDate =
-          createSafeDate(
-            selectedYear,
-            selectedMonth - 1 + aOffset,
-            a.due_day || 1
-          );
+        const aDate = createSafeDate(
+          selectedYear,
+          selectedMonth - 1 + aOffset,
+          a.due_day || 1
+        );
 
-        const bDate =
-          createSafeDate(
-            selectedYear,
-            selectedMonth - 1 + bOffset,
-            b.due_day || 1
-          );
+        const bDate = createSafeDate(
+          selectedYear,
+          selectedMonth - 1 + bOffset,
+          b.due_day || 1
+        );
 
         return (
           aDate.getTime() -
@@ -951,10 +937,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       : null;
 
   const unpaidTotalsByCurrency = useMemo(() => {
-    const totals: Record<
-      string,
-      number
-    > = {};
+    const totals: Record<string, number> = {};
 
     for (const card of unpaidStatements) {
       for (const [currency, total] of Object.entries(
@@ -970,10 +953,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   }, [unpaidStatements]);
 
   const paidTotalsByCurrency = useMemo(() => {
-    const totals: Record<
-      string,
-      number
-    > = {};
+    const totals: Record<string, number> = {};
 
     for (const card of sortedCardStatements) {
       if (!card.isPaid) {
@@ -993,10 +973,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   }, [sortedCardStatements]);
 
   const statementTotalsByCurrency = useMemo(() => {
-    const totals: Record<
-      string,
-      number
-    > = {};
+    const totals: Record<string, number> = {};
 
     for (const card of sortedCardStatements) {
       for (const [currency, total] of Object.entries(
@@ -1019,8 +996,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     return (
       currentCardStatements.find(
         (card) =>
-          card.name ===
-          selectedStatementCard
+          card.name === selectedStatementCard
       ) || null
     );
   }, [
@@ -1057,10 +1033,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         a.period_end ===
         b.period_end
       ) {
-        return (
-          Number(b.id) -
-          Number(a.id)
-        );
+        return Number(b.id) - Number(a.id);
       }
 
       return b.period_end.localeCompare(
@@ -1102,15 +1075,11 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       return {};
     }
 
-    const totals: Record<
-      string,
-      number
-    > = {};
+    const totals: Record<string, number> = {};
 
     for (const expense of statementExpenses) {
       if (
-        expense.card_name !==
-        card.name
+        expense.card_name !== card.name
       ) {
         continue;
       }
@@ -1136,10 +1105,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   }
 
   const historyCountByCard = useMemo(() => {
-    const counts: Record<
-      string,
-      number
-    > = {};
+    const counts: Record<string, number> = {};
 
     const keyword =
       historySearch
@@ -1148,16 +1114,14 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
 
     for (const statement of statementHistory) {
       const monthMatches =
-        historyMonthFilter ===
-          "all" ||
+        historyMonthFilter === "all" ||
         statement.period_end.slice(
           0,
           7
         ) === historyMonthFilter;
 
       const statusMatches =
-        historyStatusFilter ===
-          "all" ||
+        historyStatusFilter === "all" ||
         (historyStatusFilter ===
           "paid" &&
           statement.is_paid) ||
@@ -1165,14 +1129,11 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           "unpaid" &&
           !statement.is_paid);
 
-      const card =
-        creditCards.find(
-          (item) =>
-            Number(item.id) ===
-            Number(
-              statement.card_id
-            )
-        );
+      const card = creditCards.find(
+        (item) =>
+          Number(item.id) ===
+          Number(statement.card_id)
+      );
 
       const expensesForStatement =
         statementExpenses.filter(
@@ -1210,13 +1171,10 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         searchMatches
       ) {
         const cardId =
-          String(
-            statement.card_id
-          );
+          String(statement.card_id);
 
         counts[cardId] =
-          (counts[cardId] || 0) +
-          1;
+          (counts[cardId] || 0) + 1;
       }
     }
 
@@ -1268,9 +1226,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           const cardMatches =
             historyCardFilter ===
               "all" ||
-            String(
-              statement.card_id
-            ) === historyCardFilter;
+            String(statement.card_id) ===
+              historyCardFilter;
 
           const statusMatches =
             historyStatusFilter ===
@@ -1402,10 +1359,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   ]);
 
   const filteredHistoryTotals = useMemo(() => {
-    const totals: Record<
-      string,
-      number
-    > = {};
+    const totals: Record<string, number> = {};
 
     for (const statement of filteredStatementHistory) {
       const statementTotals =
@@ -1476,8 +1430,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         : null;
 
     if (
-      card.statementStatusId !==
-      null
+      card.statementStatusId !== null
     ) {
       const { error } =
         await supabase
@@ -1521,9 +1474,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       }
     }
 
-    setEditingPaidStatementId(
-      null
-    );
+    setEditingPaidStatementId(null);
 
     setEditingPaidDate("");
 
@@ -1557,9 +1508,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       return;
     }
 
-    setEditingPaidStatementId(
-      null
-    );
+    setEditingPaidStatementId(null);
 
     setEditingPaidDate("");
 
@@ -1590,9 +1539,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         creditCards.find(
           (item) =>
             Number(item.id) ===
-            Number(
-              statement.card_id
-            )
+            Number(statement.card_id)
         );
 
       const expensesForStatement =
@@ -1614,8 +1561,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         );
 
       if (
-        expensesForStatement.length ===
-        0
+        expensesForStatement.length === 0
       ) {
         rows.push([
           card?.name ||
@@ -1652,8 +1598,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             expense.item,
             expense.major_category ||
               "",
-            expense.category ||
-              "",
+            expense.category || "",
             expense.currency ||
               "USD",
             Number(
@@ -1664,34 +1609,17 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       }
     }
 
-    const csvTotals: Record<
-      string,
-      number
-    > = {};
-
-    const csvPaidTotals: Record<
-      string,
-      number
-    > = {};
-
-    const csvUnpaidTotals: Record<
-      string,
-      number
-    > = {};
-
-    const csvExpenseCounts: Record<
-      string,
-      number
-    > = {};
+    const csvTotals: Record<string, number> = {};
+    const csvPaidTotals: Record<string, number> = {};
+    const csvUnpaidTotals: Record<string, number> = {};
+    const csvExpenseCounts: Record<string, number> = {};
 
     for (const statement of filteredStatementHistory) {
       const card =
         creditCards.find(
           (item) =>
             Number(item.id) ===
-            Number(
-              statement.card_id
-            )
+            Number(statement.card_id)
         );
 
       if (!card) {
@@ -1714,9 +1642,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           expense.currency || "USD";
 
         const amount =
-          Number(
-            expense.amount || 0
-          );
+          Number(expense.amount || 0);
 
         csvTotals[currency] =
           (csvTotals[currency] || 0) +
@@ -1810,9 +1736,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       csvTotals
     )) {
       const count =
-        csvExpenseCounts[
-          currency
-        ] || 0;
+        csvExpenseCounts[currency] || 0;
 
       const average =
         count === 0
@@ -1835,8 +1759,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     }
 
     const exportCardName =
-      historyCardFilter ===
-      "all"
+      historyCardFilter === "all"
         ? "全部信用卡"
         : creditCards.find(
             (card) =>
@@ -1846,14 +1769,12 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           "未知信用卡";
 
     const exportMonth =
-      historyMonthFilter ===
-      "all"
+      historyMonthFilter === "all"
         ? "全部月份"
         : historyMonthFilter;
 
     const exportStatus =
-      historyStatusFilter ===
-      "all"
+      historyStatusFilter === "all"
         ? "全部狀態"
         : historyStatusFilter ===
           "paid"
@@ -1861,8 +1782,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         : "未繳";
 
     const exportSearch =
-      historySearch.trim() ===
-      ""
+      historySearch.trim() === ""
         ? "無"
         : historySearch.trim();
 
@@ -2058,11 +1978,13 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     const blob = new Blob(
       ["\uFEFF" + csv],
       {
-        type: "text/csv;charset=utf-8;",
+        type:
+          "text/csv;charset=utf-8;",
       }
     );
 
-    const url = URL.createObjectURL(blob);
+    const url =
+      URL.createObjectURL(blob);
 
     const link =
       document.createElement("a");
@@ -2070,8 +1992,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     link.href = url;
 
     const selectedCardName =
-      historyCardFilter ===
-      "all"
+      historyCardFilter === "all"
         ? "all-cards"
         : creditCards.find(
             (card) =>
@@ -2081,14 +2002,12 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           "card";
 
     const fileMonth =
-      historyMonthFilter ===
-      "all"
+      historyMonthFilter === "all"
         ? "all-months"
         : historyMonthFilter;
 
     const fileStatus =
-      historyStatusFilter ===
-      "all"
+      historyStatusFilter === "all"
         ? "all-status"
         : historyStatusFilter;
 
@@ -2110,90 +2029,98 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     URL.revokeObjectURL(url);
   }
 
-      function exportMonthlyExpensesCsv() {
-  const rows: string[][] = [
-    [
-      "日期",
-      "項目",
-      "大分類",
-      "小分類",
-      "幣別",
-      "金額",
-      "信用卡",
-    ],
+  function exportMonthlyExpensesCsv() {
+    const rows: string[][] = [
+      [
+        "日期",
+        "項目",
+        "大分類",
+        "小分類",
+        "幣別",
+        "金額",
+        "信用卡",
+      ],
     ];
 
-  for (const expense of filteredMonthlyExpenses) {
-    rows.push([
-      expense.date,
-      expense.item,
-      expense.major_category || "",
-      expense.category || "",
-      expense.currency || "USD",
-      Number(expense.amount).toFixed(2),
-      expense.card_name || "",
-    ]);
-  }
-
-  rows.push([
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]);
-
-  for (const [currency, total] of Object.entries(
-    filteredMonthlyTotals
-  )) {
-    rows.push([
-      "篩選後總額",
-      "",
-      "",
-      "",
-      currency,
-      total.toFixed(2),
-      "",
-    ]);
-  }
-
-        const csv = rows
-    .map((row) =>
-      row
-        .map(
-          (value) =>
-            `"${String(value).replace(/"/g, '""')}"`
-        )
-        .join(",")
-    )
-    .join("\n");
-        const blob = new Blob(
-    ["\uFEFF" + csv],
-    {
-      type: "text/csv;charset=utf-8;",
+    for (const expense of filteredMonthlyExpenses) {
+      rows.push([
+        expense.date,
+        expense.item,
+        expense.major_category || "",
+        expense.category || "",
+        expense.currency || "USD",
+        Number(expense.amount).toFixed(2),
+        expense.card_name || "",
+      ]);
     }
-  );
 
-  const url = URL.createObjectURL(blob);
+    rows.push([
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]);
 
-  const link = document.createElement("a");
-        link.href = url;
+    for (const [currency, total] of Object.entries(
+      filteredMonthlyTotals
+    )) {
+      rows.push([
+        "篩選後總額",
+        "",
+        "",
+        "",
+        currency,
+        total.toFixed(2),
+        "",
+      ]);
+    }
 
-  link.download =
-    `monthly-expenses-${selectedYear}-${String(
-      selectedMonth
-    ).padStart(2, "0")}.csv`;
+    const csv = rows
+      .map((row) =>
+        row
+          .map(
+            (value) =>
+              `"${String(value).replace(
+                /"/g,
+                '""'
+              )}"`
+          )
+          .join(",")
+      )
+      .join("\n");
 
-  document.body.appendChild(link);
+    const blob = new Blob(
+      ["\uFEFF" + csv],
+      {
+        type:
+          "text/csv;charset=utf-8;",
+      }
+    );
 
-        link.click();
+    const url =
+      URL.createObjectURL(blob);
 
-  document.body.removeChild(link);
+    const link =
+      document.createElement("a");
 
-  URL.revokeObjectURL(url);
-}
+    link.href = url;
+
+    link.download =
+      `monthly-expenses-${selectedYear}-${String(
+        selectedMonth
+      ).padStart(2, "0")}.csv`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }
 
   const years: number[] = [];
 
@@ -2208,18 +2135,20 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   }
 
   return (
-   <main
-  id="dashboard-top"
-  style={{
-    maxWidth: 900,
-    margin: "0 auto",
-    padding: 20,
-  }}
->
+    <main
+      id="dashboard-top"
+      style={{
+        maxWidth: 900,
+        margin: "0 auto",
+        padding: 20,
+      }}
+    >
       <h1>📊 記帳 Dashboard</h1>
 
       <p>
-        <Link href="/">← 回首頁</Link>
+        <Link href="/">
+          ← 回首頁
+        </Link>
       </p>
 
       <div
@@ -2273,216 +2202,223 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       <p>
         目前查看：
         <strong>
-          {selectedYear} 年 {selectedMonth} 月
+          {selectedYear} 年{" "}
+          {selectedMonth} 月
         </strong>
       </p>
 
-     <section
-  style={{
-    marginBottom: 30,
-    display: "grid",
-    gridTemplateColumns:
-      "repeat(auto-fit, minmax(180px, 1fr))",
-    gap: 12,
-  }}
->
-       <div
-    style={{
-      padding: 14,
-      border: "1px solid #ddd",
-      borderRadius: 12,
-      background: "white",
-    }}
-  >
-         <div
-      style={{
-        fontSize: 14,
-        color: "#666",
-      }}
-    >
-      本月交易筆數
-    </div>
-         <div
-      style={{
-        marginTop: 6,
-        fontSize: 24,
-        fontWeight: "bold",
-      }}
-    >
+      <section
+        style={{
+          marginBottom: 30,
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(180px, 1fr))",
+          gap: 12,
+        }}
+      >
+        <div
+          style={{
+            padding: 14,
+            border: "1px solid #ddd",
+            borderRadius: 12,
+            background: "white",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 14,
+              color: "#666",
+            }}
+          >
+            本月交易筆數
+          </div>
+
+          <div
+            style={{
+              marginTop: 6,
+              fontSize: 24,
+              fontWeight: "bold",
+            }}
+          >
             {expenses.length} 筆
-    </div>
-  </div>
+          </div>
+        </div>
 
-       <div
-  style={{
-    padding: 14,
-    border: "1px solid #f3b3b3",
-    borderRadius: 12,
-    background: "#fff8f8",
-  }}
->
-         <div
-    style={{
-      fontSize: 14,
-      color: "#666",
-    }}
-  >
-    未繳信用卡
-  </div>
-         <div
-    style={{
-      marginTop: 6,
-      fontSize: 24,
-      fontWeight: "bold",
-    }}
-  >
-    {
-      visibleCardStatements.filter(
-        (card) => !card.isPaid
-      ).length
-    }{" "}
-    張
-  </div>
-</div>
+        <div
+          style={{
+            padding: 14,
+            border: "1px solid #f3b3b3",
+            borderRadius: 12,
+            background: "#fff8f8",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 14,
+              color: "#666",
+            }}
+          >
+            未繳信用卡
+          </div>
 
-       <div
-  style={{
-    padding: 14,
-    border: "1px solid #b8d7f0",
-    borderRadius: 12,
-    background: "#eef7ff",
-  }}
-         >
-  <div
-    style={{
-      fontSize: 14,
-      color: "#666",
-    }}
-  >
-    本月總支出
-  </div>
-         <div
-    style={{
-      marginTop: 6,
-      fontSize: 24,
-      fontWeight: "bold",
-    }}
-  >
-           {Object.keys(
-      totalsByCurrency
-    ).length === 0 ? (
-      <span>0</span>
-    ) : (
-      Object.entries(
-        totalsByCurrency
-      ).map(
-        ([currency, total], index) => (
-          <span key={currency}>
-            {index > 0 ? " / " : ""}
-            {currency}{" "}
-            {total.toFixed(2)}
-          </span>
-        )
-      )
-    )}
-  </div>
-</div>
+          <div
+            style={{
+              marginTop: 6,
+              fontSize: 24,
+              fontWeight: "bold",
+            }}
+          >
+            {
+              visibleCardStatements.filter(
+                (card) => !card.isPaid
+              ).length
+            }{" "}
+            張
+          </div>
+        </div>
 
-       <div
-  style={{
-    padding: 14,
-    border: "1px solid #f0d98a",
-    borderRadius: 12,
-    background: "#fffbe6",
-  }}
->
-         <div
-    style={{
-      fontSize: 14,
-      color: "#666",
-    }}
-  >
-    最近繳款日
-  </div>
-         <div
-    style={{
-      marginTop: 6,
-      fontSize: 18,
-      fontWeight: "bold",
-    }}
-  >
-           {nextDueStatement
-      ? `${nextDueStatement.name}｜${getDueDateText(
-          nextDueStatement.due_day,
-          nextDueStatement.due_month_offset
-        )}`
-      : "目前沒有待繳帳單"}
-  </div>
-</div>
-</section>
+        <div
+          style={{
+            padding: 14,
+            border: "1px solid #b8d7f0",
+            borderRadius: 12,
+            background: "#eef7ff",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 14,
+              color: "#666",
+            }}
+          >
+            本月總支出
+          </div>
 
-     <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 24,
-  }}
->
-       <button
-    onClick={() =>
-      document
-        .getElementById(
-          "card-statements"
-        )
-        ?.scrollIntoView({
-          behavior: "smooth",
-        })
-        }
-    style={{
-      padding: "8px 12px",
-    }}
-  >
-    💳 本期帳單
-  </button>
+          <div
+            style={{
+              marginTop: 6,
+              fontSize: 24,
+              fontWeight: "bold",
+            }}
+          >
+            {Object.keys(
+              totalsByCurrency
+            ).length === 0 ? (
+              <span>0</span>
+            ) : (
+              Object.entries(
+                totalsByCurrency
+              ).map(
+                ([currency, total], index) => (
+                  <span key={currency}>
+                    {index > 0 ? " / " : ""}
+                    {currency}{" "}
+                    {total.toFixed(2)}
+                  </span>
+                )
+              )
+            )}
+          </div>
+        </div>
 
-       <button
-  onClick={() => {
-    setShowStatementHistory(true);
-    setTimeout(() => {
-      document
-        .getElementById(
-          "statement-history"
-        )
-        ?.scrollIntoView({
-          behavior: "smooth",
-          });
-    }, 50);
-  }}
-  style={{
-    padding: "8px 12px",
-  }}
->
-  📚 歷史帳單
-</button>
+        <div
+          style={{
+            padding: 14,
+            border: "1px solid #f0d98a",
+            borderRadius: 12,
+            background: "#fffbe6",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 14,
+              color: "#666",
+            }}
+          >
+            最近繳款日
+          </div>
 
-       <button
-  onClick={() =>
-    document
-      .getElementById(
-        "monthly-expenses"
-        )
-      ?.scrollIntoView({
-        behavior: "smooth",
-      })
-  }
-  style={{
-    padding: "8px 12px",
-  }}
->
-  🧾 本月支出明細
-</button>
-</div>
+          <div
+            style={{
+              marginTop: 6,
+              fontSize: 18,
+              fontWeight: "bold",
+            }}
+          >
+            {nextDueStatement
+              ? `${nextDueStatement.name}｜${getDueDateText(
+                  nextDueStatement.due_day,
+                  nextDueStatement.due_month_offset
+                )}`
+              : "目前沒有待繳帳單"}
+          </div>
+        </div>
+      </section>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          marginBottom: 24,
+        }}
+      >
+        <button
+          onClick={() =>
+            document
+              .getElementById(
+                "card-statements"
+              )
+              ?.scrollIntoView({
+                behavior: "smooth",
+              })
+          }
+          style={{
+            padding: "8px 12px",
+          }}
+        >
+          💳 本期帳單
+        </button>
+
+        <button
+          onClick={() => {
+            setShowStatementHistory(true);
+
+            setTimeout(() => {
+              document
+                .getElementById(
+                  "statement-history"
+                )
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                });
+            }, 50);
+          }}
+          style={{
+            padding: "8px 12px",
+          }}
+        >
+          📚 歷史帳單
+        </button>
+
+        <button
+          onClick={() =>
+            document
+              .getElementById(
+                "monthly-expenses"
+              )
+              ?.scrollIntoView({
+                behavior: "smooth",
+              })
+          }
+          style={{
+            padding: "8px 12px",
+          }}
+        >
+          🧾 本月支出明細
+        </button>
+      </div>
+
       {message && <p>{message}</p>}
 
       {unpaidStatements.length > 0 && (
@@ -2626,7 +2562,9 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                 {Object.keys(
                   card.totals
                 ).length === 0 ? (
-                  <span>本期金額：0</span>
+                  <span>
+                    本期金額：0
+                  </span>
                 ) : (
                   Object.entries(
                     card.totals
@@ -2659,22 +2597,22 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       )}
 
       <section
-  style={{
-    marginBottom: 30,
-    padding: 16,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    background: "white",
-  }}
->
+        style={{
+          marginBottom: 30,
+          padding: 16,
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          background: "white",
+        }}
+      >
         <h2
-  style={{
-    marginTop: 0,
-    marginBottom: 12,
-  }}
->
-  本月支出總額
-</h2>
+          style={{
+            marginTop: 0,
+            marginBottom: 12,
+          }}
+        >
+          本月支出總額
+        </h2>
 
         {Object.keys(
           totalsByCurrency
@@ -2685,13 +2623,13 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             totalsByCurrency
           ).map(([currency, total]) => (
             <div
-  key={currency}
-  style={{
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 6,
-  }}
->
+              key={currency}
+              style={{
+                fontSize: 24,
+                fontWeight: "bold",
+                marginBottom: 6,
+              }}
+            >
               {currency}{" "}
               {total.toFixed(2)}
             </div>
@@ -2699,23 +2637,23 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         )}
       </section>
 
-     <section
-  style={{
-    marginBottom: 30,
-    padding: 16,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    background: "white",
-  }}
->
- <h2
-  style={{
-    marginTop: 0,
-    marginBottom: 12,
-  }}
->
-  支出分類
-</h2>
+      <section
+        style={{
+          marginBottom: 30,
+          padding: 16,
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          background: "white",
+        }}
+      >
+        <h2
+          style={{
+            marginTop: 0,
+            marginBottom: 12,
+          }}
+        >
+          支出分類
+        </h2>
 
         {Object.keys(
           totalsByCategory
@@ -2726,16 +2664,17 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             totalsByCategory
           ).map(
             ([category, currencies]) => (
-            <div
-  key={category}
-  style={{
-    marginBottom: 12,
-    padding: 12,
-    border: "1px solid #eee",
-    borderRadius: 10,
-    background: "#fafafa",
-  }}
->
+              <div
+                key={category}
+                style={{
+                  marginBottom: 12,
+                  padding: 12,
+                  border:
+                    "1px solid #eee",
+                  borderRadius: 10,
+                  background: "#fafafa",
+                }}
+              >
                 <strong>{category}</strong>
 
                 {Object.entries(
@@ -2755,22 +2694,22 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       </section>
 
       <section
-  style={{
-    marginBottom: 30,
-    padding: 16,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    background: "white",
-  }}
->
- <h2
-  style={{
-    marginTop: 0,
-    marginBottom: 12,
-  }}
->
-  信用卡支出
-</h2>
+        style={{
+          marginBottom: 30,
+          padding: 16,
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          background: "white",
+        }}
+      >
+        <h2
+          style={{
+            marginTop: 0,
+            marginBottom: 12,
+          }}
+        >
+          信用卡支出
+        </h2>
 
         {Object.keys(
           totalsByCard
@@ -2781,16 +2720,17 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             totalsByCard
           ).map(
             ([cardName, currencies]) => (
-            <div
-  key={cardName}
-  style={{
-    marginBottom: 12,
-    padding: 12,
-    border: "1px solid #eee",
-    borderRadius: 10,
-    background: "#fafafa",
-  }}
->
+              <div
+                key={cardName}
+                style={{
+                  marginBottom: 12,
+                  padding: 12,
+                  border:
+                    "1px solid #eee",
+                  borderRadius: 10,
+                  background: "#fafafa",
+                }}
+              >
                 <button
                   onClick={() =>
                     setSelectedCard(
@@ -2818,8 +2758,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                   )
                 )}
 
-                {selectedCard ===
-                  cardName && (
+                {selectedCard === cardName && (
                   <div
                     style={{
                       marginTop: 10,
@@ -2858,23 +2797,23 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         )}
       </section>
 
-     <section
-  id="card-statements"
-  style={{
-    marginBottom: 30,
-    padding: 16,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    background: "white",
-  }}
->
+      <section
+        id="card-statements"
+        style={{
+          marginBottom: 30,
+          padding: 16,
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          background: "white",
+        }}
+      >
         <h2
-  style={{
-    marginTop: 0,
-    marginBottom: 12,
-  }}
->
-  💳 信用卡本期帳單（共{" "}
+          style={{
+            marginTop: 0,
+            marginBottom: 12,
+          }}
+        >
+          💳 信用卡本期帳單（共{" "}
           {visibleCardStatements.length} 張｜未繳{" "}
           {
             visibleCardStatements.filter(
@@ -2944,7 +2883,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         >
           目前帳單月份：
           <strong>
-            {selectedYear} 年 {selectedMonth} 月
+            {selectedYear} 年{" "}
+            {selectedMonth} 月
           </strong>
         </p>
 
@@ -3005,7 +2945,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             <div
               style={{
                 padding: 12,
-                border: "1px solid #f0d98a",
+                border:
+                  "1px solid #f0d98a",
                 borderRadius: 10,
                 background: "#fffbe6",
               }}
@@ -3042,7 +2983,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             <div
               style={{
                 padding: 12,
-                border: "1px solid #b7dfc3",
+                border:
+                  "1px solid #b7dfc3",
                 borderRadius: 10,
                 background: "#eef9f1",
               }}
@@ -3079,7 +3021,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             <div
               style={{
                 padding: 12,
-                border: "1px solid #b8d7f0",
+                border:
+                  "1px solid #b8d7f0",
                 borderRadius: 10,
                 background: "#eef7ff",
               }}
@@ -3125,15 +3068,16 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                 marginBottom: 16,
                 padding: 14,
                 border:
-  selectedStatementCard === card.name
-    ? "2px solid #777"
-    : card.isPaid
-    ? "1px solid #ddd"
-    : "1px solid #f3b3b3",
-                background: card.isPaid
-  ? "white"
-  : "#fff8f8",
+                  selectedStatementCard ===
+                  card.name
+                    ? "2px solid #777"
+                    : card.isPaid
+                    ? "1px solid #ddd"
+                    : "1px solid #f3b3b3",
                 borderRadius: 10,
+                background: card.isPaid
+                  ? "white"
+                  : "#fff8f8",
               }}
             >
               <div
@@ -3194,36 +3138,48 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                 </span>
               </div>
 
-            <div
-  style={{
-    marginTop: 8,
-    marginBottom: 8,
-    fontSize: 20,
-    fontWeight: "bold",
-  }}
+              <div
+                style={{
+                  marginTop: 8,
+                  marginBottom: 8,
+                  fontSize: 20,
+                  fontWeight: "bold",
+                }}
               >
-  {Object.keys(card.totals).length === 0 ? (
-    <span>本期金額：0</span>
-  ) : (
-    Object.entries(card.totals).map(([currency, total]) => (
-      <div key={currency}>
-        本期金額：
-        {currency} {total.toFixed(2)}
-      </div>
-    ))
-  )}
-</div>
-              <div>
-  繳款截止：
-  {getDueDateText(card.due_day, card.due_month_offset)}
-</div>
+                {Object.keys(
+                  card.totals
+                ).length === 0 ? (
+                  <span>
+                    本期金額：0
+                  </span>
+                ) : (
+                  Object.entries(
+                    card.totals
+                  ).map(
+                    ([currency, total]) => (
+                      <div key={currency}>
+                        本期金額：
+                        {currency}{" "}
+                        {total.toFixed(2)}
+                      </div>
+                    )
+                  )
+                )}
+              </div>
 
-{/* 確保 selectedStatementCard === card.name 展開時才顯示以下內容 */}
-              {selectedStatementCard === card.name && (
+              <div>
+                繳款截止：
+                {getDueDateText(
+                  card.due_day,
+                  card.due_month_offset
+                )}
+              </div>
+
+              {selectedStatementCard ===
+                card.name && (
                 <>
                   <div>
                     結帳日：
-
                     {card.statement_day
                       ? `每月 ${card.statement_day} 日`
                       : "未設定"}
@@ -3235,6 +3191,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                       ? `每月 ${card.due_day} 日`
                       : "未設定"}
                   </div>
+
                   <div
                     style={{
                       marginTop: 10,
@@ -3247,21 +3204,31 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                     <div>
                       帳單月份：
                       {selectedYear}/
-                      {String(selectedMonth).padStart(2, "0")}
+                      {String(
+                        selectedMonth
+                      ).padStart(2, "0")}
                     </div>
 
                     <div>
                       繳款月份：
-                      {getDueMonthText(card.due_month_offset)}
+                      {getDueMonthText(
+                        card.due_month_offset
+                      )}
                     </div>
 
                     <div>
                       本期區間：
-                      {card.periodStart && card.periodEnd
-                        ? `${formatDate(card.periodStart)} ～ ${formatDate(card.periodEnd)}`
+                      {card.periodStart &&
+                      card.periodEnd
+                        ? `${formatDate(
+                            card.periodStart
+                          )} ～ ${formatDate(
+                            card.periodEnd
+                          )}`
                         : "未設定"}
                     </div>
                   </div>
+
                   <div
                     style={{
                       marginTop: 10,
@@ -3271,47 +3238,188 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                       lineHeight: 1.7,
                     }}
                   >
-                    <div style={{ fontWeight: "bold", marginBottom: 4 }}>
+                    <div
+                      style={{
+                        fontWeight: "bold",
+                        marginBottom: 4,
+                      }}
+                    >
                       繳款狀態
                     </div>
+
                     <div>
                       狀態：
-                      {card.isPaid ? "✅ 已繳" : "⏳ 未繳"}
+                      {card.isPaid
+                        ? "✅ 已繳"
+                        : "⏳ 未繳"}
                     </div>
+
+                    <div>
+                      {getDueStatus(
+                        card.due_day,
+                        card.isPaid,
+                        card.due_month_offset
+                      )}
+                    </div>
+
+                    {card.isPaid && (
+                      <div
+                        style={{
+                          marginTop: 8,
+                        }}
+                      >
+                        <div>
+                          實際繳款日：
+                          {card.paidDate ||
+                            "未記錄"}
+                        </div>
+
+                        {card.statementStatusId !==
+                          null && (
+                          <button
+                            onClick={() => {
+                              setEditingPaidStatementId(
+                                card.statementStatusId
+                              );
+
+                              setEditingPaidDate(
+                                card.paidDate ||
+                                  ""
+                              );
+                            }}
+                            style={{
+                              padding:
+                                "6px 10px",
+                              marginTop: 6,
+                              marginBottom: 8,
+                            }}
+                          >
+                            修改繳款日
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  {/* 消費明細區塊 */}
+                </>
+              )}
+
+              <button
+                onClick={() =>
+                  togglePaidStatus(card)
+                }
+                disabled={
+                  !card.periodStart ||
+                  !card.periodEnd
+                }
+                style={{
+                  padding: "6px 10px",
+                  marginTop: 8,
+                  marginBottom: 8,
+                }}
+              >
+                {card.isPaid
+                  ? "標記未繳"
+                  : "標記已繳"}
+              </button>
+
+              {card.statementStatusId !==
+                null &&
+                editingPaidStatementId ===
+                  card.statementStatusId && (
                   <div
                     style={{
-                      marginTop: 14,
-                      paddingTop: 10,
-                      borderTop: "1px solid #ddd",
+                      marginTop: 8,
                     }}
                   >
-                    <strong>本期消費明細</strong>
-                    {selectedStatementExpenses.length === 0 ? (
-                      <p>本期沒有消費</p>
-                    ) : (
-                      selectedStatementExpenses.map((expense) => (
+                    <input
+                      type="date"
+                      value={editingPaidDate}
+                      onChange={(e) =>
+                        setEditingPaidDate(
+                          e.target.value
+                        )
+                      }
+                    />
+
+                    <button
+                      onClick={() =>
+                        savePaidDate(
+                          card.statementStatusId!
+                        )
+                      }
+                      style={{
+                        marginLeft: 8,
+                        padding: "6px 10px",
+                      }}
+                    >
+                      儲存
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setEditingPaidStatementId(
+                          null
+                        );
+
+                        setEditingPaidDate("");
+                      }}
+                      style={{
+                        marginLeft: 6,
+                        padding: "6px 10px",
+                      }}
+                    >
+                      取消
+                    </button>
+                  </div>
+                )}
+
+              {selectedStatementCard ===
+                card.name && (
+                <div
+                  style={{
+                    marginTop: 14,
+                    paddingTop: 10,
+                    borderTop:
+                      "1px solid #ddd",
+                  }}
+                >
+                  <strong>
+                    本期消費明細
+                  </strong>
+
+                  {selectedStatementExpenses.length ===
+                  0 ? (
+                    <p>本期沒有消費</p>
+                  ) : (
+                    selectedStatementExpenses.map(
+                      (expense) => (
                         <div
                           key={expense.id}
                           style={{
                             padding: "8px 0",
-                            borderBottom: "1px solid #eee",
+                            borderBottom:
+                              "1px solid #eee",
                           }}
                         >
-                          <Link href={`/expenses/${expense.id}`}>
-                            {expense.date} {expense.item}
+                          <Link
+                            href={`/expenses/${expense.id}`}
+                          >
+                            {expense.date}{" "}
+                            {expense.item}
                           </Link>
 
                           <div>
-                            {expense.currency || "USD"}{" "}
-                            {Number(expense.amount).toFixed(2)}
+                            {expense.currency ||
+                              "USD"}{" "}
+                            {Number(
+                              expense.amount
+                            ).toFixed(2)}
                           </div>
                         </div>
-                      ))
-                    )}
-                                    </div>
-                </>
+                      )
+                    )
+                  )}
+                </div>
               )}
             </div>
           ))
@@ -3319,23 +3427,23 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       </section>
 
       {showStatementHistory && (
-      <section
-  id="statement-history"
-  style={{
-    marginBottom: 30,
-    padding: 16,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    background: "white",
-  }}
->
-        <h2
-  style={{
-    marginTop: 0,
-    marginBottom: 12,
-  }}
->
-  📚 歷史帳單（
+        <section
+          id="statement-history"
+          style={{
+            marginBottom: 30,
+            padding: 16,
+            border: "1px solid #ddd",
+            borderRadius: 12,
+            background: "white",
+          }}
+        >
+          <h2
+            style={{
+              marginTop: 0,
+              marginBottom: 12,
+            }}
+          >
+            📚 歷史帳單（
             {filteredStatementHistory.length} 筆）
           </h2>
 
@@ -3459,7 +3567,9 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
               }}
             >
               搜尋：
-              <strong>{historySearch}</strong>
+              <strong>
+                {historySearch}
+              </strong>
               {" ｜ "}
               結果{" "}
               {filteredStatementHistory.length} 筆
@@ -3498,7 +3608,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             <div
               style={{
                 padding: 12,
-                border: "1px solid #b7dfc3",
+                border:
+                  "1px solid #b7dfc3",
                 borderRadius: 10,
                 background: "#eef9f1",
               }}
@@ -3519,7 +3630,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             <div
               style={{
                 padding: 12,
-                border: "1px solid #f0d98a",
+                border:
+                  "1px solid #f0d98a",
                 borderRadius: 10,
                 background: "#fffbe6",
               }}
@@ -3540,7 +3652,8 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
             <div
               style={{
                 padding: 12,
-                border: "1px solid #b8d7f0",
+                border:
+                  "1px solid #b8d7f0",
                 borderRadius: 10,
                 background: "#eef7ff",
               }}
@@ -3715,13 +3828,9 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
           <button
             onClick={() => {
               setHistoryMonthFilter("all");
-
               setHistoryCardFilter("all");
-
               setHistoryStatusFilter("all");
-
               setHistorySort("newest");
-
               setHistorySearch("");
             }}
             style={{
@@ -3844,13 +3953,15 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                     style={{
                       marginBottom: 12,
                       padding: 12,
-                      border: statement.is_paid
-  ? "1px solid #ddd"
-  : "1px solid #f3b3b3",
+                      border:
+                        statement.is_paid
+                          ? "1px solid #ddd"
+                          : "1px solid #f3b3b3",
                       borderRadius: 8,
-                      background: statement.is_paid
-  ? "white"
-  : "#fff8f8",
+                      background:
+                        statement.is_paid
+                          ? "white"
+                          : "#fff8f8",
                     }}
                   >
                     <div
@@ -3890,9 +4001,11 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                             "underline",
                         }}
                       >
-                        {isExpanded ? "▼ " : "▶ "}
-{card?.name ||
-  "未知信用卡"}
+                        {isExpanded
+                          ? "▼ "
+                          : "▶ "}
+                        {card?.name ||
+                          "未知信用卡"}
                       </button>
 
                       <span
@@ -3902,17 +4015,19 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                         }}
                       >
                         {Number(
-  statement.period_end.slice(
-    0,
-    4
-  )
-)} 年{" "}
-{Number(
-  statement.period_end.slice(
-    5,
-    7
-  )
-)} 月
+                          statement.period_end.slice(
+                            0,
+                            4
+                          )
+                        )}{" "}
+                        年{" "}
+                        {Number(
+                          statement.period_end.slice(
+                            5,
+                            7
+                          )
+                        )}{" "}
+                        月
                       </span>
 
                       <span
@@ -3922,9 +4037,9 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                           fontSize: 12,
                           fontWeight: "bold",
                           background:
-  statement.is_paid
-    ? "#e7f7ed"
-    : "#ffe5e5",
+                            statement.is_paid
+                              ? "#e7f7ed"
+                              : "#ffe5e5",
                         }}
                       >
                         {statement.is_paid
@@ -3943,12 +4058,12 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
                       }}
                     >
                       <div
-  style={{
-    fontSize: 18,
-    fontWeight: "bold",
-  }}
->
-  帳單金額：
+                        style={{
+                          fontSize: 18,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        帳單金額：
                         {Object.keys(
                           totals
                         ).length === 0 ? (
@@ -4096,349 +4211,356 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         </section>
       )}
 
-     <section
-  id="monthly-expenses"
-  style={{
-    marginBottom: 30,
-    padding: 16,
-    border: "1px solid #ddd",
-    borderRadius: 12,
-    background: "white",
-  }}
->
-       <h2
-    style={{
-      marginTop: 0,
-      marginBottom: 12,
-    }}
-  >
-    本月支出明細
-  </h2>
-
-
-       <div
-  style={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 10,
-    alignItems: "center",
-    marginBottom: 12,
-  }}
->
-         <input
-    type="text"
-    value={monthlyExpenseSearch}
-    onChange={(e) =>
-      setMonthlyExpenseSearch(
-        e.target.value
-      )
-    }
-           placeholder="搜尋項目、分類或信用卡"
-    style={{
-      width: "100%",
-      maxWidth: 360,
-      padding: "8px 10px",
-    }}
-  />
-          <select
-    value={monthlyExpenseCategoryFilter}
-    onChange={(e) =>
-      setMonthlyExpenseCategoryFilter(
-        e.target.value
-      )
-    }
-    style={{
-      padding: "8px 10px",
-    }}
-  >
-            <option value="all">
-      全部分類
-    </option>
-
-    <option value="餐飲">
-      餐飲
-    </option>
-
-    <option value="交通">
-      交通
-    </option>
-
-    <option value="住宿">
-      住宿
-    </option>
-            <option value="購物">
-      購物
-    </option>
-
-    <option value="娛樂旅遊">
-      娛樂旅遊
-    </option>
-
-    <option value="居家">
-      居家
-    </option>
-
-    <option value="汽車">
-      汽車
-    </option>
-            <option value="其他">
-      其他
-    </option>
-  </select>
-
-  <select
-    value={monthlyExpenseCardFilter}
-    onChange={(e) =>
-      setMonthlyExpenseCardFilter(
-        e.target.value
-      )
-    }
-    style={{
-      padding: "8px 10px",
-    }}
-  >
-    <option value="all">
-      全部付款方式
-    </option>
-
-    <option value="non-card">
-      非信用卡支出
-    </option>
-
-    {creditCards.map((card) => (
-      <option
-        key={card.id}
-        value={card.name}
+      <section
+        id="monthly-expenses"
+        style={{
+          marginBottom: 30,
+          padding: 16,
+          border: "1px solid #ddd",
+          borderRadius: 12,
+          background: "white",
+        }}
       >
-        {card.name}
-      </option>
-    ))}
-  </select>
-
-         <input
-  type="date"
-  value={monthlyExpenseStartDate}
-  onChange={(e) =>
-    setMonthlyExpenseStartDate(
-      e.target.value
-    )
-  }
-
-           style={{
-    padding: "8px 10px",
-  }}
-/>
-
-<input
-  type="date"
-  value={monthlyExpenseEndDate}
-  onChange={(e) =>
-    setMonthlyExpenseEndDate(
-      e.target.value
-    )
-  }
-  style={{
-    padding: "8px 10px",
-  }}
-/>
-         <select
-  value={monthlyExpenseSort}
-  onChange={(e) =>
-    setMonthlyExpenseSort(
-      e.target.value
-    )
-  }
-  style={{
-    padding: "8px 10px",
-  }}
-           >
-  <option value="date_desc">
-    日期新到舊
-  </option>
-
-  <option value="date_asc">
-    日期舊到新
-  </option>
-
-  <option value="amount_desc">
-    金額高到低
-  </option>
-
-  <option value="amount_asc">
-    金額低到高
-  </option>
-</select>
-         <button
-  onClick={() => {
-  setMonthlyExpenseSearch("");
-  setMonthlyExpenseCategoryFilter("all");
-  setMonthlyExpenseCardFilter("all");
-  setMonthlyExpenseStartDate("");
-  setMonthlyExpenseEndDate("");
-  setMonthlyExpenseSort("date_desc");
-}}
-           style={{
-    padding: "8px 12px",
-  }}
->
-  清除篩選
-</button>
-
-         <button
-  onClick={exportMonthlyExpensesCsv}
-  style={{
-    padding: "8px 12px",
-  }}
->
-  匯出 CSV
-</button>
-        
-</div>
-
-       <div
-  style={{
-    marginBottom: 12,
-    padding: 10,
-    border: "1px solid #eee",
-    borderRadius: 10,
-    background: "#fafafa",
-    lineHeight: 1.7,
-  }}
->
-         <div>
-    目前顯示：
-    <strong>
-      {filteredMonthlyExpenses.length} 筆
-    </strong>
-  </div>
-
-  <div>
-    篩選後總額：
-    {Object.keys(
-      filteredMonthlyTotals
-    ).length === 0 ? (
-      <strong>0</strong>
-    ) : (
-      Object.entries(
-        filteredMonthlyTotals
-      ).map(
-        ([currency, total], index) => (
-          <strong key={currency}>
-            {index > 0 ? " / " : " "}
-            {currency}{" "}
-            {total.toFixed(2)}
-          </strong>
-        )
-      )
-    )}
-  </div>
-</div>
-  {filteredMonthlyExpenses.length ===
-  0 ? (
-    <p>
-      {monthlyExpenseSearch.trim() === "" &&
-      monthlyExpenseCategoryFilter ===
-        "all"
-        ? "沒有資料"
-        : "找不到符合搜尋／篩選條件的支出"}
-    </p>
-  ) : (
-
-    visibleMonthlyExpenses.map((expense) => (
-          <div
-          key={expense.id}
+        <h2
           style={{
-            marginBottom: 10,
-            padding: 12,
-            border:
-              "1px solid #eee",
-            borderRadius: 10,
-            background: "#fafafa",
+            marginTop: 0,
+            marginBottom: 12,
           }}
         >
-          <Link
-            href={`/expenses/${expense.id}`}
+          本月支出明細
+        </h2>
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 10,
+            alignItems: "center",
+            marginBottom: 12,
+          }}
+        >
+          <input
+            type="text"
+            value={monthlyExpenseSearch}
+            onChange={(e) =>
+              setMonthlyExpenseSearch(
+                e.target.value
+              )
+            }
+            placeholder="搜尋項目、分類或信用卡"
+            style={{
+              width: "100%",
+              maxWidth: 360,
+              padding: "8px 10px",
+            }}
+          />
+
+          <select
+            value={monthlyExpenseCategoryFilter}
+            onChange={(e) =>
+              setMonthlyExpenseCategoryFilter(
+                e.target.value
+              )
+            }
+            style={{
+              padding: "8px 10px",
+            }}
           >
-            <strong>
-              {expense.date}{" "}
-              {expense.item}
-            </strong>
-          </Link>
-          <div>
-            {expense.major_category ||
-              "未分類"}
+            <option value="all">
+              全部分類
+            </option>
 
-            {expense.category
-              ? ` / ${expense.category}`
-              : ""}
-          </div>
-          <div>
-            {expense.currency ||
-              "USD"}{" "}
-            {Number(
-              expense.amount
-            ).toFixed(2)}
-          </div>
-          {expense.card_name && (
-            <div>
-              💳 {expense.card_name}
-            </div>
-          )}
+            <option value="餐飲">
+              餐飲
+            </option>
+
+            <option value="交通">
+              交通
+            </option>
+
+            <option value="住宿">
+              住宿
+            </option>
+
+            <option value="購物">
+              購物
+            </option>
+
+            <option value="娛樂旅遊">
+              娛樂旅遊
+            </option>
+
+            <option value="居家">
+              居家
+            </option>
+
+            <option value="汽車">
+              汽車
+            </option>
+
+            <option value="其他">
+              其他
+            </option>
+          </select>
+
+          <select
+            value={monthlyExpenseCardFilter}
+            onChange={(e) =>
+              setMonthlyExpenseCardFilter(
+                e.target.value
+              )
+            }
+            style={{
+              padding: "8px 10px",
+            }}
+          >
+            <option value="all">
+              全部付款方式
+            </option>
+
+            <option value="non-card">
+              非信用卡支出
+            </option>
+
+            {creditCards.map((card) => (
+              <option
+                key={card.id}
+                value={card.name}
+              >
+                {card.name}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={monthlyExpenseStartDate}
+            onChange={(e) =>
+              setMonthlyExpenseStartDate(
+                e.target.value
+              )
+            }
+            style={{
+              padding: "8px 10px",
+            }}
+          />
+
+          <input
+            type="date"
+            value={monthlyExpenseEndDate}
+            onChange={(e) =>
+              setMonthlyExpenseEndDate(
+                e.target.value
+              )
+            }
+            style={{
+              padding: "8px 10px",
+            }}
+          />
+
+          <select
+            value={monthlyExpenseSort}
+            onChange={(e) =>
+              setMonthlyExpenseSort(
+                e.target.value
+              )
+            }
+            style={{
+              padding: "8px 10px",
+            }}
+          >
+            <option value="date_desc">
+              日期新到舊
+            </option>
+
+            <option value="date_asc">
+              日期舊到新
+            </option>
+
+            <option value="amount_desc">
+              金額高到低
+            </option>
+
+            <option value="amount_asc">
+              金額低到高
+            </option>
+          </select>
+
+          <button
+            onClick={() => {
+              setMonthlyExpenseSearch("");
+              setMonthlyExpenseCategoryFilter(
+                "all"
+              );
+              setMonthlyExpenseCardFilter(
+                "all"
+              );
+              setMonthlyExpenseStartDate("");
+              setMonthlyExpenseEndDate("");
+              setMonthlyExpenseSort(
+                "date_desc"
+              );
+            }}
+            style={{
+              padding: "8px 12px",
+            }}
+          >
+            清除篩選
+          </button>
+
+          <button
+            onClick={exportMonthlyExpensesCsv}
+            style={{
+              padding: "8px 12px",
+            }}
+          >
+            匯出 CSV
+          </button>
         </div>
-      )
-    )
-  )}
 
-     
-     
-     {monthlyExpenseVisibleCount <
-  filteredMonthlyExpenses.length && (
-  <button
-    onClick={() =>
-      setMonthlyExpenseVisibleCount(
-        (count) => count + 20
-      )
-    }
-    style={{
-      marginTop: 12,
-      padding: "8px 12px",
-    }}
-  >
-    載入更多
-  </button>
-)}
-        
-        
-        </section>
-     <button
-  onClick={() =>
-    document
-      .getElementById(
-        "dashboard-top"
-      )
-      ?.scrollIntoView({
-        behavior: "smooth",
-      })
-    }
-  style={{
-    position: "fixed",
-    right: 20,
-    bottom: 20,
-    width: 44,
-    height: 44,
-    borderRadius: "50%",
-    border: "1px solid #ddd",
-    background: "white",
-    cursor: "pointer",
-    fontSize: 18,
-    boxShadow:
-      "0 2px 8px rgba(0,0,0,0.12)",
-  }}
-  aria-label="返回頂部"
-  title="返回頂部"
->
-  ↑
-</button>
-</main>
+        <div
+          style={{
+            marginBottom: 12,
+            padding: 10,
+            border: "1px solid #eee",
+            borderRadius: 10,
+            background: "#fafafa",
+            lineHeight: 1.7,
+          }}
+        >
+          <div>
+            目前顯示：
+            <strong>
+              {filteredMonthlyExpenses.length} 筆
+            </strong>
+          </div>
+
+          <div>
+            篩選後總額：
+            {Object.keys(
+              filteredMonthlyTotals
+            ).length === 0 ? (
+              <strong>0</strong>
+            ) : (
+              Object.entries(
+                filteredMonthlyTotals
+              ).map(
+                ([currency, total], index) => (
+                  <strong key={currency}>
+                    {index > 0 ? " / " : " "}
+                    {currency}{" "}
+                    {total.toFixed(2)}
+                  </strong>
+                )
+              )
+            )}
+          </div>
+        </div>
+
+        {filteredMonthlyExpenses.length === 0 ? (
+          <p>
+            {monthlyExpenseSearch.trim() === "" &&
+            monthlyExpenseCategoryFilter === "all" &&
+            monthlyExpenseCardFilter === "all" &&
+            monthlyExpenseStartDate === "" &&
+            monthlyExpenseEndDate === ""
+              ? "沒有資料"
+              : "找不到符合搜尋／篩選條件的支出"}
+          </p>
+        ) : (
+          visibleMonthlyExpenses.map((expense) => (
+            <div
+              key={expense.id}
+              style={{
+                marginBottom: 10,
+                padding: 12,
+                border: "1px solid #eee",
+                borderRadius: 10,
+                background: "#fafafa",
+              }}
+            >
+              <Link
+                href={`/expenses/${expense.id}`}
+              >
+                <strong>
+                  {expense.date}{" "}
+                  {expense.item}
+                </strong>
+              </Link>
+
+              <div>
+                {expense.major_category ||
+                  "未分類"}
+
+                {expense.category
+                  ? ` / ${expense.category}`
+                  : ""}
+              </div>
+
+              <div>
+                {expense.currency ||
+                  "USD"}{" "}
+                {Number(
+                  expense.amount
+                ).toFixed(2)}
+              </div>
+
+              {expense.card_name && (
+                <div>
+                  💳 {expense.card_name}
+                </div>
+              )}
+            </div>
+          ))
+        )}
+
+        {monthlyExpenseVisibleCount <
+          filteredMonthlyExpenses.length && (
+          <button
+            onClick={() =>
+              setMonthlyExpenseVisibleCount(
+                (count) => count + 20
+              )
+            }
+            style={{
+              marginTop: 12,
+              padding: "8px 12px",
+            }}
+          >
+            載入更多
+          </button>
+        )}
+      </section>
+
+      <button
+        onClick={() =>
+          document
+            .getElementById(
+              "dashboard-top"
+            )
+            ?.scrollIntoView({
+              behavior: "smooth",
+            })
+        }
+        style={{
+          position: "fixed",
+          right: 20,
+          bottom: 20,
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          border: "1px solid #ddd",
+          background: "white",
+          cursor: "pointer",
+          fontSize: 18,
+          boxShadow:
+            "0 2px 8px rgba(0,0,0,0.12)",
+        }}
+        aria-label="返回頂部"
+        title="返回頂部"
+      >
+        ↑
+      </button>
+    </main>
   );
 }
