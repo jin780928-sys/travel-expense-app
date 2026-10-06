@@ -4273,7 +4273,7 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       padding: "8px 10px",
     }}
   />
-</label
+</label>
          <select
   value={monthlyExpenseSort}
   onChange={(e) =>
