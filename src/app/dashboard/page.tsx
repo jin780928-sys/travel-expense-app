@@ -2719,123 +2719,88 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div
-                style={{
-                  marginTop: 8,
-                  marginBottom: 8,
-                  fontSize: 20,
-                  fontWeight: "bold",
-                }}
+            <div
+  style={{
+    marginTop: 8,
+    marginBottom: 8,
+    fontSize: 20,
+    fontWeight: "bold",
+  }}
               >
-                {Object.keys(
-                  card.totals
-                ).length === 0 ? (
-                  <span>本期金額：0</span>
-                ) : (
-                  Object.entries(
-                    card.totals
-                  ).map(
-                    ([currency, total]) => (
-                      <div key={currency}>
-                        本期金額：
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </div>
-                    )
-                  )
-                )}
-              </div>
-
+  {Object.keys(card.totals).length === 0 ? (
+    <span>本期金額：0</span>
+  ) : (
+    Object.entries(card.totals).map(([currency, total]) => (
+      <div key={currency}>
+        本期金額：
+        {currency} {total.toFixed(2)}
+      </div>
+    ))
+  )}
+</div>
               <div>
-                  繳款截止：
-                  {getDueDateText(
-                    card.due_day,
-                    card.due_month_offset
-                  )}
-                </div>
-              {selectedStatementCard === card.name && (
+  繳款截止：
+  {getDueDateText(card.due_day, card.due_month_offset)}
+</div>
+
+{selectedStatementCard === card.name && (
   <>
-    
-              <div>
-                結帳日：
-                {card.statement_day
-                  ? `每月 ${card.statement_day} 日`
-                  : "未設定"}
-              </div>
+    <div>
+      結帳日：
+      {card.statement_day ? `每月 ${card.statement_day} 日` : "未設定"}
+    </div>
 
-              <div>
-                繳款日：
-                {card.due_day
-                  ? `每月 ${card.due_day} 日`
-                  : "未設定"}
-              </div>
+    <div>
+      繳款日：
+      {card.due_day ? `每月 ${card.due_day} 日` : "未設定"}
+    </div>
+    <div
+      style={{
+        marginTop: 10,
+        padding: 10,
+        background: "#fafafa",
+        borderRadius: 8,
+        lineHeight: 1.7,
+      }}
+    >
+      <div>
+        帳單月份：
+        {selectedYear}/{String(selectedMonth).padStart(2, "0")}
+      </div>
 
-              <div
-                style={{
-                  marginTop: 10,
-                  padding: 10,
-                  background: "#fafafa",
-                  borderRadius: 8,
-                  lineHeight: 1.7,
-                }}
-              >
-                <div>
-                  帳單月份：
-                  {selectedYear}/
-                  {String(
-                    selectedMonth
-                  ).padStart(2, "0")}
-                </div>
-
-                <div>
-                  繳款月份：
-                  {getDueMonthText(
-                    card.due_month_offset
-                  )}
-                </div>
-
-                
-
-                <div>
-                  本期區間：
-                  {card.periodStart &&
-                  card.periodEnd
-                    ? `${formatDate(
-                        card.periodStart
-                      )} ～ ${formatDate(
-                        card.periodEnd
-                      )}`
-                    : "未設定"}
-                </div>
-              </div>
-
-              <div
-                style={{
-                  marginTop: 10,
-                  padding: 10,
-                  background: "#fafafa",
-                  borderRadius: 8,
-                  lineHeight: 1.7,
-                }}
-              >
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    marginBottom: 4,
-                  }}
-                >
-                  繳款狀態
-                </div>
-                  </>
-)}
-
-                <div>
-                  狀態：
-                  {card.isPaid
-                    ? "✅ 已繳"
-                    : "⏳ 未繳"}
-                </div>
-
+      <div>
+        繳款月份：
+        {getDueMonthText(card.due_month_offset)}
+      </div>
+      <div>
+        本期區間：
+        {card.periodStart && card.periodEnd
+          ? `${formatDate(card.periodStart)} ～ ${formatDate(card.periodEnd)}`
+          : "未設定"}
+      </div>
+    </div>
+    <div
+      style={{
+        marginTop: 10,
+        padding: 10,
+        background: "#fafafa",
+        borderRadius: 8,
+        lineHeight: 1.7,
+      }}
+      >
+      <div
+        style={{
+          fontWeight: "bold",
+          marginBottom: 4,
+        }}
+      >
+        繳款狀態
+      </div>
+      {/* 修正：將狀態放入對應的區塊與條件渲染中 */}
+      <div>
+        狀態：
+        {card.isPaid ? "✅ 已繳" : "⏳ 未繳"}
+      </div>
                 <div>
                   {getDueStatus(
                     card.due_day,
