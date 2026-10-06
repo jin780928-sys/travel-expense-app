@@ -3932,14 +3932,10 @@ export default function DashboardPage() {
   本月支出明細
 </h2>
 
-       <input
+      <input
   type="text"
   value={monthlyExpenseSearch}
-  onChange={(e) =>
-    setMonthlyExpenseSearch(
-      e.target.value
-    )
-    }
+  onChange={(e) => setMonthlyExpenseSearch(e.target.value)}
   placeholder="搜尋項目、分類或信用卡"
   style={{
     width: "100%",
@@ -3949,34 +3945,43 @@ export default function DashboardPage() {
   }}
 />
 
-       value={monthlyExpenseCategoryFilter}
-  onChange={(e) =>
-    setMonthlyExpenseCategoryFilter(
-      e.target.value
-    )
-  }
-       style={{
+{/* 修正 1：補上 <select> 開頭標籤 */}
+       <select
+  value={monthlyExpenseCategoryFilter}
+  onChange={(e) => setMonthlyExpenseCategoryFilter(e.target.value)}
+  style={{
     marginBottom: 12,
     padding: "8px 10px",
   }}
 >
-       <option value="all">全部分類</option>
+         <option value="all">全部分類</option>
   <option value="餐飲">餐飲</option>
   <option value="交通">交通</option>
   <option value="住宿">住宿</option>
   <option value="購物">購物</option>
-       <option value="娛樂旅遊">娛樂旅遊</option>
-  <option value="居家">居家</option>
+  <option value="娛樂旅遊">娛樂旅遊</option>
+         <option value="居家">居家</option>
   <option value="汽車">汽車</option>
   <option value="其他">其他</option>
 </select>
 
-        {filteredMonthlyExpenses.length === 0 ? (
+{/* 修正 2：補齊三元運算子的後半段 (冒號 : 還有結束大括號) */}
+       {filteredMonthlyExpenses.length === 0 ? (
   <p>
     {monthlyExpenseSearch.trim() === ""
       ? "沒有資料"
       : "找不到符合搜尋條件的支出"}
   </p>
+) : (
+  // 這裡放當有資料時要顯示的內容（例如：列表渲染）
+  <div>
+    {filteredMonthlyExpenses.map((expense) => (
+      <div key={expense.id}>
+        {expense.date} - {expense.item} ({expense.amount})
+      </div>
+    ))}
+  </div>
+)}
 ) : (
   filteredMonthlyExpenses.map((expense) => (
           <div
