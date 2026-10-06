@@ -4041,6 +4041,36 @@ export default function DashboardPage() {
     </option>
   </select>
 
+       <select
+  value={monthlyExpenseCardFilter}
+  onChange={(e) =>
+    setMonthlyExpenseCardFilter(
+      e.target.value
+    )
+  }
+         style={{
+    marginLeft: 8,
+    marginBottom: 12,
+    padding: "8px 10px",
+  }}
+>
+         <option value="all">
+    全部付款方式
+  </option>
+
+  <option value="non-card">
+    非信用卡支出
+  </option>
+         {creditCards.map((card) => (
+    <option
+      key={card.id}
+      value={card.name}
+    >
+      {card.name}
+    </option>
+  ))}
+</select>
+
   {filteredMonthlyExpenses.length ===
   0 ? (
     <p>
