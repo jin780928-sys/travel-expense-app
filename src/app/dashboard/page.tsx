@@ -419,6 +419,20 @@ export default function DashboardPage() {
   monthlyExpenseCardFilter,
 ]);
 
+            const filteredMonthlyTotals = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  for (const expense of filteredMonthlyExpenses) {
+    const currency =
+      expense.currency || "USD";
+    totals[currency] =
+      (totals[currency] || 0) +
+      Number(expense.amount || 0);
+  }
+
+  return totals;
+}, [filteredMonthlyExpenses]);
+
   function getDueDateText(
     dueDay: number | null,
     dueMonthOffset: number | null = 1
@@ -4059,6 +4073,46 @@ export default function DashboardPage() {
 >
   清除篩選
 </button>
+        
+</div>
+
+       <div
+  style={{
+    marginBottom: 12,
+    padding: 10,
+    border: "1px solid #eee",
+    borderRadius: 10,
+    background: "#fafafa",
+    lineHeight: 1.7,
+  }}
+>
+         <div>
+    目前顯示：
+    <strong>
+      {filteredMonthlyExpenses.length} 筆
+    </strong>
+  </div>
+
+  <div>
+    篩選後總額：
+    {Object.keys(
+      filteredMonthlyTotals
+    ).length === 0 ? (
+      <strong>0</strong>
+    ) : (
+      Object.entries(
+        filteredMonthlyTotals
+      ).map(
+        ([currency, total], index) => (
+          <strong key={currency}>
+            {index > 0 ? " / " : " "}
+            {currency}{" "}
+            {total.toFixed(2)}
+          </strong>
+        )
+      )
+    )}
+  </div>
 </div>
   {filteredMonthlyExpenses.length ===
   0 ? (
