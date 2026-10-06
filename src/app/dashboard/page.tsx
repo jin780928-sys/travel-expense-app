@@ -139,6 +139,17 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
     historySearch,
   ]);
 
+  useEffect(() => {
+  setMonthlyExpenseVisibleCount(20);
+}, [
+  monthlyExpenseSearch,
+  monthlyExpenseCategoryFilter,
+    monthlyExpenseCardFilter,
+  monthlyExpenseStartDate,
+  monthlyExpenseEndDate,
+  monthlyExpenseSort,
+]);
+
   function dateToString(date: Date) {
     const year = date.getFullYear();
 
@@ -4377,7 +4388,28 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
       )
     )
   )}
-</section>
+
+     
+     
+     {monthlyExpenseVisibleCount <
+  filteredMonthlyExpenses.length && (
+  <button
+    onClick={() =>
+      setMonthlyExpenseVisibleCount(
+        (count) => count + 20
+      )
+    }
+    style={{
+      marginTop: 12,
+      padding: "8px 12px",
+    }}
+  >
+    載入更多
+  </button>
+)}
+        
+        
+        </section>
      <button
   onClick={() =>
     document
