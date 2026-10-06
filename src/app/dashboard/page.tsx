@@ -104,6 +104,9 @@ export default function DashboardPage() {
   const [monthlyExpenseSearch, setMonthlyExpenseSearch] =
   useState("");
 
+  const [monthlyExpenseCategoryFilter, setMonthlyExpenseCategoryFilter] =
+  useState("all");
+
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
