@@ -2228,11 +2228,22 @@ export default function DashboardPage() {
       )}
 
       <section
-        style={{
-          marginBottom: 30,
-        }}
-      >
-        <h2>本月支出總額</h2>
+  style={{
+    marginBottom: 30,
+    padding: 16,
+    border: "1px solid #ddd",
+    borderRadius: 12,
+    background: "white",
+  }}
+>
+        <h2
+  style={{
+    marginTop: 0,
+    marginBottom: 12,
+  }}
+>
+  本月支出總額
+</h2>
 
         {Object.keys(
           totalsByCurrency
@@ -2243,13 +2254,13 @@ export default function DashboardPage() {
             totalsByCurrency
           ).map(([currency, total]) => (
             <div
-              key={currency}
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                marginBottom: 6,
-              }}
-            >
+  key={currency}
+  style={{
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 6,
+  }}
+>
               {currency}{" "}
               {total.toFixed(2)}
             </div>
