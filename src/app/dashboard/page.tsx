@@ -2888,14 +2888,23 @@ export default function DashboardPage() {
       </section>
 
       {showStatementHistory && (
-        <section
-          id="statement-history"
-          style={{
-            marginBottom: 30,
-          }}
-        >
-          <h2>
-            📚 歷史帳單（
+      <section
+  id="statement-history"
+  style={{
+    marginBottom: 30,
+    padding: 16,
+    border: "1px solid #ddd",
+    borderRadius: 12,
+    background: "white",
+  }}
+>
+        <h2
+  style={{
+    marginTop: 0,
+    marginBottom: 12,
+  }}
+>
+  📚 歷史帳單（
             {filteredStatementHistory.length} 筆）
           </h2>
 
