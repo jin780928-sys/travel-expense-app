@@ -2052,6 +2052,150 @@ export default function DashboardPage() {
         </strong>
       </p>
 
+     <section
+  style={{
+    marginBottom: 30,
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: 12,
+  }}
+>
+       <div
+    style={{
+      padding: 14,
+      border: "1px solid #ddd",
+      borderRadius: 12,
+      background: "white",
+    }}
+  >
+         <div
+      style={{
+        fontSize: 14,
+        color: "#666",
+      }}
+    >
+      本月交易筆數
+    </div>
+         <div
+      style={{
+        marginTop: 6,
+        fontSize: 24,
+        fontWeight: "bold",
+      }}
+    >
+            {expenses.length} 筆
+    </div>
+  </div>
+
+       <div
+  style={{
+    padding: 14,
+    border: "1px solid #f3b3b3",
+    borderRadius: 12,
+    background: "#fff8f8",
+  }}
+>
+         <div
+    style={{
+      fontSize: 14,
+      color: "#666",
+    }}
+  >
+    未繳信用卡
+  </div>
+         <div
+    style={{
+      marginTop: 6,
+      fontSize: 24,
+      fontWeight: "bold",
+    }}
+  >
+    {
+      visibleCardStatements.filter(
+        (card) => !card.isPaid
+      ).length
+    }{" "}
+    張
+  </div>
+</div>
+
+       <div
+  style={{
+    padding: 14,
+    border: "1px solid #b8d7f0",
+    borderRadius: 12,
+    background: "#eef7ff",
+  }}
+         >
+  <div
+    style={{
+      fontSize: 14,
+      color: "#666",
+    }}
+  >
+    本月總支出
+  </div>
+         <div
+    style={{
+      marginTop: 6,
+      fontSize: 24,
+      fontWeight: "bold",
+    }}
+  >
+           {Object.keys(
+      totalsByCurrency
+    ).length === 0 ? (
+      <span>0</span>
+    ) : (
+      Object.entries(
+        totalsByCurrency
+      ).map(
+        ([currency, total], index) => (
+          <span key={currency}>
+            {index > 0 ? " / " : ""}
+            {currency}{" "}
+            {total.toFixed(2)}
+          </span>
+        )
+      )
+    )}
+  </div>
+</div>
+
+       <div
+  style={{
+    padding: 14,
+    border: "1px solid #f0d98a",
+    borderRadius: 12,
+    background: "#fffbe6",
+  }}
+>
+         <div
+    style={{
+      fontSize: 14,
+      color: "#666",
+    }}
+  >
+    最近繳款日
+  </div>
+         <div
+    style={{
+      marginTop: 6,
+      fontSize: 18,
+      fontWeight: "bold",
+    }}
+  >
+           {nextDueStatement
+      ? `${nextDueStatement.name}｜${getDueDateText(
+          nextDueStatement.due_day,
+          nextDueStatement.due_month_offset
+        )}`
+      : "目前沒有待繳帳單"}
+  </div>
+</div>
+</section>
+
       {message && <p>{message}</p>}
 
       {unpaidStatements.length > 0 && (
