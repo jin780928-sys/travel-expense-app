@@ -2835,10 +2835,10 @@ export default function DashboardPage() {
                         </div>
                       ))
                     )}
-                    </div>
+                                    </div>
                 </>
-              )} {/* 結束 selectedStatementCard === card.name 的判斷 */}
-            </div> {/* 結束個別卡片的外層容器 div */}
+              )}
+            </div>
           ))
         )}
       </section>
