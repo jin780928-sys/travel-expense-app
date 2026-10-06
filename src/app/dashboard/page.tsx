@@ -119,6 +119,9 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
   const [monthlyExpenseSort, setMonthlyExpenseSort] =
   useState("date_desc");
 
+  const [monthlyExpenseVisibleCount, setMonthlyExpenseVisibleCount] =
+  useState(20);
+
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
@@ -477,6 +480,16 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
 
   return totals;
 }, [filteredMonthlyExpenses]);
+
+  const visibleMonthlyExpenses = useMemo(() => {
+  return filteredMonthlyExpenses.slice(
+    0,
+    monthlyExpenseVisibleCount
+    );
+}, [
+  filteredMonthlyExpenses,
+  monthlyExpenseVisibleCount,
+]);
 
   function getDueDateText(
     dueDay: number | null,
@@ -4319,9 +4332,9 @@ const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
         : "找不到符合搜尋／篩選條件的支出"}
     </p>
   ) : (
-    filteredMonthlyExpenses.map(
-      (expense) => (
-        <div
+
+    visibleMonthlyExpenses.map((expense) => (
+          <div
           key={expense.id}
           style={{
             marginBottom: 10,
