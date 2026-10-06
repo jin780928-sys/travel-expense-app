@@ -101,6 +101,9 @@ export default function DashboardPage() {
 
   const [historySearch, setHistorySearch] = useState("");
 
+  const [monthlyExpenseSearch, setMonthlyExpenseSearch] =
+  useState("");
+
   const [historyVisibleCount, setHistoryVisibleCount] =
     useState(20);
 
@@ -362,6 +365,33 @@ export default function DashboardPage() {
         expense.card_name === selectedCard
     );
   }, [expenses, selectedCard]);
+
+  const filteredMonthlyExpenses = useMemo(() => {
+  const keyword =
+    monthlyExpenseSearch
+      .trim()
+      .toLowerCase();
+
+  if (keyword === "") {
+    return expenses;
+  }
+return expenses.filter((expense) => {
+    return (
+      expense.item
+        .toLowerCase()
+        .includes(keyword) ||
+      (expense.major_category || "")
+      .toLowerCase()
+        .includes(keyword) ||
+      (expense.category || "")
+        .toLowerCase()
+        .includes(keyword) ||
+      (expense.card_name || "")
+      .toLowerCase()
+        .includes(keyword)
+    );
+  });
+}, [expenses, monthlyExpenseSearch]);
 
   function getDueDateText(
     dueDay: number | null,
@@ -3891,10 +3921,31 @@ export default function DashboardPage() {
   本月支出明細
 </h2>
 
-        {expenses.length === 0 ? (
-          <p>沒有資料</p>
-        ) : (
-          expenses.map((expense) => (
+       <input
+  type="text"
+  value={monthlyExpenseSearch}
+  onChange={(e) =>
+    setMonthlyExpenseSearch(
+      e.target.value
+    )
+    }
+  placeholder="搜尋項目、分類或信用卡"
+  style={{
+    width: "100%",
+    maxWidth: 360,
+    marginBottom: 12,
+    padding: "8px 10px",
+  }}
+/>
+
+        {filteredMonthlyExpenses.length === 0 ? (
+  <p>
+    {monthlyExpenseSearch.trim() === ""
+      ? "沒有資料"
+      : "找不到符合搜尋條件的支出"}
+  </p>
+) : (
+  filteredMonthlyExpenses.map((expense) => (
           <div
   key={expense.id}
   style={{
