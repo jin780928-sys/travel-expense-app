@@ -3923,113 +3923,133 @@ export default function DashboardPage() {
     background: "white",
   }}
 >
-  <h2
-  style={{
-    marginTop: 0,
-    marginBottom: 12,
-  }}
->
-  本月支出明細
-</h2>
-
-      <input
-  type="text"
-  value={monthlyExpenseSearch}
-  onChange={(e) => setMonthlyExpenseSearch(e.target.value)}
-  placeholder="搜尋項目、分類或信用卡"
-  style={{
-    width: "100%",
-    maxWidth: 360,
-    marginBottom: 12,
-    padding: "8px 10px",
-  }}
-/>
-
-{/* 修正 1：補上 <select> 開頭標籤 */}
+       <h2
+    style={{
+      marginTop: 0,
+      marginBottom: 12,
+    }}
+  >
+    本月支出明細
+  </h2>
+       <input
+    type="text"
+    value={monthlyExpenseSearch}
+    onChange={(e) =>
+      setMonthlyExpenseSearch(
+        e.target.value
+      )
+    }
+         placeholder="搜尋項目、分類或信用卡"
+    style={{
+      width: "100%",
+      maxWidth: 360,
+      marginBottom: 12,
+      padding: "8px 10px",
+    }}
+  />
        <select
-  value={monthlyExpenseCategoryFilter}
-  onChange={(e) => setMonthlyExpenseCategoryFilter(e.target.value)}
-  style={{
-    marginBottom: 12,
-    padding: "8px 10px",
-  }}
->
-         <option value="all">全部分類</option>
-  <option value="餐飲">餐飲</option>
-  <option value="交通">交通</option>
-  <option value="住宿">住宿</option>
-  <option value="購物">購物</option>
-  <option value="娛樂旅遊">娛樂旅遊</option>
-         <option value="居家">居家</option>
-  <option value="汽車">汽車</option>
-  <option value="其他">其他</option>
-</select>
+    value={monthlyExpenseCategoryFilter}
+    onChange={(e) =>
+      setMonthlyExpenseCategoryFilter(
+        e.target.value
+      )
+    }
+    style={{
+      marginBottom: 12,
+      padding: "8px 10px",
+    }}
+  >
+         <option value="all">
+      全部分類
+    </option>
 
-{/* 修正 2：補齊三元運算子的後半段 (冒號 : 還有結束大括號) */}
-       {filteredMonthlyExpenses.length === 0 ? (
-  <p>
-    {monthlyExpenseSearch.trim() === ""
-      ? "沒有資料"
-      : "找不到符合搜尋條件的支出"}
-  </p>
-) : (
-  // 這裡放當有資料時要顯示的內容（例如：列表渲染）
-  <div>
-    {filteredMonthlyExpenses.map((expense) => (
-      <div key={expense.id}>
-        {expense.date} - {expense.item} ({expense.amount})
-      </div>
-    ))}
-  </div>
-)}
-) : (
-  filteredMonthlyExpenses.map((expense) => (
-          <div
-  key={expense.id}
-  style={{
-    marginBottom: 10,
-    padding: 12,
-    border: "1px solid #eee",
-    borderRadius: 10,
-    background: "#fafafa",
-  }}
->
-              <Link
-                href={`/expenses/${expense.id}`}
-              >
-                <strong>
-                  {expense.date}{" "}
-                  {expense.item}
-                </strong>
-              </Link>
+    <option value="餐飲">
+      餐飲
+    </option>
 
-              <div>
-                {expense.major_category ||
-                  "未分類"}
+    <option value="交通">
+      交通
+    </option>
 
-                {expense.category
-                  ? ` / ${expense.category}`
-                  : ""}
-              </div>
+    <option value="住宿">
+      住宿
+    </option>
+         <option value="購物">
+      購物
+    </option>
 
-              <div>
-                {expense.currency ||
-                  "USD"}{" "}
-                {Number(
-                  expense.amount
-                ).toFixed(2)}
-              </div>
+    <option value="娛樂旅遊">
+      娛樂旅遊
+    </option>
 
-              {expense.card_name && (
-                <div>
-                  💳 {expense.card_name}
-                </div>
-              )}
+    <option value="居家">
+      居家
+    </option>
+
+    <option value="汽車">
+      汽車
+    </option>
+         <option value="其他">
+      其他
+    </option>
+  </select>
+
+  {filteredMonthlyExpenses.length ===
+  0 ? (
+    <p>
+      {monthlyExpenseSearch.trim() === "" &&
+      monthlyExpenseCategoryFilter ===
+        "all"
+        ? "沒有資料"
+        : "找不到符合搜尋／篩選條件的支出"}
+    </p>
+  ) : (
+    filteredMonthlyExpenses.map(
+      (expense) => (
+        <div
+          key={expense.id}
+          style={{
+            marginBottom: 10,
+            padding: 12,
+            border:
+              "1px solid #eee",
+            borderRadius: 10,
+            background: "#fafafa",
+          }}
+        >
+          <Link
+            href={`/expenses/${expense.id}`}
+          >
+            <strong>
+              {expense.date}{" "}
+              {expense.item}
+            </strong>
+          </Link>
+          <div>
+            {expense.major_category ||
+              "未分類"}
+
+            {expense.category
+              ? ` / ${expense.category}`
+              : ""}
+          </div>
+          <div>
+            {expense.currency ||
+              "USD"}{" "}
+            {Number(
+              expense.amount
+            ).toFixed(2)}
+          </div>
+          {expense.card_name && (
+            <div>
+              💳 {expense.card_name}
             </div>
-          ))
-        )}
-      </section>
-
+          )}
+        </div>
+      )
+    )
+  )}
+</section>
      <button
   onClick={() =>
     document
@@ -4054,11 +4074,11 @@ export default function DashboardPage() {
     boxShadow:
       "0 2px 8px rgba(0,0,0,0.12)",
   }}
-       aria-label="返回頂部"
+  aria-label="返回頂部"
   title="返回頂部"
 >
   ↑
 </button>
-    </main>
+</main>
   );
 }
