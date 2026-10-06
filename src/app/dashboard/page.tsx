@@ -2324,11 +2324,22 @@ export default function DashboardPage() {
       </section>
 
       <section
-        style={{
-          marginBottom: 30,
-        }}
-      >
-        <h2>信用卡支出</h2>
+  style={{
+    marginBottom: 30,
+    padding: 16,
+    border: "1px solid #ddd",
+    borderRadius: 12,
+    background: "white",
+  }}
+>
+ <h2
+  style={{
+    marginTop: 0,
+    marginBottom: 12,
+  }}
+>
+  信用卡支出
+</h2>
 
         {Object.keys(
           totalsByCard
@@ -2339,15 +2350,16 @@ export default function DashboardPage() {
             totalsByCard
           ).map(
             ([cardName, currencies]) => (
-              <div
-                key={cardName}
-                style={{
-                  marginBottom: 12,
-                  padding: 10,
-                  border: "1px solid #ddd",
-                  borderRadius: 8,
-                }}
-              >
+            <div
+  key={cardName}
+  style={{
+    marginBottom: 12,
+    padding: 12,
+    border: "1px solid #eee",
+    borderRadius: 10,
+    background: "#fafafa",
+  }}
+>
                 <button
                   onClick={() =>
                     setSelectedCard(
