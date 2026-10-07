@@ -853,93 +853,84 @@ export default function DashboardPage() {
         );
 
   const unpaidStatements = useMemo(() => {
-    const now = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    const todayOnly = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
+  return currentCardStatements.filter((card) => {
+    if (card.isPaid) {
+      return false;
+    }
+
+    const hasAmount = Object.values(card.totals).some(
+      (total) => Number(total) > 0
     );
 
-    return currentCardStatements
-      .filter((card) => {
-        if (
-          card.isPaid ||
-          !card.due_day
-        ) {
-          return false;
-        }
+    if (!hasAmount) {
+      return false;
+    }
 
-        const hasAmount =
-          Object.values(
-            card.totals
-          ).some(
-            (total) => total > 0
-          );
+    const dueDate = getCurrentDueDate(card);
 
-        if (!hasAmount) {
-          return false;
-        }
+    if (!dueDate) {
+      return false;
+    }
 
-        const offset =
-          card.due_month_offset ?? 1;
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
 
-        const dueDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1 + offset,
-          card.due_day
-        );
+    const diffDays = Math.ceil(
+      (due.getTime() - today.getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
 
-        const diffMs =
-          dueDate.getTime() -
-          todayOnly.getTime();
-
-        const diffDays = Math.ceil(
-          diffMs /
-            (1000 * 60 * 60 * 24)
-        );
-
-        return diffDays <= 7;
-      })
-      .sort((a, b) => {
-        const aOffset =
-          a.due_month_offset ?? 1;
-
-        const bOffset =
-          b.due_month_offset ?? 1;
-
-        const aDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1 + aOffset,
-          a.due_day || 1
-        );
-
-        const bDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1 + bOffset,
-          b.due_day || 1
-        );
-
-        return (
-          aDate.getTime() -
-          bDate.getTime()
-        );
-      });
-  }, [
-    currentCardStatements,
-    selectedYear,
-    selectedMonth,
-  ]);
-
-  const nextDueStatement = useMemo(() => {
-  const sorted = [...allUnpaidStatements].sort((a, b) => {
-    const aDue = getCurrentDueDate(a);
-const bDue = getCurrentDueDate(b);
-    if (!aDue && !bDue) return 0;
-    if (!aDue) return 1;
-    if (!bDue) return -1;
-    return aDue.getTime() - bDue.getTime();
+    return diffDays <= 7;
   });
+}, [currentCardStatements]);
+
+const allUnpaidStatements = useMemo(() => {
+  return currentCardStatements.filter((card) => {
+    if (card.isPaid) {
+      return false;
+    }
+
+    return Object.values(card.totals).some(
+      (total) => Number(total) > 0
+    );
+  });
+}, [currentCardStatements]);
+
+  const allUnpaidTotalsByCurrency = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+    allUnpaidStatements.forEach((card) => {
+    Object.entries(card.totals).forEach(
+      ([currency, amount]) => {
+        totals[currency] =
+          (totals[currency] || 0) +
+          Number(amount);
+      }
+    );
+  });
+
+    return totals;
+}, [allUnpaidStatements]);
+
+const nextDueStatement = useMemo(() => {
+  const sorted = [...allUnpaidStatements].sort(
+    (a, b) => {
+      const aDue = getCurrentDueDate(a);
+      const bDue = getCurrentDueDate(b);
+
+      if (!aDue && !bDue) return 0;
+      if (!aDue) return 1;
+      if (!bDue) return -1;
+
+      return (
+        aDue.getTime() -
+        bDue.getTime()
+      );
+    }
+  );
 
   return sorted[0] ?? null;
 }, [allUnpaidStatements]);
