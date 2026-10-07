@@ -933,8 +933,8 @@ export default function DashboardPage() {
 
   const nextDueStatement = useMemo(() => {
   const sorted = [...allUnpaidStatements].sort((a, b) => {
-    const aDue = getDueDate(a);
-    const bDue = getDueDate(b);
+    const aDue = getCurrentDueDate(a);
+const bDue = getCurrentDueDate(b);
     if (!aDue && !bDue) return 0;
     if (!aDue) return 1;
     if (!bDue) return -1;
