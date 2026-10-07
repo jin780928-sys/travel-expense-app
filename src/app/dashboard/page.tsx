@@ -2489,13 +2489,14 @@ const nextDueStatement = useMemo(() => {
             ).length === 0 ? (
               <span>0</span>
             ) : (
-            {Object.entries(allUnpaidTotalsByCurrency).map(
-  ([currency, amount]) => (
-    <div key={currency}>
-      {currency} {Number(amount).toFixed(2)}
-    </div>
+  Object.entries(allUnpaidTotalsByCurrency).map(
+    ([currency, amount]) => (
+      <div key={currency}>
+        {currency} {Number(amount).toFixed(2)}
+      </div>
+    )
   )
-)}
+)
           </div>
 
           {unpaidStatements.map((card) => (
