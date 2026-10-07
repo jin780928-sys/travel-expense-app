@@ -2298,7 +2298,7 @@ const nextDueStatement = useMemo(() => {
             }}
           >
             {
-             {allUnpaidStatements.length}{" "}
+             {allUnpaidStatements.length}
             張
           </div>
         </div>
