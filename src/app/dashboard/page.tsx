@@ -931,10 +931,18 @@ export default function DashboardPage() {
     selectedMonth,
   ]);
 
-  const nextDueStatement =
-    unpaidStatements.length > 0
-      ? unpaidStatements[0]
-      : null;
+  const nextDueStatement = useMemo(() => {
+  const sorted = [...allUnpaidStatements].sort((a, b) => {
+    const aDue = getDueDate(a);
+    const bDue = getDueDate(b);
+    if (!aDue && !bDue) return 0;
+    if (!aDue) return 1;
+    if (!bDue) return -1;
+    return aDue.getTime() - bDue.getTime();
+  });
+
+  return sorted[0] ?? null;
+}, [allUnpaidStatements]);
 
   const unpaidTotalsByCurrency = useMemo(() => {
     const totals: Record<string, number> = {};
@@ -951,6 +959,36 @@ export default function DashboardPage() {
 
     return totals;
   }, [unpaidStatements]);
+
+  const allUnpaidStatements = useMemo(() => {
+  return currentCardStatements.filter((card) => {
+    if (card.isPaid) {
+      return false;
+    }
+    const hasAmount =
+      Object.values(card.totals).some(
+        (total) => total > 0
+      );
+
+    return hasAmount;
+  });
+}, [currentCardStatements]);
+
+  const allUnpaidTotalsByCurrency = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  allUnpaidStatements.forEach((card) => {
+    Object.entries(card.totals).forEach(
+      ([currency, amount]) => {
+        totals[currency] =
+          (totals[currency] || 0) +
+          Number(amount);
+      }
+    );
+  });
+
+  return totals;
+}, [allUnpaidStatements]);
 
   const paidTotalsByCurrency = useMemo(() => {
     const totals: Record<string, number> = {};
@@ -2269,10 +2307,7 @@ export default function DashboardPage() {
             }}
           >
             {
-              visibleCardStatements.filter(
-                (card) => !card.isPaid
-              ).length
-            }{" "}
+             {allUnpaidStatements.length}{" "}
             張
           </div>
         </div>
@@ -2466,7 +2501,7 @@ export default function DashboardPage() {
               <span>0</span>
             ) : (
               Object.entries(
-                unpaidTotalsByCurrency
+                allUnpaidTotalsByCurrency
               ).map(
                 ([currency, total], index) => (
                   <span key={currency}>
