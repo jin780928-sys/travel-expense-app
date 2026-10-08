@@ -3653,7 +3653,7 @@ export default function DashboardPage() {
                 key={expense.id}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "120px 1fr auto",
+                  gridTemplateColumns: "90px 1fr auto",
                   gap: 10,
                   alignItems: "center",
                   padding: "10px 0",
