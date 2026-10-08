@@ -2443,6 +2443,7 @@ export default function DashboardPage() {
                     borderRadius: 12,
                     padding: 14,
                     marginBottom: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
                   <div
@@ -2465,11 +2466,17 @@ export default function DashboardPage() {
                         alignItems:
                           "center",
                         gap: 10,
+                        flexWrap: "wrap",
                       }}
                     >
-                      <strong>
-                        {card.name}
-                      </strong>
+                      <strong
+  style={{
+    fontSize: 16,
+    color: "#111827",
+  }}
+>
+  {card.name}
+</strong>
 
                       <span>
                         {getStatementBadge(
@@ -2498,15 +2505,17 @@ export default function DashboardPage() {
                             amount,
                           ]) => (
                             <div
-                              key={
-                                currency
-                              }
-                            >
-                              {currency}{" "}
-                              {formatNumber(
-                                amount
-                              )}
-                            </div>
+  key={currency}
+  style={{
+    fontWeight: 700,
+    color: "#111827",
+    fontSize: 15,
+    whiteSpace: "nowrap",
+  }}
+>
+  {currency}{" "}
+  {formatNumber(amount)}
+</div>
                           )
                         )
                       )}
@@ -2516,6 +2525,7 @@ export default function DashboardPage() {
                       style={{
                         marginTop: 8,
                         fontSize: 14,
+                        color: "#4b5563",
                       }}
                     >
                       繳款截止：
@@ -2621,21 +2631,24 @@ export default function DashboardPage() {
                                     marginTop: 8,
                                   }}
                                 >
-                                  <input
-                                    type="date"
-                                    value={
-                                      editingPaidDate
-                                    }
-                                    onChange={(
-                                      e
-                                    ) =>
-                                      setEditingPaidDate(
-                                        e
-                                          .target
-                                          .value
-                                      )
-                                    }
-                                  />
+                                 <input
+  type="date"
+  value={editingPaidDate}
+  onChange={(e) =>
+    setEditingPaidDate(e.target.value)
+  }
+  style={{
+    height: 36,
+    padding: "0 10px",
+    border: "1px solid #d1d5db",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#111827",
+    fontSize: 14,
+    outline: "none",
+    boxSizing: "border-box",
+  }}
+/>
 
                                   <button
                                     onClick={() =>
@@ -2674,8 +2687,16 @@ export default function DashboardPage() {
                                     );
                                   }}
                                   style={{
-                                    marginTop: 8,
-                                  }}
+  marginTop: 8,
+  height: 36,
+  padding: "0 12px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
                                 >
                                   修改繳款日
                                 </button>
@@ -2739,11 +2760,19 @@ export default function DashboardPage() {
                     onClick={() =>
                       togglePaidStatus(card)
                     }
-                    style={{
-                      marginTop: 12,
-                      padding:
-                        "7px 12px",
-                    }}
+                   style={{
+  marginTop: 12,
+  height: 36,
+  padding: "0 12px",
+  background: card.isPaid ? "#ecfdf5" : "#fef2f2",
+  color: card.isPaid ? "#047857" : "#b91c1c",
+  border: card.isPaid
+    ? "1px solid #a7f3d0"
+    : "1px solid #fecaca",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
                   >
                     {card.isPaid
                       ? "標記未繳"
