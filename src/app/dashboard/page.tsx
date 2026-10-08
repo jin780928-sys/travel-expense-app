@@ -3473,8 +3473,14 @@ export default function DashboardPage() {
         setMonthlyExpenseVisibleCount(20);
       }}
       style={{
-        padding: "8px 12px",
-      }}
+  padding: "8px 12px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
     >
       清除篩選
     </button>
