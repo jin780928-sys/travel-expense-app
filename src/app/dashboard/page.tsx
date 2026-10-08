@@ -314,6 +314,7 @@ export default function DashboardPage() {
     monthlyExpenseStartDate,
     monthlyExpenseEndDate,
     monthlyExpenseSort,
+    selectedMonth,
   ]);
 
   const totalsByCurrency = useMemo(() => {
@@ -3466,6 +3467,7 @@ export default function DashboardPage() {
         setMonthlyExpenseStartDate("");
         setMonthlyExpenseEndDate("");
         setMonthlyExpenseSort("date_desc");
+        setMonthlyExpenseVisibleCount(20);
       }}
       style={{
         padding: "8px 12px",
