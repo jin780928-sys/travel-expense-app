@@ -3646,8 +3646,7 @@ export default function DashboardPage() {
             <div>
   {expense.date}
 </div>
-                  {expense.date}
-                </div>
+             
 
                 <div>
                   <div>
