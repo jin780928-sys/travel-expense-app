@@ -3329,17 +3329,17 @@ export default function DashboardPage() {
             e.target.value
           )
         }
-        style={{
-          width: "80%",
-          padding: "9px 12px",
+      style={{
+  height: 40,
+  padding: "0 12px",
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
   color: "#111827",
   fontSize: 14,
   outline: "none",
-  minHeight: 38,
-        }}
+  boxSizing: "border-box",
+}}
       >
         <option value="餐飲">餐飲</option>
         <option value="交通">交通</option>
@@ -3370,17 +3370,17 @@ export default function DashboardPage() {
             e.target.value
           )
         }
-        style={{
-          width: "80%",
-          padding: "9px 12px",
+       style={{
+  height: 40,
+  padding: "0 12px",
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
   color: "#111827",
   fontSize: 14,
   outline: "none",
-  minHeight: 38,
-        }}
+  boxSizing: "border-box",
+}}
       >
         <option value="all">
           全部付款方式
@@ -3419,17 +3419,17 @@ export default function DashboardPage() {
             e.target.value
           )
         }
-        style={{
-          width: "80%",
-          padding: "9px 12px",
+       style={{
+  height: 40,
+  padding: "0 12px",
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
   color: "#111827",
   fontSize: 14,
   outline: "none",
-  minHeight: 38,
-        }}
+  boxSizing: "border-box",
+}}
       />
     </label>
             <label>
@@ -3451,17 +3451,17 @@ export default function DashboardPage() {
             e.target.value
           )
           }
-        style={{
-          width: "80%",
-          padding: "9px 12px",
+       style={{
+  height: 40,
+  padding: "0 12px",
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
   color: "#111827",
   fontSize: 14,
   outline: "none",
-  minHeight: 38,
-        }}
+  boxSizing: "border-box",
+}}
       />
     </label>
   </div>
