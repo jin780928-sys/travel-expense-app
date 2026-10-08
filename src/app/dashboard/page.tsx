@@ -3281,7 +3281,7 @@ export default function DashboardPage() {
     fontWeight: 700,
     color: "#111827",
     marginBottom: 14,
-            minHeight: 38,
+          
   }}
 >
           🧾 本月支出明細</h2>
@@ -3306,7 +3306,7 @@ export default function DashboardPage() {
   color: "#111827",
   fontSize: 14,
   outline: "none",
-  minHeight: 38,
+  Height: 40,
 }}
   />
           <div
