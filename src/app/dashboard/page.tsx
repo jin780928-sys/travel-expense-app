@@ -1664,13 +1664,16 @@ export default function DashboardPage() {
       }}
     >
       <h1
-        style={{
-          marginBottom: 18,
-        }}
-      >
-        Dashboard
-      </h1>
-
+  style={{
+    marginBottom: 18,
+    fontSize: 32,
+    fontWeight: 700,
+    color: "#111827",
+    letterSpacing: "-0.02em",
+  }}
+>
+  Dashboard
+</h1>
       {message && (
         <div
           style={{
