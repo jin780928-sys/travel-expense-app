@@ -3499,7 +3499,7 @@ export default function DashboardPage() {
       display: "flex",
       flexWrap: "wrap",
       gap: 10,
-      alignItems: "center",
+      alignItems: "flex-end",
     }}
   >
             <select
