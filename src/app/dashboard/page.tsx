@@ -3491,12 +3491,10 @@ export default function DashboardPage() {
           }}
         >
           目前顯示：
-          <strong>
-            {
-              filteredMonthlyExpenses.length
-            }
-          </strong>{" "}
-          筆
+         <strong>
+  {visibleMonthlyExpenses.length} / {filteredMonthlyExpenses.length}
+</strong>{" "}
+筆
         </div>
 
         <div
