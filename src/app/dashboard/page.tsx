@@ -3299,7 +3299,7 @@ export default function DashboardPage() {
     }
     placeholder="搜尋項目、分類或信用卡"
     style={{
-  padding: "9px 12px",
+  padding: "0px 12px",
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
