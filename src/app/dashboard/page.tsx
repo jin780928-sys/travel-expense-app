@@ -3269,303 +3269,221 @@ export default function DashboardPage() {
         <h2>🧾 本月支出明細</h2>
 
         <div
-          style={{
-            marginBottom: 12,
-          }}
-        >
-          <input
-            type="text"
-            value={monthlyExpenseSearch}
-            onChange={(e) =>
-              setMonthlyExpenseSearch(
-                e.target.value
-              )
-            }
-            placeholder="搜尋項目、分類或信用卡"
-            style={{
-              width: "100%",
-              boxSizing:
-                "border-box",
-              padding:
-                "10px 12px",
-              marginBottom: 12,
-            }}
-          />
-
+  style={{
+    marginBottom: 12,
+  }}
+>
+  <input
+    type="text"
+    value={monthlyExpenseSearch}
+    onChange={(e) =>
+      setMonthlyExpenseSearch(e.target.value)
+    }
+    placeholder="搜尋項目、分類或信用卡"
+    style={{
+       width: "100%",
+      boxSizing: "border-box",
+      padding: "10px 12px",
+      marginBottom: 12,
+    }}
+  />
           <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 10,
-              marginBottom: 12,
-              alignItems: "end",
-            }}
-          >
-            <label>
-              <div
-                style={{
-                  fontSize: 14,
-                  color: "#666",
-                  marginBottom: 5,
-                }}
-              >
-                分類
-              </div>
-
-              <select
-                value={
-                  monthlyExpenseCategoryFilter
-                }
-                onChange={(e) =>
-                  setMonthlyExpenseCategoryFilter(
-                    e.target.value
-                  )
-                }
-                style={{
-                  width: "100%",
-                  padding:
-                    "9px 10px",
-                  boxSizing:
-                    "border-box",
-                }}
-              >
-                <option value="all">
-                  全部分類
-                </option>
-
-                <option value="餐飲">
-                  餐飲
-                </option>
-
-                <option value="交通">
-                  交通
-                </option>
-
-                <option value="住宿">
-                  住宿
-                </option>
-
-                <option value="購物">
-                  購物
-                </option>
-
-                <option value="娛樂旅遊">
-                  娛樂旅遊
-                </option>
-
-                <option value="居家">
-                  居家
-                </option>
-
-                <option value="汽車">
-                  汽車
-                </option>
-
-                <option value="其他">
-                  其他
-                </option>
-              </select>
-            </label>
-
-            <label>
-              <div
-                style={{
-                  fontSize: 14,
-                  color: "#666",
-                  marginBottom: 5,
-                }}
-              >
-                付款方式
-              </div>
-
-              <select
-                value={
-                  monthlyExpenseCardFilter
-                }
-                onChange={(e) =>
-                  setMonthlyExpenseCardFilter(
-                    e.target.value
-                  )
-                }
-                style={{
-                  width: "100%",
-                  padding:
-                    "9px 10px",
-                  boxSizing:
-                    "border-box",
-                }}
-              >
-                <option value="all">
-                  全部付款方式
-                </option>
-
-                <option value="non-card">
-                  非信用卡支出
-                </option>
-
-                {creditCards.map(
-                  (card) => (
-                    <option
-                      key={card.id}
-                      value={card.name}
-                    >
-                      {card.name}
-                    </option>
-                  )
-                )}
-              </select>
-            </label>
-
-            <label>
-              <div
-                style={{
-                  fontSize: 14,
-                  color: "#666",
-                  marginBottom: 5,
-                }}
-              >
-                開始日期
-              </div>
-
-              <input
-                type="date"
-                value={
-                  monthlyExpenseStartDate
-                }
-                onChange={(e) =>
-                  setMonthlyExpenseStartDate(
-                    e.target.value
-                  )
-                }
-                style={{
-                  width: "100%",
-                  padding:
-                    "8px 10px",
-                  boxSizing:
-                    "border-box",
-                }}
-              />
-            </label>
-
-            <label>
-              <div
-                style={{
-                  fontSize: 14,
-                  color: "#666",
-                  marginBottom: 5,
-                }}
-              >
-                結束日期
-              </div>
-
-              <input
-                type="date"
-                value={
-                  monthlyExpenseEndDate
-                }
-                onChange={(e) =>
-                  setMonthlyExpenseEndDate(
-                    e.target.value
-                  )
-                }
-                style={{
-                  width: "100%",
-                  padding:
-                    "8px 10px",
-                  boxSizing:
-                    "border-box",
-                }}
-              />
-            </label>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 10,
-              alignItems: "center",
-            }}
-          >
-            <select
-              value={
-                monthlyExpenseSort
-              }
-              onChange={(e) =>
-                setMonthlyExpenseSort(
-                  e.target.value
-                )
-              }
-              style={{
-                padding:
-                  "8px 10px",
-              }}
+    style={{
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(auto-fit, minmax(180px, 1fr))",
+      gap: 10,
+      marginBottom: 12,
+      alignItems: "end",
+    }}
             >
-              <option value="date_desc">
-                日期新到舊
-              </option>
+    <label>
+      <div
+        style={{
+          fontSize: 14,
+          color: "#666",
+          marginBottom: 5,
+        }}
+      >
+        分類
+      </div>
 
-              <option value="date_asc">
-                日期舊到新
-              </option>
+      <select
+        value={monthlyExpenseCategoryFilter}
+        onChange={(e) =>
+          setMonthlyExpenseCategoryFilter(
+            e.target.value
+          )
+        }
+        style={{
+          width: "100%",
+          padding: "9px 10px",
+          boxSizing: "border-box",
+        }}
+      >
+        <option value="餐飲">餐飲</option>
+        <option value="交通">交通</option>
+        <option value="住宿">住宿</option>
+        <option value="購物">購物</option>
+        <option value="娛樂旅遊">娛樂旅遊</option>
+        <option value="居家">居家</option>
+        <option value="汽車">汽車</option>
+        <option value="其他">其他</option>
+      </select>
+    </label>
 
-              <option value="amount_desc">
-                金額高到低
-              </option>
-
-              <option value="amount_asc">
-                金額低到高
-              </option>
-            </select>
-
-            <button
-              onClick={() => {
-                setMonthlyExpenseSearch(
-                  ""
-                );
-
-                setMonthlyExpenseCategoryFilter(
-                  "all"
-                );
-
-                setMonthlyExpenseCardFilter(
-                  "all"
-                );
-
-                setMonthlyExpenseStartDate(
-                  ""
-                );
-
-                setMonthlyExpenseEndDate(
-                  ""
-                );
-
-                setMonthlyExpenseSort(
-                  "date_desc"
-                );
-              }}
-              style={{
-                padding:
-                  "8px 12px",
-              }}
-            >
-              清除篩選
-            </button>
-
-            <button
-              onClick={
-                exportMonthlyExpensesCsv
-              }
-              style={{
-                padding:
-                  "8px 12px",
-              }}
-            >
-              匯出 CSV
-            </button>
-          </div>
+    <label>
+      <div
+        style={{
+          fontSize: 14,
+          color: "#666",
+          marginBottom: 5,
+        }}
+      >
+        付款方式
         </div>
+
+      <select
+        value={monthlyExpenseCardFilter}
+        onChange={(e) =>
+          setMonthlyExpenseCardFilter(
+            e.target.value
+          )
+        }
+        style={{
+          width: "100%",
+          padding: "9px 10px",
+          boxSizing: "border-box",
+        }}
+      >
+        <option value="all">
+          全部付款方式
+        </option>
+        <option value="non-card">
+          非信用卡支出
+        </option>
+
+        {creditCards.map((card) => (
+          <option
+            key={card.id}
+            value={card.name}
+          >
+            {card.name}
+          </option>
+        ))}
+      </select>
+    </label>
+
+    <label>
+      <div
+        style={{
+          fontSize: 14,
+          color: "#666",
+          marginBottom: 5,
+        }}
+      >
+        開始日期
+      </div>
+
+      <input
+        type="date"
+        value={monthlyExpenseStartDate}
+        onChange={(e) =>
+          setMonthlyExpenseStartDate(
+            e.target.value
+          )
+        }
+        style={{
+          width: "100%",
+          padding: "8px 10px",
+          boxSizing: "border-box",
+        }}
+      />
+    </label>
+            <label>
+      <div
+        style={{
+          fontSize: 14,
+          color: "#666",
+          marginBottom: 5,
+        }}
+      >
+        結束日期
+        </div>
+
+      <input
+        type="date"
+        value={monthlyExpenseEndDate}
+        onChange={(e) =>
+          setMonthlyExpenseEndDate(
+            e.target.value
+          )
+          }
+        style={{
+          width: "100%",
+          padding: "8px 10px",
+          boxSizing: "border-box",
+        }}
+      />
+    </label>
+  </div>
+          <div
+    style={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 10,
+      alignItems: "center",
+    }}
+  >
+            <select
+      value={monthlyExpenseSort}
+      onChange={(e) =>
+        setMonthlyExpenseSort(e.target.value)
+      }
+      style={{
+        padding: "8px 10px",
+      }}
+    >
+              <option value="date_desc">
+        日期新到舊
+      </option>
+      <option value="date_asc">
+        日期舊到新
+      </option>
+      <option value="amount_desc">
+        金額高到低
+      </option>
+      <option value="amount_asc">
+        金額低到高
+        </option>
+    </select>
+
+    <button
+      onClick={() => {
+        setMonthlyExpenseSearch("");
+        setMonthlyExpenseCategoryFilter("all");
+        setMonthlyExpenseCardFilter("all");
+        setMonthlyExpenseStartDate("");
+        setMonthlyExpenseEndDate("");
+        setMonthlyExpenseSort("date_desc");
+      }}
+      style={{
+        padding: "8px 12px",
+      }}
+    >
+      清除篩選
+    </button>
+
+    <button
+      onClick={exportMonthlyExpensesCsv}
+      style={{
+        padding: "8px 12px",
+      }}
+    >
+      匯出 CSV
+    </button>
+  </div>
+</div>
 
         <div
           style={{
