@@ -3696,12 +3696,12 @@ export default function DashboardPage() {
                 </div>
 
                 <div
-                  style={{
-                    fontWeight: 700,
-                    textAlign:
-                      "right",
-                    color: "#111827",
-                  }}
+                style={{
+  fontWeight: 700,
+  textAlign: "right",
+  color: "#111827",
+  whiteSpace: "nowrap",
+}}
                 >
                   {expense.currency ||
                     "USD"}{" "}
