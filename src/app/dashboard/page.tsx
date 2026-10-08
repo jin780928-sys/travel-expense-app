@@ -3275,7 +3275,15 @@ export default function DashboardPage() {
         id="monthly-expenses"
         style={sectionStyle}
       >
-        <h2>🧾 本月支出明細</h2>
+        <h2 
+          style={{
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827",
+    marginBottom: 14,
+  }}
+>
+          🧾 本月支出明細</h2>
 
         <div
   style={{
