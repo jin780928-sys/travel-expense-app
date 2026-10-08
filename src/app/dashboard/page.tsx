@@ -3690,6 +3690,7 @@ export default function DashboardPage() {
                     fontWeight: 700,
                     textAlign:
                       "right",
+                    color: "#111827",
                   }}
                 >
                   {expense.currency ||
