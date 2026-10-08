@@ -2197,8 +2197,11 @@ export default function DashboardPage() {
         >
           <h2
             style={{
-              margin: 0,
-            }}
+  margin: 0,
+  fontSize: 22,
+  fontWeight: 700,
+  color: "#111827",
+}}
           >
             💳 信用卡本期帳單
             （共{" "}
