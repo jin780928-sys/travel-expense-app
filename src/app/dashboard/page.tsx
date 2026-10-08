@@ -3330,6 +3330,7 @@ export default function DashboardPage() {
           )
         }
       style={{
+        width: "100%",
   height: 40,
   padding: "0 12px",
   border: "1px solid #d1d5db",
@@ -3371,6 +3372,7 @@ export default function DashboardPage() {
           )
         }
        style={{
+         width: "100%",
   height: 40,
   padding: "0 12px",
   border: "1px solid #d1d5db",
@@ -3420,6 +3422,7 @@ export default function DashboardPage() {
           )
         }
        style={{
+         width: "100%",
   height: 40,
   padding: "0 12px",
   border: "1px solid #d1d5db",
@@ -3452,6 +3455,7 @@ export default function DashboardPage() {
           )
           }
        style={{
+         width: "100%",
   height: 40,
   padding: "0 12px",
   border: "1px solid #d1d5db",
