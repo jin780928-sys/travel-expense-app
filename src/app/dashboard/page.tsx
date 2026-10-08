@@ -3654,11 +3654,16 @@ export default function DashboardPage() {
              
 
                 <div>
-                  <div>
-                    <strong>
-                      {expense.item}
-                    </strong>
-                  </div>
+                <div
+  style={{
+    fontSize: 14,
+    color: "#111827",
+  }}
+>
+  <strong>
+    {expense.item}
+  </strong>
+</div>
 
                   <div
                     style={{
