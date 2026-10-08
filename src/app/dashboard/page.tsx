@@ -3665,7 +3665,7 @@ export default function DashboardPage() {
   </strong>
 </div>
 
-               <div
+           <div
   style={{
     fontSize: 13,
     color: "#6b7280",
@@ -3673,7 +3673,8 @@ export default function DashboardPage() {
   }}
 >
   {expense.major_category || "其他"}
-</div>
+
+
 
                     {expense.category
                       ? ` / ${expense.category}`
