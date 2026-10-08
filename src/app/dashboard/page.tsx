@@ -3670,7 +3670,11 @@ export default function DashboardPage() {
 </div>
              
 
-                <div>
+                <div
+  style={{
+    minWidth: 0,
+  }}
+>
                 <div
   style={{
     fontSize: 14,
