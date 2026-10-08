@@ -3300,6 +3300,7 @@ export default function DashboardPage() {
     placeholder="搜尋項目、分類或信用卡"
     style={{
   padding: "0px 12px",
+      width: 240,
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
@@ -3517,8 +3518,17 @@ export default function DashboardPage() {
         setMonthlyExpenseSort(e.target.value)
       }
       style={{
-        padding: "8px 10px",
-      }}
+  height: 40,
+  padding: "0 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+  width: 150,
+}}
     >
               <option value="date_desc">
         日期新到舊
