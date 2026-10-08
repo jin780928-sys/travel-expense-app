@@ -3653,10 +3653,10 @@ export default function DashboardPage() {
                 key={expense.id}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "90px 1fr auto",
+                  gridTemplateColumns: "82px 1fr auto",
                   gap: 10,
                   alignItems: "center",
-                  padding: "10px 0",
+                  padding: "8px 0",
                   borderBottom: "1px solid #eee",
                 }}
               >
@@ -3694,6 +3694,9 @@ whiteSpace: "nowrap",
     fontSize: 13,
     color: "#6b7280",
     marginTop: 3,
+    overflow: "hidden",
+textOverflow: "ellipsis",
+whiteSpace: "nowrap",
   }}
 >
  {expense.major_category || "其他"}
