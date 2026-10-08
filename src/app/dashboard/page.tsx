@@ -3254,11 +3254,16 @@ export default function DashboardPage() {
                     count + 20
                 )
               }
-              style={{
-                marginTop: 6,
-                padding:
-                  "8px 14px",
-              }}
+            style={{
+  marginTop: 14,
+  padding: "8px 14px",
+  background: "#f3f4f6",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
             >
               載入更多
             </button>
@@ -3637,10 +3642,15 @@ export default function DashboardPage() {
               )
             }
             style={{
-              marginTop: 14,
-              padding:
-                "8px 14px",
-            }}
+  marginTop: 14,
+  padding: "8px 14px",
+  background: "#f3f4f6",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
           >
             載入更多
           </button>
