@@ -3315,6 +3315,7 @@ export default function DashboardPage() {
   style={{
     display: "flex",
     flexDirection: "column",
+    minWidth: 180,
   }}
 >
               <div
@@ -3363,6 +3364,7 @@ export default function DashboardPage() {
   style={{
     display: "flex",
     flexDirection: "column",
+    minWidth: 180,
   }}
 >
       <div
@@ -3417,6 +3419,7 @@ export default function DashboardPage() {
   style={{
     display: "flex",
     flexDirection: "column",
+    minWidth: 180,
   }}
 >
       <div
@@ -3455,6 +3458,7 @@ export default function DashboardPage() {
   style={{
     display: "flex",
     flexDirection: "column",
+    minWidth: 180,
   }}
 >
       <div
