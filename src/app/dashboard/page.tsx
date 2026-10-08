@@ -3290,11 +3290,15 @@ export default function DashboardPage() {
     }
     placeholder="搜尋項目、分類或信用卡"
     style={{
-       width: "100%",
-      boxSizing: "border-box",
-      padding: "10px 12px",
-      marginBottom: 12,
-    }}
+  padding: "9px 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  minHeight: 38,
+}}
   />
           <div
     style={{
