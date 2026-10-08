@@ -3487,9 +3487,15 @@ export default function DashboardPage() {
 
     <button
       onClick={exportMonthlyExpensesCsv}
-      style={{
-        padding: "8px 12px",
-      }}
+     style={{
+  padding: "8px 12px",
+  background: "#2563eb",
+  color: "#ffffff",
+  border: "1px solid #2563eb",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
     >
       匯出 CSV
     </button>
