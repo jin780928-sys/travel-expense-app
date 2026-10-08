@@ -3679,6 +3679,9 @@ export default function DashboardPage() {
   style={{
     fontSize: 14,
     color: "#111827",
+    overflow: "hidden",
+textOverflow: "ellipsis",
+whiteSpace: "nowrap",
   }}
 >
   <strong>
