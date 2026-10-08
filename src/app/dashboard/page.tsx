@@ -3636,18 +3636,21 @@ export default function DashboardPage() {
                 key={expense.id}
                 style={{
                   display: "grid",
-                  gridTemplateColumns:
-                    "120px 1fr auto",
+                  gridTemplateColumns: "120px 1fr auto",
                   gap: 10,
-                  alignItems:
-                    "center",
-                  padding:
-                    "10px 0",
-                  borderBottom:
-                    "1px solid #eee",
+                  alignItems: "center",
+                  padding: "10px 0",
+                  borderBottom: "1px solid #eee",
                 }}
               >
-                <div>
+              <div
+  style={{
+    fontSize: 13,
+    color: "#6b7280",
+  }}
+>
+  {expense.date}
+</div>
                   {expense.date}
                 </div>
 
