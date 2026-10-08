@@ -2726,13 +2726,29 @@ export default function DashboardPage() {
                         )}
                       </div>
 
-                      <h4>帳單明細</h4>
+                      <h4
+  style={{
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 15,
+    fontWeight: 700,
+    color: "#111827",
+  }}
+>
+  帳單明細
+</h4>
 
                       {cardStatementExpenses.length ===
                       0 ? (
-                        <div>
-                          沒有支出明細
-                        </div>
+                       <div
+  style={{
+    padding: "12px 0",
+    color: "#6b7280",
+    fontSize: 14,
+  }}
+>
+  沒有支出明細
+</div>
                       ) : (
                         cardStatementExpenses.map(
                           (expense) => (
@@ -2741,27 +2757,36 @@ export default function DashboardPage() {
                                 expense.id
                               }
                               style={{
-                                display:
-                                  "flex",
-                                justifyContent:
-                                  "space-between",
+                                display:"flex",
+                                justifyContent:"space-between",
+                                alignItems: "center",
+                                flexWrap: "wrap",
                                 gap: 10,
-                                padding:
-                                  "7px 0",
-                                borderBottom:
-                                  "1px solid #eee",
+                                padding: "7px 0",
+                                borderBottom: "1px solid #eee",
                               }}
                             >
-                              <span>
-                                {
-                                  expense.date
-                                }{" "}
-                                {
-                                  expense.item
-                                }
+                             <span
+  style={{
+    minWidth: 0,
+    flex: "1 1 180px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "#374151",
+  }}
+>
+                                {expense.date}{" "}
+                                {expense.item}
                               </span>
 
-                              <span>
+                             <span
+  style={{
+    fontWeight: 700,
+    color: "#111827",
+    whiteSpace: "nowrap",
+  }}
+>
                                 {expense.currency ||
                                   "USD"}{" "}
                                 {formatNumber(
