@@ -3331,8 +3331,14 @@ export default function DashboardPage() {
         }
         style={{
           width: "100%",
-          padding: "9px 10px",
-          boxSizing: "border-box",
+          padding: "9px 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  minHeight: 38,
         }}
       >
         <option value="餐飲">餐飲</option>
