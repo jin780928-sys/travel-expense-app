@@ -3308,9 +3308,15 @@ export default function DashboardPage() {
       gap: 10,
       marginBottom: 12,
       alignItems: "end",
+      
     }}
             >
-    <label>
+    <label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
               <div
                 style={{
                   fontSize: 14,
@@ -3353,7 +3359,12 @@ export default function DashboardPage() {
       </select>
     </label>
 
-    <label>
+   <label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
       <div
         style={{
           fontSize: 14,
@@ -3402,7 +3413,12 @@ export default function DashboardPage() {
       </select>
     </label>
 
-    <label>
+   <label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
       <div
         style={{
           fontSize: 14,
@@ -3435,7 +3451,12 @@ export default function DashboardPage() {
 }}
       />
     </label>
-            <label>
+           <label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
       <div
         style={{
           fontSize: 14,
