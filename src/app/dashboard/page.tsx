@@ -3452,7 +3452,7 @@ export default function DashboardPage() {
           )
           }
         style={{
-          width: "100%",
+          
           padding: "9px 12px",
   border: "1px solid #d1d5db",
   borderRadius: 8,
