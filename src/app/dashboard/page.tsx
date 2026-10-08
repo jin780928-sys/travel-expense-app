@@ -3643,12 +3643,7 @@ export default function DashboardPage() {
                   borderBottom: "1px solid #eee",
                 }}
               >
-              <div
-  style={{
-    fontSize: 13,
-    color: "#6b7280",
-  }}
->
+            <div>
   {expense.date}
 </div>
                   {expense.date}
