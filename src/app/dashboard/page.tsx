@@ -3288,7 +3288,7 @@ export default function DashboardPage() {
 
         <div
   style={{
-    marginBottom: 12,
+    marginBottom: 16,
   }}
 >
   <input
@@ -3300,7 +3300,7 @@ export default function DashboardPage() {
     placeholder="搜尋項目、分類或信用卡"
     style={{
   padding: "0px 12px",
-      width: 240,
+      width: 320,
   border: "1px solid #d1d5db",
   borderRadius: 8,
   background: "#ffffff",
