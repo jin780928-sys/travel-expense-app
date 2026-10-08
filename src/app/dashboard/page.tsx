@@ -3689,17 +3689,9 @@ export default function DashboardPage() {
     marginTop: 3,
   }}
 >
-  {expense.major_category || "其他"}
-
-
-
-                    {expense.category
-                      ? ` / ${expense.category}`
-                      : ""}
-
-                    {expense.card_name
-                      ? ` / ${expense.card_name}`
-                      : ""}
+ {expense.major_category || "其他"}
+{expense.category ? ` / ${expense.category}` : ""}
+{expense.card_name ? ` / ${expense.card_name}` : ""}
                   </div>
                 </div>
 
