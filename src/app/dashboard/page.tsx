@@ -2648,6 +2648,7 @@ export default function DashboardPage() {
     outline: "none",
     boxSizing: "border-box",
   }}
+                                   
 />
 
                                   <button
@@ -2656,6 +2657,16 @@ export default function DashboardPage() {
                                         card.statementStatusId!
                                       )
                                     }
+                                    style={{
+  height: 36,
+  padding: "0 12px",
+  background: "#2563eb",
+  color: "#ffffff",
+  border: "1px solid #2563eb",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
                                   >
                                     儲存
                                   </button>
@@ -2670,6 +2681,16 @@ export default function DashboardPage() {
                                         ""
                                       );
                                     }}
+                                    style={{
+  height: 36,
+  padding: "0 12px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
                                   >
                                     取消
                                   </button>
