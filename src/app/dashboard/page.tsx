@@ -3555,6 +3555,7 @@ export default function DashboardPage() {
         setMonthlyExpenseVisibleCount(20);
       }}
       style={{
+        height: 40,
   padding: "8px 12px",
   background: "#ffffff",
   color: "#374151",
@@ -3570,6 +3571,7 @@ export default function DashboardPage() {
     <button
       onClick={exportMonthlyExpensesCsv}
      style={{
+       height: 40,
   padding: "8px 12px",
   background: "#2563eb",
   color: "#ffffff",
