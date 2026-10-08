@@ -3665,15 +3665,15 @@ export default function DashboardPage() {
   </strong>
 </div>
 
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: "#666",
-                      marginTop: 3,
-                    }}
-                  >
-                    {expense.major_category ||
-                      "其他"}
+               <div
+  style={{
+    fontSize: 13,
+    color: "#6b7280",
+    marginTop: 3,
+  }}
+>
+  {expense.major_category || "其他"}
+</div>
 
                     {expense.category
                       ? ` / ${expense.category}`
