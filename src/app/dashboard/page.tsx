@@ -3306,7 +3306,7 @@ export default function DashboardPage() {
   color: "#111827",
   fontSize: 14,
   outline: "none",
-  Height: 40,
+  minHeight: 38,
 }}
   />
           <div
