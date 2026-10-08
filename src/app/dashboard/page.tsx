@@ -3399,7 +3399,7 @@ export default function DashboardPage() {
         }
         style={{
           width: "100%",
-          padding: "8px 10px",
+          padding: "9px 10px",
           boxSizing: "border-box",
         }}
       />
@@ -3425,7 +3425,7 @@ export default function DashboardPage() {
           }
         style={{
           width: "100%",
-          padding: "8px 10px",
+          padding: "9px 10px",
           boxSizing: "border-box",
         }}
       />
