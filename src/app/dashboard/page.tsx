@@ -3313,11 +3313,16 @@ export default function DashboardPage() {
     <label>
       <div
        <div
-        style={{
-          fontSize: 14,
-          color: "#666",
-          marginBottom: 5,
-        }}
+       style={{
+  padding: "9px 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  minHeight: 38,
+}}
       >
         分類
       </div>
