@@ -1893,8 +1893,15 @@ export default function DashboardPage() {
             )
           }
           style={{
-            padding: "9px 14px",
-          }}
+  height: 40,
+  padding: "0 14px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
         >
           💳 本期帳單
         </button>
@@ -1911,9 +1918,16 @@ export default function DashboardPage() {
               );
             }, 50);
           }}
-          style={{
-            padding: "9px 14px",
-          }}
+         style={{
+  height: 40,
+  padding: "0 14px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
         >
           📚 歷史帳單
         </button>
@@ -1925,8 +1939,15 @@ export default function DashboardPage() {
             )
           }
           style={{
-            padding: "9px 14px",
-          }}
+  height: 40,
+  padding: "0 14px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
         >
           🧾 本月支出明細
         </button>
