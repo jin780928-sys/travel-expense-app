@@ -2858,10 +2858,20 @@ export default function DashboardPage() {
 </h2>
 
             <button
-              onClick={exportHistoryCsv}
-            >
-              匯出 CSV
-            </button>
+  onClick={exportHistoryCsv}
+  style={{
+    height: 40,
+    padding: "0 12px",
+    background: "#2563eb",
+    color: "#ffffff",
+    border: "1px solid #2563eb",
+    borderRadius: 8,
+    cursor: "pointer",
+    fontWeight: 600,
+  }}
+>
+  匯出 CSV
+</button>
           </div>
 
           <div
