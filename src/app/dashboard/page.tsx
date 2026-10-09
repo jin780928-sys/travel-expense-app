@@ -1650,6 +1650,7 @@ export default function DashboardPage() {
     padding: 14,
     minWidth: 180,
     flex: "1 1 180px",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
   };
 
   return (
@@ -1828,6 +1829,7 @@ export default function DashboardPage() {
           <div
             style={{
               marginTop: 6,
+              fontSize: 24,
               fontWeight: 700,
             }}
           >
@@ -1864,7 +1866,7 @@ export default function DashboardPage() {
 
           <div
             style={{
-              fontSize: 18,
+              fontSize: 24,
               fontWeight: 700,
               marginTop: 6,
             }}
