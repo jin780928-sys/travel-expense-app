@@ -2952,7 +2952,17 @@ export default function DashboardPage() {
                   e.target.value
                 )
               }
-              
+              style={{
+  height: 40,
+  padding: "0 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+}}
             >
               <option value="all">
                 全部信用卡
