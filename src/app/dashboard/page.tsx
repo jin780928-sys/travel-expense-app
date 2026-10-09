@@ -3277,8 +3277,11 @@ export default function DashboardPage() {
                       0 ? (
                         <div
                           style={{
-                            marginTop: 6,
-                          }}
+  marginTop: 6,
+  padding: "10px 0",
+  color: "#6b7280",
+  fontSize: 14,
+}}
                         >
                           沒有支出明細
                         </div>
