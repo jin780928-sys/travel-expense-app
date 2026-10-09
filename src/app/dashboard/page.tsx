@@ -3139,6 +3139,7 @@ export default function DashboardPage() {
                     borderRadius: 10,
                     padding: 12,
                     marginBottom: 10,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
                   <div
@@ -3173,19 +3174,18 @@ export default function DashboardPage() {
                           "wrap",
                       }}
                     >
-                      <strong>
-                        {isExpanded
-                          ? "▼"
-                          : "▶"}{" "}
-                        {card?.name ||
-                          "未知信用卡"}{" "}
-                        ·{" "}
-                        {monthDate.getFullYear()}{" "}
-                        年{" "}
-                        {monthDate.getMonth() +
-                          1}{" "}
-                        月
-                      </strong>
+                     <strong
+  style={{
+    fontSize: 16,
+    color: "#111827",
+  }}
+>
+  {isExpanded ? "▼" : "▶"}{" "}
+  {card?.name || "未知信用卡"}{" "}
+  ·{" "}
+  {monthDate.getFullYear()} 年{" "}
+  {monthDate.getMonth() + 1} 月
+</strong>
 
                       <span>
                         {statement.is_paid
@@ -3214,10 +3214,14 @@ export default function DashboardPage() {
                             amount,
                           ]) => (
                             <div
-                              key={
-                                currency
-                              }
-                            >
+  key={currency}
+  style={{
+    fontWeight: 700,
+    color: "#111827",
+    fontSize: 15,
+    whiteSpace: "nowrap",
+  }}
+>
                               {currency}{" "}
                               {formatNumber(
                                 amount
@@ -3286,35 +3290,41 @@ export default function DashboardPage() {
                                 expense.id
                               }
                               style={{
-                                display:
-                                  "flex",
-                                justifyContent:
-                                  "space-between",
+                                display:"flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                flexWrap:"wrap",
                                 gap: 10,
-                                padding:
-                                  "7px 0",
-                                borderBottom:
-                                  "1px solid #eee",
+                                padding:"7px 0",
+                                borderBottom: "1px solid #eee",
                               }}
                             >
-                              <span>
-                                {
-                                  expense.date
-                                }{" "}
-                                {
-                                  expense.item
-                                }
-                              </span>
+                              <span
+  style={{
+    minWidth: 0,
+    flex: "1 1 180px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "#374151",
+  }}
+>
+  {expense.date}{" "}
+  {expense.item}
+</span>
 
-                              <span>
-                                {expense.currency ||
-                                  "USD"}{" "}
-                                {formatNumber(
-                                  Number(
-                                    expense.amount
-                                  )
-                                )}
-                              </span>
+                             <span
+  style={{
+    fontWeight: 700,
+    color: "#111827",
+    whiteSpace: "nowrap",
+  }}
+>
+  {expense.currency || "USD"}{" "}
+  {formatNumber(
+    Number(expense.amount)
+  )}
+</span>
                             </div>
                           )
                         )
