@@ -2881,6 +2881,7 @@ export default function DashboardPage() {
               gap: 8,
               marginTop: 14,
               marginBottom: 14,
+              alignItems: "center",
             }}
           >
             <input
@@ -3412,7 +3413,8 @@ export default function DashboardPage() {
               }
             style={{
   marginTop: 14,
-  padding: "8px 14px",
+  height: 40,
+  padding: "0 14px",
   background: "#f3f4f6",
   color: "#374151",
   border: "1px solid #d1d5db",
