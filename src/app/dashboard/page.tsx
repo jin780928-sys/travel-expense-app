@@ -2766,7 +2766,7 @@ export default function DashboardPage() {
                                 borderBottom: "1px solid #eee",
                               }}
                             >
-                             <span
+                            <span
   style={{
     minWidth: 0,
     flex: "1 1 180px",
@@ -2776,9 +2776,9 @@ export default function DashboardPage() {
     color: "#374151",
   }}
 >
-                                {expense.date}{" "}
-                                {expense.item}
-                              </span>
+  {expense.date}{" "}
+  {expense.item}
+</span>
 
                              <span
   style={{
@@ -2846,10 +2846,12 @@ export default function DashboardPage() {
               alignItems: "center",
             }}
           >
-            <h2
-              style={{
-                margin: 0,
-              }}
+            style={{
+  margin: 0,
+  fontSize: 22,
+  fontWeight: 700,
+  color: "#111827",
+}}
             >
               📚 歷史帳單
             </h2>
@@ -3136,6 +3138,7 @@ export default function DashboardPage() {
                     borderRadius: 10,
                     padding: 12,
                     marginBottom: 10,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
                   <div
@@ -3170,19 +3173,18 @@ export default function DashboardPage() {
                           "wrap",
                       }}
                     >
-                      <strong>
-                        {isExpanded
-                          ? "▼"
-                          : "▶"}{" "}
-                        {card?.name ||
-                          "未知信用卡"}{" "}
-                        ·{" "}
-                        {monthDate.getFullYear()}{" "}
-                        年{" "}
-                        {monthDate.getMonth() +
-                          1}{" "}
-                        月
-                      </strong>
+                      <strong
+  style={{
+    fontSize: 16,
+    color: "#111827",
+  }}
+>
+  {isExpanded ? "▼" : "▶"}{" "}
+  {card?.name || "未知信用卡"}{" "}
+  ·{" "}
+  {monthDate.getFullYear()} 年{" "}
+  {monthDate.getMonth() + 1} 月
+</strong>
 
                       <span>
                         {statement.is_paid
@@ -3211,10 +3213,14 @@ export default function DashboardPage() {
                             amount,
                           ]) => (
                             <div
-                              key={
-                                currency
-                              }
-                            >
+  key={currency}
+  style={{
+    fontWeight: 700,
+    color: "#111827",
+    fontSize: 15,
+    whiteSpace: "nowrap",
+  }}
+>
                               {currency}{" "}
                               {formatNumber(
                                 amount
@@ -3287,6 +3293,8 @@ export default function DashboardPage() {
                                   "flex",
                                 justifyContent:
                                   "space-between",
+                                alignItems: "center",
+flexWrap: "wrap",
                                 gap: 10,
                                 padding:
                                   "7px 0",
