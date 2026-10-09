@@ -1704,8 +1704,16 @@ export default function DashboardPage() {
             )
           }
           style={{
-            padding: "8px 10px",
-          }}
+  height: 40,
+  padding: "0 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+}}
         >
           {Array.from(
             { length: 7 },
@@ -1731,8 +1739,16 @@ export default function DashboardPage() {
             )
           }
           style={{
-            padding: "8px 10px",
-          }}
+  height: 40,
+  padding: "0 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+}}
         >
           {Array.from(
             { length: 12 },
