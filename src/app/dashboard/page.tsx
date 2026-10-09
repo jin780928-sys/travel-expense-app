@@ -2846,15 +2846,16 @@ export default function DashboardPage() {
               alignItems: "center",
             }}
           >
-            style={{
-  margin: 0,
-  fontSize: 22,
-  fontWeight: 700,
-  color: "#111827",
-}}
-            >
-              📚 歷史帳單
-            </h2>
+            <h2
+  style={{
+    margin: 0,
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827",
+  }}
+>
+  📚 歷史帳單
+</h2>
 
             <button
               onClick={exportHistoryCsv}
