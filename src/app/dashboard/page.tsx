@@ -2129,7 +2129,14 @@ export default function DashboardPage() {
   </h2>
 
   {Object.entries(categoryTotals).length === 0 ? (
-    <div>沒有資料</div>
+    <div
+  style={{
+    color: "#6b7280",
+    fontSize: 14,
+  }}
+>
+  沒有資料
+</div>
   ) : (
     Object.entries(categoryTotals).map(
       ([category, totals], index) => (
@@ -2188,14 +2195,20 @@ export default function DashboardPage() {
   )}
 </section>
 
-      <section style={sectionStyle}>
+      <section
+  style={{
+    ...sectionStyle,
+    padding: 16,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  }}
+>
   <h2
     style={{
       fontSize: 22,
       fontWeight: 700,
       color: "#111827",
       marginTop: 0,
-      marginBottom: 14,
+      marginBottom: 10,
     }}
   >
     信用卡支出
@@ -2203,7 +2216,14 @@ export default function DashboardPage() {
 
         {Object.entries(cardTotals)
           .length === 0 ? (
-          <div>本月沒有信用卡支出</div>
+          <div
+  style={{
+    color: "#6b7280",
+    fontSize: 14,
+  }}
+>
+  本月沒有信用卡支出
+</div>
         ) : (
           Object.entries(cardTotals).map(
             ([cardName, totals]) => {
@@ -2250,7 +2270,9 @@ export default function DashboardPage() {
                     <strong
   style={{
     fontSize: 16,
+    fontWeight: 700,
     color: "#111827",
+    fontSize: 14,
   }}
 >
   {cardName}
@@ -2271,10 +2293,11 @@ export default function DashboardPage() {
                           <span
                             key={currency}
                             style={{
-  marginRight: 12,
-  fontWeight: 600,
-  color: "#111827",
-  whiteSpace: "nowrap",
+                              marginRight: 12,
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "#111827",
+                              whiteSpace: "nowrap",
 }}
                           >
                             {currency}{" "}
@@ -2317,6 +2340,7 @@ export default function DashboardPage() {
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
     color: "#374151",
+    fontSize: 14,
   }}
 >
   {expense.date}{" "}
