@@ -1648,7 +1648,7 @@ export default function DashboardPage() {
     border: "1px solid #e5e7eb",
     borderRadius: 12,
     padding: 14,
-    minWidth: 180,
+    minWidth: 160,
     flex: "1 1 180px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
   };
@@ -1783,7 +1783,7 @@ export default function DashboardPage() {
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 12,
+          gap: 14,
           marginBottom: 18,
         }}
       >
@@ -1803,6 +1803,7 @@ export default function DashboardPage() {
               fontSize: 24,
               fontWeight: 700,
               marginTop: 6,
+              color: "#111827",
             }}
           >
             {expenses.length} 筆
@@ -1825,6 +1826,7 @@ export default function DashboardPage() {
               fontSize: 24,
               fontWeight: 700,
               marginTop: 6,
+              color: "#111827",
             }}
           >
             {allUnpaidStatements.length} 張
@@ -1844,9 +1846,10 @@ export default function DashboardPage() {
 
           <div
             style={{
-              marginTop: 6,
               fontSize: 24,
               fontWeight: 700,
+              marginTop: 6,
+              color: "#111827",
             }}
           >
             {Object.entries(
@@ -1886,6 +1889,7 @@ export default function DashboardPage() {
               fontSize: 24,
               fontWeight: 700,
               marginTop: 6,
+              color: "#111827",
             }}
           >
             {nextDueStatement
@@ -1900,9 +1904,11 @@ export default function DashboardPage() {
       <div
         style={{
           ...sectionStyle,
+          padding: 14,
           display: "flex",
           flexWrap: "wrap",
           gap: 10,
+          alignItems: "center",
         }}
       >
         <button
