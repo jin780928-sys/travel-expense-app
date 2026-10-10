@@ -1655,7 +1655,7 @@ export default function DashboardPage() {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-  };
+  } as const;
 
   return (
     <main
