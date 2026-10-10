@@ -1666,7 +1666,7 @@ export default function DashboardPage() {
     >
       <h1
   style={{
-    marginBottom: 18,
+    marginBottom: 14,
     fontSize: 32,
     fontWeight: 700,
     color: "#111827",
@@ -1691,12 +1691,23 @@ export default function DashboardPage() {
       <div
         style={{
           ...sectionStyle,
+          padding: 14,
           display: "flex",
           flexWrap: "wrap",
           gap: 10,
           alignItems: "center",
+          justifyContent: "flex-start",
         }}
       >
+        <span
+  style={{
+    fontSize: 14,
+    fontWeight: 600,
+    color: "#374151",
+  }}
+>
+  統計月份
+</span>
         <select
           value={selectedYear}
           onChange={(e) =>
@@ -1714,6 +1725,7 @@ export default function DashboardPage() {
   fontSize: 14,
   outline: "none",
   boxSizing: "border-box",
+            width: 120,
 }}
         >
           {Array.from(
@@ -1749,6 +1761,7 @@ export default function DashboardPage() {
   fontSize: 14,
   outline: "none",
   boxSizing: "border-box",
+            width: 120,
 }}
         >
           {Array.from(
