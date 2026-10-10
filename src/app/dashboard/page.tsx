@@ -2604,13 +2604,17 @@ whiteSpace: "nowrap",
 
       <section
         id="card-statements"
-        style={sectionStyle}
+        style={{
+        ...sectionStyle,
+        padding: 16,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        marginBottom: 16,
+        }}
       >
         <div
           style={{
             display: "flex",
-            justifyContent:
-              "space-between",
+            justifyContent:"space-between",
             gap: 12,
             flexWrap: "wrap",
             alignItems: "center",
@@ -2645,16 +2649,16 @@ whiteSpace: "nowrap",
                 )
               }
               style={{
-  height: 36,
-  padding: "0 12px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
-            >
+                height: 40,
+                padding: "0 12px",
+                background: "#ffffff",
+                color: "#374151",
+                border: "1px solid #d1d5db",
+                borderRadius: 8,
+                cursor: "pointer",
+                fontWeight: 600,
+                }}
+              >
               {showZeroBalanceCards
                 ? "隱藏 0 元帳單"
                 : "顯示 0 元帳單"}
@@ -2668,7 +2672,7 @@ whiteSpace: "nowrap",
                 )
               }
               style={{
-  height: 36,
+  height: 40,
   padding: "0 12px",
   background: "#ffffff",
   color: "#374151",
@@ -2690,25 +2694,26 @@ whiteSpace: "nowrap",
             display: "grid",
             gridTemplateColumns:
               "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: 10,
+            gap: 12,
             marginTop: 16,
             marginBottom: 16,
           }}
         >
           <div
             style={{
-              border:
-                "1px solid #eee",
-              borderRadius: 10,
-              padding: 12,
+              border:"1px solid #eee",
+              borderRadius: 12,
+              padding: 14,
               boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             }}
           >
             <div
               style={{
-                color: "#666",
-              }}
-            >
+                color: "#6b7280",
+                fontSize: 14,
+                fontWeight: 500,
+                  }}
+              >
               本期帳單總額
             </div>
 
@@ -2718,6 +2723,7 @@ whiteSpace: "nowrap",
                 fontSize: 20,
                 fontWeight: 700,
                 color: "#111827",
+                lineHeight: 1.25,
               }}
             >
               {Object.entries(
@@ -2750,15 +2756,17 @@ whiteSpace: "nowrap",
             style={{
               border:
                 "1px solid #eee",
-              borderRadius: 10,
-              padding: 12,
+              borderRadius: 12,
+              padding: 14,
               boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             }}
           >
             <div
               style={{
-                color: "#666",
-              }}
+                color: "#6b7280",
+                fontSize: 14,
+                fontWeight: 500,
+                }}
             >
               已繳總額
             </div>
@@ -2769,6 +2777,7 @@ whiteSpace: "nowrap",
                 fontSize: 20,
                 fontWeight: 700,
                 color: "#111827",
+                lineHeight: 1.25,
               }}
             >
               {Object.entries(
@@ -2801,16 +2810,18 @@ whiteSpace: "nowrap",
             style={{
               border:
                 "1px solid #fecaca",
-              borderRadius: 10,
-              padding: 12,
+              borderRadius: 12,
+              padding: 14,
               background: "#fff7f7",
               boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             }}
           >
             <div
               style={{
-                color: "#666",
-              }}
+                color: "#6b7280",
+                fontSize: 14,
+                fontWeight: 500,
+                }}
             >
               未繳總額
             </div>
@@ -2821,6 +2832,7 @@ whiteSpace: "nowrap",
                 fontSize: 20,
                 fontWeight: 700,
                 color: "#111827",
+                lineHeight: 1.25,
               }}
             >
               {Object.entries(
@@ -2912,22 +2924,26 @@ whiteSpace: "nowrap",
                     <div
                       style={{
                         display: "flex",
-                        justifyContent:
-                          "space-between",
-                        alignItems:
-                          "center",
+                        justifyContent:"space-between",
+                        alignItems: "center",
                         gap: 10,
+                        rowGap: 6,
                         flexWrap: "wrap",
                       }}
                     >
                       <strong
-  style={{
-    fontSize: 16,
-    color: "#111827",
-  }}
->
-  {card.name}
-</strong>
+                        style={{
+                        fontSize: 16,
+                        color: "#111827",
+                        minWidth: 0,
+                        flex: "1 1 180px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        }}
+                        >
+                        {card.name}
+                      </strong>
 
                       <span
   style={{
@@ -2938,6 +2954,7 @@ whiteSpace: "nowrap",
     background: card.isPaid ? "#ecfdf5" : "#fef2f2",
     color: card.isPaid ? "#047857" : "#b91c1c",
     whiteSpace: "nowrap",
+    flexShrink: 0,
   }}
 >
   {getStatementBadge(card)}
@@ -2949,6 +2966,7 @@ whiteSpace: "nowrap",
                         marginTop: 8,
                         fontSize: 20,
                         fontWeight: 700,
+                        lineHeight: 1.25,
                       }}
                     >
                       {Object.entries(
@@ -2985,6 +3003,7 @@ whiteSpace: "nowrap",
                         marginTop: 8,
                         fontSize: 14,
                         color: "#4b5563",
+                        lineHeight: 1.4,
                       }}
                     >
                       繳款截止：
@@ -3564,8 +3583,7 @@ whiteSpace: "nowrap",
 
             <div
               style={{
-                border:
-                  "1px solid #eee",
+                border:"1px solid #eee",
                 borderRadius: 8,
                 padding: 10,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
@@ -3586,10 +3604,8 @@ whiteSpace: "nowrap",
 
             <div
               style={{
-                border:
-                  "1px solid #fecaca",
-                background:
-                  "#fff7f7",
+                border:"1px solid #fecaca",
+                background:"#fff7f7",
                 borderRadius: 8,
                 padding: 10,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
