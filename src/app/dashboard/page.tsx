@@ -3314,46 +3314,51 @@ whiteSpace: "nowrap",
       ====================================================================== */}
 
       {showStatementHistory && (
-        <section
-          id="statement-history"
-          style={sectionStyle}
-        >
+         <section
+            id="statement-history"
+            style={{
+              ...sectionStyle,
+            padding: 16,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            marginBottom: 16,
+            }}
+          >
           <div
             style={{
               display: "flex",
-              justifyContent:
-                "space-between",
+              justifyContent:"space-between",
               gap: 10,
+              rowGap: 8,
               flexWrap: "wrap",
               alignItems: "center",
             }}
           >
             <h2
-  style={{
-    margin: 0,
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#111827",
-  }}
->
+              style={{
+                margin: 0,
+                fontSize: 22,
+                fontWeight: 700,
+                color: "#111827",
+                 }}
+            >
   📚 歷史帳單
 </h2>
 
             <button
-  onClick={exportHistoryCsv}
-  style={{
-    height: 40,
-    padding: "0 12px",
-    background: "#2563eb",
-    color: "#ffffff",
-    border: "1px solid #2563eb",
-    borderRadius: 8,
-    cursor: "pointer",
-    fontWeight: 600,
-  }}
->
-  匯出 CSV
-</button>
+              onClick={exportHistoryCsv}
+                style={{
+                  height: 40,
+                      padding: "0 12px",
+                      background: "#2563eb",
+                      color: "#ffffff",
+                      border: "1px solid #2563eb",
+                      borderRadius: 10,
+                      cursor: "pointer",
+                      fontWeight: 600,
+                    }}
+                  >
+                    匯出 CSV
+              </button>
           </div>
 
           <div
@@ -3361,6 +3366,7 @@ whiteSpace: "nowrap",
               display: "flex",
               flexWrap: "wrap",
               gap: 8,
+              rowGap: 10,
               marginTop: 14,
               marginBottom: 14,
               alignItems: "center",
@@ -3380,7 +3386,7 @@ whiteSpace: "nowrap",
   padding: "0 12px",
   width: 220,
   border: "1px solid #d1d5db",
-  borderRadius: 8,
+  borderRadius: 10,
   background: "#ffffff",
   color: "#111827",
   fontSize: 14,
@@ -3399,16 +3405,16 @@ whiteSpace: "nowrap",
                 )
               }
               style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+                height: 40,
+                  padding: "0 12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: 10,
+                  background: "#ffffff",
+                  color: "#111827",
+                  fontSize: 14,
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
             >
               <option value="all">
                 全部月份
@@ -3436,16 +3442,16 @@ whiteSpace: "nowrap",
                 )
               }
               style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+                  height: 40,
+                  padding: "0 12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: 10,
+                  background: "#ffffff",
+                  color: "#111827",
+                  fontSize: 14,
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
             >
               <option value="all">
                 全部信用卡
@@ -3488,16 +3494,16 @@ whiteSpace: "nowrap",
                 )
               }
               style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+                  height: 40,
+                  padding: "0 12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: 10,
+                  background: "#ffffff",
+                  color: "#111827",
+                  fontSize: 14,
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
             >
               <option value="all">
                 全部狀態
@@ -3520,16 +3526,16 @@ whiteSpace: "nowrap",
                 )
               }
               style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+                  height: 40,
+                  padding: "0 12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: 10,
+                  background: "#ffffff",
+                  color: "#111827",
+                  fontSize: 14,
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
             >
               <option value="newest">
                 最新帳單優先
@@ -3562,18 +3568,18 @@ whiteSpace: "nowrap",
               style={{
                 border:
                   "1px solid #eee",
-                borderRadius: 8,
-                padding: 10,
+                borderRadius: 10,
+                padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               共{" "}
               <strong
-  style={{
-    fontSize: 20,
-    color: "#111827",
-  }}
->
+                style={{
+                  fontSize: 20,
+                  color: "#111827",
+                  }}
+              >
   {historySummary.total}
 </strong>
               {" "}
@@ -3583,17 +3589,17 @@ whiteSpace: "nowrap",
             <div
               style={{
                 border:"1px solid #eee",
-                borderRadius: 8,
-                padding: 10,
+                borderRadius: 10,
+                padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               已繳{" "}
               <strong
-  style={{
-    fontSize: 20,
-    color: "#111827",
-  }}
+                style={{
+                 fontSize: 20,
+                 color: "#111827",
+                }}
 >
   {historySummary.paid}
 </strong>
@@ -3605,18 +3611,18 @@ whiteSpace: "nowrap",
               style={{
                 border:"1px solid #fecaca",
                 background:"#fff7f7",
-                borderRadius: 8,
-                padding: 10,
+                borderRadius: 10,
+                padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               未繳{" "}
               <strong
-  style={{
-    fontSize: 20,
-    color: "#111827",
-  }}
->
+                style={{
+                  fontSize: 20,
+                  color: "#111827",
+                }}
+              >
   {historySummary.unpaid}
 </strong>
               {" "}
@@ -3627,8 +3633,8 @@ whiteSpace: "nowrap",
               style={{
                 border:
                   "1px solid #eee",
-                borderRadius: 8,
-                padding: 10,
+                borderRadius: 10,
+                padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
@@ -3716,9 +3722,9 @@ whiteSpace: "nowrap",
                         ? "#fff"
                         : "#fff7f7",
 
-                    borderRadius: 10,
-                    padding: 12,
-                    marginBottom: 10,
+                    borderRadius: 12,
+                    padding: 14,
+                    marginBottom: 12,
                     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
@@ -3747,24 +3753,24 @@ whiteSpace: "nowrap",
                     <div
                       style={{
                         display: "flex",
-                        justifyContent:
-                          "space-between",
+                        justifyContent:"space-between",
                         gap: 10,
-                        flexWrap:
-                          "wrap",
+                        rowGap: 6,
+                        flexWrap:"wrap",
                       }}
                     >
                      <strong
-  style={{
-    fontSize: 16,
-    color: "#111827",
-    minWidth: 0,
-    flex: "1 1 220px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-whiteSpace: "nowrap",
-  }}
->
+                       style={{
+                           fontSize: 16,
+                           fontWeight: 700,
+                           color: "#111827",
+                           minWidth: 0,
+                           flex: "1 1 220px",
+                           overflow: "hidden",
+                           textOverflow: "ellipsis",
+                       whiteSpace: "nowrap",
+                         }}
+                       >
   {isExpanded ? "▼" : "▶"}{" "}
   {card?.name || "未知信用卡"}{" "}
   ·{" "}
@@ -3773,16 +3779,17 @@ whiteSpace: "nowrap",
 </strong>
 
                       <span
-  style={{
-    padding: "4px 8px",
-    borderRadius: 999,
-    fontSize: 13,
-    fontWeight: 600,
-    background: statement.is_paid ? "#ecfdf5" : "#fef2f2",
-    color: statement.is_paid ? "#047857" : "#b91c1c",
-    whiteSpace: "nowrap",
-  }}
->
+                        style={{
+                            padding: "4px 8px",
+                            borderRadius: 999,
+                            fontSize: 13,
+                            fontWeight: 600,
+                            background: statement.is_paid ? "#ecfdf5" : "#fef2f2",
+                            color: statement.is_paid ? "#047857" : "#b91c1c",
+                            whiteSpace: "nowrap",
+                            flexShrink: 0,
+                          }}
+                        >
   {statement.is_paid
     ? "✅ 已繳"
     : "🔴 未繳"}
@@ -3794,6 +3801,7 @@ whiteSpace: "nowrap",
                         marginTop: 8,
                         fontSize: 20,
                         fontWeight: 700,
+                        lineHeight: 1.25,
                       }}
                     >
                       {Object.entries(
@@ -3831,48 +3839,50 @@ whiteSpace: "nowrap",
                   {isExpanded && (
                     <div
                       style={{
-  marginTop: 12,
-  padding: 12,
-  background: "#f9fafb",
-  borderRadius: 8,
-                        border: "1px solid #e5e7eb",
-}}
+                            marginTop: 12,
+                            padding: 12,
+                            background: "#f9fafb",
+                            borderRadius: 10,
+                            border: "1px solid #e5e7eb",
+                          }}
                     >
                       <div
-  style={{
-    fontSize: 14,
-    color: "#4b5563",
-  }}
->
-  帳單期間：
-  {formatDate(statement.period_start)} ～{" "}
-  {formatDate(statement.period_end)}
-</div>
+                        style={{
+                            fontSize: 14,
+                            color: "#4b5563",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          帳單期間：
+                          {formatDate(statement.period_start)} ～{" "}
+                          {formatDate(statement.period_end)}
+                        </div>
 
                       {statement.is_paid && (
-  <div
-    style={{
-      marginTop: 5,
-      fontSize: 14,
-      color: "#4b5563",
-    }}
-  >
-    實際繳款日：
-    {formatDate(statement.paid_date)}
-  </div>
+                  <div
+                    style={{
+                      marginTop: 5,
+                            fontSize: 14,
+                            color: "#4b5563",
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          實際繳款日：
+                          {formatDate(statement.paid_date)}
+                   </div>
 )}
 
-                      <div
-  style={{
-    marginTop: 16,
-    marginBottom: 8,
-    fontSize: 15,
-    fontWeight: 700,
-    color: "#111827",
-  }}
->
-  支出明細
-</div>
+                   <div
+                      style={{
+                          marginTop: 14,
+                              marginBottom: 8,
+                              fontSize: 15,
+                              fontWeight: 700,
+                              color: "#111827",
+                            }}
+                          >
+                            支出明細
+                    </div>
 
                       {expensesInStatement.length ===
                       0 ? (
@@ -3904,31 +3914,37 @@ whiteSpace: "nowrap",
                               }}
                             >
                               <span
-  style={{
-    minWidth: 0,
-    flex: "1 1 180px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    color: "#374151",
-  }}
->
-  {expense.date}{" "}
-  {expense.item}
-</span>
+                                  style={{
+                                      minWidth: 0,
+                                      flex: "1 1 180px",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                      color: "#374151",
+                                      fontSize: 14,
+                                      lineHeight: 1.4,
+                                    }}
+                                  >
+                                    {expense.date}{" "}
+                                    {expense.item}
+                                </span>
 
                              <span
-  style={{
-    fontWeight: 700,
-    color: "#111827",
-    whiteSpace: "nowrap",
-  }}
->
-  {expense.currency || "USD"}{" "}
-  {formatNumber(
-    Number(expense.amount)
-  )}
-</span>
+                                 style={{
+                                         fontSize: 14,
+                                         fontWeight: 700,
+                                         color: "#111827",
+                                         whiteSpace: "nowrap",
+                                         textAlign: "right",
+                                         minWidth: 80,
+                                         lineHeight: 1.4,
+                                       }}
+                                    >
+                                      {expense.currency || "USD"}{" "}
+                                      {formatNumber(
+                                      Number(expense.amount)
+                                      )}
+                              </span>
                             </div>
                           )
                         )
