@@ -2314,10 +2314,19 @@ export default function DashboardPage() {
             <button
               onClick={() =>
                 setShowZeroBalanceCards(
-                  (value) =>
-                    !value
+                  (value) =>!value
                 )
               }
+              style={{
+  height: 36,
+  padding: "0 12px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
             >
               {showZeroBalanceCards
                 ? "隱藏 0 元帳單"
@@ -2331,6 +2340,16 @@ export default function DashboardPage() {
                     !value
                 )
               }
+              style={{
+  height: 36,
+  padding: "0 12px",
+  background: "#ffffff",
+  color: "#374151",
+  border: "1px solid #d1d5db",
+  borderRadius: 8,
+  cursor: "pointer",
+  fontWeight: 600,
+}}
             >
               {showStatementHistory
                 ? "隱藏歷史帳單"
