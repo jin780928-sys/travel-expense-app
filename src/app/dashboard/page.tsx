@@ -2046,7 +2046,13 @@ export default function DashboardPage() {
         </section>
       )}
 
-      <section style={sectionStyle}>
+      <section
+  style={{
+    ...sectionStyle,
+    padding: 16,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  }}
+>
         <h2
   style={{
     fontSize: 22,
@@ -2103,14 +2109,20 @@ export default function DashboardPage() {
       )}
       </section>
 
-      <section style={sectionStyle}>
+     <section
+  style={{
+    ...sectionStyle,
+    padding: 16,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  }}
+>
   <h2
     style={{
       fontSize: 22,
       fontWeight: 700,
       color: "#111827",
       marginTop: 0,
-      marginBottom: 14,
+      marginBottom: 10,
     }}
   >
     支出分類
@@ -2120,7 +2132,7 @@ export default function DashboardPage() {
     <div>沒有資料</div>
   ) : (
     Object.entries(categoryTotals).map(
-      ([category, totals]) => (
+      ([category, totals], index) => (
         <div
           key={category}
           style={{
@@ -2129,13 +2141,17 @@ export default function DashboardPage() {
             alignItems: "center",
             gap: 10,
             flexWrap: "wrap",
-            padding: "10px 0",
-            borderBottom: "1px solid #eee",
+            padding: "8px 0",
+            borderBottom:
+  index === Object.entries(categoryTotals).length - 1
+    ? "none"
+    : "1px solid #eee",
           }}
         >
           <strong
             style={{
               fontSize: 15,
+              fontWeight: 600,
               color: "#111827",
             }}
           >
@@ -2155,6 +2171,7 @@ export default function DashboardPage() {
                 <span
                   key={currency}
                   style={{
+                    fontSize: 14,
                     fontWeight: 600,
                     whiteSpace: "nowrap",
                   }}
