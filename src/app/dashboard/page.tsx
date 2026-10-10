@@ -2033,92 +2033,72 @@ export default function DashboardPage() {
       </section>
 
       <section style={sectionStyle}>
-        <h2
-  style={{
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#111827",
-    marginTop: 0,
-    marginBottom: 14,
-  }}
->
-  支出分類
-</h2>
-
-        {Object.entries(
-          categoryTotals
-        ).length === 0 ? (
-          <div>沒有資料</div>
-        ) : (
-          Object.entries(
-            categoryTotals
-          ).map(
-            ([category, totals]) => (
-              <div
-                key={category}
-                style={{
-                  padding:"10px 0",
-                  borderBottom:"1px solid #eee",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 10,
-                  flexWrap: "wrap",
-                }}
-              >
-                <strong>
-                  {category}
-                </strong>
-
-                <div
-  key={category}
-  style={{
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 10,
-    flexWrap: "wrap",
-    padding: "10px 0",
-    borderBottom: "1px solid #eee",
-  }}
->
-  <strong
+  <h2
     style={{
-      fontSize: 15,
+      fontSize: 22,
+      fontWeight: 700,
       color: "#111827",
+      marginTop: 0,
+      marginBottom: 14,
     }}
   >
-    {category}
-  </strong>
+    支出分類
+  </h2>
 
-  <div
-    style={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 12,
-      color: "#374151",
-    }}
-  >
-    {Object.entries(totals).map(
-      ([currency, amount]) => (
-        <span
-          key={currency}
+  {Object.entries(categoryTotals).length === 0 ? (
+    <div>沒有資料</div>
+  ) : (
+    Object.entries(categoryTotals).map(
+      ([category, totals]) => (
+        <div
+          key={category}
           style={{
-            fontWeight: 600,
-            whiteSpace: "nowrap",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+            padding: "10px 0",
+            borderBottom: "1px solid #eee",
           }}
         >
-          {currency}{" "}
-          {formatNumber(amount)}
-        </span>
+          <strong
+            style={{
+              fontSize: 15,
+              color: "#111827",
+            }}
+          >
+            {category}
+          </strong>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              color: "#374151",
+            }}
+          >
+            {Object.entries(totals).map(
+              ([currency, amount]) => (
+                <span
+                  key={currency}
+                  style={{
+                    fontWeight: 600,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {currency}{" "}
+                  {formatNumber(amount)}
+                </span>
+              )
+            )}
+          </div>
+        </div>
       )
-    )}
-  </div>
-</div>
-            )
-          )
-        )}
-      </section>
+    )
+  )}
+</section>
 
       <section style={sectionStyle}>
   <h2
