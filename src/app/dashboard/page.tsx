@@ -3990,17 +3990,22 @@ whiteSpace: "nowrap",
 
       <section
         id="monthly-expenses"
-        style={sectionStyle}
+          style={{
+            ...sectionStyle,
+            padding: 16,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            marginBottom: 16,
+            }}
       >
         <h2 
           style={{
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#111827",
-    marginBottom: 14,
-          
-  }}
->
+            fontSize: 22,
+            fontWeight: 700,
+            color: "#111827",
+            marginTop: 0,
+            marginBottom: 14,
+           }}
+      >
           🧾 本月支出明細</h2>
 
         <div
@@ -4015,23 +4020,22 @@ whiteSpace: "nowrap",
       setMonthlyExpenseSearch(e.target.value)
     }
     placeholder="搜尋項目、分類或信用卡"
-    style={{
-  padding: "0px 12px",
-      width: 320,
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  minHeight: 38,
-}}
+      style={{
+        padding: "0px 12px",
+        width: 320,
+        border: "1px solid #d1d5db",
+        borderRadius: 10,
+        background: "#ffffff",
+        color: "#111827",
+        fontSize: 14,
+        outline: "none",
+        height: 40,
+      }}
   />
           <div
     style={{
       display: "grid",
-      gridTemplateColumns:
-        "repeat(auto-fit, minmax(180px, 1fr))",
+      gridTemplateColumns:"repeat(auto-fit, minmax(180px, 1fr))",
       gap: 10,
       marginBottom: 12,
       alignItems: "end",
@@ -4039,13 +4043,13 @@ whiteSpace: "nowrap",
     }}
             >
     <label
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    minWidth: 180,
-    flex: "1 1 220px",
-  }}
->
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minWidth: 180,
+          flex: "1 1 220px",
+          }}
+    >
               <div
                 style={{
                   fontSize: 14,
@@ -4066,16 +4070,16 @@ whiteSpace: "nowrap",
         }
       style={{
         width: "100%",
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+        height: 40,
+        padding: "0 12px",
+        border: "1px solid #d1d5db",
+        borderRadius: 10,
+        background: "#ffffff",
+        color: "#111827",
+        fontSize: 14,
+        outline: "none",
+        boxSizing: "border-box",
+        }}
       >
         <option value="餐飲">餐飲</option>
         <option value="交通">交通</option>
@@ -4089,13 +4093,13 @@ whiteSpace: "nowrap",
     </label>
 
    <label
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    minWidth: 180,
-    flex: "1 1 220px",
-  }}
->
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minWidth: 180,
+        flex: "1 1 220px",
+        }}
+  >
       <div
         style={{
           fontSize: 14,
@@ -4114,17 +4118,17 @@ whiteSpace: "nowrap",
           )
         }
        style={{
-         width: "100%",
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+          width: "100%",
+          height: 40,
+          padding: "0 12px",
+          border: "1px solid #d1d5db",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#111827",
+          fontSize: 14,
+          outline: "none",
+          boxSizing: "border-box",
+          }}
       >
         <option value="all">
           全部付款方式
@@ -4171,17 +4175,17 @@ whiteSpace: "nowrap",
           )
         }
        style={{
-         width: "100%",
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+          width: "100%",
+          height: 40,
+          padding: "0 12px",
+          border: "1px solid #d1d5db",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#111827",
+          fontSize: 14,
+          outline: "none",
+          boxSizing: "border-box",
+          }}
       />
     </label>
            <label
@@ -4211,17 +4215,17 @@ whiteSpace: "nowrap",
           )
           }
        style={{
-         width: "100%",
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+          width: "100%",
+          height: 40,
+          padding: "0 12px",
+          border: "1px solid #d1d5db",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#111827",
+          fontSize: 14,
+          outline: "none",
+          boxSizing: "border-box",
+          }}
       />
     </label>
   </div>
@@ -4230,6 +4234,7 @@ whiteSpace: "nowrap",
       display: "flex",
       flexWrap: "wrap",
       gap: 10,
+      rowGap: 10,
       alignItems: "flex-end",
     }}
   >
@@ -4239,17 +4244,17 @@ whiteSpace: "nowrap",
         setMonthlyExpenseSort(e.target.value)
       }
       style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-  width: 150,
-}}
+          height: 40,
+          padding: "0 12px",
+          border: "1px solid #d1d5db",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#111827",
+          fontSize: 14,
+          outline: "none",
+          boxSizing: "border-box",
+          width: 150,
+          }}
     >
               <option value="date_desc">
         日期新到舊
@@ -4276,31 +4281,31 @@ whiteSpace: "nowrap",
         setMonthlyExpenseVisibleCount(20);
       }}
       style={{
-        height: 40,
-  padding: "8px 12px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+         height: 40,
+         padding: "8px 12px",
+         background: "#ffffff",
+         color: "#374151",
+         border: "1px solid #d1d5db",
+         borderRadius: 10,
+         cursor: "pointer",
+         fontWeight: 600,
+         }}
     >
       清除篩選
     </button>
 
     <button
       onClick={exportMonthlyExpensesCsv}
-     style={{
-       height: 40,
-  padding: "8px 12px",
-  background: "#2563eb",
-  color: "#ffffff",
-  border: "1px solid #2563eb",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+         style={{
+             height: 40,
+             padding: "8px 12px",
+             background: "#2563eb",
+             color: "#ffffff",
+             border: "1px solid #2563eb",
+             borderRadius: 10,
+             cursor: "pointer",
+             fontWeight: 600,
+             }}
     >
       匯出 CSV
     </button>
@@ -4310,7 +4315,9 @@ whiteSpace: "nowrap",
         <div
           style={{
             marginBottom: 10,
-          }}
+            fontSize: 14,
+            color: "#4b5563",
+            }}
         >
           目前顯示：
          <strong>
@@ -4323,7 +4330,9 @@ whiteSpace: "nowrap",
           style={{
             marginBottom: 14,
             fontWeight: 700,
-          }}
+            fontSize: 14,
+            color: "#111827",
+            }}
         >
           篩選後總額：
 
@@ -4360,12 +4369,17 @@ whiteSpace: "nowrap",
 
         {/* A11-1. 本月支出交易列表 */}
 
-        {visibleMonthlyExpenses.length ===
-        0 ? (
-          <div>
-            沒有符合條件的支出
-          </div>
-        ) : (
+        {visibleMonthlyExpenses.length === 0 ? (
+          <div
+            style={{
+                color: "#6b7280",
+                fontSize: 14,
+                padding: "8px 0",
+                }}
+          >
+    沒有符合條件的支出
+  </div>
+) : (
           visibleMonthlyExpenses.map(
             (expense) => (
               <div
@@ -4375,16 +4389,17 @@ whiteSpace: "nowrap",
                   gridTemplateColumns: "82px 1fr auto",
                   gap: 10,
                   alignItems: "center",
-                  padding: "8px 0",
+                  padding: "9px 0",
                   borderBottom: "1px solid #eee",
                 }}
               >
           <div
-  style={{
-    fontSize: 13,
-    color: "#6b7280",
-  }}
->
+            style={{
+              fontSize: 13,
+              color: "#6b7280",
+              whiteSpace: "nowrap",
+              }}
+          >
   {expense.date}
 </div>
              
@@ -4395,29 +4410,31 @@ whiteSpace: "nowrap",
   }}
 >
                 <div
-  style={{
-    fontSize: 14,
-    color: "#111827",
-    overflow: "hidden",
-textOverflow: "ellipsis",
-whiteSpace: "nowrap",
-  }}
->
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: "#111827",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    }}
+                >
   <strong>
     {expense.item}
   </strong>
 </div>
 
            <div
-  style={{
-    fontSize: 13,
-    color: "#6b7280",
-    marginTop: 3,
-    overflow: "hidden",
-textOverflow: "ellipsis",
-whiteSpace: "nowrap",
-  }}
->
+              style={{
+                  fontSize: 13,
+                  color: "#6b7280",
+                  marginTop: 3,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  lineHeight: 1.4,
+                  }}
+            >
  {expense.major_category || "其他"}
 {expense.category ? ` / ${expense.category}` : ""}
 {expense.card_name ? ` / ${expense.card_name}` : ""}
@@ -4425,12 +4442,15 @@ whiteSpace: "nowrap",
                 </div>
 
                 <div
-                style={{
-  fontWeight: 700,
-  textAlign: "right",
-  color: "#111827",
-  whiteSpace: "nowrap",
-}}
+                  style={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      textAlign: "right",
+                      color: "#111827",
+                      whiteSpace: "nowrap",
+                      lineHeight: 1.4,
+                      minWidth: 80,
+                      }}
                 >
                   {expense.currency ||
                     "USD"}{" "}
@@ -4457,15 +4477,16 @@ whiteSpace: "nowrap",
               )
             }
             style={{
-  marginTop: 14,
-  padding: "8px 14px",
-  background: "#f3f4f6",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+                  marginTop: 14,
+                  height: 40,
+                  padding: "8px 14px",
+                  background: "#f3f4f6",
+                  color: "#374151",
+                  border: "1px solid #d1d5db",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                  }}
           >
             載入更多
           </button>
