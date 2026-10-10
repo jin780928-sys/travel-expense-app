@@ -2057,10 +2057,13 @@ export default function DashboardPage() {
               <div
                 key={category}
                 style={{
-                  padding:
-                    "10px 0",
-                  borderBottom:
-                    "1px solid #eee",
+                  padding:"10px 0",
+                  borderBottom:"1px solid #eee",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 10,
+                  flexWrap: "wrap",
                 }}
               >
                 <strong>
