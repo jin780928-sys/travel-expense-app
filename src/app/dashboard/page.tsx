@@ -3021,10 +3021,9 @@ whiteSpace: "nowrap",
                     >
                       <div
                         style={{
-                          background:
-                            "#f3f4f6",
+                          background:"#f3f4f6",
                           padding: 12,
-                          borderRadius: 8,
+                          borderRadius: 10,
                           marginBottom: 10,
                         }}
                       >
@@ -3072,7 +3071,7 @@ whiteSpace: "nowrap",
                           background:
                             "#f3f4f6",
                           padding: 12,
-                          borderRadius: 8,
+                          borderRadius: 10,
                           marginBottom: 10,
                         }}
                       >
@@ -3101,10 +3100,8 @@ whiteSpace: "nowrap",
                               card.statementStatusId ? (
                                 <div
                                   style={{
-                                    display:
-                                      "flex",
-                                    flexWrap:
-                                      "wrap",
+                                    display:"flex",
+                                    flexWrap:"wrap",
                                     gap: 8,
                                     marginTop: 8,
                                   }}
@@ -3206,7 +3203,7 @@ whiteSpace: "nowrap",
 
                       <h4
   style={{
-    marginTop: 16,
+    marginTop: 14,
     marginBottom: 8,
     fontSize: 15,
     fontWeight: 700,
@@ -3240,37 +3237,40 @@ whiteSpace: "nowrap",
                                 alignItems: "center",
                                 flexWrap: "wrap",
                                 gap: 10,
-                                padding: "6px 0",
+                                padding: "7px 0",
                                 borderBottom: "1px solid #eee",
                               }}
                             >
                              <span
-  style={{
-    minWidth: 0,
-    flex: "1 1 180px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    color: "#374151",
-  }}
->
+                                style={{
+                                    minWidth: 0,
+                                    flex: "1 1 180px",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    color: "#374151",
+                                    fontSize: 14,
+                                    lineHeight: 1.4,
+                                  }}
+                                >
                                 {expense.date}{" "}
                                 {expense.item}
                               </span>
 
                              <span
-  style={{
-    fontWeight: 700,
-    color: "#111827",
-    whiteSpace: "nowrap",
-  }}
->
-                                {expense.currency ||
-                                  "USD"}{" "}
-                                {formatNumber(
-                                  Number(
-                                    expense.amount
-                                  )
+                              style={{
+                                    fontSize: 14,
+                                    fontWeight: 700,
+                                    color: "#111827",
+                                    whiteSpace: "nowrap",
+                                    textAlign: "right",
+                                    minWidth: 80,
+                                    lineHeight: 1.4,
+                                  }}
+                                >
+                                {expense.currency ||"USD"}{" "}
+                                {formatNumber(Number
+                                    (expense.amount)
                                 )}
                               </span>
                             </div>
@@ -3285,18 +3285,17 @@ whiteSpace: "nowrap",
                       togglePaidStatus(card)
                     }
                    style={{
-  marginTop: 12,
-  height: 36,
-  padding: "0 12px",
-  background: card.isPaid ? "#ecfdf5" : "#fef2f2",
-  color: card.isPaid ? "#047857" : "#b91c1c",
-  border: card.isPaid
-    ? "1px solid #a7f3d0"
-    : "1px solid #fecaca",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+                        marginTop: 12,
+                        height: 40,
+                        padding: "0 12px",
+                        background: card.isPaid ? "#ecfdf5" : "#fef2f2",
+                        color: card.isPaid ? "#047857" : "#b91c1c",
+                        border: card.isPaid ? "1px solid #a7f3d0" : "1px solid #fecaca",
+                        borderRadius: 10,
+                        cursor: "pointer",
+                        fontWeight: 600,
+                       fontSize: 14,
+                      }}
                   >
                     {card.isPaid
                       ? "標記未繳"
