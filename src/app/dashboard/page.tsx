@@ -1646,8 +1646,8 @@ export default function DashboardPage() {
   const summaryCardStyle = {
     background: "#fff",
     border: "1px solid #e5e7eb",
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: 14,
+    padding: 16,
     minWidth: 160,
     flex: "1 1 180px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
@@ -1804,6 +1804,7 @@ export default function DashboardPage() {
               fontWeight: 700,
               marginTop: 6,
               color: "#111827",
+              lineHeight: 1.2,
             }}
           >
             {expenses.length} 筆
@@ -1827,6 +1828,7 @@ export default function DashboardPage() {
               fontWeight: 700,
               marginTop: 6,
               color: "#111827",
+              lineHeight: 1.2,
             }}
           >
             {allUnpaidStatements.length} 張
@@ -1850,6 +1852,7 @@ export default function DashboardPage() {
               fontWeight: 700,
               marginTop: 6,
               color: "#111827",
+              lineHeight: 1.2,
             }}
           >
             {Object.entries(
@@ -1890,6 +1893,7 @@ export default function DashboardPage() {
               fontWeight: 700,
               marginTop: 6,
               color: "#111827",
+              lineHeight: 1.2,
             }}
           >
             {nextDueStatement
