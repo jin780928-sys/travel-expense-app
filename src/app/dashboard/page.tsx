@@ -2044,25 +2044,25 @@ export default function DashboardPage() {
           display: "flex",
           flexWrap: "wrap",
           gap: 10,
+          rowGap: 10,
           alignItems: "center",
         }}
       >
         <button
           onClick={() =>
-            scrollToSection(
-              "card-statements"
-            )
+            scrollToSection("card-statements")
           }
           style={{
-  height: 40,
-  padding: "0 14px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+            height: 40,
+            padding: "0 14px",
+            background: "#ffffff",
+            color: "#374151",
+            border: "1px solid #d1d5db",
+            borderRadius: 10,
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 14,
+            }}
         >
           💳 本期帳單
         </button>
@@ -2080,15 +2080,16 @@ export default function DashboardPage() {
             }, 50);
           }}
          style={{
-  height: 40,
-  padding: "0 14px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+            height: 40,
+            padding: "0 14px",
+            background: "#ffffff",
+            color: "#374151",
+            border: "1px solid #d1d5db",
+            borderRadius: 10,
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 14,
+            }}
         >
           📚 歷史帳單
         </button>
@@ -2100,15 +2101,16 @@ export default function DashboardPage() {
             )
           }
           style={{
-  height: 40,
-  padding: "0 14px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+            height: 40,
+            padding: "0 14px",
+            background: "#ffffff",
+            color: "#374151",
+            border: "1px solid #d1d5db",
+            borderRadius: 10,
+            cursor: "pointer",
+            fontWeight: 600,
+            fontSize: 14,
+            }}
         >
           🧾 本月支出明細
         </button>
