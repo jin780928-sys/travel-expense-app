@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
@@ -3212,6 +3212,7 @@ export default function DashboardPage() {
                   "1px solid #eee",
                 borderRadius: 8,
                 padding: 10,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               共{" "}
@@ -3227,6 +3228,7 @@ export default function DashboardPage() {
                   "1px solid #eee",
                 borderRadius: 8,
                 padding: 10,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               已繳{" "}
@@ -3244,6 +3246,7 @@ export default function DashboardPage() {
                   "#fff7f7",
                 borderRadius: 8,
                 padding: 10,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               未繳{" "}
@@ -3259,6 +3262,7 @@ export default function DashboardPage() {
                   "1px solid #eee",
                 borderRadius: 8,
                 padding: 10,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
             >
               {Object.entries(
@@ -3371,6 +3375,11 @@ export default function DashboardPage() {
   style={{
     fontSize: 16,
     color: "#111827",
+    minWidth: 0,
+    flex: "1 1 220px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+whiteSpace: "nowrap",
   }}
 >
   {isExpanded ? "▼" : "▶"}{" "}
@@ -3439,42 +3448,48 @@ export default function DashboardPage() {
                   {isExpanded && (
                     <div
                       style={{
-                        marginTop: 12,
-                      }}
+  marginTop: 12,
+  padding: 12,
+  background: "#f9fafb",
+  borderRadius: 8,
+                        border: "1px solid #e5e7eb",
+}}
                     >
-                      <div>
-                        帳單期間：
-                        {formatDate(
-                          statement.period_start
-                        )}{" "}
-                        ～{" "}
-                        {formatDate(
-                          statement.period_end
-                        )}
-                      </div>
+                      <div
+  style={{
+    fontSize: 14,
+    color: "#4b5563",
+  }}
+>
+  帳單期間：
+  {formatDate(statement.period_start)} ～{" "}
+  {formatDate(statement.period_end)}
+</div>
 
                       {statement.is_paid && (
-                        <div
-                          style={{
-                            marginTop: 5,
-                          }}
-                        >
-                          實際繳款日：
-                          {formatDate(
-                            statement.paid_date
-                          )}
-                        </div>
-                      )}
+  <div
+    style={{
+      marginTop: 5,
+      fontSize: 14,
+      color: "#4b5563",
+    }}
+  >
+    實際繳款日：
+    {formatDate(statement.paid_date)}
+  </div>
+)}
 
                       <div
-                        style={{
-                          marginTop: 12,
-                        }}
-                      >
-                        <strong>
-                          支出明細
-                        </strong>
-                      </div>
+  style={{
+    marginTop: 16,
+    marginBottom: 8,
+    fontSize: 15,
+    fontWeight: 700,
+    color: "#111827",
+  }}
+>
+  支出明細
+</div>
 
                       {expensesInStatement.length ===
                       0 ? (
