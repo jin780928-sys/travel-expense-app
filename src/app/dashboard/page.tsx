@@ -1996,51 +1996,68 @@ export default function DashboardPage() {
           style={{
             ...sectionStyle,
             background: "#fff7ed",
-            border:
-              "1px solid #fed7aa",
+            border:"1px solid #fed7aa",
+            padding: 16,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            marginBottom: 16,
           }}
         >
           <h2
-            style={{
-              marginTop: 0,
-            }}
-          >
-            ⚠️ 信用卡繳款提醒
-          </h2>
+  style={{
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827",
+    marginTop: 0,
+    marginBottom: 10,
+  }}
+>
+  ⚠️ 信用卡繳款提醒
+</h2>
 
           {unpaidStatements.map(
-            (card) => (
+            (card, index) => (
               <div
                 key={card.id}
                 style={{
-                marginBottom: 8,
+                marginBottom:
+  index === unpaidStatements.length - 1
+    ? 0
+    : 8,
                 padding: "10px 12px",
                 background: "#ffffff",
                 border: "1px solid #fed7aa",
                 borderRadius: 8,
               }}
               >
-                <strong
-                  style={{
-                  fontSize: 15,
-                  color: "#111827",
-                  }}
-              >
-                  {card.name}
-              </strong>
-                <span
-                  style={{
-                    marginLeft: 6,
-                    color: "#7c2d12",
-                    fontSize: 14,
-                    }}
-                  >
-                    {getDueStatus(card)}
-                    {"｜"}
-                  截止日{" "}
-                  {getDueDateText(card)}
-                  </span>
-              </div>
+                <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 6,
+  }}
+>
+  <strong
+    style={{
+      fontSize: 15,
+      color: "#111827",
+    }}
+  >
+    {card.name}
+  </strong>
+
+  <span
+    style={{
+      color: "#7c2d12",
+      fontSize: 14,
+    }}
+  >
+    {getDueStatus(card)}
+    {"｜"}
+    截止日{" "}
+    {getDueDateText(card)}
+  </span>
+</div>
             )
           )}
         </section>
@@ -2227,6 +2244,7 @@ export default function DashboardPage() {
   style={{
     color: "#6b7280",
     fontSize: 14,
+    padding: "4px 0",
   }}
 >
   本月沒有信用卡支出
