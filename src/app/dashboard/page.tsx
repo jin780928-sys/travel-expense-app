@@ -2369,7 +2369,9 @@ export default function DashboardPage() {
             <div
               style={{
                 marginTop: 6,
+                fontSize: 20,
                 fontWeight: 700,
+                color: "#111827",
               }}
             >
               {Object.entries(
@@ -2418,7 +2420,9 @@ export default function DashboardPage() {
             <div
               style={{
                 marginTop: 6,
+                fontSize: 20,
                 fontWeight: 700,
+                color: "#111827",
               }}
             >
               {Object.entries(
@@ -2468,7 +2472,9 @@ export default function DashboardPage() {
             <div
               style={{
                 marginTop: 6,
+                fontSize: 20,
                 fontWeight: 700,
+                color: "#111827",
               }}
             >
               {Object.entries(
