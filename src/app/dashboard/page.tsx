@@ -2053,7 +2053,7 @@ export default function DashboardPage() {
     fontWeight: 700,
     color: "#111827",
     marginTop: 0,
-    marginBottom: 14,
+    marginBottom: 10,
   }}
 >
   本月支出總額
@@ -2062,13 +2062,20 @@ export default function DashboardPage() {
         {Object.entries(
           totalsByCurrency
         ).length === 0 ? (
-          <div>本月目前沒有支出</div>
+          <div
+  style={{
+    color: "#6b7280",
+    fontSize: 14,
+  }}
+>
+  本月目前沒有支出
+</div>
         ) : (
   <div
     style={{
       display: "flex",
       flexDirection: "column",
-      gap: 6,
+      gap: 4,
     }}
   >
     {Object.entries(
@@ -2081,7 +2088,6 @@ export default function DashboardPage() {
                 style={{
                   fontSize: 24,
                   fontWeight: 700,
-                  marginBottom: 6,
                   color: "#111827",
                   whiteSpace: "nowrap",
                   lineHeight: 1.2,
