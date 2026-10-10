@@ -2180,7 +2180,9 @@ export default function DashboardPage() {
                   style={{
                     fontSize: 14,
                     fontWeight: 600,
+                    color: "#111827",
                     whiteSpace: "nowrap",
+                    lineHeight: 1.4,
                   }}
                 >
                   {currency}{" "}
@@ -2243,10 +2245,15 @@ export default function DashboardPage() {
                   key={cardName}
                   style={{
                     marginBottom: 10,
-                    border:"1px solid #eee",
-                    borderRadius: 10,
-                    padding: 12,
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    border: isOpen
+  ? "2px solid #111827"
+  : "1px solid #e5e7eb",
+                    borderRadius: 12,
+                    padding: 14,
+                    background: isOpen ? "#f9fafb" : "#ffffff",
+                    boxShadow: isOpen
+  ? "0 2px 8px rgba(0,0,0,0.10)"
+  : "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
                   <button
@@ -2269,18 +2276,31 @@ export default function DashboardPage() {
                   >
                     <strong
   style={{
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 700,
     color: "#111827",
   }}
 >
   {cardName}
 </strong>
+                    <span
+  style={{
+    marginLeft: 8,
+    color: "#6b7280",
+    fontSize: 14,
+  }}
+>
+  {isOpen ? "▲" : "▼"}
+</span>
 
                     <div
-                      style={{
-                        marginTop: 6,
-                      }}
+                     style={{
+  marginTop: 8,
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 8,
+                       alignItems: "center",
+}}
                     >
                       {Object.entries(
                         totals
@@ -2292,7 +2312,6 @@ export default function DashboardPage() {
                           <span
                             key={currency}
                             style={{
-                              marginRight: 12,
                               fontSize: 14,
                               fontWeight: 600,
                               color: "#111827",
@@ -2310,13 +2329,17 @@ export default function DashboardPage() {
                   </button>
 
                   {isOpen && (
-                    <div
-                      style={{
-                        marginTop: 14,
-                      }}
-                    >
-                      {cardExpenses.map(
-  (expense, index) => (
+  <div
+    style={{
+      marginTop: 14,
+      padding: 10,
+      background: "#f9fafb",
+      borderRadius: 8,
+      border: "1px solid #e5e7eb",
+    }}
+  >
+    {cardExpenses.map(
+      (expense, index) => (
                           <div
                             key={
                               expense.id
@@ -2326,8 +2349,8 @@ export default function DashboardPage() {
                               justifyContent:"space-between",
                               alignItems: "center",
                               flexWrap: "wrap",
-                              gap: 10,
-                              padding:"7px 0",
+                              gap: 8,
+                              padding:"6px 0",
                               borderBottom:
   index === cardExpenses.length - 1
     ? "none"
@@ -2343,6 +2366,7 @@ export default function DashboardPage() {
     whiteSpace: "nowrap",
     color: "#374151",
     fontSize: 14,
+    lineHeight: 1.4,
   }}
 >
   {expense.date}{" "}
@@ -2351,10 +2375,14 @@ export default function DashboardPage() {
 
                             <span
   style={{
-    fontWeight: 700,
-    color: "#111827",
-    whiteSpace: "nowrap",
-  }}
+  fontSize: 14,
+  fontWeight: 700,
+  color: "#111827",
+  whiteSpace: "nowrap",
+    textAlign: "right",
+    minWidth: 90,
+    lineHeight: 1.4,
+}}
 >
   {expense.currency || "USD"}{" "}
   {formatNumber(
