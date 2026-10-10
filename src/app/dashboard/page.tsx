@@ -2274,11 +2274,24 @@ export default function DashboardPage() {
                       cursor: "pointer",
                     }}
                   >
+                    <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    marginBottom: 4,
+    minWidth: 0,
+  }}
+>
                     <strong
   style={{
     fontSize: 16,
     fontWeight: 700,
     color: "#111827",
+    overflow: "hidden",
+textOverflow: "ellipsis",
+whiteSpace: "nowrap",
+    minWidth: 0,
+    flex: "1 1 auto",
   }}
 >
   {cardName}
@@ -2288,6 +2301,9 @@ export default function DashboardPage() {
     marginLeft: 8,
     color: "#6b7280",
     fontSize: 14,
+    flexShrink: 0,
+    maxWidth: "100%",
+    width: "100%",
   }}
 >
   {isOpen ? "▲" : "▼"}
