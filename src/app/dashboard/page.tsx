@@ -2091,7 +2091,7 @@ export default function DashboardPage() {
                 {formatNumber(amount)}
               </div>
             )
-          )
+          
         )}
   </div>
       )}
