@@ -2159,13 +2159,18 @@ export default function DashboardPage() {
                       cursor: "pointer",
                     }}
                   >
-                    <strong>
-                      {cardName}
-                    </strong>
+                    <strong
+  style={{
+    fontSize: 16,
+    color: "#111827",
+  }}
+>
+  {cardName}
+</strong>
 
                     <div
                       style={{
-                        marginTop: 5,
+                        marginTop: 6,
                       }}
                     >
                       {Object.entries(
@@ -2176,13 +2181,13 @@ export default function DashboardPage() {
                           amount,
                         ]) => (
                           <span
-                            key={
-                              currency
-                            }
+                            key={currency}
                             style={{
-                              marginRight:
-                                12,
-                            }}
+  marginRight: 12,
+  fontWeight: 600,
+  color: "#111827",
+  whiteSpace: "nowrap",
+}}
                           >
                             {currency}{" "}
                             {formatNumber(
@@ -2197,7 +2202,7 @@ export default function DashboardPage() {
                   {isOpen && (
                     <div
                       style={{
-                        marginTop: 12,
+                        marginTop: 14,
                       }}
                     >
                       {cardExpenses.map(
