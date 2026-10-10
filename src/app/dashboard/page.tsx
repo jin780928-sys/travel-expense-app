@@ -3216,9 +3216,15 @@ export default function DashboardPage() {
               }}
             >
               共{" "}
-              <strong>
-                {historySummary.total}
-              </strong>{" "}
+              <strong
+  style={{
+    fontSize: 20,
+    color: "#111827",
+  }}
+>
+  {historySummary.total}
+</strong>
+              {" "}
               筆
             </div>
 
@@ -3232,9 +3238,15 @@ export default function DashboardPage() {
               }}
             >
               已繳{" "}
-              <strong>
-                {historySummary.paid}
-              </strong>{" "}
+              <strong
+  style={{
+    fontSize: 20,
+    color: "#111827",
+  }}
+>
+  {historySummary.paid}
+</strong>
+              {" "}
               筆
             </div>
 
@@ -3250,9 +3262,15 @@ export default function DashboardPage() {
               }}
             >
               未繳{" "}
-              <strong>
-                {historySummary.unpaid}
-              </strong>{" "}
+              <strong
+  style={{
+    fontSize: 20,
+    color: "#111827",
+  }}
+>
+  {historySummary.unpaid}
+</strong>
+              {" "}
               筆
             </div>
 
@@ -3268,7 +3286,15 @@ export default function DashboardPage() {
               {Object.entries(
                 historyTotals
               ).length === 0 ? (
-                <span>總額 0</span>
+                <span
+  style={{
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#111827",
+  }}
+>
+  總額 0
+</span>
               ) : (
                 Object.entries(
                   historyTotals
@@ -3278,8 +3304,14 @@ export default function DashboardPage() {
                     amount,
                   ]) => (
                     <div
-                      key={currency}
-                    >
+  key={currency}
+  style={{
+    fontSize: 20,
+    fontWeight: 700,
+    color: "#111827",
+    whiteSpace: "nowrap",
+  }}
+>
                       {currency}{" "}
                       {formatNumber(
                         amount
