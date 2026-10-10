@@ -1995,7 +1995,17 @@ export default function DashboardPage() {
       )}
 
       <section style={sectionStyle}>
-        <h2>本月支出總額</h2>
+        <h2
+  style={{
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827",
+    marginTop: 0,
+    marginBottom: 14,
+  }}
+>
+  本月支出總額
+</h2>
 
         {Object.entries(
           totalsByCurrency
@@ -2023,7 +2033,17 @@ export default function DashboardPage() {
       </section>
 
       <section style={sectionStyle}>
-        <h2>支出分類</h2>
+        <h2
+  style={{
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827",
+    marginTop: 0,
+    marginBottom: 14,
+  }}
+>
+  支出分類
+</h2>
 
         {Object.entries(
           categoryTotals
@@ -2083,7 +2103,17 @@ export default function DashboardPage() {
       </section>
 
       <section style={sectionStyle}>
-        <h2>信用卡支出</h2>
+        <h2
+  style={{
+    fontSize: 22,
+    fontWeight: 700,
+    color: "#111827",
+    marginTop: 0,
+    marginBottom: 14,
+  }}
+>
+  信用卡支出
+</h2>
 
         {Object.entries(cardTotals)
           .length === 0 ? (
@@ -2107,10 +2137,10 @@ export default function DashboardPage() {
                   key={cardName}
                   style={{
                     marginBottom: 10,
-                    border:
-                      "1px solid #eee",
+                    border:"1px solid #eee",
                     borderRadius: 10,
                     padding: 12,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
                   <button
@@ -2179,35 +2209,41 @@ export default function DashboardPage() {
                               expense.id
                             }
                             style={{
-                              display:
-                                "flex",
-                              justifyContent:
-                                "space-between",
+                              display:"flex",
+                              justifyContent:"space-between",
+                              alignItems: "center",
+                              flexWrap: "wrap",
                               gap: 10,
-                              padding:
-                                "7px 0",
-                              borderTop:
-                                "1px solid #eee",
+                              padding:"7px 0",
+                              borderTop:"1px solid #eee",
                             }}
                           >
-                            <span>
-                              {
-                                expense.date
-                              }{" "}
-                              {
-                                expense.item
-                              }
-                            </span>
+                            <span
+  style={{
+    minWidth: 0,
+    flex: "1 1 180px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "#374151",
+  }}
+>
+  {expense.date}{" "}
+  {expense.item}
+</span>
 
-                            <span>
-                              {expense.currency ||
-                                "USD"}{" "}
-                              {formatNumber(
-                                Number(
-                                  expense.amount
-                                )
-                              )}
-                            </span>
+                            <span
+  style={{
+    fontWeight: 700,
+    color: "#111827",
+    whiteSpace: "nowrap",
+  }}
+>
+  {expense.currency || "USD"}{" "}
+  {formatNumber(
+    Number(expense.amount)
+  )}
+</span>
                           </div>
                         )
                       )}
