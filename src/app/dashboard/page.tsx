@@ -2269,10 +2269,9 @@ export default function DashboardPage() {
                   >
                     <strong
   style={{
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 700,
     color: "#111827",
-    fontSize: 14,
   }}
 >
   {cardName}
