@@ -3380,11 +3380,21 @@ export default function DashboardPage() {
   {monthDate.getMonth() + 1} 月
 </strong>
 
-                      <span>
-                        {statement.is_paid
-                          ? "✅ 已繳"
-                          : "🔴 未繳"}
-                      </span>
+                      <span
+  style={{
+    padding: "4px 8px",
+    borderRadius: 999,
+    fontSize: 13,
+    fontWeight: 600,
+    background: statement.is_paid ? "#ecfdf5" : "#fef2f2",
+    color: statement.is_paid ? "#047857" : "#b91c1c",
+    whiteSpace: "nowrap",
+  }}
+>
+  {statement.is_paid
+    ? "✅ 已繳"
+    : "🔴 未繳"}
+</span>
                     </div>
 
                     <div
