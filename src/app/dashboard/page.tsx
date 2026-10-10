@@ -1776,13 +1776,14 @@ export default function DashboardPage() {
       >
         <div style={summaryCardStyle}>
           <div
-            style={{
-              color: "#666",
-              fontSize: 14,
-            }}
-          >
-            本月交易筆數
-          </div>
+  style={{
+    color: "#6b7280",
+    fontSize: 14,
+    fontWeight: 500,
+  }}
+>
+  本月交易筆數
+</div>
 
           <div
             style={{
@@ -1798,9 +1799,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-              color: "#666",
-              fontSize: 14,
-            }}
+  color: "#6b7280",
+  fontSize: 14,
+  fontWeight: 500,
+}}
           >
             未繳信用卡
           </div>
@@ -1819,9 +1821,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-              color: "#666",
-              fontSize: 14,
-            }}
+  color: "#6b7280",
+  fontSize: 14,
+  fontWeight: 500,
+}}
           >
             本月總支出
           </div>
@@ -1857,9 +1860,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-              color: "#666",
-              fontSize: 14,
-            }}
+  color: "#6b7280",
+  fontSize: 14,
+  fontWeight: 500,
+}}
           >
             最近繳款日
           </div>
