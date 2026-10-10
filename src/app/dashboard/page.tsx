@@ -2316,7 +2316,7 @@ export default function DashboardPage() {
                       }}
                     >
                       {cardExpenses.map(
-                        (expense) => (
+  (expense, index) => (
                           <div
                             key={
                               expense.id
@@ -2328,7 +2328,10 @@ export default function DashboardPage() {
                               flexWrap: "wrap",
                               gap: 10,
                               padding:"7px 0",
-                              borderTop:"1px solid #eee",
+                              borderBottom:
+  index === cardExpenses.length - 1
+    ? "none"
+    : "1px solid #eee",
                             }}
                           >
                             <span
@@ -2987,7 +2990,7 @@ export default function DashboardPage() {
                                 alignItems: "center",
                                 flexWrap: "wrap",
                                 gap: 10,
-                                padding: "7px 0",
+                                padding: "6px 0",
                                 borderBottom: "1px solid #eee",
                               }}
                             >
