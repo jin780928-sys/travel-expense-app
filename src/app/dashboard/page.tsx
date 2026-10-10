@@ -2058,6 +2058,7 @@ export default function DashboardPage() {
     {getDueDateText(card)}
   </span>
 </div>
+                </div>
             )
           )}
         </section>
