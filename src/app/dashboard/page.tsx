@@ -2071,35 +2071,50 @@ export default function DashboardPage() {
                 </strong>
 
                 <div
-                  style={{
-                    marginTop: 4,
-                  }}
-                >
-                  {Object.entries(
-                    totals
-                  ).map(
-                    ([
-                      currency,
-                      amount,
-                    ]) => (
-                      <span
-                        key={
-                          currency
-                        }
-                        style={{
-                          marginRight:
-                            12,
-                        }}
-                      >
-                        {currency}{" "}
-                        {formatNumber(
-                          amount
-                        )}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
+  key={category}
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 10,
+    flexWrap: "wrap",
+    padding: "10px 0",
+    borderBottom: "1px solid #eee",
+  }}
+>
+  <strong
+    style={{
+      fontSize: 15,
+      color: "#111827",
+    }}
+  >
+    {category}
+  </strong>
+
+  <div
+    style={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 12,
+      color: "#374151",
+    }}
+  >
+    {Object.entries(totals).map(
+      ([currency, amount]) => (
+        <span
+          key={currency}
+          style={{
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {currency}{" "}
+          {formatNumber(amount)}
+        </span>
+      )
+    )}
+  </div>
+</div>
             )
           )
         )}
