@@ -2121,17 +2121,17 @@ export default function DashboardPage() {
       </section>
 
       <section style={sectionStyle}>
-        <h2
-  style={{
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#111827",
-    marginTop: 0,
-    marginBottom: 14,
-  }}
->
-  信用卡支出
-</h2>
+  <h2
+    style={{
+      fontSize: 22,
+      fontWeight: 700,
+      color: "#111827",
+      marginTop: 0,
+      marginBottom: 14,
+    }}
+  >
+    信用卡支出
+  </h2>
 
         {Object.entries(cardTotals)
           .length === 0 ? (
