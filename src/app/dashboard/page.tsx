@@ -1977,17 +1977,33 @@ export default function DashboardPage() {
               <div
                 key={card.id}
                 style={{
-                  marginBottom: 8,
-                }}
+                marginBottom: 8,
+                padding: "10px 12px",
+                background: "#ffffff",
+                border: "1px solid #fed7aa",
+                borderRadius: 8,
+              }}
               >
-                <strong>
+                <strong
+                  style={{
+                  fontSize: 15,
+                  color: "#111827",
+                  }}
+              >
                   {card.name}
-                </strong>
-                {"："}
-                {getDueStatus(card)}
-                {"｜"}
-                截止日{" "}
-                {getDueDateText(card)}
+              </strong>
+                <span
+                  style={{
+                    marginLeft: 6,
+                    color: "#7c2d12",
+                    fontSize: 14,
+                    }}
+                  >
+                    {getDueStatus(card)}
+                    {"｜"}
+                  截止日{" "}
+                  {getDueDateText(card)}
+                  </span>
               </div>
             )
           )}
