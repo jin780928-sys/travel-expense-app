@@ -2008,7 +2008,7 @@ export default function DashboardPage() {
     fontWeight: 700,
     color: "#111827",
     marginTop: 0,
-    marginBottom: 10,
+    marginBottom: 12,
   }}
 >
   ⚠️ 信用卡繳款提醒
@@ -2022,11 +2022,12 @@ export default function DashboardPage() {
                 marginBottom:
   index === unpaidStatements.length - 1
     ? 0
-    : 8,
-                padding: "10px 12px",
+    : 10,
+                padding: "12px 14px",
                 background: "#ffffff",
                 border: "1px solid #fed7aa",
-                borderRadius: 8,
+                borderRadius: 10,
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
               }}
               >
                 <div
@@ -2035,12 +2036,18 @@ export default function DashboardPage() {
     alignItems: "center",
     flexWrap: "wrap",
     gap: 6,
+    rowGap: 4,
+    minWidth: 0,
+    width: "100%",
   }}
 >
   <strong
     style={{
       fontSize: 15,
+      fontWeight: 700,
       color: "#111827",
+      lineHeight: 1.4,
+      whiteSpace: "nowrap",
     }}
   >
     {card.name}
@@ -2048,8 +2055,10 @@ export default function DashboardPage() {
 
   <span
     style={{
-      color: "#7c2d12",
+      color: "#9a3412",
       fontSize: 14,
+      lineHeight: 1.4,
+      whiteSpace: "nowrap",
     }}
   >
     {getDueStatus(card)}
