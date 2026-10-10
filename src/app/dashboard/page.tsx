@@ -2051,6 +2051,7 @@ export default function DashboardPage() {
     ...sectionStyle,
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    marginBottom: 16,
   }}
 >
         <h2
@@ -2072,6 +2073,7 @@ export default function DashboardPage() {
   style={{
     color: "#6b7280",
     fontSize: 14,
+    padding: "4px 0",
   }}
 >
   本月目前沒有支出
@@ -2114,6 +2116,7 @@ export default function DashboardPage() {
     ...sectionStyle,
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    marginBottom: 16,
   }}
 >
   <h2
@@ -2133,6 +2136,7 @@ export default function DashboardPage() {
   style={{
     color: "#6b7280",
     fontSize: 14,
+    padding: "4px 0",
   }}
 >
   沒有資料
@@ -2202,6 +2206,7 @@ export default function DashboardPage() {
     ...sectionStyle,
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    marginBottom: 16,
   }}
 >
   <h2
@@ -2246,14 +2251,14 @@ export default function DashboardPage() {
                   style={{
                     marginBottom: 10,
                     border: isOpen
-  ? "2px solid #111827"
-  : "1px solid #e5e7eb",
+                      ? "2px solid #111827"
+                      : "1px solid #e5e7eb",
                     borderRadius: 12,
                     padding: 14,
                     background: isOpen ? "#f9fafb" : "#ffffff",
                     boxShadow: isOpen
-  ? "0 2px 8px rgba(0,0,0,0.10)"
-  : "0 1px 3px rgba(0,0,0,0.06)",
+                      ? "0 2px 8px rgba(0,0,0,0.10)"
+                      : "0 1px 3px rgba(0,0,0,0.06)",
                   }}
                 >
                   <button
@@ -2267,11 +2272,13 @@ export default function DashboardPage() {
                     style={{
                       width: "100%",
                       textAlign: "left",
-                      background:
-                        "transparent",
+                      background: "#ffffff",
                       border: "none",
-                      padding: 0,
+                      padding: "2px 0",
                       cursor: "pointer",
+                      font: "inherit",
+                      color: "inherit",
+                      outline: "none",
                     }}
                   >
                     <div
@@ -2308,10 +2315,11 @@ whiteSpace: "nowrap",
 >
   {isOpen ? "▲" : "▼"}
 </span>
+</div>
 
-                    <div
-                     style={{
-  marginTop: 8,
+<div
+  style={{
+    marginTop: 8,
   display: "flex",
   flexWrap: "wrap",
   gap: 8,
@@ -2347,11 +2355,12 @@ whiteSpace: "nowrap",
                   {isOpen && (
   <div
     style={{
-      marginTop: 14,
-      padding: 10,
-      background: "#f9fafb",
-      borderRadius: 8,
+      marginTop: 12,
+      padding: 12,
+      background: "#f8fafc",
+      borderRadius: 10,
       border: "1px solid #e5e7eb",
+      overflow: "hidden",
     }}
   >
     {cardExpenses.map(
@@ -2364,23 +2373,26 @@ whiteSpace: "nowrap",
                               display:"flex",
                               justifyContent:"space-between",
                               alignItems: "center",
+                              alignContent: "center",
                               flexWrap: "wrap",
                               gap: 8,
-                              padding:"6px 0",
+                              width: "100%",
+                              padding:"7px 0",
                               borderBottom:
   index === cardExpenses.length - 1
     ? "none"
-    : "1px solid #eee",
+    : "1px solid #e5e7eb",
                             }}
                           >
                             <span
   style={{
     minWidth: 0,
-    flex: "1 1 180px",
+    flex: "1 1 160px",
+    maxWidth: "100%",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-    color: "#374151",
+    color: "#4b5563",
     fontSize: 14,
     lineHeight: 1.4,
   }}
@@ -2396,7 +2408,7 @@ whiteSpace: "nowrap",
   color: "#111827",
   whiteSpace: "nowrap",
     textAlign: "right",
-    minWidth: 90,
+    minWidth: 80,
     lineHeight: 1.4,
 }}
 >
