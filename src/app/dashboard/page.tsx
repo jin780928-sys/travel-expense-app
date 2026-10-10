@@ -2600,11 +2600,19 @@ export default function DashboardPage() {
   {card.name}
 </strong>
 
-                      <span>
-                        {getStatementBadge(
-                          card
-                        )}
-                      </span>
+                      <span
+  style={{
+    padding: "4px 8px",
+    borderRadius: 999,
+    fontSize: 13,
+    fontWeight: 600,
+    background: card.isPaid ? "#ecfdf5" : "#fef2f2",
+    color: card.isPaid ? "#047857" : "#b91c1c",
+    whiteSpace: "nowrap",
+  }}
+>
+  {getStatementBadge(card)}
+</span>
                     </div>
 
                     <div
