@@ -1649,8 +1649,12 @@ export default function DashboardPage() {
     borderRadius: 14,
     padding: 16,
     minWidth: 160,
+    minHeight: 92,
     flex: "1 1 180px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
   };
 
   return (
@@ -1785,6 +1789,7 @@ export default function DashboardPage() {
           flexWrap: "wrap",
           gap: 14,
           marginBottom: 18,
+          alignItems: "stretch",
         }}
       >
         <div style={summaryCardStyle}>
@@ -1805,6 +1810,7 @@ export default function DashboardPage() {
               marginTop: 6,
               color: "#111827",
               lineHeight: 1.2,
+              whiteSpace: "nowrap",
             }}
           >
             {expenses.length} 筆
@@ -1829,6 +1835,7 @@ export default function DashboardPage() {
               marginTop: 6,
               color: "#111827",
               lineHeight: 1.2,
+              whiteSpace: "nowrap",
             }}
           >
             {allUnpaidStatements.length} 張
@@ -1853,6 +1860,7 @@ export default function DashboardPage() {
               marginTop: 6,
               color: "#111827",
               lineHeight: 1.2,
+              whiteSpace: "nowrap",
             }}
           >
             {Object.entries(
@@ -1894,6 +1902,7 @@ export default function DashboardPage() {
               marginTop: 6,
               color: "#111827",
               lineHeight: 1.2,
+              whiteSpace: "nowrap",
             }}
           >
             {nextDueStatement
@@ -2055,16 +2064,27 @@ export default function DashboardPage() {
         ).length === 0 ? (
           <div>本月目前沒有支出</div>
         ) : (
-          Object.entries(
-            totalsByCurrency
-          ).map(
-            ([currency, amount]) => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 6,
+    }}
+  >
+    {Object.entries(
+      totalsByCurrency
+    ).map(
+      ([currency, amount]) => (
+        
               <div
                 key={currency}
                 style={{
-                  fontSize: 22,
+                  fontSize: 24,
                   fontWeight: 700,
                   marginBottom: 6,
+                  color: "#111827",
+                  whiteSpace: "nowrap",
+                  lineHeight: 1.2,
                 }}
               >
                 {currency}{" "}
@@ -2073,6 +2093,8 @@ export default function DashboardPage() {
             )
           )
         )}
+  </div>
+      )}
       </section>
 
       <section style={sectionStyle}>
