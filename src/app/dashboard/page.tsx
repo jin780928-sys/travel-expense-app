@@ -3127,6 +3127,7 @@ export default function DashboardPage() {
                             <div
                               style={{
                                 marginTop: 5,
+                                marginBottom: 4,
                               }}
                             >
                               實際繳款日：
@@ -3146,6 +3147,7 @@ export default function DashboardPage() {
                                     marginTop: 8,
                                   }}
                                 >
+          //A09 第二個灰底區塊裡的日期輸入框
                                  <input
   type="date"
   value={editingPaidDate}
@@ -3153,10 +3155,10 @@ export default function DashboardPage() {
     setEditingPaidDate(e.target.value)
   }
   style={{
-    height: 36,
+    height: 40,
     padding: "0 10px",
     border: "1px solid #d1d5db",
-    borderRadius: 8,
+    borderRadius: 10,
     background: "#ffffff",
     color: "#111827",
     fontSize: 14,
@@ -3223,16 +3225,19 @@ export default function DashboardPage() {
                                     );
                                   }}
                                   style={{
-  marginTop: 8,
-  height: 36,
-  padding: "0 12px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+                                         marginTop: 4,
+                                        height: 40,
+                                        padding: "0 12px",
+                                        background: "#ffffff",
+                                        color: "#374151",
+                                        border: "1px solid #d1d5db",
+                                        borderRadius: 10,
+                                        cursor: "pointer",
+                                        fontWeight: 600,
+                                        fontSize: 14,
+                                        whiteSpace: "nowrap",
+                                        flexShrink: 0,
+                                        }}
                                 >
                                   修改繳款日
                                 </button>
