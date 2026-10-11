@@ -39,7 +39,7 @@
 // ============================================================================
 // 01. Imports
 // ============================================================================
-
+import * as XLSX from "xlsx";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
