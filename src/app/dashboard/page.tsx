@@ -2639,7 +2639,7 @@ export default function DashboardPage() {
   							boxSizing: "border-box",
   							padding: "7px 0",
   							borderBottom:
-   							index === items.length - 1
+   							index === cardExpenses.length - 1
   								 ? "none"
   								 : "1px solid #e5e7eb",
   							}}
