@@ -2632,17 +2632,19 @@ export default function DashboardPage() {
             display: "flex",
             justifyContent:"space-between",
             gap: 12,
+            rowGap: 8,
             flexWrap: "wrap",
             alignItems: "center",
           }}
         >
           <h2
             style={{
-  margin: 0,
-  fontSize: 22,
-  fontWeight: 700,
-  color: "#111827",
-}}
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#111827",
+              marginTop: 0,
+              marginBottom: 10,
+              }}
           >
             💳 信用卡本期帳單
             （共{" "}
@@ -2656,6 +2658,7 @@ export default function DashboardPage() {
               display: "flex",
               flexWrap: "wrap",
               gap: 8,
+              rowGap: 8,
             }}
           >
             <button
@@ -2688,15 +2691,15 @@ export default function DashboardPage() {
                 )
               }
               style={{
-  height: 40,
-  padding: "0 12px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+                height: 40,
+                padding: "0 12px",
+                background: "#ffffff",
+                color: "#374151",
+                border: "1px solid #d1d5db",
+                borderRadius: 8,
+                cursor: "pointer",
+                fontWeight: 600,
+              }}
             >
               {showStatementHistory
                 ? "隱藏歷史帳單"
@@ -2728,6 +2731,7 @@ export default function DashboardPage() {
                 color: "#6b7280",
                 fontSize: 14,
                 fontWeight: 500,
+                lineHeight: 1.4,
                   }}
               >
               本期帳單總額
@@ -2735,11 +2739,11 @@ export default function DashboardPage() {
 
             <div
               style={{
-                marginTop: 6,
                 fontSize: 20,
                 fontWeight: 700,
                 color: "#111827",
                 lineHeight: 1.25,
+                marginTop: 4,
               }}
             >
               {Object.entries(
@@ -2782,18 +2786,19 @@ export default function DashboardPage() {
                 color: "#6b7280",
                 fontSize: 14,
                 fontWeight: 500,
+                lineHeight: 1.4,
                 }}
             >
               已繳總額
             </div>
 
             <div
-              style={{
-                marginTop: 6,
+              style={{ 
                 fontSize: 20,
                 fontWeight: 700,
                 color: "#111827",
                 lineHeight: 1.25,
+                marginTop: 4,
               }}
             >
               {Object.entries(
@@ -2837,6 +2842,7 @@ export default function DashboardPage() {
                 color: "#6b7280",
                 fontSize: 14,
                 fontWeight: 500,
+                lineHeight: 1.4,
                 }}
             >
               未繳總額
@@ -2844,11 +2850,11 @@ export default function DashboardPage() {
 
             <div
               style={{
-                marginTop: 6,
                 fontSize: 20,
                 fontWeight: 700,
                 color: "#111827",
                 lineHeight: 1.25,
+                marginTop: 4,
               }}
             >
               {Object.entries(
@@ -2950,12 +2956,14 @@ export default function DashboardPage() {
                       <strong
                         style={{
                         fontSize: 16,
+                        fontWeight: 700,
                         color: "#111827",
                         minWidth: 0,
                         flex: "1 1 180px",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
+                        lineHeight: 1.4,
                         }}
                         >
                         {card.name}
