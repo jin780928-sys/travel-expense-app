@@ -1949,12 +1949,15 @@ XLSX.writeFile(
 
           <div
             style={{
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
+			  overflow: "hidden",
+			  textOverflow: "ellipsis",
+			  maxWidth: "100%",
             }}
           >
             {expenses.length} 筆
@@ -1975,12 +1978,15 @@ XLSX.writeFile(
 
           <div
             style={{
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
+			  overflow: "hidden",
+		      textOverflow: "ellipsis",
+			  maxWidth: "100%",
             }}
           >
             {allUnpaidStatements.length} 張
@@ -2001,12 +2007,15 @@ XLSX.writeFile(
 
           <div
             style={{
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
+			  overflow: "hidden",
+			  textOverflow: "ellipsis",
+			  maxWidth: "100%",
             }}
           >
             {Object.entries(
@@ -2044,12 +2053,15 @@ XLSX.writeFile(
 
           <div
             style={{
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
+			  overflow: "hidden",
+			  textOverflow: "ellipsis",
+			  maxWidth: "100%",
             }}
           >
             {nextDueStatement
