@@ -3243,11 +3243,14 @@ export default function DashboardPage() {
                               card.statementStatusId ? (
                                 <div
                                   style={{
-                                    display:"flex",
-                                    flexWrap:"wrap",
-                                    gap: 8,
-                                    marginTop: 8,
-                                  }}
+  									display: "flex",
+    									flexWrap: "wrap",
+    									gap: 8,
+    									rowGap: 8,
+    									marginTop: 8,
+    									alignItems: "center",
+    									minWidth: 0,
+  									}}
                                 >
 {/* ======================================================================
 	    //A09 第二個灰底區塊裡的日期輸入框
@@ -3260,16 +3263,17 @@ export default function DashboardPage() {
     setEditingPaidDate(e.target.value)
   }
   style={{
-    height: 40,
-    padding: "0 10px",
-    border: "1px solid #d1d5db",
-    borderRadius: 10,
-    background: "#ffffff",
-    color: "#111827",
-    fontSize: 14,
-    outline: "none",
-    boxSizing: "border-box",
-  }}
+  height: 40,
+  padding: "0 10px",
+  border: "1px solid #d1d5db",
+  borderRadius: 10,
+  background: "#ffffff",
+  color: "#111827",
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+  minWidth: 0,
+}}
                                    
 />
 
@@ -3280,14 +3284,17 @@ export default function DashboardPage() {
                                       )
                                     }
                                     style={{
-  height: 36,
-  padding: "0 12px",
-  background: "#2563eb",
-  color: "#ffffff",
-  border: "1px solid #2563eb",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
+  									height: 40,
+ 									 padding: "0 12px",
+  									background: "#2563eb",
+  									color: "#ffffff",
+ 									 border: "1px solid #2563eb",
+ 									 borderRadius: 10,
+ 									 cursor: "pointer",
+ 									 fontWeight: 600,
+									fontSize: 14,
+									whiteSpace: "nowrap",
+									flexShrink: 0,
 }}
                                   >
                                     儲存
@@ -3304,15 +3311,18 @@ export default function DashboardPage() {
                                       );
                                     }}
                                     style={{
-  height: 36,
-  padding: "0 12px",
-  background: "#ffffff",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+  										height: 40,
+  										padding: "0 12px",
+  										background: "#ffffff",
+  										color: "#374151",
+  										border: "1px solid #d1d5db",
+  										borderRadius: 10,
+  										cursor: "pointer",
+  										fontWeight: 600,
+										fontSize: 14,
+										whiteSpace: "nowrap",
+										flexShrink: 0,
+										}}
                                   >
                                     取消
                                   </button>
@@ -3370,6 +3380,7 @@ export default function DashboardPage() {
                             padding: "12px 0",
                             color: "#6b7280",
                             fontSize: 14,
+							lineHeight: 1.4,
                             }}
                         >
                           沒有支出明細
@@ -3389,6 +3400,7 @@ export default function DashboardPage() {
                                 gap: 10,
                                 rowGap: 4,
                                 padding: "7px 0",
+								  minWidth: 0,
                                 borderBottom: "1px solid #eee",
                               }}
                             >
@@ -3457,6 +3469,7 @@ export default function DashboardPage() {
                         fontWeight: 600,
                         fontSize: 14,
                         whiteSpace: "nowrap",
+					   flexShrink: 0,
                       }}
                   >
                     {card.isPaid
