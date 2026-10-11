@@ -3268,7 +3268,8 @@ export default function DashboardPage() {
    //A09「帳單明細」左側品項文字。
                              <span
                                 style={{
-                                    minWidth: 0,
+                                    
+                                  display: "block",minWidth: 0,
                                     flex: "1 1 180px",
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
