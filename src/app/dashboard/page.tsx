@@ -4069,7 +4069,7 @@ export default function DashboardPage() {
                                 gap: 10,
                                 rowGap: 4,
                                 padding:"7px 0",
-                                borderBottom: "1px solid #eee",
+                                borderBottom: "1px solid #e5e7eb",
                               }}
                             >
 
@@ -4136,16 +4136,19 @@ export default function DashboardPage() {
                 )
               }
             style={{
-  marginTop: 14,
-  height: 40,
-  padding: "0 14px",
-  background: "#f3f4f6",
-  color: "#374151",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-}}
+ 				 marginTop: 14,
+ 				 height: 40,
+ 				 padding: "0 14px",
+			     background: "#f3f4f6",
+				 color: "#374151",
+				 border: "1px solid #d1d5db",
+ 				 borderRadius: 10,
+				 cursor: "pointer",
+				 fontWeight: 600,
+			  	fontSize: 14,
+			 	whiteSpace: "nowrap",
+				flexShrink: 0,
+				}}
             >
               載入更多
             </button>
