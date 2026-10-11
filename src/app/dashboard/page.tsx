@@ -4526,6 +4526,7 @@ export default function DashboardPage() {
             marginBottom: 10,
             fontSize: 14,
             color: "#4b5563",
+			lineHeight: 1.4,
             }}
         >
           目前顯示：
@@ -4541,6 +4542,7 @@ export default function DashboardPage() {
             fontWeight: 700,
             fontSize: 14,
             color: "#111827",
+		    lineHeight: 1.4,
             }}
         >
           篩選後總額：
@@ -4584,10 +4586,11 @@ export default function DashboardPage() {
                 color: "#6b7280",
                 fontSize: 14,
                 padding: "8px 0",
+				lineHeight: 1.4,
                 }}
           >
-    沒有符合條件的支出
-  </div>
+    		沒有符合條件的支出
+ 		 </div>
 ) : (
           visibleMonthlyExpenses.map(
             (expense) => (
@@ -4600,6 +4603,7 @@ export default function DashboardPage() {
                   alignItems: "center",
                   padding: "9px 0",
                   borderBottom: "1px solid #eee",
+				rowGap: 4,
                 }}
               >
           <div
@@ -4615,7 +4619,9 @@ export default function DashboardPage() {
 
                 <div
   style={{
-    minWidth: 0,
+    minWidth: 100,%
+    flex: "1 1 220px",
+
   }}
 >
                 <div
