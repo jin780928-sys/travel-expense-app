@@ -4622,7 +4622,7 @@ export default function DashboardPage() {
 
                 <div
   style={{
-    minWidth: 100%,"
+    minWidth: 0,
     flex: "1 1 220px",
 
   }}
