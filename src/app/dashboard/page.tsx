@@ -4638,7 +4638,6 @@ export default function DashboardPage() {
 					  lineHeight: 1.4,
 					  marginTop: 2,
 					  textAlign: "right",
-					  whiteSpace: "nowrap",
 					  flexShrink: 0,
                     }}
                 >
