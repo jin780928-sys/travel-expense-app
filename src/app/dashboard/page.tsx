@@ -1617,7 +1617,7 @@ XLSX.writeFile(
   }
 
   function exportHistoryExcel() {
-  const rows = [
+  const rows: (string | number)[][] = [
     [
       "信用卡",
       "帳單期間",
@@ -1659,7 +1659,7 @@ XLSX.writeFile(
             : "未繳",
           statement.paid_date || "",
           "",
-          "0.00",
+          0,
         ]);
 
         return;
