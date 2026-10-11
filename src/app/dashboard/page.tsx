@@ -1736,7 +1736,7 @@ export default function DashboardPage() {
   // 16. 共用 Style
   // ==========================================================================
 
-  const sectionStyle = {
+  const sectionStyle: React.CSSProperties = {
     background: "#ffffff",
     border: "1px solid #e5e7eb",
     borderRadius: 14,
@@ -1857,7 +1857,7 @@ export default function DashboardPage() {
             color: "#111827",
             fontSize: 14,
             outline: "none",
-            boxSizing: "border-box" as const,
+            boxSizing: "border-box" ,
             width: 120,
             }}
         >
