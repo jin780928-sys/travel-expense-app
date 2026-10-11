@@ -3273,7 +3273,7 @@ export default function DashboardPage() {
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
                                     whiteSpace: "nowrap",
-                                    color: "#374151",
+                                    color: "#4b5563",
                                     fontSize: 14,
                                     lineHeight: 1.4,
                                   }}
