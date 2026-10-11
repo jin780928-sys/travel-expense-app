@@ -3947,7 +3947,6 @@ export default function DashboardPage() {
                                       color: "#374151",
                                       fontSize: 14,
                                       lineHeight: 1.4,
-                                      minWidth: 0,
                                     }}
                                   >
                                     {expense.date}{" "}
