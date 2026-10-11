@@ -2239,6 +2239,7 @@ export default function DashboardPage() {
     color: "#6b7280",
     fontSize: 14,
     padding: "4px 0",
+    lineHeight: 1.4,
   }}
 >
   本月目前沒有支出
@@ -2306,6 +2307,7 @@ export default function DashboardPage() {
     color: "#6b7280",
     fontSize: 14,
     padding: "4px 0",
+    lineHeight: 1.4,
   }}
 >
   沒有資料
@@ -2333,6 +2335,7 @@ export default function DashboardPage() {
               fontSize: 15,
               fontWeight: 600,
               color: "#111827",
+              lineHeight: 1.4,
             }}
           >
             {category}
@@ -2343,6 +2346,7 @@ export default function DashboardPage() {
               display: "flex",
               flexWrap: "wrap",
               gap: 12,
+              rowGap: 6,
               color: "#374151",
             }}
           >
@@ -2402,6 +2406,7 @@ export default function DashboardPage() {
     color: "#6b7280",
     fontSize: 14,
     padding: "4px 0",
+    lineHeight: 1.4,
   }}
 >
   本月沒有信用卡支出
@@ -2454,6 +2459,7 @@ export default function DashboardPage() {
                       font: "inherit",
                       color: "inherit",
                       outline: "none",
+                      minWidth: 0,
                     }}
                   >
                     <div
@@ -2470,10 +2476,11 @@ export default function DashboardPage() {
     fontWeight: 700,
     color: "#111827",
     overflow: "hidden",
-textOverflow: "ellipsis",
-whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
     minWidth: 0,
     flex: "1 1 auto",
+    lineHeight: 1.4,
   }}
 >
   {cardName}
@@ -2536,6 +2543,7 @@ whiteSpace: "nowrap",
       borderRadius: 10,
       border: "1px solid #e5e7eb",
       overflow: "hidden",
+      lineHeight: 1.4,
     }}
   >
     {cardExpenses.map(
@@ -2551,12 +2559,13 @@ whiteSpace: "nowrap",
                               alignContent: "center",
                               flexWrap: "wrap",
                               gap: 8,
+                              rowGap: 4,
                               width: "100%",
                               padding:"7px 0",
                               borderBottom:
-  index === cardExpenses.length - 1
-    ? "none"
-    : "1px solid #e5e7eb",
+                                    index === cardExpenses.length - 1
+                                    ? "none"
+                                     : "1px solid #e5e7eb",
                             }}
                           >
                             <span
@@ -2578,14 +2587,14 @@ whiteSpace: "nowrap",
 
                             <span
   style={{
-  fontSize: 14,
-  fontWeight: 700,
-  color: "#111827",
-  whiteSpace: "nowrap",
+    fontSize: 14,
+    fontWeight: 700,
+    color: "#111827",
+    whiteSpace: "nowrap",
     textAlign: "right",
     minWidth: 80,
     lineHeight: 1.4,
-}}
+    }}
 >
   {expense.currency || "USD"}{" "}
   {formatNumber(
