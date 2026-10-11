@@ -217,7 +217,7 @@ export default function ExpenseDetailPage() {
       lineHeight: 1.3,
     }}
   >
-    {expense.currency} {formatNumber(expense.amount)}
+    {expense.currency} {Number(expense.amount).toFixed(2)}
   </div>
 </div>
 
