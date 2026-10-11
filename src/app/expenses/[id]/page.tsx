@@ -185,12 +185,41 @@ export default function ExpenseDetailPage() {
 
       {expense && (
         <>
-          <h1>{expense.item}</h1>
+          <div
+  style={{
+    background: "#ffffff",
+    border: "1px solid #e5e7eb",
+    borderRadius: 14,
+    padding: 18,
+    marginTop: 16,
+    marginBottom: 18,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  }}
+>
+  <div
+    style={{
+      fontSize: 24,
+      fontWeight: 700,
+      color: "#111827",
+      lineHeight: 1.25,
+      marginBottom: 10,
+      wordBreak: "break-word",
+    }}
+  >
+    {expense.item}
+  </div>
 
-          <p>
-            金額：{expense.currency || "USD"}{" "}
-            {expense.amount ?? 0}
-          </p>
+  <div
+    style={{
+      fontSize: 20,
+      fontWeight: 700,
+      color: "#111827",
+      lineHeight: 1.3,
+    }}
+  >
+    {expense.currency} {formatNumber(expense.amount)}
+  </div>
+</div>
 
           <p>日期：{expense.date || "未設定"}</p>
 
