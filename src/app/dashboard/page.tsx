@@ -4168,6 +4168,7 @@ export default function DashboardPage() {
             padding: 16,
             boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             marginBottom: 16,
+			minWidth: 0,
             }}
       >
         <h2 
@@ -4180,12 +4181,16 @@ export default function DashboardPage() {
            }}
       >
           🧾 本月支出明細</h2>
-
+{/* ======================================================================
+		A11「本月支出明細」搜尋框
+   ======================================================================
         <div
   style={{
     marginBottom: 16,
   }}
 >
+ */}
+
   <input
     type="text"
     value={monthlyExpenseSearch}
@@ -4203,6 +4208,8 @@ export default function DashboardPage() {
         fontSize: 14,
         outline: "none",
         height: 40,
+	    boxSizing: "border-box",
+		minWidth: 0,
       }}
   />
           <div
@@ -4233,6 +4240,9 @@ export default function DashboardPage() {
                 分類
 
       </div>
+{/* ======================================================================
+		A11「本月支出明細」第一個篩選下拉選單
+    ====================================================================== */}
 
       <select
         value={monthlyExpenseCategoryFilter}
@@ -4282,6 +4292,9 @@ export default function DashboardPage() {
       >
         付款方式
         </div>
+{/* ======================================================================
+		A11「本月支出明細」信用卡篩選下拉選單
+   ====================================================================== */}
 
       <select
         value={monthlyExpenseCardFilter}
@@ -4329,6 +4342,9 @@ export default function DashboardPage() {
     flex: "1 1 220px",
   }}
 >
+ {/* ======================================================================
+		A11「本月支出明細」開始日期欄位
+     ====================================================================== */}
       <div
         style={{
           fontSize: 14,
@@ -4338,6 +4354,7 @@ export default function DashboardPage() {
       >
         開始日期
       </div>
+
 
       <input
         type="date"
@@ -4378,6 +4395,9 @@ export default function DashboardPage() {
       >
         結束日期
         </div>
+{/* ======================================================================
+		A11「本月支出明細」結束日期欄位
+   ====================================================================== */}
 
       <input
         type="date"
@@ -4408,10 +4428,14 @@ export default function DashboardPage() {
       flexWrap: "wrap",
       gap: 10,
       rowGap: 10,
-      alignItems: "flex-end",
+      alignItems: "center",
     }}
   >
-            <select
+ {/* ======================================================================
+		A11「本月支出明細」排序下拉選單
+     ====================================================================== */}
+
+			  <select
       value={monthlyExpenseSort}
       onChange={(e) =>
         setMonthlyExpenseSort(e.target.value)
@@ -4442,6 +4466,9 @@ export default function DashboardPage() {
         金額低到高
         </option>
     </select>
+{/* ======================================================================
+		A11「本月支出明細」清除篩選按鈕
+    ====================================================================== */}
 
     <button
       onClick={() => {
@@ -4462,10 +4489,16 @@ export default function DashboardPage() {
          borderRadius: 10,
          cursor: "pointer",
          fontWeight: 600,
+		 fontSize: 14,
+	     whiteSpace: "nowrap",
+		 flexShrink: 0,
          }}
     >
       清除篩選
     </button>
+{/* ======================================================================
+		A11「本月支出明細」CSV 匯出按鈕
+    ====================================================================== */}
 
     <button
       onClick={exportMonthlyExpensesCsv}
@@ -4478,6 +4511,9 @@ export default function DashboardPage() {
              borderRadius: 10,
              cursor: "pointer",
              fontWeight: 600,
+			 fontSize: 14,
+			 whiteSpace: "nowrap",
+		 	 flexShrink: 0,
              }}
     >
       匯出 CSV
