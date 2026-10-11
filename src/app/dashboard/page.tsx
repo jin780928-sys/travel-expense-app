@@ -4609,7 +4609,7 @@ export default function DashboardPage() {
           <div
             style={{
               fontSize: 14,
-              color: "#6b7280",
+              color: "#4b5563",
               whiteSpace: "nowrap",
 			  
 			
