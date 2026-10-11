@@ -2160,6 +2160,7 @@ export default function DashboardPage() {
             padding: 16,
             boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             marginBottom: 16,
+			minWidth: 0,
           }}
         >
           <h2
@@ -2173,6 +2174,9 @@ export default function DashboardPage() {
 >
   ⚠️ 信用卡繳款提醒
 </h2>
+{/* ======================================================================
+		A05「信用卡繳款提醒」每一張提醒卡片
+    ====================================================================== */}
 
           {unpaidStatements.map(
             (card, index) => (
@@ -2180,27 +2184,37 @@ export default function DashboardPage() {
                 key={card.id}
                 style={{
                 marginBottom:
-  index === unpaidStatements.length - 1
-    ? 0
-    : 10,
+ 					 index === unpaidStatements.length - 1
+  					  ? 0
+				      : 10,
                 padding: "12px 14px",
                 background: "#ffffff",
                 border: "1px solid #fed7aa",
                 borderRadius: 10,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+				minWidth: 0,
+				width: "100%",
+				boxSizing: "border-box",
               }}
               >
+{/* ======================================================================
+		A05「信用卡繳款提醒」每張提醒卡內層那一列
+    ====================================================================== */}
                 <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 6,
-    rowGap: 4,
-    minWidth: 0,
-    width: "100%",
-  }}
+ 				 style={{
+  				  display: "flex",
+			      alignItems: "center",
+    			  flexWrap: "wrap",
+  				  gap: 6,
+  				  rowGap: 4,
+ 			      minWidth: 0,
+ 			      width: "100%",
+	  			  boxSizing: "border-box",
+ 				 }}
 >
+{/* ======================================================================
+		A05「信用卡繳款提醒」卡名文字
+    ====================================================================== */}
   <strong
     style={{
       fontSize: 15,
@@ -2208,17 +2222,21 @@ export default function DashboardPage() {
       color: "#111827",
       lineHeight: 1.4,
       whiteSpace: "nowrap",
+	  flexShrink: 0,
     }}
   >
     {card.name}
   </strong>
-
+{/* ======================================================================
+		A05「信用卡繳款提醒」右側的狀態／繳款截止文字
+    ====================================================================== */}
   <span
     style={{
       color: "#9a3412",
       fontSize: 14,
       lineHeight: 1.4,
       whiteSpace: "nowrap",
+	flexShrink: 0,
     }}
   >
     {getDueStatus(card)}
