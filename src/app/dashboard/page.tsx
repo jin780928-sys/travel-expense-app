@@ -3619,66 +3619,86 @@ export default function DashboardPage() {
               display: "grid",
               gridTemplateColumns:
                 "repeat(auto-fit, minmax(160px, 1fr))",
-              gap: 10,
+              gap: 12,
               marginBottom: 14,
             }}
           >
+//「共 X 筆」 統計卡 - 外層
             <div
               style={{
-                border: "1px solid #eee",
+                border: "1px solid #e5e7eb",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                fontSize: 14,
+                color: "#4b5563",
+                lineHeight: 1.4,
+                background: "#ffffff",
               }}
             >
-              共{" "}
+              共{" "} 
+//「共 X 筆」 統計卡
               <strong
                 style={{
                   fontSize: 20,
+                  fontWeight: 700,
                   color: "#111827",
+                  lineHeight: 1.2,
                   }}
               >
-  {historySummary.total}
-</strong>
+              {historySummary.total}
+          </strong>
               {" "}
               筆
             </div>
-
+//「已繳 X 筆」 統計卡 - 外層
             <div
               style={{
-                border:"1px solid #eee",
+                border: "1px solid #e5e7eb",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                fontSize: 14,
+                color: "#4b5563",
+                lineHeight: 1.4,
+                background: "#ffffff",
               }}
             >
               已繳{" "}
+//「已繳 X 筆」 統計卡
               <strong
                 style={{
-                 fontSize: 20,
-                 color: "#111827",
-                }}
->
-  {historySummary.paid}
-</strong>
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: "#111827",
+                  lineHeight: 1.2,
+                  }}
+              >
+                {historySummary.paid}
+              </strong>
               {" "}
               筆
             </div>
-
+//「未繳 X 筆」 統計卡 - 外層
             <div
               style={{
-                border:"1px solid #fecaca",
+                border: "1px solid #e5e7eb",
                 background:"#fff7f7",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                fontSize: 14,
+                color: "#4b5563",
+                lineHeight: 1.4,
               }}
             >
               未繳{" "}
+//「未繳 X 筆」 統計卡
               <strong
                 style={{
                   fontSize: 20,
                   color: "#111827",
+                  lineHeight: 1.2,
                 }}
               >
   {historySummary.unpaid}
@@ -3686,28 +3706,32 @@ export default function DashboardPage() {
               {" "}
               筆
             </div>
-
+//總額 - 外層
             <div
               style={{
-                border:
-                  "1px solid #eee",
+                border: "1px solid #e5e7eb",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                fontSize: 14,
+                color: "#4b5563",
+                lineHeight: 1.4,
+                background: "#ffffff",
               }}
             >
               {Object.entries(
                 historyTotals
               ).length === 0 ? (
                 <span
-  style={{
-    fontSize: 20,
-    fontWeight: 700,
-    color: "#111827",
-  }}
->
-  總額 0
-</span>
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 700,
+                    color: "#111827",
+                    lineHeight: 1.2,
+                    }}
+                >
+                  總額 0
+              </span>
               ) : (
                 Object.entries(
                   historyTotals
@@ -3717,14 +3741,15 @@ export default function DashboardPage() {
                     amount,
                   ]) => (
                     <div
-  key={currency}
-  style={{
-    fontSize: 20,
-    fontWeight: 700,
-    color: "#111827",
-    whiteSpace: "nowrap",
-  }}
->
+                      key={currency}
+                        style={{
+                          fontSize: 20,
+                          fontWeight: 700,
+                          color: "#111827",
+                          whiteSpace: "nowrap",
+                          lineHeight: 1.2,
+                          }}
+                    >
                       {currency}{" "}
                       {formatNumber(
                         amount
@@ -3815,6 +3840,8 @@ export default function DashboardPage() {
                         gap: 10,
                         rowGap: 6,
                         flexWrap:"wrap",
+                        alignItems: "center",
+                        minWidth: 0,
                       }}
                     >
                      <strong
@@ -3826,7 +3853,8 @@ export default function DashboardPage() {
                            flex: "1 1 220px",
                            overflow: "hidden",
                            textOverflow: "ellipsis",
-                       whiteSpace: "nowrap",
+                           whiteSpace: "nowrap",
+                           lineHeight: 1.4,
                          }}
                        >
   {isExpanded ? "▼" : "▶"}{" "}
@@ -3835,7 +3863,7 @@ export default function DashboardPage() {
   {monthDate.getFullYear()} 年{" "}
   {monthDate.getMonth() + 1} 月
 </strong>
-
+//A10「歷史帳單」狀態徽章
                       <span
                         style={{
                             padding: "4px 8px",
@@ -3853,10 +3881,11 @@ export default function DashboardPage() {
     : "🔴 未繳"}
 </span>
                     </div>
-
+//A10「歷史帳單」每張卡片的金額區塊
                     <div
                       style={{
                         marginTop: 8,
+                        marginBottom: 2,
                         fontSize: 20,
                         fontWeight: 700,
                         lineHeight: 1.25,
@@ -3893,15 +3922,17 @@ export default function DashboardPage() {
                       )}
                     </div>
                   </div>
-
+//A10「歷史帳單」展開後的灰底詳細資訊區塊
                   {isExpanded && (
                     <div
                       style={{
-                            marginTop: 12,
-                            padding: 12,
-                            background: "#f9fafb",
-                            borderRadius: 10,
-                            border: "1px solid #e5e7eb",
+                         padding: 12,
+                         background: "#f9fafb",
+                         borderRadius: 10,
+                         border: "1px solid #e5e7eb",
+                         width: "100%",
+                         boxSizing: "border-box",
+                         lineHeight: 1.4,
                           }}
                     >
                       <div
@@ -3920,9 +3951,9 @@ export default function DashboardPage() {
                   <div
                     style={{
                       marginTop: 5,
-                            fontSize: 14,
-                            color: "#4b5563",
-                            lineHeight: 1.4,
+                      fontSize: 14,
+                      color: "#4b5563",
+                     lineHeight: 1.4,
                           }}
                         >
                           實際繳款日：
@@ -3946,11 +3977,12 @@ export default function DashboardPage() {
                       0 ? (
                         <div
                           style={{
-  marginTop: 6,
-  padding: "10px 0",
-  color: "#6b7280",
-  fontSize: 14,
-}}
+                            marginTop: 6,
+                            padding: "10px 0",
+                            color: "#6b7280",
+                            fontSize: 14,
+                            lineHeight: 1.4,
+                          }}
                         >
                           沒有支出明細
                         </div>
@@ -3967,10 +3999,13 @@ export default function DashboardPage() {
                                 alignItems: "center",
                                 flexWrap:"wrap",
                                 gap: 10,
+                                rowGap: 4,
                                 padding:"7px 0",
                                 borderBottom: "1px solid #eee",
                               }}
                             >
+
+   //A10「歷史帳單」展開後每筆支出的左側文字。
                               <span
                                   style={{
                                       minWidth: 0,
@@ -3978,7 +4013,7 @@ export default function DashboardPage() {
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       whiteSpace: "nowrap",
-                                      color: "#374151",
+                                      color: "#4b5563",
                                       fontSize: 14,
                                       lineHeight: 1.4,
                                     }}
