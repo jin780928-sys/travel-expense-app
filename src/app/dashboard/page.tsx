@@ -1737,11 +1737,14 @@ export default function DashboardPage() {
   // ==========================================================================
 
   const sectionStyle = {
-    background: "#fff",
+    background: "#ffffff",
     border: "1px solid #e5e7eb",
     borderRadius: 14,
     padding: 18,
     marginBottom: 18,
+    boxSizing: "border-box",
+    width: "100%",
+	minWidth: 0,
   };
 
   const summaryCardStyle = {
@@ -1757,6 +1760,8 @@ export default function DashboardPage() {
     flexDirection: "column",
     justifyContent: "center",
     gap: 2,
+    boxSizing: "border-box",
+	  overflow: "hidden",
   } as const;
 
   // ==========================================================================
@@ -1772,6 +1777,9 @@ export default function DashboardPage() {
         padding: 20,
         background: "#f7f7f8",
         minHeight: "100vh",
+		boxSizing: "border-box",
+		width: "100%",
+		minWidth: 0,
       }}
     >
       {/* ======================================================================
@@ -1786,6 +1794,7 @@ export default function DashboardPage() {
     fontWeight: 700,
     color: "#111827",
     letterSpacing: "-0.02em",
+	lineHeight: 1.2,
   }}
 >
   Dashboard
@@ -1819,13 +1828,15 @@ export default function DashboardPage() {
           rowGap: 10,
           alignItems: "center",
           justifyContent: "flex-start",
+		  minWidth: 0,
         }}
       >
         <span
   style={{
-    fontSize: 14,
-    fontWeight: 600,
-    color: "#374151",
+    	fontSize: 14,
+    	fontWeight: 600,
+    	color: "#374151",
+	  lineHeight: 1.4,
   }}
 >
   統計月份
@@ -1913,14 +1924,19 @@ export default function DashboardPage() {
           gap: 14,
           marginBottom: 18,
           alignItems: "stretch",
+		  width: "100%",
+		  minWidth: 0,
+		  boxSizing: "border-box",
+		justifyContent: "stretch",
         }}
       >
         <div style={summaryCardStyle}>
           <div
   style={{
-    color: "#6b7280",
-    fontSize: 14,
-    fontWeight: 500,
+  	  color: "#6b7280",
+  	  fontSize: 14,
+   	  fontWeight: 500,
+	  lineHeight: 1.4,
   }}
 >
   本月交易筆數
@@ -1943,9 +1959,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-              color: "#6b7280",
-              fontSize: 14,
-              fontWeight: 500,
+              	color: "#6b7280",
+              	fontSize: 14,
+              	fontWeight: 500,
+				lineHeight: 1.4,
               }}
           >
             未繳信用卡
@@ -1968,9 +1985,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-              color: "#6b7280",
-              fontSize: 14,
-              fontWeight: 500,
+              	color: "#6b7280",
+              	fontSize: 14,
+              	fontWeight: 500,
+				lineHeight: 1.4,
               }}
           >
             本月總支出
@@ -2010,9 +2028,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-              color: "#6b7280",
-              fontSize: 14,
-              fontWeight: 500,
+              	color: "#6b7280",
+              	fontSize: 14,
+              	fontWeight: 500,
+				lineHeight: 1.4,
               }}
           >
             最近繳款日
@@ -4729,6 +4748,7 @@ export default function DashboardPage() {
           )
         }
         style={{
+		  display: "flex",
           position: "fixed",
           right: 24,
           bottom: 24,
@@ -4741,6 +4761,10 @@ export default function DashboardPage() {
           cursor: "pointer",
           fontSize: 20,
           boxShadow:"0 2px 8px rgba(0,0,0,0.12)",
+		  fontWeight: 600,
+			alignItems: "center",
+			justifyContent: "center",
+			zIndex: 50,
         }}
         aria-label="回到頂端"
       >
