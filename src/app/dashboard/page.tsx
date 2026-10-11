@@ -1587,6 +1587,10 @@ export default function DashboardPage() {
 
     const worksheet =
   XLSX.utils.aoa_to_sheet(rows);
+	  worksheet["!freeze"] = {
+  xSplit: 0,
+  ySplit: 1,
+};
 
 const workbook =
   XLSX.utils.book_new();
@@ -1596,7 +1600,13 @@ XLSX.utils.book_append_sheet(
   worksheet,
   "本月支出"
 );
+for (let row = 2; row <= rows.length; row++) {
+  const cell = worksheet[`G${row}`];
 
+  if (cell && typeof cell.v === "number") {
+    cell.z = '#,##0.00';
+  }
+}
 worksheet["!cols"] = [
   { wch: 12 },
   { wch: 24 },
