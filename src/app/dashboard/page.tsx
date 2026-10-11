@@ -3092,8 +3092,7 @@ export default function DashboardPage() {
 
                       <div
                         style={{
-                          background:
-                            "#f3f4f6",
+                          background:"#f3f4f6",
                           padding: 12,
                           borderRadius: 10,
                           marginBottom: 10,
@@ -3229,9 +3228,9 @@ export default function DashboardPage() {
   style={{
     marginTop: 14,
     marginBottom: 8,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 700,
-    color: "#111827",
+    color: "#111827",,
   }}
 >
   帳單明細
