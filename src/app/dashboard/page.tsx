@@ -1780,6 +1780,7 @@ export default function DashboardPage() {
 
       <h1
   style={{
+    marginTop: 0,
     marginBottom: 14,
     fontSize: 32,
     fontWeight: 700,
@@ -1793,9 +1794,11 @@ export default function DashboardPage() {
         <div
           style={{
             marginBottom: 14,
-            padding: 10,
+            padding: "10px 12px",
             background: "#fee2e2",
-            borderRadius: 8,
+            borderRadius: 10,
+            color: "#991b1b",
+            fontSize: 14,
           }}
         >
           {message}
