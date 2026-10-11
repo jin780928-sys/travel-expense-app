@@ -4603,14 +4603,16 @@ export default function DashboardPage() {
                   alignItems: "center",
                   padding: "9px 0",
                   borderBottom: "1px solid #eee",
-				rowGap: 4,
+			  	rowGap: 4,
                 }}
               >
           <div
             style={{
-              fontSize: 13,
+              fontSize: 14,
               color: "#6b7280",
               whiteSpace: "nowrap",
+			  
+			
               }}
           >
   {expense.date}
