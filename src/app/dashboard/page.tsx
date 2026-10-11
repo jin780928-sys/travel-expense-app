@@ -1785,6 +1785,8 @@ XLSX.writeFile(
 		boxSizing: "border-box",
 		width: "100%",
 		minWidth: 0,
+		  fontFamily:
+      'Inter, "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif',
       }}
     >
       {/* ======================================================================
