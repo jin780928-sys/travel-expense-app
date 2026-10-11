@@ -4711,6 +4711,9 @@ export default function DashboardPage() {
             (expense) => (
               <div
                 key={expense.id}
+				  onClick={() => {
+        window.location.href = `/expenses/${expense.id}`;
+      }}
                 style={{
                   display: "grid",
                   gridTemplateColumns: "82px 1fr auto",
@@ -4718,6 +4721,7 @@ export default function DashboardPage() {
                   alignItems: "center",
                   padding: "9px 0",
                   borderBottom: "1px solid #e5e7eb",
+					cursor: "pointer",
 			  	rowGap: 4,
                 }}
               >
