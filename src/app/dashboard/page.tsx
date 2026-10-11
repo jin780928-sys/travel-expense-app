@@ -3382,6 +3382,7 @@ export default function DashboardPage() {
               rowGap: 8,
               flexWrap: "wrap",
               alignItems: "center",
+              minWidth: 0,
             }}
           >
             <h2
@@ -3390,6 +3391,7 @@ export default function DashboardPage() {
                 fontSize: 22,
                 fontWeight: 700,
                 color: "#111827",
+                marginBottom: 10,
                  }}
             >
   📚 歷史帳單
@@ -3398,7 +3400,7 @@ export default function DashboardPage() {
             <button
               onClick={exportHistoryCsv}
                 style={{
-                  height: 40,
+                      height: 40,
                       padding: "0 12px",
                       background: "#2563eb",
                       color: "#ffffff",
@@ -3406,12 +3408,15 @@ export default function DashboardPage() {
                       borderRadius: 10,
                       cursor: "pointer",
                       fontWeight: 600,
+                      fontSize: 14,
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
                     }}
                   >
                     匯出 CSV
               </button>
           </div>
-
+//A10「歷史帳單」篩選列
           <div
             style={{
               display: "flex",
@@ -3421,8 +3426,10 @@ export default function DashboardPage() {
               marginTop: 14,
               marginBottom: 14,
               alignItems: "center",
+              minWidth: 0,
             }}
-          >
+          >  
+//A10「歷史帳單」搜尋框
             <input
               type="text"
               value={historySearch}
@@ -3433,19 +3440,20 @@ export default function DashboardPage() {
               }
               placeholder="搜尋信用卡"
               style={{
-  height: 40,
-  padding: "0 12px",
-  width: 220,
-  border: "1px solid #d1d5db",
-  borderRadius: 10,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
-}}
+                height: 40,
+                padding: "0 12px",
+                width: 220,
+                border: "1px solid #d1d5db",
+                borderRadius: 10,
+                background: "#ffffff",
+                color: "#111827",
+                fontSize: 14,
+                outline: "none",
+                 boxSizing: "border-box",
+                minWidth: 0,
+                }}
             />
-
+//A10「歷史帳單」月份篩選下拉選單
             <select
               value={
                 historyMonthFilter
@@ -3482,7 +3490,7 @@ export default function DashboardPage() {
                 )
               )}
             </select>
-
+//A10「歷史帳單」信用卡篩選下拉選單
             <select
               value={
                 historyCardFilter
@@ -3534,7 +3542,7 @@ export default function DashboardPage() {
                 )
               )}
             </select>
-
+//A10「歷史帳單」狀態篩選下拉選單。
             <select
               value={
                 historyStatusFilter
@@ -3568,7 +3576,7 @@ export default function DashboardPage() {
                 未繳
               </option>
             </select>
-
+//A10「歷史帳單」排序下拉選單
             <select
               value={historySort}
               onChange={(e) =>
@@ -3617,8 +3625,7 @@ export default function DashboardPage() {
           >
             <div
               style={{
-                border:
-                  "1px solid #eee",
+                borde:                  "1px solid #eee",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
