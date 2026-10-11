@@ -3100,16 +3100,22 @@ export default function DashboardPage() {
                           )}
                         </div>
                       </div>
-
+          //A09 第二個灰底資訊區塊
                       <div
                         style={{
                           background:"#f3f4f6",
                           padding: 12,
                           borderRadius: 10,
                           marginBottom: 10,
+                          width: "100%",
+                          boxSizing: "border-box",
+                          lineHeight: 1.4,
+                          color: "#374151",
+                          fontSize: 14,
                         }}
                       >
-                        <div>
+
+                        <div style={{ marginBottom: 4 }}>
                           狀態：
                           {getDueStatus(
                             card
