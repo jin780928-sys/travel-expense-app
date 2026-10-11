@@ -3228,9 +3228,9 @@ export default function DashboardPage() {
   style={{
     marginTop: 14,
     marginBottom: 8,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 700,
-    color: "#111827",,
+    color: "#111827",
   }}
 >
   帳單明細
@@ -3260,6 +3260,7 @@ export default function DashboardPage() {
                                 alignItems: "center",
                                 flexWrap: "wrap",
                                 gap: 10,
+                                rowGap: 4,
                                 padding: "7px 0",
                                 borderBottom: "1px solid #eee",
                               }}
@@ -3946,6 +3947,7 @@ export default function DashboardPage() {
                                       color: "#374151",
                                       fontSize: 14,
                                       lineHeight: 1.4,
+                                      minWidth: 0,
                                     }}
                                   >
                                     {expense.date}{" "}
