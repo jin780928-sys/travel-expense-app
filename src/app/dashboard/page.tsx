@@ -2281,70 +2281,72 @@ XLSX.writeFile(
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
     marginBottom: 16,
-	minWidth: 0,
+    minWidth: 0,
   }}
 >
-        <h2
-  style={{
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#111827",
-    marginTop: 0,
-    marginBottom: 10,
-  }}
->
-  本月支出總額
-</h2>
-
-        {Object.entries(
-          totalsByCurrency
-        ).length === 0 ? (
-          <div
-  style={{
-    color: "#6b7280",
-    fontSize: 14,
-    padding: "4px 0",
-    lineHeight: 1.4,
-  }}
->
-  本月目前沒有支出
-</div>
-        ) : (
   <div
     style={{
       display: "flex",
-      flexDirection: "column",
-      gap: 4,
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 12,
+      flexWrap: "wrap",
+      minWidth: 0,
     }}
   >
-    {Object.entries(
-      totalsByCurrency
-    ).map(
-      ([currency, amount]) => (
-        
-              <div
-                key={currency}
-                style={{
-                  fontSize: 24,
-                  fontWeight: 700,
-                  color: "#111827",
-                  whiteSpace: "nowrap",
-                  lineHeight: 1.2,
-				  overflow: "hidden",
-				  textOverflow: "ellipsis",
-				  maxWidth: "100%",
-				  minWidth: 0,
-                }}
-              >
-                {currency}{" "}
-                {formatNumber(amount)}
-              </div>
-            )
-          
+    <h2
+      style={{
+        fontSize: 22,
+        fontWeight: 700,
+        color: "#111827",
+        marginTop: 0,
+        marginBottom: 0,
+        whiteSpace: "nowrap",
+      }}
+    >
+      本月支出總額
+    </h2>
+
+    {Object.entries(totalsByCurrency).length === 0 ? (
+      <div
+        style={{
+          color: "#6b7280",
+          fontSize: 14,
+          lineHeight: 1.4,
+        }}
+      >
+        本月目前沒有支出
+      </div>
+    ) : (
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          justifyContent: "flex-end",
+          minWidth: 0,
+        }}
+      >
+        {Object.entries(totalsByCurrency).map(
+          ([currency, amount]) => (
+            <div
+              key={currency}
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                color: "#111827",
+                whiteSpace: "nowrap",
+                lineHeight: 1.2,
+              }}
+            >
+              {currency} {formatNumber(amount)}
+            </div>
+          )
         )}
+      </div>
+    )}
   </div>
-      )}
-      </section>
+</section>
 
 {/* ======================================================================
     	A07. 支出分類
