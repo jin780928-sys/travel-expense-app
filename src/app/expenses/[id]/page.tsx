@@ -413,7 +413,7 @@ export default function ExpenseDetailPage() {
     )}
   </div>
 </div>
-          )}
+          
           <p style={{ marginTop: 20 }}>
   <Link href={`/expenses/${id}/edit`}>
     ✏️ 編輯這筆花費
