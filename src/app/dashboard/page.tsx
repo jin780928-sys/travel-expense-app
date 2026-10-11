@@ -1845,7 +1845,6 @@ export default function DashboardPage() {
             background: "#ffffff",
             color: "#111827",
             fontSize: 14,
-            padding: "0 12px",
             outline: "none",
             boxSizing: "border-box",
             width: 120,
