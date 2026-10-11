@@ -3036,49 +3036,60 @@ export default function DashboardPage() {
                       )}
                     </div>
                   </div>
-
+//A09「本期信用卡帳單」展開內容。
                   {isOpen && (
                     <div
                       style={{
-                        marginTop: 14,
+                        marginTop: 12,
+                        paddingTop: 2,
+                        width: "100%",
+                        minWidth: 0,
+                        boxSizing: "border-box",
                       }}
                     >
+   //A09 第一個灰底資訊區塊。
                       <div
                         style={{
                           background:"#f3f4f6",
                           padding: 12,
                           borderRadius: 10,
                           marginBottom: 10,
+                          width: "100%",
+                          boxSizing: "border-box",
+                          lineHeight: 1.4,
+                          color: "#374151",
+                          fontSize: 14,
                         }}
                       >
-                        <div>
-                          結帳日：
+          //A09 第一個灰底資訊區塊裡面的每一行文字。
+                        <div style={{ marginBottom: 4 }}>
+                        結帳日：
                           {card.statement_day ||
                             "-"}
                           日
                         </div>
 
-                        <div>
+                        <div style={{ marginBottom: 4 }}>
                           繳款日：
                           {card.due_day ||
                             "-"}
                           日
                         </div>
 
-                        <div>
+                        <div style={{ marginBottom: 4 }}>
                           帳單月份：
                           {selectedYear} 年{" "}
                           {selectedMonth} 月
                         </div>
 
-                        <div>
+                        <div style={{ marginBottom: 4 }}>
                           繳款月份：
                           {getDueMonthText(
                             card
                           )}
                         </div>
 
-                        <div>
+                        <div style={{ marginBottom: 4 }}>
                           帳單期間：
                           {formatDate(
                             card.periodStart
@@ -3268,8 +3279,9 @@ export default function DashboardPage() {
    //A09「帳單明細」左側品項文字。
                              <span
                                 style={{
-                                    
-                                  display: "block",minWidth: 0,
+                                    display: "block",
+                                    minWidth: 0,
+                                    maxWidth: "100%",
                                     flex: "1 1 180px",
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
@@ -3292,6 +3304,7 @@ export default function DashboardPage() {
                                     textAlign: "right",
                                     minWidth: 80,
                                     lineHeight: 1.4,
+                                    flexShrink: 0,
                                   }}
                                 >
                                 {expense.currency ||"USD"}{" "}
@@ -3320,7 +3333,8 @@ export default function DashboardPage() {
                         borderRadius: 10,
                         cursor: "pointer",
                         fontWeight: 600,
-                       fontSize: 14,
+                        fontSize: 14,
+                        whiteSpace: "nowrap",
                       }}
                   >
                     {card.isPaid
