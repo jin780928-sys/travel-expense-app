@@ -3972,6 +3972,10 @@ export default function DashboardPage() {
                     padding: 14,
                     marginBottom: 12,
                     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+					minWidth: 0,
+  					width: "100%",
+  					boxSizing: "border-box",
+  					overflow: "hidden",
                   }}
                 >
                   <div
@@ -4009,10 +4013,12 @@ export default function DashboardPage() {
                     >
                      <strong
                        style={{
-                           fontSize: 16,
+                           display: "block",
+						   fontSize: 16,
                            fontWeight: 700,
                            color: "#111827",
                            minWidth: 0,
+						   maxWidth: "100%",
                            flex: "1 1 220px",
                            overflow: "hidden",
                            textOverflow: "ellipsis",
@@ -4057,7 +4063,9 @@ export default function DashboardPage() {
                         marginBottom: 2,
                         fontSize: 20,
                         fontWeight: 700,
-                        lineHeight: 1.25,
+                        color: "#111827",
+  						lineHeight: 1.25,
+  						minWidth: 0,
                       }}
                     >
                       {Object.entries(
@@ -4079,6 +4087,7 @@ export default function DashboardPage() {
     color: "#111827",
     fontSize: 15,
     whiteSpace: "nowrap",
+	  lineHeight: 1.4,
   }}
 >
                               {currency}{" "}
@@ -4098,11 +4107,13 @@ export default function DashboardPage() {
                   {isExpanded && (
                     <div
                       style={{
-                         padding: 12,
+                         paddingTop: 2,
+						 marginTop: 12,
                          background: "#f9fafb",
                          borderRadius: 10,
                          border: "1px solid #e5e7eb",
                          width: "100%",
+						 minWidth: 0,
                          boxSizing: "border-box",
                          lineHeight: 1.4,
                           }}
