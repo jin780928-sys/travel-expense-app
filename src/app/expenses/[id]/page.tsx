@@ -169,10 +169,13 @@ export default function ExpenseDetailPage() {
   return (
     <main
       style={{
-        maxWidth: 800,
-        margin: "40px auto",
+        maxWidth: 760,
+        margin: "0 auto",
         padding: 20,
-      }}
+        minHeight: "100vh",
+        boxSizing: "border-box",
+        width: "100%",
+        }}
     >
       <p>
         <Link href="/expenses">← 回到花費紀錄</Link>
