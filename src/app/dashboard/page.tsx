@@ -1812,6 +1812,7 @@ export default function DashboardPage() {
           display: "flex",
           flexWrap: "wrap",
           gap: 10,
+          rowGap: 10,
           alignItems: "center",
           justifyContent: "flex-start",
         }}
@@ -1833,17 +1834,17 @@ export default function DashboardPage() {
             )
           }
           style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
+            height: 40,
+            padding: "0 12px",
+            padding: "0 12px",border: "1px solid #d1d5db",
+            padding: "0 12px",borderRadius: 10,
+            padding: "0 12px",background: "#ffffff",
+            padding: "0 12px",color: "#111827",
+            padding: "0 12px",fontSize: 14,
+            padding: "0 12px",outline: "none",
+            boxSizing: "border-box",
             width: 120,
-}}
+            }}
         >
           {Array.from(
             { length: 7 },
@@ -1869,17 +1870,17 @@ export default function DashboardPage() {
             )
           }
           style={{
-  height: 40,
-  padding: "0 12px",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  background: "#ffffff",
-  color: "#111827",
-  fontSize: 14,
-  outline: "none",
-  boxSizing: "border-box",
+            height: 40,
+            padding: "0 12px",
+            border: "1px solid #d1d5db",
+            borderRadius: 10,
+            background: "#ffffff",
+            color: "#111827",
+            fontSize: 14,
+            outline: "none",
+            boxSizing: "border-box",
             width: 120,
-}}
+            }}
         >
           {Array.from(
             { length: 12 },
