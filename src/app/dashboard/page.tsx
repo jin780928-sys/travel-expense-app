@@ -1857,7 +1857,7 @@ export default function DashboardPage() {
             color: "#111827",
             fontSize: 14,
             outline: "none",
-            boxSizing: "border-box",
+            boxSizing: "border-box" as const,
             width: 120,
             }}
         >
