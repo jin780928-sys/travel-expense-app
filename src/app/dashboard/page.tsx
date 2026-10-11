@@ -1749,13 +1749,14 @@ export default function DashboardPage() {
     border: "1px solid #e5e7eb",
     borderRadius: 14,
     padding: 16,
-    minWidth: 17s0,
-    minHeight: 92,
+    minWidth: 170,
+    minHeight: 96,
     flex: "1 1 180px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    gap: 2,
   } as const;
 
   // ==========================================================================
@@ -1926,7 +1927,7 @@ export default function DashboardPage() {
             style={{
               fontSize: 24,
               fontWeight: 700,
-              marginTop: 6,
+              marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
@@ -1951,7 +1952,7 @@ export default function DashboardPage() {
             style={{
               fontSize: 24,
               fontWeight: 700,
-              marginTop: 6,
+              marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
@@ -1976,7 +1977,7 @@ export default function DashboardPage() {
             style={{
               fontSize: 24,
               fontWeight: 700,
-              marginTop: 6,
+              marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
@@ -2018,7 +2019,7 @@ export default function DashboardPage() {
             style={{
               fontSize: 24,
               fontWeight: 700,
-              marginTop: 6,
+              marginTop: 4,
               color: "#111827",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
