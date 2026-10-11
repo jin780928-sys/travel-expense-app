@@ -2518,17 +2518,18 @@ export default function DashboardPage() {
                       )
                     }
                     style={{
-                      width: "100%",
-                      textAlign: "left",
-                      background: "#ffffff",
-                      border: "none",
-                      padding: "2px 0",
-                      cursor: "pointer",
-                      font: "inherit",
-                      color: "inherit",
-                      outline: "none",
-                      minWidth: 0,
-                    }}
+ 					 width: "100%",
+					 minWidth: 0,
+					 boxSizing: "border-box",
+					 textAlign: "left",
+					 background: "#ffffff",
+					 border: "none",
+					 padding: "2px 0",
+					 cursor: "pointer",
+					 font: "inherit",
+					 color: "inherit",
+					 outline: "none",
+					 }}
                   >
                     <div
   style={{
@@ -2539,20 +2540,22 @@ export default function DashboardPage() {
   }}
 >
                     <strong
-  style={{
-    fontSize: 16,
-    fontWeight: 700,
-    color: "#111827",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    minWidth: 0,
-    flex: "1 1 auto",
-    lineHeight: 1.4,
-  }}
->
-  {cardName}
-</strong>
+  						style={{
+  							display: "block",
+  							fontSize: 16,
+  							fontWeight: 700,
+  							color: "#111827",
+  							lineHeight: 1.4,
+  							minWidth: 0,
+  							maxWidth: "100%",
+  							flex: "1 1 auto",
+    							overflow: "hidden",
+  							textOverflow: "ellipsis",
+  							 whiteSpace: "nowrap",
+  							}}
+  							>
+    							{cardName}
+  							</strong>
                     <span
   style={{
     marginLeft: 8,
@@ -2603,72 +2606,79 @@ export default function DashboardPage() {
                   </button>
 
                   {isOpen && (
-  <div
-    style={{
-      marginTop: 12,
-      padding: 12,
-      background: "#f8fafc",
-      borderRadius: 10,
-      border: "1px solid #e5e7eb",
-      overflow: "hidden",
-      lineHeight: 1.4,
-    }}
-  >
-    {cardExpenses.map(
-      (expense, index) => (
+ 				 <div
+					 style={{
+ 						 marginTop: 12,
+ 						 padding: 12,
+ 						 background: "#f8fafc",
+ 						 borderRadius: 10,
+ 						 border: "1px solid #e5e7eb",
+ 						 overflow: "hidden",
+ 						 lineHeight: 1.4,
+ 						 width: "100%",
+ 						 minWidth: 0,
+ 						 boxSizing: "border-box",
+ 						 }}
+   						 >
+    						  {cardExpenses.map(
+       						 (expense, index) => (
                           <div
                             key={
                               expense.id
                             }
-                            style={{
-                              display:"flex",
-                              justifyContent:"space-between",
-                              alignItems: "center",
-                              alignContent: "center",
-                              flexWrap: "wrap",
-                              gap: 8,
-                              rowGap: 4,
-                              width: "100%",
-                              padding:"7px 0",
-                              borderBottom:
-                                    index === cardExpenses.length - 1
-                                    ? "none"
-                                     : "1px solid #e5e7eb",
-                            }}
+                         style={{
+  							display: "flex",
+  							justifyContent: "space-between",
+  							alignItems: "center",
+  							alignContent: "center",
+  							flexWrap: "wrap",
+  							gap: 8,
+  							rowGap: 4,
+  							width: "100%",
+  							minWidth: 0,
+  							boxSizing: "border-box",
+  							padding: "7px 0",
+  							borderBottom:
+   							index === items.length - 1
+  								 ? "none"
+  								 : "1px solid #e5e7eb",
+  							}}
                           >
                             <span
-  style={{
-    minWidth: 0,
-    flex: "1 1 160px",
-    maxWidth: "100%",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    color: "#4b5563",
-    fontSize: 14,
-    lineHeight: 1.4,
-  }}
->
-  {expense.date}{" "}
-  {expense.item}
-</span>
+  								style={{
+  									display: "block",
+  									minWidth: 0,
+  									maxWidth: "100%",
+  									flex: "1 1 160px",
+  									overflow: "hidden",
+  									textOverflow: "ellipsis",
+  									whiteSpace: "nowrap",
+  									color: "#4b5563",
+  									fontSize: 14,
+  									lineHeight: 1.4,
+  									}}
+  									>
+    									{expense.date}{" "}
+    									{expense.item}
+  									</span>
 
                             <span
-  style={{
-    fontSize: 14,
-    fontWeight: 700,
-    color: "#111827",
-    whiteSpace: "nowrap",
-    textAlign: "right",
-    minWidth: 80,
-    lineHeight: 1.4,
-    }}
->
-  {expense.currency || "USD"}{" "}
-  {formatNumber(
-    Number(expense.amount)
-  )}
-</span>
+  								style={{
+  									fontSize: 14,
+    								fontWeight: 700,
+    								color: "#111827",
+   									whiteSpace: "nowrap",
+   									textAlign: "right",
+  									minWidth: 80,
+  									lineHeight: 1.4,
+  									flexShrink: 0,
+  									}}
+  									>
+   									 {expense.currency || "USD"}{" "}
+   									 {formatNumber(
+     									 Number(expense.amount)
+    									)}
+  									</span>
                           </div>
                         )
                       )}
@@ -2991,13 +3001,17 @@ export default function DashboardPage() {
 
                     background:
                       card.isPaid
-                        ? "#fff"
+                        ? "#ffffff"
                         : "#fff7f7",
 
                     borderRadius: 12,
                     padding: 14,
                     marginBottom: 12,
                     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+					minWidth: 0,
+  					width: "100%",
+  					boxSizing: "border-box",
+  					overflow: "hidden",
                   }}
                 >
                   <div
@@ -3019,21 +3033,24 @@ export default function DashboardPage() {
                         alignItems: "center",
                         gap: 10,
                         rowGap: 6,
+						minWidth: 0,
                         flexWrap: "wrap",
                       }}
                     >
                       <strong
-                        style={{
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: "#111827",
-                        minWidth: 0,
-                        flex: "1 1 180px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        lineHeight: 1.4,
-                        }}
+                      style={{
+  						display: "block",
+ 						fontSize: 16,
+  						fontWeight: 700,
+  						color: "#111827",
+  						lineHeight: 1.4,
+  						minWidth: 0,
+  						maxWidth: "100%",
+  						flex: "1 1 180px",
+  						overflow: "hidden",
+  						textOverflow: "ellipsis",
+ 						whiteSpace: "nowrap",
+						}}
                         >
                         {card.name}
                       </strong>
@@ -3056,11 +3073,13 @@ export default function DashboardPage() {
 
                     <div
                       style={{
-                        marginTop: 8,
-                        fontSize: 20,
-                        fontWeight: 700,
-                        lineHeight: 1.25,
-                      }}
+ 						 marginTop: 8,
+ 						 fontSize: 20,
+  						fontWeight: 700,
+						color: "#111827",
+ 						 lineHeight: 1.25,
+ 						 minWidth: 0,
+						}}
                     >
                       {Object.entries(
                         card.totals
@@ -3076,12 +3095,13 @@ export default function DashboardPage() {
                           ]) => (
                             <div
   key={currency}
-  style={{
-    fontWeight: 700,
-    color: "#111827",
-    fontSize: 15,
-    whiteSpace: "nowrap",
-  }}
+ style={{
+  fontWeight: 700,
+  color: "#111827",
+  fontSize: 15,
+  whiteSpace: "nowrap",
+  lineHeight: 1.4,
+}}
 >
   {currency}{" "}
   {formatNumber(amount)}
@@ -3093,11 +3113,12 @@ export default function DashboardPage() {
 
                     <div
                       style={{
-                        marginTop: 8,
-                        fontSize: 14,
-                        color: "#4b5563",
-                        lineHeight: 1.4,
-                      }}
+ 						marginTop: 8,
+						fontSize: 14,
+  						color: "#4b5563",
+  						lineHeight: 1.4,
+  						whiteSpace: "nowrap",
+						}}
                     >
                       繳款截止：
                       {getDueDateText(
