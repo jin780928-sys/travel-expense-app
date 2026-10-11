@@ -39,8 +39,9 @@
 // ============================================================================
 // 01. Imports
 // ============================================================================
-import * as XLSX from "xlsx";
+
 import { useEffect, useMemo, useState } from "react";
+import * as XLSX from "xlsx";
 import { supabase } from "../../lib/supabase";
 
 // ============================================================================
@@ -1584,64 +1585,88 @@ export default function DashboardPage() {
       )
       .join("\n");
 
-    const blob = new Blob(
-      ["\uFEFF" + csv],
-      {
-        type: "text/csv;charset=utf-8;",
-      }
-    );
+    const worksheet =
+  XLSX.utils.aoa_to_sheet(rows);
 
-    const url =
-      URL.createObjectURL(blob);
+const workbook =
+  XLSX.utils.book_new();
 
-    const link =
-      document.createElement("a");
+XLSX.utils.book_append_sheet(
+  workbook,
+  worksheet,
+  "本月支出"
+);
 
-    link.href = url;
+worksheet["!cols"] = [
+  { wch: 12 },
+  { wch: 24 },
+  { wch: 14 },
+  { wch: 14 },
+  { wch: 16 },
+  { wch: 14 },
+  { wch: 14 },
+  { wch: 30 },
+];
 
-    link.download = `monthly-expenses-${selectedYear}-${String(
-      selectedMonth
-    ).padStart(2, "0")}.csv`;
-
-    link.click();
-
-    URL.revokeObjectURL(url);
+XLSX.writeFile(
+  workbook,
+  `monthly-expenses-${selectedYear}-${String(
+    selectedMonth
+  ).padStart(2, "0")}.xlsx`
+);
   }
 
-  function exportHistoryCsv() {
-    const rows = [
-      [
-        "信用卡",
-        "帳單期間",
-        "帳單月份",
-        "狀態",
-        "實際繳款日",
-        "幣別",
-        "金額",
-      ],
-    ];
+  function exportHistoryExcel() {
+  const rows = [
+    [
+      "信用卡",
+      "帳單期間",
+      "帳單月份",
+      "狀態",
+      "實際繳款日",
+      "幣別",
+      "金額",
+    ],
+  ];
 
-    filteredStatementHistory.forEach(
-      (statement) => {
-        const card = getCardById(
-          statement.card_id
+  filteredStatementHistory.forEach(
+    (statement) => {
+      const card = getCardById(
+        statement.card_id
+      );
+
+      const totals =
+        getHistoricalStatementTotals(
+          statement
         );
 
-        const totals =
-          getHistoricalStatementTotals(
-            statement
-          );
+      const month =
+        statement.period_end.slice(
+          0,
+          7
+        );
 
-        const month =
-          statement.period_end.slice(
-            0,
-            7
-          );
+      const entries =
+        Object.entries(totals);
 
-        const entries =
-          Object.entries(totals);
+      if (entries.length === 0) {
+        rows.push([
+          card?.name || "未知信用卡",
+          `${statement.period_start} ~ ${statement.period_end}`,
+          month,
+          statement.is_paid
+            ? "已繳"
+            : "未繳",
+          statement.paid_date || "",
+          "",
+          "0.00",
+        ]);
 
-        if (entries.length === 0) {
+        return;
+      }
+
+      entries.forEach(
+        ([currency, amount]) => {
           rows.push([
             card?.name ||
               "未知信用卡",
@@ -1652,71 +1677,41 @@ export default function DashboardPage() {
               : "未繳",
             statement.paid_date ||
               "",
-            "",
-            "0.00",
+            currency,
+            Number(amount),
           ]);
-
-          return;
         }
+      );
+    }
+  );
 
-        entries.forEach(
-          ([currency, amount]) => {
-            rows.push([
-              card?.name ||
-                "未知信用卡",
-              `${statement.period_start} ~ ${statement.period_end}`,
-              month,
-              statement.is_paid
-                ? "已繳"
-                : "未繳",
-              statement.paid_date ||
-                "",
-              currency,
-              Number(
-                amount
-              ).toFixed(2),
-            ]);
-          }
-        );
-      }
-    );
+  const worksheet =
+    XLSX.utils.aoa_to_sheet(rows);
 
-    const csv = rows
-      .map((row) =>
-        row
-          .map((cell) => {
-            const text =
-              String(cell ?? "");
+  const workbook =
+    XLSX.utils.book_new();
 
-            return `"${text.replace(
-              /"/g,
-              '""'
-            )}"`;
-          })
-          .join(",")
-      )
-      .join("\n");
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "信用卡歷史帳單"
+  );
 
-    const blob = new Blob(
-      ["\uFEFF" + csv],
-      {
-        type: "text/csv;charset=utf-8;",
-      }
-    );
+  worksheet["!cols"] = [
+    { wch: 22 },
+    { wch: 25 },
+    { wch: 12 },
+    { wch: 10 },
+    { wch: 14 },
+    { wch: 10 },
+    { wch: 14 },
+  ];
 
-    const url =
-      URL.createObjectURL(blob);
-
-    const link =
-      document.createElement("a");
-
-    link.href = url;
-    link.download =
-      "credit-card-statement-history.csv";
-    link.click();
-
-    URL.revokeObjectURL(url);
-  }
+  XLSX.writeFile(
+    workbook,
+    "credit-card-statement-history.xlsx"
+  );
+}
 
   // ==========================================================================
   // 15. 畫面捲動工具
@@ -3523,7 +3518,7 @@ export default function DashboardPage() {
 </h2>
 
             <button
-              onClick={exportHistoryCsv}
+              onClick={exportHistoryExcel}
                 style={{
                       height: 40,
                       padding: "0 12px",
@@ -3538,7 +3533,7 @@ export default function DashboardPage() {
                       flexShrink: 0,
                     }}
                   >
-                    匯出 CSV
+                    匯出 Excel
               </button>
           </div>
 {/* ======================================================================
@@ -4631,7 +4626,7 @@ export default function DashboardPage() {
 		 	 flexShrink: 0,
              }}
     >
-      匯出 CSV
+      匯出 Excel
     </button>
   </div>
 
