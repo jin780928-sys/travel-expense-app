@@ -2070,6 +2070,7 @@ export default function DashboardPage() {
           gap: 10,
           rowGap: 10,
           alignItems: "center",
+		  minWidth: 0,
         }}
       >
         <button
@@ -2086,6 +2087,8 @@ export default function DashboardPage() {
             cursor: "pointer",
             fontWeight: 600,
             fontSize: 14,
+			flexShrink: 0,
+			whiteSpace: "nowrap",
             }}
         >
           💳 本期帳單
@@ -2113,6 +2116,8 @@ export default function DashboardPage() {
             cursor: "pointer",
             fontWeight: 600,
             fontSize: 14,
+			flexShrink: 0,
+			whiteSpace: "nowrap",
             }}
         >
           📚 歷史帳單
@@ -2134,6 +2139,8 @@ export default function DashboardPage() {
             cursor: "pointer",
             fontWeight: 600,
             fontSize: 14,
+			flexShrink: 0,
+			whiteSpace: "nowrap",
             }}
         >
           🧾 本月支出明細
