@@ -3239,14 +3239,14 @@ export default function DashboardPage() {
                       {cardStatementExpenses.length ===
                       0 ? (
                        <div
-  style={{
-    padding: "12px 0",
-    color: "#6b7280",
-    fontSize: 14,
-  }}
->
-  沒有支出明細
-</div>
+                          style={{
+                            padding: "12px 0",
+                            color: "#6b7280",
+                            fontSize: 14,
+                            }}
+                        >
+                          沒有支出明細
+                      </div>
                       ) : (
                         cardStatementExpenses.map(
                           (expense) => (
@@ -3265,6 +3265,7 @@ export default function DashboardPage() {
                                 borderBottom: "1px solid #eee",
                               }}
                             >
+   //A09「帳單明細」左側品項文字。
                              <span
                                 style={{
                                     minWidth: 0,
@@ -3280,7 +3281,7 @@ export default function DashboardPage() {
                                 {expense.date}{" "}
                                 {expense.item}
                               </span>
-
+  //A09「帳單明細」右側金額。
                              <span
                               style={{
                                     fontSize: 14,
