@@ -2251,16 +2251,20 @@ export default function DashboardPage() {
         </section>
       )}
 
-            {/* ======================================================================
-          A06. 本月支出總額
-      ====================================================================== */}
+{/* ======================================================================
+        A06. 本月支出總額
+    ====================================================================== */}
 
+{/* ======================================================================
+		A06「本月支出總額」section 外層
+    ====================================================================== */}
 <section
   style={{
     ...sectionStyle,
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
     marginBottom: 16,
+	minWidth: 0,
   }}
 >
         <h2
@@ -2309,6 +2313,10 @@ export default function DashboardPage() {
                   color: "#111827",
                   whiteSpace: "nowrap",
                   lineHeight: 1.2,
+				  overflow: "hidden",
+				  textOverflow: "ellipsis",
+				  maxWidth: "100%",
+				  minWidth: 0,
                 }}
               >
                 {currency}{" "}
@@ -2321,9 +2329,9 @@ export default function DashboardPage() {
       )}
       </section>
 
-           {/* ======================================================================
-          A07. 支出分類
-      ====================================================================== */}
+{/* ======================================================================
+    	A07. 支出分類
+    ====================================================================== */}
 
 <section
   style={{
@@ -2331,6 +2339,7 @@ export default function DashboardPage() {
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
     marginBottom: 16,
+	minWidth: 0,
   }}
 >
   <h2
@@ -2366,20 +2375,28 @@ export default function DashboardPage() {
             justifyContent: "space-between",
             alignItems: "center",
             gap: 10,
+			rowGap: 4,
             flexWrap: "wrap",
             padding: "8px 0",
             borderBottom:
   index === Object.entries(categoryTotals).length - 1
     ? "none"
     : "1px solid #eee",
+			  minWidth: 0,
           }}
         >
           <strong
             style={{
-              fontSize: 15,
+              display: "block",
+			fontSize: 15,
               fontWeight: 600,
               color: "#111827",
               lineHeight: 1.4,
+			  minWidth: 0,
+			  flex: "1 1 160px",
+			  overflow: "hidden",
+			  textOverflow: "ellipsis",
+			whiteSpace: "nowrap",
             }}
           >
             {category}
@@ -2387,11 +2404,12 @@ export default function DashboardPage() {
 
           <div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 12,
-              rowGap: 6,
-              color: "#374151",
+              	display: "flex",
+              	flexWrap: "wrap",
+              	gap: 12,
+              	rowGap: 6,
+              	color: "#374151",
+				minWidth: 0,
             }}
           >
             {Object.entries(totals).map(
@@ -2404,6 +2422,7 @@ export default function DashboardPage() {
                     color: "#111827",
                     whiteSpace: "nowrap",
                     lineHeight: 1.4,
+					flexShrink: 0,
                   }}
                 >
                   {currency}{" "}
@@ -2429,6 +2448,7 @@ export default function DashboardPage() {
     padding: 16,
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
     marginBottom: 16,
+	minWidth: 0,
   }}
 >
   <h2
@@ -2483,6 +2503,10 @@ export default function DashboardPage() {
                     boxShadow: isOpen
                       ? "0 2px 8px rgba(0,0,0,0.10)"
                       : "0 1px 3px rgba(0,0,0,0.06)",
+					  minWidth: 0,
+					  width: "100%",
+					  boxSizing: "border-box",
+					  overflow: "hidden",
                   }}
                 >
                   <button
@@ -2669,6 +2693,7 @@ export default function DashboardPage() {
         padding: 16,
         boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
         marginBottom: 16,
+		minWidth: 0,
         }}
       >
         <div
@@ -3437,6 +3462,7 @@ export default function DashboardPage() {
             padding: 16,
             boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             marginBottom: 16,
+			minWidth: 0,
             }}
           >
           <div
