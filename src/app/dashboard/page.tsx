@@ -4602,7 +4602,7 @@ export default function DashboardPage() {
                   gap: 10,
                   alignItems: "center",
                   padding: "9px 0",
-                  borderBottom: "1px solid #eee",
+                  borderBottom: "1px solid #e5e7eb",
 			  	rowGap: 4,
                 }}
               >
@@ -4611,6 +4611,7 @@ export default function DashboardPage() {
               fontSize: 14,
               color: "#4b5563",
               whiteSpace: "nowrap",
+			lineHeight: 1.4,
 			  
 			
               }}
@@ -4634,6 +4635,11 @@ export default function DashboardPage() {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
+					  lineHeight: 1.4,
+					  marginTop: 2,
+					  textAlign: "right",
+					  whiteSpace: "nowrap",
+					  flexShrink: 0,
                     }}
                 >
   <strong>
@@ -4703,6 +4709,9 @@ export default function DashboardPage() {
                   borderRadius: 10,
                   cursor: "pointer",
                   fontWeight: 600,
+		 		fontSize: 14,
+				whiteSpace: "nowrap",
+				flexShrink: 0,
                   }}
           >
             載入更多
