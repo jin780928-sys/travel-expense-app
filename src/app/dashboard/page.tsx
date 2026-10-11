@@ -1745,11 +1745,11 @@ export default function DashboardPage() {
   };
 
   const summaryCardStyle = {
-    background: "#fff",
+    background: "#ffffff",
     border: "1px solid #e5e7eb",
     borderRadius: 14,
     padding: 16,
-    minWidth: 160,
+    minWidth: 17s0,
     minHeight: 92,
     flex: "1 1 180px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
@@ -1939,10 +1939,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-  color: "#6b7280",
-  fontSize: 14,
-  fontWeight: 500,
-}}
+              color: "#6b7280",
+              fontSize: 14,
+              fontWeight: 500,
+              }}
           >
             未繳信用卡
           </div>
@@ -1964,10 +1964,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-  color: "#6b7280",
-  fontSize: 14,
-  fontWeight: 500,
-}}
+              color: "#6b7280",
+              fontSize: 14,
+              fontWeight: 500,
+              }}
           >
             本月總支出
           </div>
@@ -2006,10 +2006,10 @@ export default function DashboardPage() {
         <div style={summaryCardStyle}>
           <div
             style={{
-  color: "#6b7280",
-  fontSize: 14,
-  fontWeight: 500,
-}}
+              color: "#6b7280",
+              fontSize: 14,
+              fontWeight: 500,
+              }}
           >
             最近繳款日
           </div>
