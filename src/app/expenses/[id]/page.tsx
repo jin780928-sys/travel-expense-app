@@ -221,65 +221,198 @@ export default function ExpenseDetailPage() {
   </div>
 </div>
 
-          <p>日期：{expense.date || "未設定"}</p>
+         <div
+  style={{
+    background: "#ffffff",
+    border: "1px solid #e5e7eb",
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 18,
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+  }}
+>
+  <div
+    style={{
+      display: "grid",
+      gap: 12,
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+      }}
+    >
+      <span style={{ color: "#6b7280", fontSize: 14 }}>日期</span>
+      <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+        {expense.date || "未設定"}
+      </span>
+    </div>
 
-          {(expense.major_category || expense.category) && (
-  <p>
-    分類：
-    {expense.major_category || "未分類"}
-    {expense.category ? ` → ${expense.category}` : ""}
-  </p>
-)}
+    {(expense.major_category || expense.category) && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 16,
+          flexWrap: "wrap",
+        }}
+      >
+        <span style={{ color: "#6b7280", fontSize: 14 }}>分類</span>
+        <span
+          style={{
+            color: "#111827",
+            fontSize: 14,
+            fontWeight: 600,
+            textAlign: "right",
+          }}
+        >
+          {expense.major_category || "未分類"}
+          {expense.category ? ` → ${expense.category}` : ""}
+        </span>
+      </div>
+    )}
 
-         {expense.payment_method && (
-  <p>
-  付款方式：
-  {expense.payment_method === "cash"
-    ? "現金"
-    : expense.payment_method === "credit_card"
-    ? "信用卡"
-    : expense.payment_method === "debit_card"
-    ? "簽帳金融卡"
-    : expense.payment_method === "bank_transfer"
-    ? "銀行轉帳"
-    : expense.payment_method === "apple_pay"
-    ? "Apple Pay"
-    : expense.payment_method === "google_pay"
-    ? "Google Pay"
-    : expense.payment_method === "other"
-    ? "其他"
-    : expense.payment_method}
-</p>
-)}
+    {expense.payment_method && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 16,
+          flexWrap: "wrap",
+        }}
+      >
+        <span style={{ color: "#6b7280", fontSize: 14 }}>付款方式</span>
+        <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+          {expense.payment_method === "cash"
+            ? "現金"
+            : expense.payment_method === "credit_card"
+            ? "信用卡"
+            : expense.payment_method === "debit_card"
+            ? "簽帳金融卡"
+            : expense.payment_method === "bank_transfer"
+            ? "銀行轉帳"
+            : expense.payment_method === "apple_pay"
+            ? "Apple Pay"
+            : expense.payment_method === "google_pay"
+            ? "Google Pay"
+            : expense.payment_method === "other"
+            ? "其他"
+            : expense.payment_method}
+        </span>
+      </div>
+    )}
 
-{expense.payment_method === "credit_card" && (
-  <p>信用卡：{expense.card_name || "-"}</p>
-)}
+    {expense.payment_method === "credit_card" && (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 16,
+          flexWrap: "wrap",
+        }}
+      >
+        <span style={{ color: "#6b7280", fontSize: 14 }}>信用卡</span>
+        <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+          {expense.card_name || "-"}
+        </span>
+      </div>
+    )}
 
-          <p>
-            類型：
-            {expense.expense_scope === "travel"
-              ? "旅遊花費"
-              : "日常花費"}
-          </p>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+      }}
+    >
+      <span style={{ color: "#6b7280", fontSize: 14 }}>類型</span>
+      <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+        {expense.expense_scope === "travel"
+          ? "旅遊花費"
+          : "日常花費"}
+      </span>
+    </div>
 
-          <p>
-            所屬旅程：{tripName || "無"}
-          </p>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+      }}
+    >
+      <span style={{ color: "#6b7280", fontSize: 14 }}>所屬旅程</span>
+      <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+        {tripName || "無"}
+      </span>
+    </div>
 
-          <p>
-            付款人：{payerName || "未指定"}
-          </p>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+      }}
+    >
+      <span style={{ color: "#6b7280", fontSize: 14 }}>付款人</span>
+      <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+        {payerName || "未指定"}
+      </span>
+    </div>
 
-          <p>
-            分攤方式：
-            {expense.split_type === "custom"
-              ? "自訂金額"
-              : "平均分攤"}
-          </p>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        gap: 16,
+        flexWrap: "wrap",
+      }}
+    >
+      <span style={{ color: "#6b7280", fontSize: 14 }}>分攤方式</span>
+      <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
+        {expense.split_type === "custom"
+          ? "自訂金額"
+          : "平均分攤"}
+      </span>
+    </div>
 
-          {expense.notes && (
-            <p>備註：{expense.notes}</p>
+    {expense.notes && (
+      <div
+        style={{
+          paddingTop: 12,
+          borderTop: "1px solid #e5e7eb",
+        }}
+      >
+        <div
+          style={{
+            color: "#6b7280",
+            fontSize: 14,
+            marginBottom: 6,
+          }}
+        >
+          備註
+        </div>
+
+        <div
+          style={{
+            color: "#111827",
+            fontSize: 14,
+            lineHeight: 1.5,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+        >
+          {expense.notes}
+        </div>
+      </div>
+    )}
+  </div>
+</div>
           )}
           <p style={{ marginTop: 20 }}>
   <Link href={`/expenses/${id}/edit`}>
