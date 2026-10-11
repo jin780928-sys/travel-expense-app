@@ -4008,6 +4008,7 @@ export default function DashboardPage() {
    //A10「歷史帳單」展開後每筆支出的左側文字。
                               <span
                                   style={{
+                                      display: "block",
                                       minWidth: 0,
                                       flex: "1 1 180px",
                                       overflow: "hidden",
@@ -4016,12 +4017,13 @@ export default function DashboardPage() {
                                       color: "#4b5563",
                                       fontSize: 14,
                                       lineHeight: 1.4,
+                                      maxWidth: "100%",
                                     }}
                                   >
                                     {expense.date}{" "}
                                     {expense.item}
                                 </span>
-
+//A10「歷史帳單」展開後每筆支出的右側金額。
                              <span
                                  style={{
                                          fontSize: 14,
@@ -4030,6 +4032,7 @@ export default function DashboardPage() {
                                          whiteSpace: "nowrap",
                                          textAlign: "right",
                                          minWidth: 80,
+                                         flexShrink: 0,
                                          lineHeight: 1.4,
                                        }}
                                     >
