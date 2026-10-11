@@ -3625,7 +3625,7 @@ export default function DashboardPage() {
           >
             <div
               style={{
-                borde:                  "1px solid #eee",
+                border: "1px solid #eee",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
