@@ -62,6 +62,7 @@ type Expense = {
   major_category: string | null;
   category: string | null;
   currency: string | null;
+ payment_method: string | null;
   card_name: string | null;
 };
 
