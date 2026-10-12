@@ -388,21 +388,64 @@ function togglePerson(
   }
 
   function getEqualShare() {
-    const numericAmount =
-      Number(amount);
+  const numericAmount =
+    Number(amount);
 
   if (
-      !numericAmount ||
-      selectedPeople.length === 0
-    ) {
-      return 0;
-    }
+    !numericAmount ||
+    selectedPeople.length === 0
+  ) {
+    return 0;
+  }
 
     return (
-      numericAmount /
-      selectedPeople.length
-    );
-  }
+    numericAmount /
+    selectedPeople.length
+  );
+}
+
+function updateCustomShare(
+  personId: string,
+  value: string
+) {
+  const enteredAmount =
+    Number(value) || 0;
+
+  const totalAmount =
+    Number(amount) || 0;
+
+  setCustomShares((prev) => {
+    const next = {
+      ...prev,
+      [personId]: enteredAmount,
+    };
+
+    // 只有 2 個分攤人時，
+    // 自動計算另一人的剩餘金額
+    if (selectedPeople.length === 2) {
+      const otherPersonId =
+        selectedPeople.find(
+          (id) => id !== personId
+        );
+
+
+      if (otherPersonId) {
+        next[otherPersonId] =
+          Math.max(
+            0,
+            Number(
+              (
+                totalAmount -
+                enteredAmount
+              ).toFixed(2)
+            )
+          );
+      }
+    }
+
+    return next;
+  });
+}
 
 const customTotal =
     selectedPeople.reduce(
