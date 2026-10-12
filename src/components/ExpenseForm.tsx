@@ -649,14 +649,23 @@ const fieldStyle: CSSProperties = {
           </label>
 
           <select
-            value={expenseScope}
-            onChange={(e) =>
-              setExpenseScope(
-                e.target.value
-              )
-            }
-            style={inputStyle}
-          >
+  value={expenseScope}
+  onChange={(e) => {
+    const newScope =
+      e.target.value;
+
+    setExpenseScope(
+      newScope
+    );
+
+    if (
+      newScope !== "trip"
+    ) {
+      setTripId("");
+    }
+  }}
+  style={inputStyle}
+>
             <option value="daily">
               日常花費
             </option>
@@ -669,25 +678,22 @@ const fieldStyle: CSSProperties = {
 
         {expenseScope ===
           "travel" && (
-          <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              所屬旅程
-            </label>
+          {expenseScope === "trip" && (
+  <div style={fieldStyle}>
+    <label style={labelStyle}>
+      所屬旅程
+    </label>
 
-            <select
-              value={tripId}
-              onChange={(e) =>
-                setTripId(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            >
-              <option value="">
-                無
-              </option>
+    <select
+      value={tripId}
+      onChange={(e) =>
+        setTripId(e.target.value)
+      }
+      style={inputStyle}
+    >
+      <option value="">
+        無
+      </option>
 
               {trips.map(
                 (trip) => (
