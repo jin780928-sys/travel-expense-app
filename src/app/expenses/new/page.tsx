@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import ExpenseForm from "../../../components/ExpenseForm";
 
 type Trip = {
   id: number;
