@@ -436,17 +436,24 @@ if (!category) {
             </label>
 
             <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={amount}
-              onChange={(e) =>
-                setAmount(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            />
+  type="number"
+  min="0"
+  step="0.01"
+  value={amount}
+  onChange={(e) => {
+    const value =
+      e.target.value;
+
+    if (
+      /^\d*(\.\d{0,2})?$/.test(
+        value
+      )
+    ) {
+      setAmount(value);
+    }
+  }}
+  style={inputStyle}
+/>
           </div>
 
           <div style={fieldStyle}>
@@ -1038,19 +1045,22 @@ const checked =
                           readOnly={
                             isAutoSharePerson
                             }
-                          onChange={(
-                            e
-                          ) => {
-                            if (
-                              !isAutoSharePerson
-                              ) {
-                              updateCustomShare(
-                                personId,
-                                e.target
-                                  .value
-                              );
-                              }
-                          }}
+                          onChange={(e) => {
+  const value =
+    e.target.value;
+
+  if (
+    !isAutoSharePerson &&
+    /^\d*(\.\d{0,2})?$/.test(
+      value
+    )
+  ) {
+    updateCustomShare(
+      personId,
+      value
+       );
+  }
+}}
                           placeholder={
                             isAutoSharePerson
                               ? "自動計算"
