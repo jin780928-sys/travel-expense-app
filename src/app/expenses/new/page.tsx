@@ -230,6 +230,23 @@ export default function NewExpensePage() {
     0
   );
 
+  function getEqualShare() {
+  const totalAmount =
+    Number(amount) || 0;
+
+  if (
+    selectedPeople.length === 0
+  ) {
+    return 0;
+  }
+
+  return Number(
+    (
+      totalAmount /
+      selectedPeople.length
+    ).toFixed(2)
+  );
+}
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
