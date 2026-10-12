@@ -257,6 +257,59 @@ const fieldStyle: CSSProperties = {
   return (
    <form
   onSubmit={(e) => {
+
+    if (!item.trim()) {
+  e.preventDefault();
+
+  alert("請輸入支出項目");
+
+  return;
+}
+
+if (
+  !amount ||
+  Number(amount) <= 0
+) {
+  e.preventDefault();
+
+  alert(
+    "請輸入大於 0 的支出金額"
+  );
+
+  return;
+}
+
+if (!date) {
+  e.preventDefault();
+
+  alert("請選擇日期");
+
+  return;
+}
+
+    if (!majorCategory) {
+  e.preventDefault();
+
+  alert("請選擇大分類");
+
+  return;
+}
+
+if (!category) {
+  e.preventDefault();
+
+  alert("請選擇小分類");
+
+  return;
+}
+
+    if (!paymentMethod) {
+  e.preventDefault();
+
+  alert("請選擇付款方式");
+
+  return;
+}
     if (
       expenseScope === "trip" &&
       !tripId
