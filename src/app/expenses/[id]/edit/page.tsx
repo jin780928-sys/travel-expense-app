@@ -1332,16 +1332,23 @@ if (loading) {
               {people.map(
                 (person) => {
                   const personId =
-                    String(
-                      person.id
-                    );
+  String(
+    person.id
+  );
 
-              const checked =
-                    selectedPeople.includes(
-                      personId
-                    );
+const checked =
+  selectedPeople.includes(
+    personId
+  );
+                  const isAutoSharePerson =
+  splitType === "custom" &&
+  selectedPeople.length >= 3 &&
+  personId ===
+    selectedPeople[
+      selectedPeople.length - 1
+    ];
 
-                  return (
+return (
                     <div
                       key={
                         person.id
@@ -1429,14 +1436,23 @@ if (loading) {
     customShares[
       personId
     ] ?? ""
+    }
+  readOnly={
+    isAutoSharePerson
   }
-                            onChange={(e) =>
-    updateCustomShare(
-      personId,
-      e.target.value
-    )
+  onChange={(e) => {
+    if (!isAutoSharePerson) {
+      updateCustomShare(
+        personId,
+        e.target.value
+      );
+    }
+  }}
+                            placeholder={
+    isAutoSharePerson
+      ? "自動計算"
+      : "金額"
   }
-  placeholder="金額"
   style={{
     width: 120,
     height: 38,
@@ -1447,6 +1463,11 @@ if (loading) {
     boxSizing:
       "border-box",
     fontSize: 14,
+    background:
+      isAutoSharePerson
+        ? "#f3f4f6"
+        : "#ffffff",
+    color: "#111827",
   }}
 />
                         )}
