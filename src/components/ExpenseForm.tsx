@@ -272,6 +272,19 @@ const fieldStyle: CSSProperties = {
     }
 
     if (
+  selectedPeople.length > 0 &&
+  !paidBy
+) {
+  e.preventDefault();
+
+  alert(
+    "有分攤時，請先選擇付款人"
+  );
+
+  return;
+}
+
+    if (
       splitType === "custom" &&
       selectedPeople.length === 0
     ) {
