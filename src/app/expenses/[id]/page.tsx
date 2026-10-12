@@ -414,20 +414,55 @@ export default function ExpenseDetailPage() {
   </div>
 </div>
           
-          <p style={{ marginTop: 20 }}>
-  <Link href={`/expenses/${id}/edit`}>
-    ✏️ 編輯這筆花費
-  </Link>
-</p>
-          <button
-  onClick={handleDelete}
+          <div
   style={{
-    padding: "10px 16px",
-    marginTop: 16,
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 20,
+    marginBottom: 24,
   }}
 >
-  刪除這筆花費
-</button>
+            <Link
+    href={`/expenses/${id}/edit`}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: 40,
+      padding: "0 14px",
+      background: "#ffffff",
+      color: "#374151",
+      border: "1px solid #d1d5db",
+      borderRadius: 10,
+      textDecoration: "none",
+      fontWeight: 600,
+      fontSize: 14,
+      whiteSpace: "nowrap",
+    }}
+  >
+              📝 編輯這筆花費
+  </Link>
+
+  <button
+    type="button"
+    onClick={handleDelete}
+    style={{
+      height: 40,
+      padding: "0 14px",
+      background: "#fef2f2",
+      color: "#b91c1c",
+      border: "1px solid #fecaca",
+      borderRadius: 10,
+      cursor: "pointer",
+      fontWeight: 600,
+      fontSize: 14,
+      whiteSpace: "nowrap",
+    }}
+  >
+    刪除這筆花費
+  </button>
+</div>
           
 
           <hr style={{ margin: "30px 0" }} />
