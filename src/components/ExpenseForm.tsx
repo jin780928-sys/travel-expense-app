@@ -10,6 +10,7 @@ import {
 
 import {
   PAYMENT_METHODS,
+  CARD_PAYMENT_METHODS,
 } from "../lib/paymentMethods";
 
 import {
@@ -568,21 +569,22 @@ const fieldStyle: CSSProperties = {
 
         {paymentMethod ===
           "credit_card" && (
-          <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              信用卡
-            </label>
+          {CARD_PAYMENT_METHODS.includes(
+  paymentMethod
+) && (
+  <div style={fieldStyle}>
+    <label style={labelStyle}>
+      信用卡
+    </label>
 
-            <select
-              value={cardName}
-              onChange={(e) =>
-                setCardName(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
+    <select
+      value={cardName}
+      onChange={(e) =>
+        setCardName(
+          e.target.value
+        )
+      }
+      style={inputStyle}
             >
               <option value="">
                 請選擇信用卡
