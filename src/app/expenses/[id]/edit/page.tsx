@@ -731,46 +731,7 @@ const pageStyle:
     width: "100%",
   };
 
-const cardStyle:
-    React.CSSProperties = {
-    background: "#ffffff",
-    border:
-      "1px solid #e5e7eb",
-    borderRadius: 14,
-    padding: 18,
-    marginBottom: 18,
-    boxShadow:
-      "0 1px 3px rgba(0,0,0,0.06)",
-  };
 
-const labelStyle:
-    React.CSSProperties = {
-    display: "block",
-    marginBottom: 6,
-    fontSize: 14,
-    fontWeight: 600,
-    color: "#374151",
-  };
-
-const inputStyle:
-    React.CSSProperties = {
-    width: "100%",
-    height: 42,
-    padding: "0 12px",
-    border:
-      "1px solid #d1d5db",
-  borderRadius: 10,
-    background: "#ffffff",
-    color: "#111827",
-    fontSize: 14,
-    boxSizing: "border-box",
-    outline: "none",
-  };
-
-const fieldStyle:
-    React.CSSProperties = {
-    marginBottom: 14,
-  };
 
 if (loading) {
     return (
