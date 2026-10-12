@@ -532,11 +532,22 @@ const fieldStyle: CSSProperties = {
 
           <select
   value={paymentMethod}
-  onChange={(e) =>
+  onChange={(e) => {
+    const newPaymentMethod =
+      e.target.value;
+
     setPaymentMethod(
-      e.target.value
-    )
-  }
+      newPaymentMethod
+    );
+
+    if (
+      !CARD_PAYMENT_METHODS.includes(
+        newPaymentMethod
+      )
+    ) {
+      setCardName("");
+    }
+  }}
   style={inputStyle}
 >
             <option value="">
