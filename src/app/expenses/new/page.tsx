@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import ExpenseForm from "../../../components/ExpenseForm";
-import { useRouter } from "next/navigation";
+import {
+  useParams,
+  useRouter,
+} from "next/navigation";
 
 type Trip = {
   id: number;
