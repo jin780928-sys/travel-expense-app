@@ -567,9 +567,7 @@ const fieldStyle: CSSProperties = {
 </select>
         </div>
 
-        {paymentMethod ===
-          "credit_card" && (
-          {CARD_PAYMENT_METHODS.includes(
+       {CARD_PAYMENT_METHODS.includes(
   paymentMethod
 ) && (
   <div style={fieldStyle}>
