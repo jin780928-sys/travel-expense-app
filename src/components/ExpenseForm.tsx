@@ -1101,6 +1101,59 @@ const checked =
                   </div>
                   );
               }
+                      {splitType === "custom" && (
+  <div
+    style={{
+      marginTop: 12,
+      padding: 12,
+      border: "1px solid #e5e7eb",
+      borderRadius: 10,
+      background: "#f9fafb",
+      fontSize: 14,
+      color: "#374151",
+    }}
+    >
+    <div>
+      目前分攤：
+      {Number(customTotal).toFixed(2)}
+    </div>
+
+    <div>
+      支出金額：
+      {Number(amount).toFixed(2)}
+    </div>
+
+     {Number(customTotal) >
+      Number(amount) && (
+      <div
+        style={{
+          marginTop: 8,
+          color: "#b91c1c",
+          fontWeight: 600,
+        }}
+      >
+        ⚠️ 分攤總額已超過支出金額
+      </div>
+    )}
+    {selectedPeople.length > 0 &&
+      Number(customTotal) <
+        Number(amount) && (
+        <div
+          style={{
+            marginTop: 8,
+            color: "#92400e",
+            fontWeight: 600,
+          }}
+          >
+          尚差{" "}
+          {(
+            Number(amount) -
+            Number(customTotal)
+          ).toFixed(2)}
+        </div>
+      )}
+  </div>
+)}
             )}
           </div>
         )}
