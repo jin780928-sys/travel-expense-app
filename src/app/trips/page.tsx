@@ -336,28 +336,101 @@ export default function TripsPage() {
       {!message && trips.length === 0 && <p>目前還沒有旅程。</p>}
 
       {trips.map((trip) => (
+{/* =========================================================
+    單一旅程卡片
+    - 白底
+    - 灰色邊框
+    - 圓角 14
+    - 卡片間距固定
+   ========================================================= */}
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      gap: 12,
+      alignItems: "flex-start",
+      flexWrap: "wrap",
+    }}
+  >
+    <div
+      style={{
+        minWidth: 0,
+        flex: "1 1 260px",
+      }}
+    >
+      <Link
+        href={`/trips/${trip.id}`}
+        style={{
+          fontSize: 22,
+          fontWeight: 700,
+          color: "#111827",
+          textDecoration: "none",
+        }}
+      >
+        {trip.name}
+      </Link>
+
+      <div
+        style={{
+          marginTop: 12,
+          fontSize: 15,
+          color: "#374151",
+        }}
+      >
+        地點：{trip.location || "未設定"}
+      </div>
+
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 15,
+          color: "#374151",
+        }}
+      >
+        日期：{trip.start_date} ～ {trip.end_date}
+      </div>
+
+      {trip.notes && (
         <div
-          key={trip.id}
           style={{
-            border: "1px solid #ccc",
-            padding: 16,
-            marginBottom: 12,
-            borderRadius: 8,
+            marginTop: 10,
+            fontSize: 14,
+            lineHeight: 1.6,
+            color: "#6b7280",
+            whiteSpace: "pre-wrap",
           }}
         >
-          <h2>
-  <Link href={`/trips/${trip.id}`}>
-    {trip.name}
-  </Link>
-</h2>
+          {trip.notes}
+        </div>
+      )}
+    </div>
 
-          {trip.location && <p>地點：{trip.location}</p>}
-
-          <p>
-            日期：{trip.start_date || "未設定"}
-            {" ～ "}
-            {trip.end_date || "未設定"}
-          </p>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          height: 30,
+          padding: "0 10px",
+          borderRadius: 999,
+          background: "#f3f4f6",
+          color: "#374151",
+          fontSize: 13,
+          fontWeight: 600,
+          whiteSpace: "nowrap",
+        }}
+      >
+        旅程
+      </span>
+    </div>
+  </div>
+</div>
 
           {trip.notes && <p>備註：{trip.notes}</p>}
         </div>
