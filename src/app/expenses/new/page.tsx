@@ -387,8 +387,7 @@ if (splitError) {
   return;
 }
 
-router.push("/dashboard");
-    }
+
 
     setDate("");
     setItem("");
@@ -412,6 +411,9 @@ router.push("/dashboard");
     setCustomAmounts({});
 
     setMessage("新增成功");
+
+      router.push("/dashboard");
+    
   }
 
   return (
