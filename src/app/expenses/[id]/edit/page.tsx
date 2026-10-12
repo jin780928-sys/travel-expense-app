@@ -223,8 +223,8 @@ useEffect(() => {
         throw expenseResult.error;
       }
 
-            const data =
-        expenseResult.data as ExpenseData;
+                 const data =
+        expenseResult.data as unknown as ExpenseData;
 
     setItem(data.item || "");
 
