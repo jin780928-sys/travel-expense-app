@@ -4,6 +4,10 @@ import type {
   CSSProperties,
 } from "react";
 
+import {
+  CATEGORY_OPTIONS,
+} from "../lib/categories";
+
 export type Person = {
   id: number | string;
   name?: string | null;
@@ -23,83 +27,7 @@ export type Trip = {
   trip_name?: string | null;
 };
 
-const CATEGORY_OPTIONS: Record<
-  string,
-  string[]
-> = {
-  餐飲: [
-    "早餐",
-    "午餐",
-    "晚餐",
-    "飲料",
-    "咖啡",
-    "點心",
-    "其他",
-  ],
-  交通: [
-    "大眾運輸",
-    "計程車／叫車",
-    "機票",
-    "租車",
-    "停車",
-    "過路費",
-    "其他",
-  ],
 
-  住宿: [
-    "飯店",
-    "民宿",
-    "Airbnb",
-    "露營",
-    "其他",
-  ],
-  購物: [
-    "日用品",
-    "服飾",
-    "3C",
-    "美妝保養",
-    "家電",
-    "禮物",
-    "其他",
-  ],
-  娛樂旅遊: [
-    "景點門票",
-    "樂園",
-    "活動",
-    "旅遊行程",
-    "郵輪",
-    "娛樂",
-    "其他",
-  ],
-
-  居家: [
-    "房租",
-    "水電瓦斯",
-    "網路",
-    "家具",
-    "清潔用品",
-    "維修",
-    "其他",
-  ],
-
-  汽車: [
-    "加油",
-    "保險",
-    "保養",
-    "維修",
-    "洗車",
-    "註冊／牌照",
-    "其他",
-  ],
-
-  其他: [
-    "醫療",
-    "教育",
-    "手續費",
-    "稅金",
-    "其他",
-  ],
-};
 
 type ExpenseFormProps = {
   item: string;
