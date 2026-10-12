@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import ExpenseForm from "../../../components/ExpenseForm";
+import { useRouter } from "next/navigation";
 
 type Trip = {
   id: number;
@@ -68,6 +69,8 @@ export default function NewExpensePage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tripFromUrl = params.get("trip_id");
+
+    const router = useRouter();
 
     if (tripFromUrl) {
       setTripId(tripFromUrl);
@@ -249,10 +252,16 @@ export default function NewExpensePage() {
     ).toFixed(2)
   );
 }
+
+  
   async function handleSubmit(
   e: React.FormEvent
 ) {
   e.preventDefault();
+
+    if (saving) {
+    return;
+  }
 
   setSaving(true);
 
