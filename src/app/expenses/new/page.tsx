@@ -288,324 +288,89 @@ export default function NewExpensePage() {
     >
       <h1>新增花費</h1>
 
-      <form onSubmit={handleSubmit}>
-        <label>日期</label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        />
+      <ExpenseForm
+  item={item}
+  setItem={setItem}
 
-        <label>花費項目</label>
-        <input
-          type="text"
-          placeholder="例如：晚餐"
-          value={item}
-          onChange={(e) => setItem(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        />
+  amount={amount}
+  setAmount={setAmount}
 
-        <label>金額</label>
-        <input
-          type="number"
-          step="0.01"
-          placeholder="0"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        />
+  date={date}
+  setDate={setDate}
 
-        <label>大分類</label>
-        <select
-          value={majorCategory}
-          onChange={(e) => {
-            setMajorCategory(e.target.value);
-            setCategory("");
-          }}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="">請選擇大分類</option>
 
-          {Object.keys(categoryOptions).map((major) => (
-            <option key={major} value={major}>
-              {major}
-            </option>
-          ))}
-        </select>
+        majorCategory={majorCategory}
+  setMajorCategory={setMajorCategory}
 
-        <label>小分類</label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          disabled={!majorCategory}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="">請選擇小分類</option>
+  category={category}
+  setCategory={setCategory}
 
-          {majorCategory &&
-            categoryOptions[majorCategory].map((sub) => (
-              <option key={sub} value={sub}>
-                {sub}
-              </option>
-            ))}
-        </select>
+  paymentMethod={paymentMethod}
+  setPaymentMethod={setPaymentMethod}
 
-        <label>付款方式</label>
-        <select
-          value={paymentMethod}
-          onChange={(e) => {
-            const value = e.target.value;
-            setPaymentMethod(value);
+        cardName={cardName}
+  setCardName={setCardName}
 
-            if (value !== "credit_card") {
-              setCardName("");
-            }
-          }}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="">請選擇付款方式</option>
-          <option value="cash">現金</option>
-          <option value="credit_card">信用卡</option>
-          <option value="debit_card">簽帳金融卡</option>
-          <option value="bank_transfer">銀行轉帳</option>
-          <option value="apple_pay">Apple Pay</option>
-          <option value="google_pay">Google Pay</option>
-          <option value="other">其他</option>
-        </select>
+  currency={currency}
+  setCurrency={setCurrency}
 
-        {paymentMethod === "credit_card" && (
-          <>
-            <label>信用卡</label>
+  expenseScope={expenseScope}
+  setExpenseScope={setExpenseScope}
 
-            <select
-              value={cardName}
-              onChange={(e) => setCardName(e.target.value)}
-              style={{
-                width: "100%",
-                padding: 10,
-                marginBottom: 12,
-              }}
-            >
-              <option value="">請選擇信用卡</option>
+  tripId={tripId}
+  setTripId={setTripId}
 
-              {creditCards.map((card) => (
-                <option key={card.id} value={card.name}>
-                  {card.name}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+        notes={notes}
+  setNotes={setNotes}
 
-        <label>幣別</label>
-        <select
-          value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="USD">USD</option>
-          <option value="TWD">TWD</option>
-          <option value="JPY">JPY</option>
-          <option value="EUR">EUR</option>
-          <option value="PEN">PEN</option>
-        </select>
+  paidBy={paidBy}
+  setPaidBy={setPaidBy}
 
-        <label>花費類型</label>
-        <select
-          value={expenseScope}
-          onChange={(e) => setExpenseScope(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="daily">日常花費</option>
-          <option value="travel">旅遊花費</option>
-        </select>
+  splitType={splitType}
+  setSplitType={setSplitType}
 
-        {expenseScope === "travel" && (
-          <>
-            <label>旅程</label>
+  selectedPeople={selectedPeople}
+  togglePerson={togglePerson}
 
-            <select
-              value={tripId}
-              onChange={(e) => setTripId(e.target.value)}
-              style={{
-                width: "100%",
-                padding: 10,
-                marginBottom: 12,
-              }}
-            >
-              <option value="">請選擇旅程</option>
 
-              {trips.map((trip) => (
-                <option key={trip.id} value={trip.id}>
-                  {trip.name}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+        customShares={customShares}
+  updateCustomShare={updateCustomShare}
 
-        <label>付款人</label>
-        <select
-          value={paidBy}
-          onChange={(e) => setPaidBy(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="">未指定</option>
+  people={people}
+  creditCards={creditCards}
+  trips={trips}
 
-          {people.map((person) => (
-            <option key={person.id} value={person.id}>
-              {person.name}
-            </option>
-          ))}
-        </select>
+  customTotal={customTotal}
+  getEqualShare={getEqualShare}
 
-        <div style={{ marginBottom: 12 }}>
-          <div style={{ marginBottom: 6 }}>分攤人員</div>
+  saving={saving}
+  submitText="新增支出"
 
-          {people.length === 0 && (
-            <p>目前尚未建立人員資料</p>
-          )}
+        onSubmit={handleSubmit}
 
-          {people.map((person) => (
-            <label
-              key={person.id}
-              style={{
-                display: "block",
-                marginBottom: 6,
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selectedPeople.includes(person.id)}
-                onChange={() => togglePerson(person.id)}
-              />
-
-              <span style={{ marginLeft: 8 }}>
-                {person.name}
-              </span>
-            </label>
-          ))}
-        </div>
-
-        <label>分攤方式</label>
-        <select
-          value={splitType}
-          onChange={(e) => setSplitType(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        >
-          <option value="equal">平均分攤</option>
-          <option value="custom">自訂金額</option>
-        </select>
-
-        {splitType === "custom" &&
-          selectedPeople.length > 0 && (
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ marginBottom: 8 }}>
-                自訂分攤金額
-              </div>
-
-              {selectedPeople.map((personId) => {
-                const person = people.find(
-                  (p) => p.id === personId
-                );
-
-                return (
-                  <div
-                    key={personId}
-                    style={{
-                      marginBottom: 8,
-                    }}
-                  >
-                    <label>
-                      {person?.name || `人員 ${personId}`}
-                    </label>
-
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={
-                        customAmounts[personId] || ""
-                      }
-                      onChange={(e) =>
-                        setCustomAmounts((current) => ({
-                          ...current,
-                          [personId]: e.target.value,
-                        }))
-                      }
-                      style={{
-                        width: "100%",
-                        padding: 10,
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-        <label>備註</label>
-        <textarea
-          placeholder="備註"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows={4}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginBottom: 12,
-          }}
-        />
-
-        <button
-          type="submit"
-          style={{
-            padding: "10px 16px",
-          }}
-        >
-          新增花費
-        </button>
-      </form>
+  cancelContent={
+    <a
+      href="/dashboard"
+      style={{
+        height: 42,
+        padding: "0 18px",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#ffffff",
+        color: "#374151",
+        border: "1px solid #d1d5db",
+        borderRadius: 10,
+        textDecoration: "none",
+        fontSize: 14,
+        fontWeight: 600,
+        whiteSpace: "nowrap",
+      }}
+    >
+      取消
+    </a>
+  }
+/>
 
       {message && (
         <p style={{ marginTop: 16 }}>{message}</p>
