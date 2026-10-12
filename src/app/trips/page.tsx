@@ -329,9 +329,7 @@ export default function TripsPage() {
   </button>
 </div>
 
-      <p>
-        <Link href="/trips/new">＋ 新增旅程</Link>
-      </p>
+     
 
       {message && <p>{message}</p>}
 
