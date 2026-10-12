@@ -335,7 +335,7 @@ export default function TripsPage() {
 
       {!message && trips.length === 0 && <p>目前還沒有旅程。</p>}
 
-      {trips.map((trip) => (
+      
 {/* =========================================================
     單一旅程卡片
     - 白底
@@ -343,6 +343,7 @@ export default function TripsPage() {
     - 圓角 14
     - 卡片間距固定
    ========================================================= */}
+      {trips.map((trip) => (
   <div
     style={{
       display: "flex",
