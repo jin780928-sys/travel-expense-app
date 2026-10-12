@@ -8,7 +8,14 @@ export default function EditExpensePage() {
   const params = useParams();
   const router = useRouter();
   const id = Number(params.id);
+  const [paidBy, setPaidBy] = useState("");
+const [splitType, setSplitType] = useState("equal");
 
+const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
+
+const [customShares, setCustomShares] = useState<
+  Record<string, number>
+>({});
   const [item, setItem] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
@@ -80,13 +87,30 @@ const categoryOptions: Record<string, string[]> = {
   );
 }
 
-      const { data: splitData, error: splitError } = await supabase
+     const { data: splitData, error: splitError } = await supabase
   .from("ExpenseSplits")
   .select("*")
   .eq("expense_id", id);
 
-if (splitError) {
+      if (splitError) {
   console.error("讀取分攤資料失敗:", splitError);
+}
+
+if (splitData) {
+  setSelectedPeople(
+    splitData.map((row) =>
+      String(row.person_id)
+    )
+    );
+
+  setCustomShares(
+    Object.fromEntries(
+      splitData.map((row) => [
+        String(row.person_id),
+        Number(row.share_amount),
+      ])
+    )
+  );
 }
 
       setItem(data.item || "");
@@ -99,7 +123,18 @@ if (splitError) {
       setCurrency(data.currency || "USD");
       setNotes(data.notes || "");
       setMessage("");
+      setPaidBy(
+  data.paid_by != null
+    ? String(data.paid_by)
+    : ""
+);
+
+setSplitType(
+  data.split_type || "equal"
+);
     }
+
+    
 
     if (id) {
       loadExpense();
