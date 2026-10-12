@@ -255,15 +255,51 @@ const fieldStyle: CSSProperties = {
   };
 
   return (
-    <form
+   <form
   onSubmit={(e) => {
     if (
       expenseScope === "trip" &&
       !tripId
     ) {
       e.preventDefault();
+
       alert(
         "旅遊支出請先選擇所屬旅程"
+      );
+
+
+      return;
+    }
+
+    if (
+      splitType === "custom" &&
+      selectedPeople.length === 0
+    ) {
+      e.preventDefault();
+
+      alert(
+        "自訂分攤請至少選擇一位分攤人"
+      );
+
+      return;
+    }
+
+
+    if (
+      splitType === "custom" &&
+      Math.abs(
+        customTotal -
+          Number(amount)
+      ) > 0.01
+    ) {
+      e.preventDefault();
+
+      alert(
+        `自訂分攤總額必須等於支出金額\n目前分攤：${customTotal.toFixed(
+          2
+        )}\n支出金額：${Number(
+          amount
+        ).toFixed(2)}`
       );
 
       return;
@@ -762,14 +798,23 @@ const fieldStyle: CSSProperties = {
           </label>
 
           <select
-            value={splitType}
-            onChange={(e) =>
-              setSplitType(
-                e.target.value
-              )
-            }
-            style={inputStyle}
-          >
+  value={splitType}
+  onChange={(e) => {
+    const newSplitType =
+      e.target.value;
+
+    setSplitType(
+      newSplitType
+    );
+
+    if (
+      newSplitType === "equal"
+    ) {
+      setCustomShares({});
+    }
+  }}
+  style={inputStyle}
+>
             <option value="equal">
               平均分攤
             </option>
@@ -807,8 +852,7 @@ const fieldStyle: CSSProperties = {
               gap: 8,
             }}
           >
-            {people.map(
-              (person) => {
+          {people.map((person) => {
                 const personId =
   Number(person.id);
 
