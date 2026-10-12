@@ -369,17 +369,22 @@ export default function NewExpensePage() {
         };
       });
 
-      const { error: splitError } = await supabase
-        .from("ExpenseSplits")
-        .insert(splitRows);
+     const { error: splitError } =
+  await supabase
+    .from("ExpenseSplits")
+    .insert(splitRows);
 
-      if (splitError) {
-        setMessage(
-          `花費已新增，但分攤資料失敗：${splitError.message}`
-        );
-        return;
-      }
-    }
+if (splitError) {
+  console.error(
+    "新增分攤資料失敗:",
+    splitError
+    );
+
+  alert("新增分攤資料失敗");
+  return;
+}
+
+router.push("/dashboard");
 
     setDate("");
     setItem("");
