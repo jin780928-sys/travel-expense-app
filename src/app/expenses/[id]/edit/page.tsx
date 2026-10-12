@@ -732,22 +732,26 @@ const pageStyle:
   };
 
 
-
 if (loading) {
-    return (
-      <main style={pageStyle}>
-        <div
-          style={{
-            ...cardStyle,
-            color: "#6b7280",
-            fontSize: 14,
-          }}
-        >
-          載入中...
-        </div>
-      </main>
-    );
-  }
+  return (
+    <main style={pageStyle}>
+      <div
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: 14,
+          padding: 18,
+          marginBottom: 18,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          color: "#6b7280",
+          fontSize: 14,
+        }}
+      >
+        載入中...
+      </div>
+    </main>
+  );
+}
 
   return (
     <main style={pageStyle}>
