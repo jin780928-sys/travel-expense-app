@@ -433,8 +433,7 @@ export default function TripsPage() {
   </div>
 </div>
 
-          {trip.notes && <p>備註：{trip.notes}</p>}
-        </div>
+     
       ))}
     </main>
   );
