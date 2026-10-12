@@ -385,7 +385,7 @@ if (splitError) {
 }
 
 router.push("/dashboard");
-      {
+    }
 
     setDate("");
     setItem("");
