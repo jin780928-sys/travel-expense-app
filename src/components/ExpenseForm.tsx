@@ -676,8 +676,7 @@ const fieldStyle: CSSProperties = {
             </select>
         </div>
 
-        {expenseScope ===
-          "travel" && (
+      
           {expenseScope === "trip" && (
   <div style={fieldStyle}>
     <label style={labelStyle}>
