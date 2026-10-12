@@ -337,104 +337,117 @@ export default function TripsPage() {
 
       
 {/* =========================================================
-    單一旅程卡片
-    - 白底
-    - 灰色邊框
-    - 圓角 14
-    - 卡片間距固定
+    旅程卡片清單
+    - 每一筆旅程使用相同卡片版型
+    - 白底、灰色邊框、圓角 14
+    - 顯示名稱、地點、日期、備註
    ========================================================= */}
-      {trips.map((trip) => (
+
+{trips.map((trip) => (
   <div
+    key={trip.id}
     style={{
-      display: "flex",
-      justifyContent: "space-between",
-      gap: 12,
-      alignItems: "flex-start",
-      flexWrap: "wrap",
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: 14,
+      padding: 18,
+      marginBottom: 14,
+      boxSizing: "border-box",
     }}
   >
     <div
       style={{
-        minWidth: 0,
-        flex: "1 1 260px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: 12,
+        flexWrap: "wrap",
       }}
     >
-      <Link
-        href={`/trips/${trip.id}`}
-        style={{
-          fontSize: 22,
-          fontWeight: 700,
-          color: "#111827",
-          textDecoration: "none",
-        }}
-      >
-        {trip.name}
-      </Link>
-
+      {/* 左側：旅程主要資料 */}
       <div
         style={{
-          marginTop: 12,
-          fontSize: 15,
-          color: "#374151",
+          minWidth: 0,
+          flex: "1 1 260px",
         }}
       >
-        地點：{trip.location || "未設定"}
-      </div>
-
-      <div
-        style={{
-          marginTop: 8,
-          fontSize: 15,
-          color: "#374151",
-        }}
-      >
-        日期：{trip.start_date} ～ {trip.end_date}
-      </div>
-
-      {trip.notes && (
-        <div
+        <Link
+          href={`/trips/${trip.id}`}
           style={{
-            marginTop: 10,
-            fontSize: 14,
-            lineHeight: 1.6,
-            color: "#6b7280",
-            whiteSpace: "pre-wrap",
+            fontSize: 22,
+            fontWeight: 700,
+            color: "#111827",
+            textDecoration: "none",
           }}
         >
-          {trip.notes}
-        </div>
-      )}
-    </div>
+          {trip.name}
+        </Link>
 
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-      }}
-    >
-      <span
+        <div
+          style={{
+            marginTop: 12,
+            fontSize: 15,
+            color: "#374151",
+          }}
+        >
+          地點：{trip.location || "未設定"}
+        </div>
+
+        <div
+          style={{
+            marginTop: 8,
+            fontSize: 15,
+            color: "#374151",
+          }}
+        >
+          日期：{trip.start_date} ～{" "}
+          {trip.end_date}
+        </div>
+
+        {trip.notes && (
+          <div
+            style={{
+              marginTop: 10,
+              fontSize: 14,
+              lineHeight: 1.6,
+              color: "#6b7280",
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            備註：{trip.notes}
+          </div>
+        )}
+      </div>
+
+      {/* 右側：旅程標籤 */}
+      <div
         style={{
-          display: "inline-flex",
+          display: "flex",
           alignItems: "center",
-          height: 30,
-          padding: "0 10px",
-          borderRadius: 999,
-          background: "#f3f4f6",
-          color: "#374151",
-          fontSize: 13,
-          fontWeight: 600,
-          whiteSpace: "nowrap",
+          justifyContent: "flex-end",
         }}
       >
-        旅程
-      </span>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            height: 30,
+            padding: "0 10px",
+            borderRadius: 999,
+            background: "#f3f4f6",
+            color: "#374151",
+            fontSize: 13,
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+          }}
+        >
+          旅程
+        </span>
+      </div>
     </div>
   </div>
-</div>
-
-     
-      ))}
+))}
+      {
     </main>
   );
 }
