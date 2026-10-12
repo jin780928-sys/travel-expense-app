@@ -1385,50 +1385,34 @@ if (loading) {
                         splitType ===
                           "custom" && (
                           <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={
-                              customShares[
-                                personId
-                              ] ?? ""
-                            }
-                            onChange={(
-                              e
-                            ) =>
-                              setCustomShares(
-                                (
-                                  prev
-                                ) => ({
-                                  ...prev,
-
-                                  [personId]:
-                                    Number(
-                                      e
-                                        .target
-                                        .value
-                                      ),
-                                })
-                              )
-                            }
-                            placeholder="金額"
-                            style={{
-                              width:
-                                120,
-                              height:
-                                38,
-                              padding:
-                                "0 10px",
-                              border:
-                                "1px solid #d1d5db",
-                              borderRadius:
-                                8,
-                              boxSizing:
-                                "border-box",
-                              fontSize:
-                                14,
-                            }}
-                          />
+  type="number"
+  min="0"
+  max={Number(amount) || undefined}
+  step="0.01"
+  value={
+    customShares[
+      personId
+    ] ?? ""
+  }
+                            onChange={(e) =>
+    updateCustomShare(
+      personId,
+      e.target.value
+    )
+  }
+  placeholder="金額"
+  style={{
+    width: 120,
+    height: 38,
+    padding: "0 10px",
+    border:
+      "1px solid #d1d5db",
+    borderRadius: 8,
+    boxSizing:
+      "border-box",
+    fontSize: 14,
+  }}
+/>
                         )}
                       </div>
                   );
