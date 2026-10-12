@@ -46,6 +46,9 @@ import { supabase } from "../../lib/supabase";
 import {
   MAJOR_CATEGORIES,
 } from "../../lib/categories";
+import {
+  PAYMENT_METHODS,
+} from "../../lib/paymentMethods";
 
 // ============================================================================
 // 02. Type 型別定義
@@ -224,9 +227,14 @@ export default function DashboardPage() {
   ] = useState("all");
 
   const [
-    monthlyExpenseCardFilter,
-    setMonthlyExpenseCardFilter,
-  ] = useState("all");
+  monthlyExpensePaymentFilter,
+  setMonthlyExpensePaymentFilter,
+] = useState("all");
+
+const [
+  monthlyExpenseCardFilter,
+  setMonthlyExpenseCardFilter,
+] = useState("all");
 
   const [
     monthlyExpenseStartDate,
@@ -1417,22 +1425,29 @@ export default function DashboardPage() {
             }
 
             if (
-              monthlyExpenseCardFilter ===
-              "non-card"
-            ) {
-              if (
-                expense.card_name
-              ) {
-                return false;
-              }
-            } else if (
-              monthlyExpenseCardFilter !==
-                "all" &&
-              expense.card_name !==
-                monthlyExpenseCardFilter
-            ) {
-              return false;
-            }
+  monthlyExpensePaymentFilter !==
+    "all" &&
+  expense.payment_method !==
+    monthlyExpensePaymentFilter
+) {
+  return false;
+}
+
+if (
+	monthlyExpenseCardFilter ===
+  "none"
+) {
+  if (expense.card_name) {
+    return false;
+  }
+} else if (
+	monthlyExpenseCardFilter !==
+    "all" &&
+  expense.card_name !==
+    monthlyExpenseCardFilter
+) {
+  return false;
+}
 
             if (
               monthlyExpenseStartDate &&
@@ -1490,15 +1505,16 @@ export default function DashboardPage() {
       });
 
       return list;
-    }, [
-      expenses,
-      monthlyExpenseSearch,
-      monthlyExpenseCategoryFilter,
-      monthlyExpenseCardFilter,
-      monthlyExpenseStartDate,
-      monthlyExpenseEndDate,
-      monthlyExpenseSort,
-    ]);
+    },[
+  expenses,
+  monthlyExpenseSearch,
+  monthlyExpenseCategoryFilter,
+  monthlyExpensePaymentFilter,
+  monthlyExpenseCardFilter,
+  monthlyExpenseStartDate,
+  monthlyExpenseEndDate,
+  monthlyExpenseSort,
+]);
 
   const filteredMonthlyTotals =
     useMemo(() => {
@@ -4413,65 +4429,120 @@ XLSX.writeFile(
 )}
       </select>
     </label>
-
-   <label
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minWidth: 180,
-        flex: "1 1 220px",
-        }}
-  >
-      <div
-        style={{
-          fontSize: 14,
-          color: "#666",
-          marginBottom: 5,
-        }}
-      >
-        付款方式
-        </div>
 {/* ======================================================================
 		A11「本月支出明細」信用卡篩選下拉選單
    ====================================================================== */}
+  <label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    minWidth: 180,
+    flex: "1 1 220px",
+  }}
+>
+  <div
+    style={{
+      fontSize: 14,
+      color: "#666",
+      marginBottom: 5,
+    }}
+  >
+	  付款方式
+  </div>
 
-      <select
-        value={monthlyExpenseCardFilter}
-        onChange={(e) =>
-          setMonthlyExpenseCardFilter(
-            e.target.value
-          )
-        }
-       style={{
-          width: "100%",
-          height: 40,
-          padding: "0 12px",
-          border: "1px solid #d1d5db",
-          borderRadius: 10,
-          background: "#ffffff",
-          color: "#111827",
-          fontSize: 14,
-          outline: "none",
-          boxSizing: "border-box",
-          }}
+  <select
+    value={monthlyExpensePaymentFilter}
+    onChange={(e) =>
+      setMonthlyExpensePaymentFilter(
+        e.target.value
+      )
+    }
+	  style={{
+      width: "100%",
+      height: 40,
+      padding: "0 12px",
+      border: "1px solid #d1d5db",
+      borderRadius: 8,
+      background: "#ffffff",
+      color: "#111827",
+      fontSize: 14,
+		  outline: "none",
+      boxSizing: "border-box",
+    }}
+  >
+    <option value="all">
+      全部付款方式
+    </option>
+
+    {PAYMENT_METHODS.map(
+      (method) => (
+        <option
+          key={method}
+          value={method}
+        >
+			{method}
+        </option>
+      )
+    )}
+  </select>
+</label>
+
+<label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    minWidth: 180,
+    flex: "1 1 220px",
+  }}
+>
+	<div
+    style={{
+      fontSize: 14,
+      color: "#666",
+      marginBottom: 5,
+    }}
+  >
+    信用卡
+  </div>
+
+  <select
+    value={monthlyExpenseCardFilter}
+	  onChange={(e) =>
+      setMonthlyExpenseCardFilter(
+        e.target.value
+      )
+    }
+    style={{
+      width: "100%",
+		height: 40,
+      padding: "0 12px",
+      border: "1px solid #d1d5db",
+      borderRadius: 8,
+      background: "#ffffff",
+      color: "#111827",
+      fontSize: 14,
+      outline: "none",
+      boxSizing: "border-box",
+    }}
+  >
+	  <option value="all">
+      全部信用卡
+    </option>
+
+    <option value="none">
+      無信用卡
+    </option>
+
+    {creditCards.map((card) => (
+      <option
+        key={card.id}
+        value={card.name}
       >
-        <option value="all">
-          全部付款方式
-        </option>
-        <option value="non-card">
-          非信用卡支出
-        </option>
-
-        {creditCards.map((card) => (
-          <option
-            key={card.id}
-            value={card.name}
-          >
-            {card.name}
-          </option>
-        ))}
-      </select>
-    </label>
+		  {card.name}
+      </option>
+    ))}
+  </select>
+</label>
 
    <label
   style={{
