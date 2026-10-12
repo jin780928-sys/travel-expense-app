@@ -46,7 +46,17 @@ export default function TripsPage() {
   }, []);
 
   return (
-    <main style={{ maxWidth: 800, margin: "40px auto", padding: 20 }}>
+    <main
+  style={{
+    maxWidth: 1100,
+    margin: "0 auto",
+    padding: 20,
+    background: "#f7f7f8",
+    minHeight: "100vh",
+    boxSizing: "border-box",
+    width: "100%",
+    }}
+    >
       <h1>我的旅程</h1>
 
       <p>
