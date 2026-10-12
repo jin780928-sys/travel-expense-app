@@ -411,6 +411,7 @@ function updateCustomShare(
   const enteredAmount =
     Number(value) || 0;
 
+
   const totalAmount =
     Number(amount) || 0;
 
@@ -420,14 +421,12 @@ function updateCustomShare(
       [personId]: enteredAmount,
     };
 
-    // 只有 2 個分攤人時，
-    // 自動計算另一人的剩餘金額
+    // 2 人：修改其中一人，另一人自動補差額
     if (selectedPeople.length === 2) {
       const otherPersonId =
         selectedPeople.find(
           (id) => id !== personId
         );
-
 
       if (otherPersonId) {
         next[otherPersonId] =
@@ -435,14 +434,51 @@ function updateCustomShare(
             0,
             Number(
               (
+
                 totalAmount -
                 enteredAmount
               ).toFixed(2)
             )
           );
       }
+
+      return next;
     }
 
+    // 3 人以上：最後一位自動補足剩餘金額
+    if (selectedPeople.length >= 3) {
+      const autoPersonId =
+        selectedPeople[
+          selectedPeople.length - 1
+        ];
+
+      if (personId !== autoPersonId) {
+        const usedAmount =
+          selectedPeople
+            .filter(
+              (id) =>
+                id !== autoPersonId
+            )
+        .reduce(
+              (sum, id) =>
+                sum +
+                Number(
+                  next[id] || 0
+                ),
+              0
+            );
+        next[autoPersonId] =
+          Math.max(
+            0,
+            Number(
+              (
+                totalAmount -
+                usedAmount
+              ).toFixed(2)
+            )
+          );
+      }
+    }
     return next;
   });
 }
