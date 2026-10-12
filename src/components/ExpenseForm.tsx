@@ -12,6 +12,10 @@ import {
   PAYMENT_METHODS,
 } from "../lib/paymentMethods";
 
+import {
+  CURRENCIES,
+} from "../lib/currencies";
+
 export type Person = {
   id: number | string;
   name?: string | null;
@@ -314,42 +318,42 @@ const fieldStyle: CSSProperties = {
           </div>
 
           <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              幣別
-            </label>
+  <label
+    style={labelStyle}
+  >
+    幣別
+  </label>
 
-            <select
-              value={currency}
-              onChange={(e) =>
-                setCurrency(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            >
-              <option value="USD">
-                USD
-              </option>
+  <select
+    value={currency}
+    onChange={(e) =>
+      setCurrency(
+        e.target.value
+      )
+    }
+    style={inputStyle}
+  >
+    {currency &&
+      !CURRENCIES.includes(
+        currency
+      ) && (
+        <option value={currency}>
+          {currency}（原資料）
+        </option>
+      )}
 
-              <option value="TWD">
-                TWD
-              </option>
-
-              <option value="JPY">
-                JPY
-              </option>
-
-              <option value="EUR">
-                EUR
-              </option>
-
-              <option value="KRW">
-                KRW
-              </option>
-            </select>
-          </div>
+    {CURRENCIES.map(
+      (currencyOption) => (
+        <option
+          key={currencyOption}
+          value={currencyOption}
+        >
+          {currencyOption}
+        </option>
+      )
+    )}
+  </select>
+</div>
 
           <div style={fieldStyle}>
             <label
