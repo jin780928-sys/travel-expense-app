@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 
@@ -16,6 +19,20 @@ type Trip = {
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [message, setMessage] = useState("讀取中...");
+
+  // =========================================================
+// 旅程狀態篩選
+// all      = 全部
+// upcoming = 即將出發
+// active   = 進行中
+// ended    = 已結束
+// =========================================================
+  const [
+  tripStatusFilter,
+  setTripStatusFilter,
+] = useState<
+  "all" | "upcoming" | "active" | "ended"
+>("all");
 
   useEffect(() => {
     async function loadTrips() {
@@ -57,6 +74,13 @@ export default function TripsPage() {
     width: "100%",
     }}
     >
+  {/* =========================================================
+    我的旅程頁面標題區
+    - 左側：頁面標題 + 說明文字
+    - 右側：新增旅程按鈕
+    - 桌機版左右排列
+    - 手機版空間不足時自動換行
+   ========================================================= */}
      <div
   style={{
     display: "flex",
@@ -67,6 +91,7 @@ export default function TripsPage() {
     marginBottom: 18,
   }}
 >
+{/* 左側：標題與頁面說明 */}
        <div>
     <h1
       style={{
@@ -88,6 +113,8 @@ export default function TripsPage() {
       管理旅程與旅遊支出
     </div>
   </div>
+
+{/* 右側：新增旅程按鈕 */}
        <a
     href="/trips/new"
     style={{
@@ -109,6 +136,149 @@ export default function TripsPage() {
   >
     ＋ 新增旅程
   </a>
+</div>
+
+👉 從這裡開始貼「狀態篩選區」
+      {/* =========================================================
+    旅程狀態篩選區
+    - 全部
+    - 即將出發
+    - 進行中
+    - 已結束
+    - 使用膠囊式按鈕
+    - 選中的狀態使用藍色
+    - 手機版可自動換行
+   ========================================================= */}
+      <div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 18,
+  }}
+>
+  {/* 全部 */}
+        <button
+    type="button"
+    onClick={() =>
+      setTripStatusFilter("all")
+    }
+    style={{
+      height: 38,
+      padding: "0 14px",
+      borderRadius: 999,
+      border:
+        tripStatusFilter === "all"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        tripStatusFilter === "all"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        tripStatusFilter === "all"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    }}
+  >
+    全部
+          </button>
+
+  {/* 即將出發 */}
+  <button
+    type="button"
+    onClick={() =>
+      setTripStatusFilter("upcoming")
+    }
+    style={{
+      height: 38,
+      padding: "0 14px",
+      borderRadius: 999,
+      border:
+        tripStatusFilter === "upcoming"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        tripStatusFilter === "upcoming"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        tripStatusFilter === "upcoming"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    }}
+  >
+    即將出發
+  </button>
+        {/* 進行中 */}
+  <button
+    type="button"
+    onClick={() =>
+      setTripStatusFilter("active")
+    }
+    style={{
+      height: 38,
+      padding: "0 14px",
+      borderRadius: 999,
+      border:
+        tripStatusFilter === "active"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        tripStatusFilter === "active"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        tripStatusFilter === "active"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    }}
+    >
+    進行中
+  </button>
+
+  {/* 已結束 */}
+  <button
+    type="button"
+    onClick={() =>
+      setTripStatusFilter("ended")
+    }
+     style={{
+      height: 38,
+      padding: "0 14px",
+      borderRadius: 999,
+      border:
+        tripStatusFilter === "ended"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        tripStatusFilter === "ended"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        tripStatusFilter === "ended"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+       cursor: "pointer",
+      whiteSpace: "nowrap",
+    }}
+  >
+    已結束
+  </button>
 </div>
 
       <p>
