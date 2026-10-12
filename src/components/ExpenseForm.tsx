@@ -452,6 +452,16 @@ if (!category) {
       setAmount(value);
     }
   }}
+  onBlur={() => {
+    if (
+      amount &&
+      Number(amount) > 0
+      ) {
+      setAmount(
+        Number(amount).toFixed(2)
+      );
+    }
+  }}
   style={inputStyle}
 />
           </div>
