@@ -57,7 +57,59 @@ export default function TripsPage() {
     width: "100%",
     }}
     >
-      <h1>我的旅程</h1>
+     <div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+    flexWrap: "wrap",
+    marginBottom: 18,
+  }}
+>
+       <div>
+    <h1
+      style={{
+        margin: 0,
+        fontSize: 28,
+        fontWeight: 700,
+        color: "#111827",
+      }}
+    >
+      我的旅程
+    </h1>
+         <div
+      style={{
+        marginTop: 6,
+        fontSize: 14,
+        color: "#6b7280",
+      }}
+    >
+      管理旅程與旅遊支出
+    </div>
+  </div>
+       <a
+    href="/trips/new"
+    style={{
+      height: 42,
+      padding: "0 16px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#2563eb",
+      color: "#ffffff",
+      border: "1px solid #2563eb",
+      borderRadius: 10,
+      textDecoration: "none",
+      fontSize: 14,
+      fontWeight: 600,
+      whiteSpace: "nowrap",
+      boxSizing: "border-box",
+    }}
+  >
+    ＋ 新增旅程
+  </a>
+</div>
 
       <p>
         <Link href="/trips/new">＋ 新增旅程</Link>
