@@ -10,7 +10,7 @@ import {
   useRouter,
 } from "next/navigation";
 import { supabase } from "../../../../lib/supabase";
-import ExpenseForm from "@/components/ExpenseForm";
+import ExpenseForm from "../../../../components/ExpenseForm";
 
 type Person = {
   id: number | string;
