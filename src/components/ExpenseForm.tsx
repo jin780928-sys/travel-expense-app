@@ -8,6 +8,10 @@ import {
   CATEGORY_OPTIONS,
 } from "../lib/categories";
 
+import {
+  PAYMENT_METHODS,
+} from "../lib/paymentMethods";
+
 export type Person = {
   id: number | string;
   name?: string | null;
@@ -506,58 +510,40 @@ const fieldStyle: CSSProperties = {
           </label>
 
           <select
-            value={
-              paymentMethod
-            }
-            onChange={(e) => {
-              const value =
-                e.target.value;
-
-              setPaymentMethod(
-                value
-              );
-
-              if (
-                value !==
-                "credit_card"
-              ) {
-                setCardName("");
-              }
-            }}
-            style={inputStyle}
-          >
+  value={paymentMethod}
+  onChange={(e) =>
+    setPaymentMethod(
+      e.target.value
+    )
+  }
+  style={inputStyle}
+>
             <option value="">
-              請選擇
-            </option>
+    請選擇付款方式
+  </option>
 
-            <option value="cash">
-              現金
-            </option>
+  {paymentMethod &&
+    !PAYMENT_METHODS.includes(
+      paymentMethod
+    ) && (
+      <option
+        value={paymentMethod}
+      >
+        {paymentMethod}（原資料）
+      </option>
+    )}
 
-            <option value="credit_card">
-              信用卡
-            </option>
-
-            <option value="debit_card">
-              簽帳金融卡
-            </option>
-
-            <option value="bank_transfer">
-              銀行轉帳
-            </option>
-
-            <option value="apple_pay">
-              Apple Pay
-            </option>
-
-            <option value="google_pay">
-              Google Pay
-            </option>
-
-            <option value="other">
-              其他
-            </option>
-            </select>
+            {PAYMENT_METHODS.map(
+    (method) => (
+      <option
+        key={method}
+        value={method}
+      >
+        {method}
+      </option>
+    )
+  )}
+</select>
         </div>
 
         {paymentMethod ===
