@@ -220,6 +220,16 @@ export default function NewExpensePage() {
   });
 }
 
+  const customTotal =
+  selectedPeople.reduce(
+    (total, personId) =>
+      total +
+      Number(
+        customShares[personId] || 0
+      ),
+    0
+  );
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
