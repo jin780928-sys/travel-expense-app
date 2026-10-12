@@ -74,6 +74,12 @@ const categoryOptions: Record<string, string[]> = {
         return;
       }
 
+      if (splitData) {
+  setSelectedPeople(
+    splitData.map((row) => String(row.person_id))
+  );
+}
+
       const { data: splitData, error: splitError } = await supabase
   .from("ExpenseSplits")
   .select("*")
