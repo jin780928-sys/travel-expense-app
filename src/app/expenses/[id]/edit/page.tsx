@@ -129,13 +129,13 @@ const [notes, setNotes] =
 const [
     selectedPeople,
     setSelectedPeople,
-  ] = useState<string[]>([]);
+  ] = useState<number[]>([]);
 
   const [
     customShares,
     setCustomShares,
   ] = useState<
-    Record<string, number>
+    Record<number, number>
   >({});
 
 const [people, setPeople] =
@@ -293,14 +293,14 @@ useEffect(() => {
 
     setSelectedPeople(
           splitData.map((row) =>
-            String(row.person_id)
+            Number(row.person_id)
           )
         );
 
         setCustomShares(
           Object.fromEntries(
             splitData.map((row) => [
-              String(row.person_id),
+              Number(row.person_id),
               Number(
                 row.share_amount || 0
               ),
@@ -359,7 +359,7 @@ useEffect(() => {
   }
 
 function togglePerson(
-    personId: string
+    personId: number
   ) {
     setSelectedPeople((prev) => {
       if (prev.includes(personId)) {
@@ -406,7 +406,7 @@ function togglePerson(
 }
 
 function updateCustomShare(
-  personId: string,
+  personId: number,
   value: string
 ) {
   const enteredAmount =
@@ -646,27 +646,16 @@ async function handleSave(
     const splitRows =
           selectedPeople.map(
             (personId) => {
-              const parsedPersonId =
-                Number(personId);
+              return {
+  expense_id:
+    Number.isNaN(
+      Number(id)
+    )
+      ? id
+      : Number(id),
 
-            const personValue =
-                Number.isNaN(
-                  parsedPersonId
-                )
-                  ? personId
-                  : parsedPersonId;
-
-            return {
-                expense_id:
-                  Number.isNaN(
-                    Number(id)
-                  )
-                    ? id
-                    : Number(id),
-
-
-              person_id:
-                  personValue,
+  person_id:
+    personId,
 
               share_amount:
                   splitType ===
