@@ -10,6 +10,7 @@ import {
   useRouter,
 } from "next/navigation";
 import { supabase } from "../../../../lib/supabase";
+import ExpenseForm from "@/components/ExpenseForm";
 
 type Person = {
   id: number | string;
@@ -854,770 +855,87 @@ if (loading) {
         </div>
       )}
 
-      <form
-        onSubmit={handleSave}
-      >
-        {/* 基本資料 */}
-        <section style={cardStyle}>
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 16,
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#111827",
-            }}
-            >
-            基本資料
-          </h2>
+      <ExpenseForm
+  item={item}
+  setItem={setItem}
 
-          <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              項目
-            </label>
+  amount={amount}
+  setAmount={setAmount}
 
-            <input
-              type="text"
-              value={item}
-              onChange={(e) =>
-                setItem(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            />
-          </div>
+  date={date}
+  setDate={setDate}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 12,
-            }}
-          >
+  majorCategory={majorCategory}
+  setMajorCategory={setMajorCategory}
 
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                金額
-              </label>
+        category={category}
+  setCategory={setCategory}
 
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={amount}
-                onChange={(e) =>
-                  setAmount(
-                    e.target.value
-                  )
-                }
-                style={inputStyle}
-              />
-            </div>
+  paymentMethod={paymentMethod}
+  setPaymentMethod={setPaymentMethod}
 
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                幣別
-              </label>
+  cardName={cardName}
+  setCardName={setCardName}
 
-              <select
-                value={currency}
-                onChange={(e) =>
-                  setCurrency(
-                    e.target.value
-                  )
-                }
-                style={inputStyle}
-              >
+  currency={currency}
+  setCurrency={setCurrency}
 
-                <option value="USD">
-                  USD
-                </option>
+        expenseScope={expenseScope}
+  setExpenseScope={setExpenseScope}
 
-                <option value="TWD">
-                  TWD
-                </option>
+  tripId={tripId}
+  setTripId={setTripId}
 
-                <option value="JPY">
-                  JPY
-                </option>
+  notes={notes}
+  setNotes={setNotes}
 
-                <option value="EUR">
-                  EUR
-                </option>
+  paidBy={paidBy}
+  setPaidBy={setPaidBy}
 
+        splitType={splitType}
+  setSplitType={setSplitType}
 
-                <option value="KRW">
-                  KRW
-                </option>
-              </select>
-            </div>
+  selectedPeople={selectedPeople}
+  togglePerson={togglePerson}
 
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                日期
-              </label>
+  customShares={customShares}
+  updateCustomShare={updateCustomShare}
 
-              <input
-                type="date"
-                value={date}
-                onChange={(e) =>
-                  setDate(
-                    e.target.value
-                  )
-                }
-                style={inputStyle}
-              />
-            </div>
-          </div>
+  people={people}
+  creditCards={creditCards}
+  trips={trips}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 12,
-            }}
-          >
+        customTotal={customTotal}
+  getEqualShare={getEqualShare}
 
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                大分類
-              </label>
+  saving={saving}
+  submitText="儲存修改"
 
-              <input
-                type="text"
-                value={
-                  majorCategory
-                }
-                onChange={(e) =>
-                  setMajorCategory(
-                    e.target.value
-                  )
-                }
-                style={inputStyle}
-              />
-            </div>
+  onSubmit={handleSave}
 
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                小分類
-              </label>
-
-              <input
-                type="text"
-                value={category}
-                onChange={(e) =>
-                  setCategory(
-                    e.target.value
-                  )
-                  }
-                style={inputStyle}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* 付款資料 */}
-        <section style={cardStyle}>
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 16,
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#111827",
-              }}
-          >
-            付款資料
-          </h2>
-
-          <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              付款方式
-            </label>
-
-            <select
-              value={paymentMethod}
-              onChange={(e) => {
-                const value =
-                  e.target.value;
-
-                setPaymentMethod(
-                  value
-                );
-
-                if (
-                  value !==
-                  "credit_card"
-                ) {
-                  setCardName("");
-                  }
-              }}
-              style={inputStyle}
-            >
-              <option value="">
-                請選擇
-              </option>
-
-              <option value="cash">
-                現金
-              </option>
-
-              <option value="credit_card">
-                信用卡
-              </option>
-
-              <option value="debit_card">
-                簽帳金融卡
-              </option>
-
-              <option value="bank_transfer">
-                銀行轉帳
-              </option>
-
-              <option value="apple_pay">
-                Apple Pay
-              </option>
-
-              <option value="google_pay">
-                Google Pay
-              </option>
-
-              <option value="other">
-                其他
-              </option>
-            </select>
-          </div>
-
-          {paymentMethod ===
-            "credit_card" && (
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                信用卡
-              </label>
-
-              <select
-                value={cardName}
-                onChange={(e) =>
-                  setCardName(
-                    e.target.value
-                  )
-                }
-                style={inputStyle}
-              >
-                <option value="">
-                  請選擇信用卡
-                </option>
-
-                {creditCards.map(
-                  (card) => (
-                    <option
-                      key={card.id}
-                      value={
-                        card.name
-                      }
-                    >
-                      {card.name}
-                    </option>
-                  )
-                )}
-              </select>
-            </div>
-          )}
-
-           <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              付款人
-            </label>
-
-            <select
-              value={paidBy}
-              onChange={(e) =>
-                setPaidBy(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            >
-              <option value="">
-                未指定
-              </option>
-
-              {people.map(
-                (person) => (
-                  <option
-                    key={person.id}
-                    value={String(
-                      person.id
-                      )}
-                  >
-                    {getPersonName(
-                      person
-                    )}
-                  </option>
-                  )
-              )}
-            </select>
-          </div>
-        </section>
-
-        {/* 支出類型 */}
-        <section style={cardStyle}>
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 16,
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#111827",
-            }}
-          >
-            支出類型
-          </h2>
-
-          <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              類型
-            </label>
-
-            <select
-              value={expenseScope}
-              onChange={(e) =>
-                setExpenseScope(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            >
-              <option value="daily">
-                日常花費
-              </option>
-              <option value="travel">
-                旅遊花費
-              </option>
-            </select>
-          </div>
-
-          {expenseScope ===
-            "travel" && (
-            <div style={fieldStyle}>
-              <label
-                style={labelStyle}
-              >
-                所屬旅程
-              </label>
-
-
-              <select
-                value={tripId}
-                onChange={(e) =>
-                  setTripId(
-                    e.target.value
-                  )
-                }
-                style={inputStyle}
-              >
-                <option value="">
-                  無
-                </option>
-
-                {trips.map(
-                  (trip) => (
-                    <option
-                      key={trip.id}
-                      value={String(
-                        trip.id
-                      )}
-                    >
-                      {getTripName(
-                        trip
-                      )}
-                    </option>
-                    )
-                )}
-              </select>
-            </div>
-          )}
-        </section>
-
-        {/* 分攤設定 */}
-        <section style={cardStyle}>
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 16,
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#111827",
-            }}
-            >
-            分攤設定
-          </h2>
-
-          <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              分攤方式
-            </label>
-
-            <select
-              value={splitType}
-              onChange={(e) =>
-                setSplitType(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            >
-              <option value="equal">
-                平均分攤
-              </option>
-
-              <option value="custom">
-                自訂金額
-              </option>
-            </select>
-          </div>
-
-          <div
-            style={{
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#374151",
-              marginBottom: 8,
-            }}
-          >
-            分攤人
-          </div>
-
-          {people.length === 0 ? (
-            <div
-              style={{
-                color: "#6b7280",
-                fontSize: 14,
-              }}
-            >
-              目前沒有可選人員
-              </div>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gap: 8,
-              }}
-            >
-              {people.map(
-                (person) => {
-                  const personId =
-  String(
-    person.id
-  );
-
-const checked =
-  selectedPeople.includes(
-    personId
-  );
-                  const isAutoSharePerson =
-  splitType === "custom" &&
-  selectedPeople.length >= 3 &&
-  personId ===
-    selectedPeople[
-      selectedPeople.length - 1
-    ];
-
-return (
-                    <div
-                      key={
-                        person.id
-                      }
-                      style={{
-                        display:
-                          "flex",
-                        alignItems:
-                          "center",
-                        gap: 10,
-                        padding:
-                          "10px 12px",
-                        border:
-                          "1px solid #e5e7eb",
-                        borderRadius:
-                          10,
-                        background:
-                          checked
-                            ? "#f9fafb"
-                            : "#ffffff",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={
-                          checked
-                        }
-                        onChange={() =>
-                          togglePerson(
-                            personId
-                          )
-                        }
-                      />
-
-                      <div
-                        style={{
-                          flex:
-                            "1 1 auto",
-                          minWidth: 0,
-                          fontSize: 14,
-                          color:
-                            "#111827",
-                          fontWeight:
-                            checked
-                              ? 600
-                              : 400,
-                        }}
-                      >
-                        {getPersonName(
-                          person
-                        )}
-                      </div>
-
-                      {checked &&
-                        splitType ===
-                          "equal" && (
-
-                        <div
-                            style={{
-                              fontSize:
-                                14,
-                              fontWeight:
-                                600,
-                              color:
-                                "#374151",
-                              whiteSpace:
-                                "nowrap",
-                            }}
-                          >
-                          {currency}{" "}
-                            {getEqualShare().toFixed(
-                              2
-                            )}
-                          </div>
-                        )}
-                      {checked &&
-                        splitType ===
-                          "custom" && (
-                          <input
-  type="number"
-  min="0"
-  max={Number(amount) || undefined}
-  step="0.01"
-  value={
-    customShares[
-      personId
-    ] ?? ""
-    }
-  readOnly={
-    isAutoSharePerson
+  cancelContent={
+    <Link
+      href={`/expenses/${id}`}
+      style={{
+        height: 42,
+        padding: "0 18px",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#ffffff",
+        color: "#374151",
+        border: "1px solid #d1d5db",
+        borderRadius: 10,
+        textDecoration: "none",
+        fontSize: 14,
+        fontWeight: 600,
+        whiteSpace: "nowrap",
+        }}
+    >
+      取消
+    </Link>
   }
-  onChange={(e) => {
-    if (!isAutoSharePerson) {
-      updateCustomShare(
-        personId,
-        e.target.value
-      );
-    }
-  }}
-                            placeholder={
-    isAutoSharePerson
-      ? "自動計算"
-      : "金額"
-  }
-  style={{
-    width: 120,
-    height: 38,
-    padding: "0 10px",
-    border:
-      "1px solid #d1d5db",
-    borderRadius: 8,
-    boxSizing:
-      "border-box",
-    fontSize: 14,
-    background:
-      isAutoSharePerson
-        ? "#f3f4f6"
-        : "#ffffff",
-    color: "#111827",
-  }}
 />
-                        )}
-                      </div>
-                  );
-                }
-              )}
-            </div>
-          )}
-
-          {selectedPeople.length >
-            0 && (
-            <div
-              style={{
-                marginTop: 12,
-                paddingTop: 12,
-                borderTop:
-                  "1px solid #e5e7eb",
-                fontSize: 14,
-                color: "#4b5563",
-              }}
-            >
-              已選{" "}
-              {
-                selectedPeople.length
-              }{" "}
-              人
-
-              {splitType ===
-                "custom" && (
-                <span>
-                  {" "}
-                  ｜分攤總額：
-                  {currency}{" "}
-                  {customTotal.toFixed(
-                  2
-                  )}
-                </span>
-              )}
-            </div>
-          )}
-        </section>
-
-        {/* 備註 */}
-        <section style={cardStyle}>
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 16,
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#111827",
-            }}
-          >
-            備註
-          </h2>
-          <textarea
-            value={notes}
-            onChange={(e) =>
-              setNotes(
-                e.target.value
-              )
-              }
-            rows={5}
-            placeholder="備註"
-            style={{
-              width: "100%",
-              padding: 12,
-              border:
-                "1px solid #d1d5db",
-              borderRadius: 10,
-              background:
-                "#ffffff",
-              color: "#111827",
-              fontSize: 14,
-              lineHeight: 1.5,
-              resize: "vertical",
-              boxSizing:
-                "border-box",
-              outline: "none",
-            }}
-          />
-        </section>
-
-        {/* 儲存 */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 10,
-            paddingBottom: 30,
-          }}
-        >
-          <button
-            type="submit"
-            disabled={saving}
-            style={{
-              height: 42,
-              padding: "0 18px",
-              background:
-                saving
-                  ? "#9ca3af"
-                  : "#111827",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: 10,
-              cursor:
-                saving
-              ? "not-allowed"
-                  : "pointer",
-              fontSize: 14,
-              fontWeight: 700,
-              whiteSpace:
-                "nowrap",
-            }}
-          >
-            {saving
-              ? "儲存中..."
-              : "儲存修改"}
-          </button>
-
-          <Link
-            href={`/expenses/${id}`}
-            style={{
-              height: 42,
-              padding: "0 18px",
-              display:
-                "inline-flex",
-              alignItems:
-                "center",
-              justifyContent:
-                "center",
-              background:
-                "#ffffff",
-              color: "#374151",
-              border:
-                "1px solid #d1d5db",
-              borderRadius: 10,
-              textDecoration:
-                "none",
-              fontSize: 14,
-              fontWeight: 600,
-              whiteSpace:
-                "nowrap",
-            }}
-          >
-            取消
-          </Link>
-        </div>
-      </form>
     </main>
   );
 }
