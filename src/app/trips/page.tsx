@@ -16,6 +16,34 @@ type Trip = {
   notes: string | null;
 };
 
+// =========================================================
+// 旅程狀態判斷
+// upcoming = 即將出發
+// active   = 進行中
+// ended    = 已結束
+// =========================================================
+function getTripStatus(
+  startDate: string,
+  endDate: string
+) {
+  const today = new Date();
+
+  const todayString =
+    today.toISOString().slice(0, 10);
+  if (todayString < startDate) {
+    return "upcoming";
+  }
+
+  if (
+    todayString >= startDate &&
+    todayString <= endDate
+  ) {
+    return "active";
+  }
+
+  return "ended";
+}
+
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [message, setMessage] = useState("讀取中...");
@@ -33,6 +61,26 @@ export default function TripsPage() {
 ] = useState<
   "all" | "upcoming" | "active" | "ended"
 >("all");
+
+  // =========================================================
+// 依照目前選取的旅程狀態篩選
+// =========================================================
+  const filteredTrips =
+  trips.filter((trip) => {
+    if (
+      tripStatusFilter === "all"
+    ) {
+      return true;
+    }
+     const status = getTripStatus(
+      trip.start_date,
+      trip.end_date
+    );
+
+    return (
+      status === tripStatusFilter
+    );
+  });
 
   useEffect(() => {
     async function loadTrips() {
