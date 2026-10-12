@@ -353,17 +353,16 @@ if (!category) {
 }
 
     if (
-      splitType === "custom" &&
-      selectedPeople.length === 0
-    ) {
-      e.preventDefault();
+  selectedPeople.length === 0
+) {
+  e.preventDefault();
 
-      alert(
-        "自訂金額請至少選擇一位分攤人"
-      );
+  alert(
+    "請至少選擇一位分攤人"
+  );
 
-      return;
-    }
+  return;
+}
 
     if (
       splitType === "custom" &&
