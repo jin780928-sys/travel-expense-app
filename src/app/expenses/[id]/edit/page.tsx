@@ -74,6 +74,15 @@ const categoryOptions: Record<string, string[]> = {
         return;
       }
 
+      const { data: splitData, error: splitError } = await supabase
+  .from("ExpenseSplits")
+  .select("*")
+  .eq("expense_id", id);
+
+if (splitError) {
+  console.error("讀取分攤資料失敗:", splitError);
+}
+
       setItem(data.item || "");
       setAmount(data.amount?.toString() || "");
       setDate(data.date || "");
