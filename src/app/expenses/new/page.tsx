@@ -37,6 +37,8 @@ export default function NewExpensePage() {
   const [item, setItem] = useState("");
   const [amount, setAmount] = useState("");
 
+  const [saving, setSaving] = useState(false);
+
   const [majorCategory, setMajorCategory] = useState("");
   const [category, setCategory] = useState("");
 
@@ -247,8 +249,12 @@ export default function NewExpensePage() {
     ).toFixed(2)
   );
 }
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(
+  e: React.FormEvent
+) {
+  e.preventDefault();
+
+  setSaving(true);
 
     setMessage("");
 
