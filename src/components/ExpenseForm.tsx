@@ -272,6 +272,21 @@ const fieldStyle: CSSProperties = {
     }
 
     if (
+  CARD_PAYMENT_METHODS.includes(
+    paymentMethod
+  ) &&
+  !cardName
+) {
+  e.preventDefault();
+
+  alert(
+    "這個付款方式請先選擇卡別"
+  );
+
+  return;
+}
+
+    if (
   selectedPeople.length > 0 &&
   !paidBy
 ) {
