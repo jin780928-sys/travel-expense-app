@@ -56,6 +56,7 @@ export default function NewExpensePage() {
   const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
 
   const [selectedPeople, setSelectedPeople] = useState<number[]>([]);
+  const [customShares,  setCustomShares,] = useState<Record<number, number>>({});
   const [customAmounts, setCustomAmounts] = useState<
     Record<number, string>
   >({});
