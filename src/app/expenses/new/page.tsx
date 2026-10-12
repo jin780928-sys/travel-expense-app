@@ -136,6 +136,90 @@ export default function NewExpensePage() {
     });
   }
 
+  function updateCustomShare(
+  personId: number,
+  value: string
+) {
+  const enteredAmount =
+    Number(value) || 0;
+
+  const totalAmount =
+    Number(amount) || 0;
+
+    setCustomShares((prev) => {
+    const next = {
+      ...prev,
+      [personId]: enteredAmount,
+    };
+
+    // 2 人分攤：
+    // 輸入其中一人，另一人自動補足
+    if (selectedPeople.length === 2) {
+      const otherPersonId =
+        selectedPeople.find(
+          (id) => id !== personId
+        );
+
+      if (
+        otherPersonId !== undefined
+      ) {
+        next[otherPersonId] =
+          Math.max(
+            0,
+            Number(
+              (
+                totalAmount -
+                enteredAmount
+              ).toFixed(2)
+            )
+          );
+      }
+      return next;
+    }
+
+    // 3 人以上：
+    // 最後選取的人自動補差額
+    if (selectedPeople.length >= 3) {
+      const autoPersonId =
+        selectedPeople[
+          selectedPeople.length - 1
+        ];
+
+      if (
+        personId !== autoPersonId
+      ) {
+        const usedAmount =
+          selectedPeople
+            .filter(
+              (id) =>
+                id !== autoPersonId
+            )
+        .reduce(
+              (sum, id) =>
+                sum +
+                Number(
+                  next[id] || 0
+                ),
+              0
+            );
+
+        next[autoPersonId] =
+          Math.max(
+            0,
+            Number(
+              (
+                totalAmount -
+                usedAmount
+              ).toFixed(2)
+            )
+          );
+      }
+    }
+
+    return next;
+  });
+}
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
