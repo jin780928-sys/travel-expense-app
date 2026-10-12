@@ -790,63 +790,44 @@ const fieldStyle: CSSProperties = {
           分攤設定
         </h2>
 
+
         <div style={fieldStyle}>
-          <label
-            style={labelStyle}
-          >
-            分攤方式
-          </label>
+  <label style={labelStyle}>
+    分攤方式
+  </label>
 
-          <select
-  value={splitType}
-  onChange={(e) => {
-    const newSplitType =
-      e.target.value;
+  <select
+    value={splitType}
+    onChange={(e) => {
+      const newSplitType =
+        e.target.value;
+      setSplitType(
+        newSplitType
+      );
+    }}
+    style={inputStyle}
+  >
+    <option value="equal">
+      平均分攤
+    </option>
 
-    setSplitType(
-      newSplitType
-    );
+    <option value="custom">
+      自訂金額
+    </option>
+  </select>
+</div>
 
-    if (
-      newSplitType === "equal"
-    ) {
-     <select
-  value={splitType}
-  onChange={(e) => {
-    const newSplitType =
-      e.target.value;
-
-    setSplitType(
-      newSplitType
-    );
+<div
+  style={{
+    marginTop: 16,
+    marginBottom: 10,
+    fontSize: 14,
+    fontWeight: 600,
+    color: "#374151",
   }}
-  style={inputStyle}
->
-    }
-  }}
-  style={inputStyle}
->
-            <option value="equal">
-              平均分攤
-            </option>
-
-            <option value="custom">
-              自訂金額
-            </option>
-          </select>
-        </div>
-
-        <div
-          style={{
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#374151",
-            marginBottom: 8,
-          }}
-        >
-          分攤人
-        </div>
-
+  >
+  分攤人
+</div>
         {people.length === 0 ? (
           <div
             style={{
