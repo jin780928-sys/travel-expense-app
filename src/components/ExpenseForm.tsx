@@ -83,21 +83,21 @@ type ExpenseFormProps = {
     value: string
   ) => void;
 
-  selectedPeople: string[];
+  selectedPeople: number[];
 
-  togglePerson: (
-    personId: string
-  ) => void;
+togglePerson: (
+  personId: number
+) => void;
 
-  customShares: Record<
-    string,
-    number
-  >;
+customShares: Record<
+  number,
+  number
+>;
 
   updateCustomShare: (
-    personId: string,
-    value: string
-  ) => void;
+  personId: number,
+  value: string
+) => void;
 
   people: Person[];
   creditCards: CreditCard[];
@@ -716,14 +716,12 @@ const fieldStyle: CSSProperties = {
             {people.map(
               (person) => {
                 const personId =
-                  String(
-                    person.id
-                  );
+  Number(person.id);
 
-                const checked =
-                  selectedPeople.includes(
-                    personId
-                  );
+const checked =
+  selectedPeople.includes(
+    personId
+  );
 
                 const isAutoSharePerson =
                   splitType ===
