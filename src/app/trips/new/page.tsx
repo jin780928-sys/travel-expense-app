@@ -46,8 +46,49 @@ export default function NewTripPage() {
   }
 
   return (
-    <main style={{ maxWidth: 600, margin: "40px auto", padding: 20 }}>
-      <h1>新增旅程</h1>
+   <main
+    style={{
+    maxWidth: 760,
+    margin: "0 auto",
+    padding: 20,
+    background: "#f7f7f8",
+    minHeight: "100vh",
+    boxSizing: "border-box",
+    width: "100%",
+    }}
+  >
+     {/* =========================================================
+    新增旅程頁面標題區
+    - 與「我的旅程」及其他表單頁面維持相同版型
+    - 主標題：新增旅程
+    - 次要文字：建立旅程基本資料
+   ========================================================= */}
+<div
+  style={{
+    marginBottom: 18,
+  }}
+>
+  <h1
+    style={{
+      margin: 0,
+      fontSize: 28,
+      fontWeight: 700,
+      color: "#111827",
+    }}
+  >
+    新增旅程
+  </h1>
+
+  <div
+    style={{
+      marginTop: 6,
+      fontSize: 14,
+      color: "#6b7280",
+    }}
+  >
+    建立旅程基本資料
+  </div>
+</div>
 
       <input
         placeholder="旅程名稱"
