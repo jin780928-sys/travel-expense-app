@@ -278,26 +278,25 @@ const fieldStyle: CSSProperties = {
       e.preventDefault();
 
       alert(
-        "自訂分攤請至少選擇一位分攤人"
+        "自訂金額請至少選擇一位分攤人"
       );
 
       return;
     }
 
-
     if (
       splitType === "custom" &&
       Math.abs(
-        customTotal -
+        Number(customTotal) -
           Number(amount)
       ) > 0.01
     ) {
       e.preventDefault();
 
       alert(
-        `自訂分攤總額必須等於支出金額\n目前分攤：${customTotal.toFixed(
-          2
-        )}\n支出金額：${Number(
+        `自訂分攤總額必須等於支出金額\n目前分攤：${Number(
+          customTotal
+        ).toFixed(2)}\n支出金額：${Number(
           amount
         ).toFixed(2)}`
       );
