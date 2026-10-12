@@ -64,7 +64,7 @@ const categoryOptions: Record<string, string[]> = {
       const { data, error } = await supabase
         .from("Expenses")
         .select(
-  "item,amount,date,major_category,category,payment_method,card_name,currency,notes"
+  "item,amount,date,major_category,category,payment_method,card_name,currency,trip_id,notes,paid_by,split_type"
 )
         .eq("id", id)
         .single();
