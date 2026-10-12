@@ -43,6 +43,9 @@
 import { useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { supabase } from "../../lib/supabase";
+import {
+  MAJOR_CATEGORIES,
+} from "../../lib/categories";
 
 // ============================================================================
 // 02. Type 型別定義
@@ -4398,14 +4401,16 @@ XLSX.writeFile(
         boxSizing: "border-box",
         }}
       >
-        <option value="餐飲">餐飲</option>
-        <option value="交通">交通</option>
-        <option value="住宿">住宿</option>
-        <option value="購物">購物</option>
-        <option value="娛樂旅遊">娛樂旅遊</option>
-        <option value="居家">居家</option>
-        <option value="汽車">汽車</option>
-        <option value="其他">其他</option>
+        {MAJOR_CATEGORIES.map(
+  (category) => (
+    <option
+      key={category}
+      value={category}
+    >
+      {category}
+    </option>
+  )
+)}
       </select>
     </label>
 
