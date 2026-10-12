@@ -254,7 +254,23 @@ const fieldStyle: CSSProperties = {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form
+  onSubmit={(e) => {
+    if (
+      expenseScope === "trip" &&
+      !tripId
+    ) {
+      e.preventDefault();
+      alert(
+        "旅遊支出請先選擇所屬旅程"
+      );
+
+      return;
+    }
+
+    onSubmit(e);
+  }}
+>
       {/* 基本資料 */}
       <section style={cardStyle}>
         <h2
