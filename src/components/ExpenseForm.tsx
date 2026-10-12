@@ -23,6 +23,84 @@ export type Trip = {
   trip_name?: string | null;
 };
 
+const CATEGORY_OPTIONS: Record<
+  string,
+  string[]
+> = {
+  餐飲: [
+    "早餐",
+    "午餐",
+    "晚餐",
+    "飲料",
+    "咖啡",
+    "點心",
+    "其他",
+  ],
+  交通: [
+    "大眾運輸",
+    "計程車／叫車",
+    "機票",
+    "租車",
+    "停車",
+    "過路費",
+    "其他",
+  ],
+
+  住宿: [
+    "飯店",
+    "民宿",
+    "Airbnb",
+    "露營",
+    "其他",
+  ],
+  購物: [
+    "日用品",
+    "服飾",
+    "3C",
+    "美妝保養",
+    "家電",
+    "禮物",
+    "其他",
+  ],
+  娛樂旅遊: [
+    "景點門票",
+    "樂園",
+    "活動",
+    "旅遊行程",
+    "郵輪",
+    "娛樂",
+    "其他",
+  ],
+
+  居家: [
+    "房租",
+    "水電瓦斯",
+    "網路",
+    "家具",
+    "清潔用品",
+    "維修",
+    "其他",
+  ],
+
+  汽車: [
+    "加油",
+    "保險",
+    "保養",
+    "維修",
+    "洗車",
+    "註冊／牌照",
+    "其他",
+  ],
+
+  其他: [
+    "醫療",
+    "教育",
+    "手續費",
+    "稅金",
+    "其他",
+  ],
+};
+
 type ExpenseFormProps = {
   item: string;
   setItem: (value: string) => void;
@@ -370,45 +448,111 @@ const fieldStyle: CSSProperties = {
           }}
         >
           <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              大分類
-            </label>
+  <label
+    style={labelStyle}
+  >
+    大分類
+  </label>
 
-            <input
-              type="text"
-              value={
-                majorCategory
-              }
-              onChange={(e) =>
-                setMajorCategory(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-            />
-          </div>
+  <select
+    value={majorCategory}
+    onChange={(e) => {
+      const newMajorCategory =
+        e.target.value;
+
+      setMajorCategory(
+        newMajorCategory
+      );
+
+      setCategory("");
+    }}
+    style={inputStyle}
+  >
+    <option value="">
+      請選擇大分類
+    </option>
+
+    {majorCategory &&
+      !Object.prototype.hasOwnProperty.call(
+        CATEGORY_OPTIONS,
+        majorCategory
+      ) && (
+        <option value={majorCategory}>
+          {majorCategory}（原資料）
+        </option>
+      )}
+
+    {Object.keys(
+      CATEGORY_OPTIONS
+    ).map((major) => (
+      <option
+        key={major}
+        value={major}
+      >
+        {major}
+      </option>
+    ))}
+  </select>
+</div>
 
           <div style={fieldStyle}>
-            <label
-              style={labelStyle}
-            >
-              小分類
-            </label>
+  <label
+    style={labelStyle}
+  >
+    小分類
+  </label>
 
+  <select
+    value={category}
+    onChange={(e) =>
+      setCategory(
+        e.target.value
+      )
+    }
+    disabled={!majorCategory}
+    style={{
+      ...inputStyle,
+      background:
+        majorCategory
+          ? "#ffffff"
+          : "#f3f4f6",
+      cursor:
+        majorCategory
+          ? "pointer"
+          : "not-allowed",
+    }}
+    >
+    <option value="">
+      {majorCategory
+        ? "請選擇小分類"
+        : "請先選擇大分類"}
+    </option>
 
-            <input
-              type="text"
-              value={category}
-              onChange={(e) =>
-                setCategory(
-                  e.target.value
-                )
-              }
-              style={inputStyle}
-              />
-          </div>
+    {category &&
+      !(
+        CATEGORY_OPTIONS[
+          majorCategory
+        ] ?? []
+      ).includes(category) && (
+        <option value={category}>
+          {category}（原資料）
+        </option>
+      )}
+
+    {(
+      CATEGORY_OPTIONS[
+        majorCategory
+      ] ?? []
+    ).map((subCategory) => (
+      <option
+        key={subCategory}
+        value={subCategory}
+      >
+        {subCategory}
+      </option>
+    ))}
+  </select>
+</div>
         </div>
       </section>
 
