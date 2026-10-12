@@ -810,7 +810,18 @@ const fieldStyle: CSSProperties = {
     if (
       newSplitType === "equal"
     ) {
-      setCustomShares({});
+     <select
+  value={splitType}
+  onChange={(e) => {
+    const newSplitType =
+      e.target.value;
+
+    setSplitType(
+      newSplitType
+    );
+  }}
+  style={inputStyle}
+>
     }
   }}
   style={inputStyle}
