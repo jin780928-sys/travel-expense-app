@@ -44,6 +44,46 @@ function getTripStatus(
   return "ended";
 }
 
+// =========================================================
+// 旅程狀態標籤樣式
+// upcoming = 藍色
+// active   = 綠色
+// ended    = 灰色
+// =========================================================
+function getTripStatusStyle(
+  status:
+    | "upcoming"
+    | "active"
+    | "ended"
+) {
+  if (status === "upcoming") {
+    return {
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      border:
+        "1px solid #bfdbfe",
+    };
+  }
+
+  if (status === "active") {
+    return {
+      background: "#ecfdf5",
+      color: "#047857",
+      border:
+        "1px solid #a7f3d0",
+    };
+  }
+
+  return {
+    background: "#f3f4f6",
+    color: "#6b7280",
+    border:
+      "1px solid #e5e7eb",
+  };
+}
+
+export default function TripsPage() {
+
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [message, setMessage] = useState("讀取中...");
