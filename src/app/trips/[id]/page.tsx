@@ -119,8 +119,6 @@ function formatTripDate(
   return `${month}/${day}（${weekday}）`;
 }
 
-return `${month}/${day}（${weekday}）`;
-}
 
 /* =========================================================
    行程時間顯示格式
