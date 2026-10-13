@@ -13,8 +13,7 @@ export default function NewTripPage() {
   const [endDate, setEndDate] = useState("");
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState("");
-  const [saving, setSaving] =
-  useState(false);
+  const [saving, setSaving] =  useState(false);
   
   async function handleSubmit() {
   if (saving) {
@@ -44,6 +43,7 @@ export default function NewTripPage() {
 
     if (error) {
       setMessage("新增失敗：" + error.message);
+      setSaving(false);
       return;
     }
     router.push("/trips");
