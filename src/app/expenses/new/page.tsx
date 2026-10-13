@@ -122,7 +122,30 @@ export default function NewExpensePage() {
   const [message, setMessage] =
     useState("");
 
- 
+ /* =========================================================
+   從旅程頁進入新增花費
+   - 讀取網址 ?trip_id=
+   - 自動切換成旅程支出
+   - 自動帶入旅程 ID
+   ========================================================= */
+  useEffect(() => {
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+    const tripIdFromUrl =
+    params.get("trip_id");
+
+  if (!tripIdFromUrl) {
+    return;
+  }
+
+
+    setExpenseScope("trip");
+  setTripId(tripIdFromUrl);
+}, []);
+  
   
   // =========================================================
   // 載入付款人、信用卡、旅程
