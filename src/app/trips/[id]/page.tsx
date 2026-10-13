@@ -1337,14 +1337,26 @@ return (
 </div>
 
                         {/* ===================================
-                            該日期的行程
-                           =================================== */}
-                        {items.map(
-                          (item) => (
-                            <div
-                              key={
-                                item.id
-                              }
+    該日期的行程
+    - 依開始時間由早到晚
+   =================================== */}
+{[...items]
+  .sort((a, b) => {
+    const timeA =
+      a.start_time || "99:99:99";
+
+    const timeB =
+      b.start_time || "99:99:99";
+
+    return timeA.localeCompare(
+      timeB
+    );
+  })
+  .map(
+    (item) => (
+      <div
+        key={item.id}
+        
                               style={{
                                 padding:
                                   "14px 0",
