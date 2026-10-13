@@ -82,6 +82,26 @@ function getTripStatusStyle(
   };
 }
 
+// =========================================================
+// 旅程狀態中文名稱
+// =========================================================
+function getTripStatusLabel(
+  status:
+    | "upcoming"
+    | "active"
+    | "ended"
+) {
+  if (status === "upcoming") {
+    return "即將出發";
+  }
+
+  if (status === "active") {
+    return "進行中";
+  }
+
+  return "已結束";
+}
+
 export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [message, setMessage] = useState("讀取中...");
