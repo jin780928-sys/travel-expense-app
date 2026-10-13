@@ -127,35 +127,92 @@ const textareaStyle = {
   </div>
 </div>
 
-      <input
-        placeholder="旅程名稱"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 12 }}
-      />
+      {/* =========================================================
+    旅程名稱
+   ========================================================= */}
+     <div style={fieldStyle}>
+  <label style={labelStyle}>
+    旅程名稱
+  </label>
 
-      <input
-        placeholder="地點"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 12 }}
-      />
+       <input
+    type="text"
+    placeholder="例如：Disney Treasure"
+    value={name}
+    onChange={(e) =>
+      setName(e.target.value)
+    }
+    style={inputStyle}
+  />
+</div>
 
-      <label>開始日期</label>
-      <input
-        type="date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 12 }}
-      />
+      {/* =========================================================
+    地點
+   ========================================================= */}
+     <div style={fieldStyle}>
+  <label style={labelStyle}>
+    地點
+  </label>
 
-      <label>結束日期</label>
-      <input
-        type="date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 12 }}
-      />
+  <input
+    type="text"
+    placeholder="例如：Orlando"
+    value={location}
+    onChange={(e) =>
+      setLocation(e.target.value)
+    }
+    style={inputStyle}
+  />
+</div>
+
+      {/* =========================================================
+    開始日期 / 結束日期
+   ========================================================= */}
+     <div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: 12,
+    marginBottom: 16,
+  }}
+>
+       {/* 開始日期 */}
+  <div>
+    <label style={labelStyle}>
+      開始日期
+    </label>
+
+    <input
+      type="date"
+      value={startDate}
+      onChange={(e) =>
+        setStartDate(
+          e.target.value
+        )
+      }
+      style={inputStyle}
+    />
+  </div>
+
+       {/* 結束日期 */}
+  <div>
+    <label style={labelStyle}>
+      結束日期
+    </label>
+
+    <input
+      type="date"
+      value={endDate}
+      onChange={(e) =>
+        setEndDate(
+          e.target.value
+        )
+      }
+      style={inputStyle}
+    />
+  </div>
+</div>
 
       <textarea
         placeholder="備註"
