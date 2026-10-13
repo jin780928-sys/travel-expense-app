@@ -364,7 +364,27 @@ const categoryTotals =
 
       return result;
     }, {});
+/* =========================================================
+     每日行程：依日期分組
+     - 相同日期的行程放在同一組
+     - 沒有日期時歸類為「日期未設定」
+     ========================================================= */
+  const groupedItineraryItems =
+    itineraryItems.reduce<
+      Record<string, ItineraryItem[]>
+    >((result, item) => {
+      const dateKey =
+        item.date || "日期未設定";
 
+       if (!result[dateKey]) {
+        result[dateKey] = [];
+      }
+
+      result[dateKey].push(item);
+
+      return result;
+      }, {});
+  
 /* =========================================================
      Loading
      ========================================================= */
