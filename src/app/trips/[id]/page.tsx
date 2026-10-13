@@ -466,7 +466,7 @@ export default function TripDetailPage() {
           備註：{trip.notes}
         </div>
       )}
-    </div>
+    
 
           <p style={{ marginTop: 20 }}>
             <Link href={`/trips/${id}/edit`}>
