@@ -227,19 +227,76 @@ export default function TripDetailPage() {
 
       {message && <p>{message}</p>}
 
-      {trip && (
-        <>
-          <h1>{trip.name}</h1>
+     {trip && (
+  <>
+    {/* =========================================================
+        旅程基本資料卡片
+        - 白底
+        - 灰色邊框
+        - 圓角 14
+        - 顯示名稱、地點、日期、備註
+       ========================================================= */}
+    <div
+      style={{
+        background: "#ffffff",
+        border: "1px solid #e5e7eb",
+        borderRadius: 14,
+        padding: 18,
+        marginBottom: 18,
+        boxSizing: "border-box",
+      }}
+    >
 
-          {trip.location && <p>地點：{trip.location}</p>}
+      <h1
+        style={{
+          margin: 0,
+          fontSize: 28,
+          fontWeight: 700,
+          color: "#111827",
+        }}
+      >
+        {trip.name}
+      </h1>
 
-          <p>
-            日期：{trip.start_date || "未設定"}
-            {" ～ "}
-            {trip.end_date || "未設定"}
-          </p>
+      <div
+        style={{
+          marginTop: 10,
+          fontSize: 15,
+          color: "#374151",
+        }}
+      >
+        地點：
+        {trip.location || "未設定"}
+      </div>
 
-          {trip.notes && <p>備註：{trip.notes}</p>}
+
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 15,
+          color: "#374151",
+        }}
+      >
+        日期：
+        {trip.start_date || "未設定"}
+        {" ～ "}
+        {trip.end_date || "未設定"}
+      </div>
+
+      {trip.notes && (
+        <div
+          style={{
+            marginTop: 10,
+            fontSize: 14,
+            lineHeight: 1.6,
+            color: "#6b7280",
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          備註：{trip.notes}
+        </div>
+      )}
+    </div>
 
           <p style={{ marginTop: 20 }}>
             <Link href={`/trips/${id}/edit`}>
