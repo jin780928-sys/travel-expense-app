@@ -145,12 +145,12 @@ const [
     params.get("trip_id");
 
   if (!tripIdFromUrl) {
-    return;
-  }
+  return;
+}
 
-
-    setExpenseScope("trip");
-  setTripId(tripIdFromUrl);
+setOpenedFromTrip(true);
+setExpenseScope("trip");
+setTripId(tripIdFromUrl);
 }, []);
   
   
