@@ -855,33 +855,60 @@ return (
                 <div>
                   {Object.entries(
                     groupedItineraryItems
-                  ).map(
+                    ).map(
                     ([
                       date,
                       items,
-                      ]) => (
+                    ], dayIndex) => (
                       <div
                         key={date}
                         style={{
                           marginBottom: 22,
                         }}
                       >
-                        {/* ===================================
-                            日期標題
-                           =================================== */}
+{/* ===================================
+    日期標題
+    - Day 1 / Day 2
+    - 日期
+   =================================== */}
                         <div
                           style={{
-                            marginBottom: 10,
-                            paddingBottom: 8,
-                            borderBottom:
-                              "1px solid #e5e7eb",
-                            fontSize: 16,
-                            fontWeight: 700,
-                            color: "#111827",
+                          display: "flex",
+                           alignItems: "center",
+                              gap: 10,
+                          flexWrap: "wrap",
+                           marginBottom: 12,
+                          paddingBottom: 10,
+                          borderBottom:
+                          "1px solid #e5e7eb",
                           }}
                           >
-                            {formatTripDate(date)}
-                        </div>
+                          <div
+                          style={{
+                          padding: "4px 9px",
+                           background: "#eff6ff",
+                          border:
+                                  "1px solid #bfdbfe",
+                           borderRadius: 999,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: "#1d4ed8",
+                           whiteSpace: "nowrap",
+                           }}
+                            >
+                            Day {dayIndex + 1}
+  </div>
+
+  <div
+    style={{
+      fontSize: 16,
+      fontWeight: 700,
+      color: "#111827",
+    }}
+  >
+    {formatTripDate(date)}
+  </div>
+</div>
 
                         {/* ===================================
                             該日期的行程
