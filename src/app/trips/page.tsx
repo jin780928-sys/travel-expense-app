@@ -321,119 +321,177 @@ export default function TripsPage() {
     - 顯示名稱、地點、日期、備註
    ========================================================= */}     
 
-      {message && <p>{message}</p>}
-
-      {!message && trips.length === 0 && <p>目前還沒有旅程。</p>}
-
-      
-
-
-{trips.map((trip) => (
-  <div
-    key={trip.id}
-    style={{
-      background: "#ffffff",
-      border: "1px solid #e5e7eb",
-      borderRadius: 14,
-      padding: 18,
-      marginBottom: 14,
-      boxSizing: "border-box",
-    }}
-  >
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        gap: 12,
-        flexWrap: "wrap",
-      }}
-    >
-      {/* 左側：旅程主要資料 */}
-      <div
-        style={{
-          minWidth: 0,
-          flex: "1 1 260px",
-        }}
-      >
-        <Link
-          href={`/trips/${trip.id}`}
-          style={{
-            fontSize: 22,
-            fontWeight: 700,
-            color: "#111827",
-            textDecoration: "none",
-          }}
-        >
-          {trip.name}
-        </Link>
-
+    {/* =========================================================
+        沒有旅程
+       ========================================================= */}
+      {!message &&
+      sortedTrips.length === 0 && (
         <div
           style={{
-            marginTop: 12,
-            fontSize: 15,
-            color: "#374151",
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 14,
+            padding: 24,
+            color: "#6b7280",
+            fontSize: 14,
+            textAlign: "center",
           }}
         >
-          地點：{trip.location || "未設定"}
+          {tripStatusFilter === "all"
+            ? "目前沒有旅程"
+            : "這個分類目前沒有旅程"}
         </div>
+      )}
 
+     {/* =========================================================
+        旅程卡片
+       ========================================================= */}
+
+
+{sortedTrips.map((trip) => {
+      const status =
+        getTripStatus(
+          trip.start_date,
+          trip.end_date
+        );
+
+  const statusStyle =
+        getTripStatusStyle(status);
+
+      return (
         <div
+          key={trip.id}
           style={{
-            marginTop: 8,
-            fontSize: 15,
-            color: "#374151",
+            background: "#ffffff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 14,
+            padding: 18,
+            marginBottom: 14,
+            boxSizing: "border-box",
           }}
         >
-          日期：{trip.start_date} ～{" "}
-          {trip.end_date}
-        </div>
-
-        {trip.notes && (
           <div
             style={{
-              marginTop: 10,
-              fontSize: 14,
-              lineHeight: 1.6,
-              color: "#6b7280",
-              whiteSpace: "pre-wrap",
-            }}
+              display: "flex",
+              justifyContent:
+                "space-between",
+              alignItems:
+                "flex-start",
+              gap: 12,
+              flexWrap: "wrap",
+              }}
           >
-            備註：{trip.notes}
-          </div>
-        )}
-      </div>
+            {/* 左側資料 */}
+            <div
+              style={{
+                minWidth: 0,
+                flex: "1 1 260px",
+              }}
+            >
+              <Link
+                href={`/trips/${trip.id}`}
+                style={{
+                  fontSize: 22,
+                  fontWeight: 700,
+                  color: "#111827",
+                  textDecoration: "none",
+                }}
+              >
+                {trip.name}
+              </Link>
 
-      {/* 右側：旅程標籤 */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            height: 30,
-            padding: "0 10px",
-            borderRadius: 999,
-            background: "#f3f4f6",
-            color: "#374151",
-            fontSize: 13,
-            fontWeight: 600,
-            whiteSpace: "nowrap",
-          }}
-        >
-          旅程
-        </span>
-      </div>
-    </div>
-   </div>
-          );
-        }
-      )}
-    </main>
-  );
+              <div
+                style={{
+                  marginTop: 12,
+                  fontSize: 15,
+                  color: "#374151",
+                }}
+              >
+                地點：
+                {trip.location ||
+                  "未設定"}
+              </div>
+
+              <div
+                style={{
+                  marginTop: 8,
+                  fontSize: 15,
+                  color: "#374151",
+                }}
+              >
+                日期：
+                {trip.start_date} ～{" "}
+                {trip.end_date}
+              </div>
+
+              {trip.notes && (
+              <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    color: "#6b7280",
+                    whiteSpace: "pre-wrap",
+                    }}
+                >
+                  備註：{trip.notes}
+                </div>
+              )}
+            </div>
+
+
+            {/* 右側狀態 */}
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                height: 30,
+                padding: "0 10px",
+                borderRadius: 999,
+                background:
+                  statusStyle.background,
+                color:
+                  statusStyle.color,
+                border:
+                  statusStyle.border,
+                fontSize: 13,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {getTripStatusLabel(
+              status
+              )}
+            </span>
+          </div>
+
+          {/* 查看旅程 */}
+          <div
+            style={{
+              marginTop: 16,
+              paddingTop: 14,
+              borderTop:
+                "1px solid #f3f4f6",
+              display: "flex",
+              justifyContent:
+                "flex-end",
+              }}
+          >
+            <Link
+              href={`/trips/${trip.id}`}
+              style={{
+                color: "#2563eb",
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              查看旅程 →
+              </Link>
+          </div>
+        </div>
+      );
+    })}
+  </main>
+);
 }
