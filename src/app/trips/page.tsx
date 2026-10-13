@@ -82,6 +82,49 @@ export default function TripsPage() {
     );
   });
 
+  // =========================================================
+// 旅程排序
+// - 未結束旅程：開始日期較近的排前面
+// - 已結束旅程：最近結束的排前面
+// - 已結束旅程排在未來 / 進行中旅程後面
+// =========================================================
+const sortedTrips = [
+  ...filteredTrips,
+].sort((a, b) => {
+  const aStatus =
+    getTripStatus(
+      a.start_date,
+      a.end_date
+    );
+
+  const bStatus =
+    getTripStatus(
+      b.start_date,
+      b.end_date
+    );
+
+
+   if (
+    aStatus === "ended" &&
+    bStatus === "ended"
+  ) {
+    return b.end_date.localeCompare(
+      a.end_date
+    );
+  }
+
+  if (aStatus === "ended") {
+    return 1;
+  }
+
+  if (bStatus === "ended") {
+    return -1;
+  }
+
+  return a.start_date.localeCompare(
+    b.start_date
+  );
+});
   useEffect(() => {
     async function loadTrips() {
       const {
