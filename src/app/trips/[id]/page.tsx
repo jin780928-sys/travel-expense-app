@@ -900,66 +900,66 @@ return (
                               }}
                             >
                               <div
-                                style={{
-                                  display:
-                                    "flex",
-                                  justifyContent:
-                                    "space-between",
-                                  alignItems:
-                                    "flex-start",
-                                  gap: 12,
-                                  flexWrap:
-                                     "wrap",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    minWidth: 0,
-                                    flex:
-                                      "1 1 260px",
-                                  }}
-                                  >
-                                  {/* =========================
-                                      行程標題
-                                     ========================= */}
-                                  <div
-                                    style={{
-                                      fontSize:
-                                        16,
-                                      fontWeight:
-                                        700,
-                                      color:
-                                        "#111827",
-                                    }}
-                                    >
-                                    {
-                                      item.title
-                                    }
-                                  </div>
+  style={{
+    display: "flex",
+    alignItems: "flex-start",
+    gap: 14,
+    flexWrap: "wrap",
+  }}
+>
 
-                                  {/* =========================
-                                      時間
-                                     ========================= */}
-                                  {(item.start_time ||
-                                    item.end_time) && (
-                                    <div
-                                      style={{
-                                        marginTop:
-                                          6,
-                                        fontSize:
-                                          14,
-                                        color:
-                                          "#374151",
-                                      }}
-                                    >
-                                      時間：
-                                      {item.start_time ||
-                                        "未設定"}
-                                      {" ～ "}
-                                      {item.end_time ||
-                                        "未設定"}
-                                    </div>
-                                  )}
+  {/* =========================
+      左側時間
+      ========================= */}
+                                <div
+    style={{
+      width: 90,
+      flexShrink: 0,
+      fontSize: 14,
+      fontWeight: 700,
+      color: "#2563eb",
+      lineHeight: 1.5,
+    }}
+                                  >
+    {item.start_time || "未設定"}
+
+    {item.end_time && (
+      <>
+        <br />
+        <span
+          style={{
+            color: "#6b7280",
+            fontWeight: 500,
+          }}
+        >
+          ～ {item.end_time}
+        </span>
+      </>
+    )}
+  </div>
+
+     {/* =========================
+      右側行程內容
+     ========================= */}
+  <div
+    style={{
+      minWidth: 0,
+      flex: "1 1 260px",
+    }}
+  >
+
+     {/* =========================
+        行程標題
+       ========================= */}
+    <div
+      style={{
+        fontSize: 16,
+        fontWeight: 700,
+        color: "#111827",
+      }}
+      >
+      {item.title}
+    </div>
 
                                   {/* =========================
                                       地點
