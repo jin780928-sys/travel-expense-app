@@ -322,6 +322,17 @@ const [
     "itinerary"
   );
 
+  /* =========================================================
+   統計分頁內部切換
+   - category = 大分類統計
+   - payment  = 付款方式統計
+   ========================================================= */
+  const [
+  statsView,
+  setStatsView,
+] = useState<
+  "category" | "payment"
+>("category");
 
 /* =========================================================
      載入 Trip 詳細資料
@@ -552,6 +563,35 @@ const categoryTotals =
 
       return result;
     }, {});
+
+  /* =========================================================
+     統計：依付款方式＋幣別
+     ========================================================= */
+  const paymentMethodTotals =
+    expenses.reduce<
+      Record<
+        string,
+        Record<string, number>
+      >
+    >((result, expense) => {
+      const paymentMethod =
+        expense.payment_method ||
+        "未設定";
+
+      const currency =
+        expense.currency || "USD";
+
+      if (!result[paymentMethod]) {
+        result[paymentMethod] = {};
+      }
+      result[paymentMethod][currency] =
+        (result[paymentMethod][currency] ||
+          0) +
+        Number(expense.amount || 0);
+
+      return result;
+    }, {});
+  
 /* =========================================================
      每日行程：依日期分組
      - 相同日期的行程放在同一組
@@ -1937,9 +1977,81 @@ return (
                 )}
               </section>
 
+{/* =============================================
+    統計類型切換
+    - 大分類統計
+    - 付款方式統計
+   ============================================= */}
+              <div
+  style={{
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    marginBottom: 18,
+  }}
+>
+                <button
+    type="button"
+    onClick={() =>
+      setStatsView("category")
+    }
+    style={{
+      height: 40,
+      padding: "0 16px",
+      borderRadius: 10,
+      border:
+        statsView === "category"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        statsView === "category"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        statsView === "category"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+    }}
+  >
+    大分類統計
+                  </button>
+
+  <button
+    type="button"
+    onClick={() =>
+      setStatsView("payment")
+    }
+    style={{
+      height: 40,
+      padding: "0 16px",
+      borderRadius: 10,
+      border:
+        statsView === "payment"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        statsView === "payment"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        statsView === "payment"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+      }}
+  >
+    付款方式統計
+  </button>
+</div>
               {/* =============================================
                   分類統計
                  ============================================= */}
+              {statsView === "category" && (
               <section
                 style={{
                   background:
@@ -2061,6 +2173,7 @@ return (
                     </div>
                 )}
               </section>
+              )}
             </>
           )}
         </>
