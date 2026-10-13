@@ -572,6 +572,28 @@ const categoryTotals =
 
       return result;
       }, {});
+
+   /* =========================================================
+     旅程支出：依日期分組
+     - 相同日期的支出放在同一組
+     ========================================================= */
+  const groupedExpenses =
+    expenses.reduce<
+      Record<string, Expense[]>
+    >((result, expense) => {
+      const dateKey =
+        expense.date || "日期未設定";
+
+      if (!result[dateKey]) {
+        result[dateKey] = [];
+      }
+
+      result[dateKey].push(expense);
+
+      return result;
+    }, {});
+
+② 修改後前後文
   
 /* =========================================================
      Loading
@@ -1552,117 +1574,117 @@ return (
                    支出列表
                    =========================================== */
                 <div>
-                  {expenses.map(
-                    (expense) => (
-                      <Link
-                        key={
-                          expense.id
-                          }
-                        href={`/expenses/${expense.id}`}
-                        style={{
-                          display:
-                            "block",
-                          padding:
-                            "13px 0",
-                          borderBottom:
-                            "1px solid #e5e7eb",
-                          textDecoration:
-                            "none",
-                          color:
-                            "inherit",
-                        }}
-                      >
-                        <div
-                          style={{
-                            display:
-                              "flex",
-                            justifyContent:
-                              "space-between",
-                            alignItems:
-                              "center",
-                            gap: 12,
-                            flexWrap:
-                              "wrap",
-                          }}
-                        >
-                          <div
-                            style={{
-                              minWidth: 0,
-                              flex:
-                                "1 1 220px",
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontSize:
-                                  13,
-                                color:
-                                  "#6b7280",
-                              }}
-                            >
-                              {
-                                expense.date
-                                }
-                            </div>
+  {Object.entries(
+    groupedExpenses
+  ).map(
+    ([
+      date,
+      dayExpenses,
+    ]) => (
+      <div
+        key={date}
+        style={{
+          marginBottom: 20,
+          }}
+      >
+        {/* ===================================
+            支出日期
+           =================================== */}
+        <div
+          style={{
+            marginBottom: 8,
+            paddingBottom: 8,
+            borderBottom:
+              "1px solid #e5e7eb",
+            fontSize: 15,
+            fontWeight: 700,
+            color: "#111827",
+          }}
+        >
+          {formatTripDate(date)}
+        </div>
 
-                            <div
-                              style={{
-                                marginTop:
-                                  4,
-                                fontSize:
-                                  15,
-                                fontWeight:
-                                  600,
-                                color:
-                                  "#111827",
-                                }}
-                            >
-                              {
-                                expense.item
-                              }
-                            </div>
+        {/* ===================================
+            當日支出
+           =================================== */}
+        {dayExpenses.map(
+          (expense) => (
+            <Link
+              key={expense.id}
+              href={`/expenses/${expense.id}`}
+              style={{
+                display: "block",
+                padding: "13px 0",
+                borderBottom:
+                  "1px solid #f3f4f6",
+                textDecoration: "none",
+                color: "inherit",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent:
+                    "space-between",
+                  alignItems: "center",
+                  gap: 12,
+                  flexWrap: "wrap",
+                }}
+              >
+                <div
+                  style={{
+                    minWidth: 0,
+                    flex: "1 1 220px",
+                  }}
+                  >
+                  <div
+                    style={{
+                      fontSize: 15,
+                      fontWeight: 600,
+                      color: "#111827",
+                      }}
+                  >
+                    {expense.item}
+                  </div>
 
-                            {(expense.major_category ||
-                              expense.category) && (
-                              <div
-                                style={{
-                                  marginTop:
-                                    4,
-                                  fontSize:
-                                    13,
-                                  color:
-                                    "#6b7280",
-                                  }}
-                              >
-                                分類：
-                                {expense.major_category ||
-                                  expense.category}
-                              </div>
-                            )}
-                          </div>
-                          <div
-                            style={{
-                              fontSize:
-                                15,
-                              fontWeight:
-                                700,
-                              color:
-                                "#111827",
-                              whiteSpace:
-                                "nowrap",
-                            }}
-                          >
-                            {expense.currency ||
-                              "USD"}{" "}
-                            {formatAmount(
-                              expense.amount
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-                      )
+                  {(expense.major_category ||
+                    expense.category) && (
+                    <div
+                      style={{
+                        marginTop: 4,
+                        fontSize: 13,
+                        color: "#6b7280",
+                      }}
+                    >
+                      分類：
+                      {expense.major_category ||
+                        expense.category}
+                    </div>
                   )}
                 </div>
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "#111827",
+                    whiteSpace: "nowrap",
+                  }}
+                  >
+                  {expense.currency ||
+                    "USD"}{" "}
+                  {formatAmount(
+                    expense.amount
+                  )}
+                  </div>
+              </div>
+            </Link>
+          )
+        )}
+      </div>
+    )
+  )}
+</div>
+                         
               )}
             </section>
           )}
