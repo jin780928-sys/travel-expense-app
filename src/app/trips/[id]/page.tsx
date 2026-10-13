@@ -817,7 +817,60 @@ return (
   </Link>
 </div>
             </div>
+{/* =============================================
+    旅程總支出摘要
+   ============================================= */}
+            {Object.keys(
+  totalsByCurrency
+).length > 0 && (
+  <div
+    style={{
+      marginTop: 10,
+      display: "flex",
+      gap: 8,
+      flexWrap: "wrap",
+      alignItems: "center",
+    }}
+  >
+    <span
+      style={{
+        fontSize: 14,
+        color: "#6b7280",
+      }}
+    >
+      總支出：
+    </span>
 
+    {Object.entries(
+      totalsByCurrency
+    ).map(
+      ([
+        currency,
+        amount,
+      ]) => (
+        <span
+          key={currency}
+          style={{
+            padding: "4px 9px",
+            background: "#f9fafb",
+            border:
+              "1px solid #e5e7eb",
+            borderRadius: 999,
+            fontSize: 13,
+            fontWeight: 700,
+            color: "#111827",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {currency}{" "}
+          {formatAmount(
+            amount
+          )}
+        </span>
+      )
+    )}
+  </div>
+)}
             {trip.notes && (
               <div
                 style={{
