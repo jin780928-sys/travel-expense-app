@@ -3,17 +3,26 @@
 import { useState } from "react";
 import { supabase } from "../../../lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NewTripPage() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState("");
-
+  const [saving, setSaving] =
+  useState(false);
+  
   async function handleSubmit() {
-    setMessage("");
+  if (saving) {
+    return;
+  }
+
+  setSaving(true);
+  setMessage("");
 
     const {
       data: { user },
@@ -37,6 +46,7 @@ export default function NewTripPage() {
       setMessage("新增失敗：" + error.message);
       return;
     }
+    router.push("/trips");
 
     setMessage("旅程新增成功！");
     setName("");
@@ -269,8 +279,10 @@ const textareaStyle = {
   </Link>
 
   <button
-    type="button"
-    onClick={handleSubmit}
+    <button
+  type="button"
+  onClick={handleSubmit}
+  disabled={saving}
     style={{
       height: 42,
       padding: "0 18px",
