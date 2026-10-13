@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect,  useState,} from "react";
-import {useRouter,  useSearchParams,} from "next/navigation";
+import { useRouter } from "next/navigation";
 import ExpenseForm from "../../../components/ExpenseForm";
 import { supabase } from "../../../lib/supabase";
 
@@ -26,9 +26,7 @@ type Trip = {
 
 export default function NewExpensePage() {
   const router = useRouter();
-  const searchParams =
-    useSearchParams();
-
+  
   // =========================================================
   // 基本資料
   // =========================================================
@@ -124,22 +122,7 @@ export default function NewExpensePage() {
   const [message, setMessage] =
     useState("");
 
-  /* =========================================================
-   從旅程頁進入新增花費
-   - 讀取網址 ?trip_id=
-   - 自動切換成 trip
-   - 自動指定旅程
-   ========================================================= */
-  useEffect(() => {
-  const tripIdFromUrl =
-    searchParams.get("trip_id");
-
-  if (!tripIdFromUrl) {
-    return;
-  }
-    setExpenseScope("trip");
-  setTripId(tripIdFromUrl);
-}, [searchParams]);
+ 
   
   // =========================================================
   // 載入付款人、信用卡、旅程
