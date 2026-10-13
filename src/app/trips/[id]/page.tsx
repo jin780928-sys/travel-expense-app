@@ -361,6 +361,119 @@ export default function TripDetailPage() {
   </button>
 </div>
 
+      {/* =========================================================
+    分頁內容區
+   ========================================================= */}
+
+{/* 行程 */}
+      {activeTab === "itinerary" && (
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: 14,
+      padding: 18,
+      marginBottom: 18,
+      boxSizing: "border-box",
+    }}
+
+    >
+    <h2
+      style={{
+        margin: 0,
+        fontSize: 20,
+        fontWeight: 700,
+        color: "#111827",
+      }}
+    >
+      行程
+    </h2>
+
+    <div
+      style={{
+        marginTop: 12,
+        fontSize: 14,
+        color: "#6b7280",
+      }}
+    >
+      行程內容會放在這裡
+    </div>
+  </div>
+)}
+
+      {/* 支出 */}
+{activeTab === "expenses" && (
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: 14,
+      padding: 18,
+      marginBottom: 18,
+      boxSizing: "border-box",
+    }}
+  >
+
+    <h2
+      style={{
+        margin: 0,
+        fontSize: 20,
+        fontWeight: 700,
+        color: "#111827",
+      }}
+    >
+      支出
+    </h2>
+
+    <div
+      style={{
+        marginTop: 12,
+        fontSize: 14,
+        color: "#6b7280",
+      }}
+    >
+      旅程支出會放在這裡
+    </div>
+  </div>
+)}
+
+      {/* 統計 */}
+{activeTab === "stats" && (
+  <div
+    style={{
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: 14,
+      padding: 18,
+      marginBottom: 18,
+      boxSizing: "border-box",
+    }}
+  >
+
+    <h2
+      style={{
+        margin: 0,
+        fontSize: 20,
+        fontWeight: 700,
+        color: "#111827",
+      }}
+    >
+      統計
+    </h2>
+
+    <div
+      style={{
+        marginTop: 12,
+        fontSize: 14,
+        color: "#6b7280",
+      }}
+    >
+      旅程統計會放在這裡
+    </div>
+  </div>
+)}
+
+
       <h1
         style={{
           margin: 0,
