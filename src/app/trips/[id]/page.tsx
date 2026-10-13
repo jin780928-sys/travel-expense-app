@@ -43,6 +43,18 @@ export default function TripDetailPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>([]);
   const [message, setMessage] = useState("讀取中...");
+  // =========================================================
+// 旅程詳細頁分頁
+// itinerary = 行程
+// expenses  = 支出
+// stats     = 統計
+// =========================================================
+  const [
+  activeTab,
+  setActiveTab,
+] = useState<
+  "itinerary" | "expenses" | "stats"
+>("itinerary");
 
   useEffect(() => {
     async function loadTrip() {
@@ -246,6 +258,108 @@ export default function TripDetailPage() {
         boxSizing: "border-box",
       }}
     >
+
+      {/* =========================================================
+    旅程功能分頁
+    - 行程
+    - 支出
+    - 統計
+   ========================================================= */}
+      <div
+  style={{
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    marginBottom: 18,
+  }}
+>
+        <button
+    type="button"
+    onClick={() =>
+      setActiveTab("itinerary")
+    }
+    style={{
+      height: 40,
+      padding: "0 16px",
+      borderRadius: 10,
+      border:
+        activeTab === "itinerary"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        activeTab === "itinerary"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        activeTab === "itinerary"
+        ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+    }}
+  >
+    行程
+  </button>
+
+        <button
+    type="button"
+    onClick={() =>
+      setActiveTab("expenses")
+    }
+    style={{
+      height: 40,
+      padding: "0 16px",
+      borderRadius: 10,
+      border:
+        activeTab === "expenses"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        activeTab === "expenses"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        activeTab === "expenses"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+    }}
+  >
+    支出
+  </button>
+
+        <button
+    type="button"
+    onClick={() =>
+      setActiveTab("stats")
+    }
+    style={{
+      height: 40,
+      padding: "0 16px",
+      borderRadius: 10,
+      border:
+        activeTab === "stats"
+          ? "1px solid #2563eb"
+          : "1px solid #d1d5db",
+      background:
+        activeTab === "stats"
+          ? "#2563eb"
+          : "#ffffff",
+      color:
+        activeTab === "stats"
+          ? "#ffffff"
+          : "#374151",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+    }}
+  >
+    統計
+  </button>
+</div>
 
       <h1
         style={{
