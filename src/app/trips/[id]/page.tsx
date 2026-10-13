@@ -2177,6 +2177,132 @@ return (
               </section>
               )}
             </>
+              {/* =============================================
+                  付款方式統計
+                 ============================================= */}
+          {statsView === "payment" && (
+                <section
+                  style={{
+                    background:
+                      "#ffffff",
+                    border:
+                      "1px solid #e5e7eb",
+                    borderRadius: 14,
+                    padding: 18,
+                    marginBottom: 18,
+                  }}
+                >
+                  <h2
+                    style={{
+                      margin:
+                        "0 0 14px",
+                      fontSize: 20,
+                      fontWeight: 700,
+                      color: "#111827",
+                    }}
+                  >
+                    付款方式統計
+                  </h2>
+
+                  {Object.keys(
+                    paymentMethodTotals
+                  ).length === 0 ? (
+                    <div
+                      style={{
+                        color:
+                          "#6b7280",
+                        fontSize: 14,
+                      }}
+                    >
+                      尚無付款方式資料
+                    </div>
+                  ) : (
+                  <div>
+                      {Object.entries(
+                        paymentMethodTotals
+                      ).map(
+                        ([
+                          paymentMethod,
+                          currencyTotals,
+                        ]) => (
+                          <div
+                            key={
+                              paymentMethod
+                            }
+                            style={{
+                              display:
+                                "flex",
+                              justifyContent:
+                                "space-between",
+                              alignItems:
+                                "flex-start",
+                              gap: 12,
+                              padding:
+                                "11px 0",
+                              borderBottom:
+                                "1px solid #e5e7eb",
+                            }}
+                            >
+                            <div
+                              style={{
+                                fontSize:
+                                  14,
+                                fontWeight:
+                                  600,
+                                color:
+                                  "#374151",
+                              }}
+                            >
+                              {
+                                paymentMethod
+                                }
+                            </div>
+
+                            <div
+                              style={{
+                                textAlign:
+                                  "right",
+                              }}
+                              >
+                              {Object.entries(
+                                currencyTotals
+                              ).map(
+                                ([
+                                  currency,
+                                  amount,
+                                ]) => (
+                                  <div
+                                    key={
+                                      currency
+                                    }
+                                    style={{
+                                      fontSize:
+                                        14,
+                                      fontWeight:
+                                        700,
+                                      color:
+                                        "#111827",
+                                      marginBottom:
+                                        3,
+                                      }}
+                                  >
+                                    {
+                                      currency
+                                    }{" "}
+                                    {formatAmount(
+                                      amount
+                                    )}
+                                  </div>
+                                )
+                                )}
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+                </section>
+              )}
           )}
         </>
       )}
