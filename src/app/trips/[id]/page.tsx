@@ -1661,6 +1661,65 @@ return (
                         expense.category}
                     </div>
                   )}
+                  <div
+  style={{
+    minWidth: 0,
+    flex: "1 1 220px",
+  }}
+>
+  <div
+    style={{
+      fontSize: 15,
+      fontWeight: 600,
+      color: "#111827",
+    }}
+  >
+    {expense.item}
+  </div>
+
+  {(expense.major_category ||
+    expense.category) && (
+    <div
+      style={{
+        marginTop: 4,
+        fontSize: 13,
+        color: "#6b7280",
+      }}
+      >
+      分類：
+      {expense.major_category ||
+        expense.category}
+    </div>
+  )}
+
+
+                    {/* =========================================
+      付款方式 / 信用卡
+     ========================================= */}
+                    {(expense.payment_method ||
+    expense.card_name) && (
+    <div
+      style={{
+        marginTop: 4,
+        fontSize: 13,
+        color: "#6b7280",
+      }}
+      >
+      付款：
+      {expense.payment_method ||
+        "未設定"}
+
+      {expense.card_name && (
+        <>
+          {" · "}
+          {expense.card_name}
+        </>
+        )}
+    </div>
+  )}
+</div>
+
+
                 </div>
                 <div
                   style={{
