@@ -401,51 +401,20 @@ export default function TripDetailPage() {
   </div>
 )}
 
-    {/* =========================================================
+{/* =========================================================
     支出分頁內容
    ========================================================= */}
-
-
-      {/* 統計 */}
-{activeTab === "stats" && (
-  <div
-    style={{
-      background: "#ffffff",
-      border: "1px solid #e5e7eb",
-      borderRadius: 14,
-      padding: 18,
-      marginBottom: 18,
-      boxSizing: "border-box",
-    }}
-  >
+{activeTab === "expenses" && (
+  <>
+    <h2>支出</h2>
+    
 {/* =========================================================
     統計分頁內容
    ========================================================= */}
 {activeTab === "stats" && (
   <>
-    
-    <h2
-      style={{
-        margin: 0,
-        fontSize: 20,
-        fontWeight: 700,
-        color: "#111827",
-      }}
-    >
-      統計
-    </h2>
-
-    <div
-      style={{
-        marginTop: 12,
-        fontSize: 14,
-        color: "#6b7280",
-      }}
-    >
-      旅程統計會放在這裡
-    </div>
-  </div>
-)}
+    <h2>統計</h2>
+     
 
 
       <h1
