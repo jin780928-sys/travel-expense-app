@@ -1244,7 +1244,19 @@ return (
                 <div>
                   {Object.entries(
   groupedItineraryItems
-).map(
+)
+  .sort(([dateA], [dateB]) => {
+  if (dateA === "日期未設定") {
+    return 1;
+  }
+
+  if (dateB === "日期未設定") {
+    return -1;
+  }
+
+  return dateA.localeCompare(dateB);
+})
+                    .map(
   ([
     date,
     items,
