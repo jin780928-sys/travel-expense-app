@@ -404,6 +404,20 @@ const [
 >("category");
 
 
+  /* =========================================================
+   支出分頁篩選
+   - category = 大分類
+   - payment  = 付款方式
+   ========================================================= */
+  const [
+  expenseCategoryFilter,
+  setExpenseCategoryFilter,
+] = useState("all");
+
+const [
+  expensePaymentFilter,
+  setExpensePaymentFilter,
+] = useState("all");
   
 /* =========================================================
      載入 Trip 詳細資料
