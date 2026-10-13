@@ -67,8 +67,15 @@ export default function NewExpensePage() {
     setExpenseScope,
   ] = useState("daily");
 
-  const [tripId, setTripId] =
-    useState("");
+  const [
+  tripId,
+  setTripId,
+] = useState("");
+
+const [
+  openedFromTrip,
+  setOpenedFromTrip,
+] = useState(false);
 
   const [notes, setNotes] =
     useState("");
