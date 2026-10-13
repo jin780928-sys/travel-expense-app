@@ -445,9 +445,10 @@ export default function TripsPage() {
         </span>
       </div>
     </div>
-  </div>
-))}
-      {
+   </div>
+          );
+        }
+      )}
     </main>
   );
 }
