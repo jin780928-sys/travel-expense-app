@@ -119,6 +119,24 @@ function formatTripDate(
   return `${month}/${day}（${weekday}）`;
 }
 
+return `${month}/${day}（${weekday}）`;
+}
+
+/* =========================================================
+   行程時間顯示格式
+   - 09:00:00 → 09:00
+   - 09:30:00 → 09:30
+   ========================================================= */
+function formatItineraryTime(
+  timeString: string | null
+) {
+  if (!timeString) {
+    return null;
+  }
+
+  return timeString.slice(0, 5);
+}
+
 /* =========================================================
    計算旅程天數
    - 起訖日都算一天
@@ -1358,7 +1376,9 @@ return (
       lineHeight: 1.5,
     }}
                                   >
-    {item.start_time || "未設定"}
+   {formatItineraryTime(
+  item.start_time
+) || "未設定"}
 
     {item.end_time && (
       <>
@@ -1369,7 +1389,10 @@ return (
             fontWeight: 500,
           }}
         >
-          ～ {item.end_time}
+           ～{" "}
+      {formatItineraryTime(
+        item.end_time
+      )}
         </span>
       </>
     )}
