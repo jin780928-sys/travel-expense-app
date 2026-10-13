@@ -83,8 +83,6 @@ function getTripStatusStyle(
 }
 
 export default function TripsPage() {
-
-export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [message, setMessage] = useState("讀取中...");
 
