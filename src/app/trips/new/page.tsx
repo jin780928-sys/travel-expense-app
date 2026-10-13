@@ -45,6 +45,43 @@ export default function NewTripPage() {
     setNotes("");
   }
 
+  // =========================================================
+// 表單欄位固定樣式
+// =========================================================
+  const fieldStyle = {
+  marginBottom: 16,
+};
+
+const labelStyle = {
+  display: "block",
+  marginBottom: 6,
+  fontSize: 14,
+  fontWeight: 600,
+  color: "#374151",
+};
+
+
+  const inputStyle = {
+  width: "100%",
+  minHeight: 42,
+  padding: "0 12px",
+  border: "1px solid #d1d5db",
+  borderRadius: 10,
+  background: "#ffffff",
+  color: "#111827",
+    fontSize: 14,
+  boxSizing:
+    "border-box" as const,
+  outline: "none",
+};
+
+const textareaStyle = {
+  ...inputStyle,
+  minHeight: 100,
+  padding: 12,
+  resize:
+    "vertical" as const,
+};
   return (
    <main
     style={{
