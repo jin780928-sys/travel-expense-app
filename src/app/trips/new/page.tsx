@@ -292,12 +292,19 @@ const textareaStyle = {
       borderRadius: 10,
       fontSize: 14,
       fontWeight: 600,
-      cursor: "pointer",
-      whiteSpace: "nowrap",
-    }}
-    >
-    新增旅程
-  </button>
+     cursor:
+      saving
+        ? "not-allowed"
+        : "pointer",
+    opacity:
+      saving ? 0.7 : 1,
+    whiteSpace: "nowrap",
+  }}
+>
+  {saving
+    ? "新增中..."
+    : "新增旅程"}
+</button>
 </div>
 
       {message && <p style={{ marginTop: 20 }}>{message}</p>}
