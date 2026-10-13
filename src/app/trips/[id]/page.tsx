@@ -577,8 +577,9 @@ const categoryTotals =
       >
     >((result, expense) => {
       const paymentMethod =
-        expense.payment_method ||
-        "未設定";
+          expense.card_name ||
+          expense.payment_method ||
+          "未設定";
 
       const currency =
         expense.currency || "USD";
