@@ -604,15 +604,17 @@ export default function TripDetailPage() {
                   日期：{expense.date || "未設定"}
                 </p>
 
-                {expense.category && (
-                  <p>分類：{expense.category}</p>
-                )}
-              </div>
-            
+              {expense.category && (
+  <p>分類: {expense.category}</p>
+)}
+</div>
+)}
+
+      </>
+    )}
+
   </>
-          )}
-        </>
-      )}
-    </main>
-  );
+)}
+</main>
+);
 }
