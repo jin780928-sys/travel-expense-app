@@ -118,6 +118,50 @@ function formatTripDate(
 
   return `${month}/${day}（${weekday}）`;
 }
+
+/* =========================================================
+   計算旅程天數
+   - 起訖日都算一天
+   - 例如 11/04 ～ 11/14 = 11 天
+   ========================================================= */
+function getTripDayCount(
+  startDate: string | null,
+  endDate: string | null
+) {
+  if (!startDate || !endDate) {
+    return null;
+  }
+
+  const start = new Date(
+    `${startDate}T00:00:00`
+  );
+
+  const end = new Date(
+    `${endDate}T00:00:00`
+  );
+
+
+  if (
+    Number.isNaN(start.getTime()) ||
+    Number.isNaN(end.getTime()) ||
+    end < start
+  ) {
+    return null;
+  }
+
+  const millisecondsPerDay =
+    1000 * 60 * 60 * 24;
+
+  const difference =
+    end.getTime() - start.getTime();
+
+  return (
+    Math.floor(
+      difference /
+        millisecondsPerDay
+    ) + 1
+  );
+}
 /* =========================================================
    旅程狀態
    - upcoming = 即將出發
@@ -676,22 +720,36 @@ return (
                 </div>
 
                 <div
-                  style={{
-                    marginTop: 8,
-                    fontSize: 15,
-                    color: "#374151",
-                  }}
-                  >
-                  日期：
+  style={{
+    marginTop: 8,
+    fontSize: 15,
+    color: "#374151",
+  }}
+>
+  日期：
                   {trip.start_date ||
-                    "未設定"}
-                  {" ～ "}
-                  {trip.end_date ||
-                    "未設定"}
-                </div>
+    "未設定"}
+  {" ～ "}
+  {trip.end_date ||
+    "未設定"}
+
+  {getTripDayCount(
+    trip.start_date,
+    trip.end_date
+  ) !== null && (
+  <>
+      {" · "}
+      {getTripDayCount(
+        trip.start_date,
+        trip.end_date
+      )}{" "}
+      天
+    </>
+  )}
+</div>
               </div>
 
-              {/* =============================================
+{/* =============================================
     右側：旅程狀態 + 編輯
    ============================================= */}
 <div
