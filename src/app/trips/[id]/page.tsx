@@ -805,23 +805,273 @@ return (
                 >
                   尚未新增每日行程
                 </div>
-              ) : (
-
+            ) : (
                 /* ===========================================
-                   每日行程列表
+                   每日行程列表：依日期分組
                    =========================================== */
                 <div>
-                  {itineraryItems.map(
-                    (item) => (
+                  {Object.entries(
+                    groupedItineraryItems
+                  ).map(
+                    ([
+                      date,
+                      items,
+                      ]) => (
                       <div
-                        key={item.id}
+                        key={date}
                         style={{
-                          padding:
-                            "14px 0",
-                          borderBottom:
-                            "1px solid #e5e7eb",
+                          marginBottom: 22,
                         }}
                       >
+                        {/* ===================================
+                            日期標題
+                           =================================== */}
+                        <div
+                          style={{
+                            marginBottom: 10,
+                            paddingBottom: 8,
+                            borderBottom:
+                              "1px solid #e5e7eb",
+                            fontSize: 16,
+                            fontWeight: 700,
+                            color: "#111827",
+                          }}
+                          >
+                          {date}
+                        </div>
+
+                        {/* ===================================
+                            該日期的行程
+                           =================================== */}
+                        {items.map(
+                          (item) => (
+                            <div
+                              key={
+                                item.id
+                              }
+                              style={{
+                                padding:
+                                  "14px 0",
+                                borderBottom:
+                                  "1px solid #f3f4f6",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display:
+                                    "flex",
+                                  justifyContent:
+                                    "space-between",
+                                  alignItems:
+                                    "flex-start",
+                                  gap: 12,
+                                  flexWrap:
+                                     "wrap",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    minWidth: 0,
+                                    flex:
+                                      "1 1 260px",
+                                  }}
+                                  >
+                                  {/* =========================
+                                      行程標題
+                                     ========================= */}
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        16,
+                                      fontWeight:
+                                        700,
+                                      color:
+                                        "#111827",
+                                    }}
+                                    >
+                                    {
+                                      item.title
+                                    }
+                                  </div>
+
+                                  {/* =========================
+                                      時間
+                                     ========================= */}
+                                  {(item.start_time ||
+                                    item.end_time) && (
+                                    <div
+                                      style={{
+                                        marginTop:
+                                          6,
+                                        fontSize:
+                                          14,
+                                        color:
+                                          "#374151",
+                                      }}
+                                    >
+                                      時間：
+                                      {item.start_time ||
+                                        "未設定"}
+                                      {" ～ "}
+                                      {item.end_time ||
+                                        "未設定"}
+                                    </div>
+                                  )}
+
+                                  {/* =========================
+                                      地點
+                                     ========================= */}
+                                  {item.location && (
+                                    <div
+                                      style={{
+                                        marginTop:
+                                          6,
+                                        fontSize:
+                                          14,
+                                        color:
+                                          "#374151",
+                                      }}
+                                    >
+                                      地點：
+                                      {
+                                        item.location
+                                      }
+                                    </div>
+                                  )}
+
+                                  {/* =========================
+                                      交通
+                                     ========================= */}
+                                  {item.transportation && (
+                                    <div
+                                      style={{
+                                        marginTop:
+                                          6,
+                                        fontSize:
+                                          14,
+                                        color:
+                                          "#374151",
+                                      }}
+                                    >
+                                      交通：
+                                      {
+                                        item.transportation
+                                      }
+                                    </div>
+                                  )}
+
+                                  {/* =========================
+                                      備註
+                                     ========================= */}
+                                  {item.notes && (
+                                    <div
+                                      style={{
+                                        marginTop:
+                                          6,
+                                        fontSize:
+                                          14,
+                                        lineHeight:
+                                          1.6,
+                                        color:
+                                          "#6b7280",
+                                        whiteSpace:
+                                          "pre-wrap",
+                                      }}
+                                    >
+                                      備註：
+                                      {
+                                        item.notes
+                                      }
+                                    </div>
+                                    )}
+                                </div>
+
+                                {/* ===========================
+                                    編輯 / 刪除
+                                   =========================== */}
+                                <div
+                                  style={{
+                                    display:
+                                      "flex",
+                                    gap: 8,
+                                    flexWrap:
+                                      "wrap",
+                                  }}
+                                >
+                                  <Link
+                                    href={`/trips/${trip.id}/itinerary/${item.id}/edit`}
+                                    style={{
+                                      height:
+                                        36,
+                                      padding:
+                                        "0 12px",
+                                      display:
+                                        "inline-flex",
+                                      alignItems:
+                                        "center",
+                                      justifyContent:
+                                        "center",
+                                      border:
+                                        "1px solid #d1d5db",
+                                      borderRadius:
+                                        8,
+                                      background:
+                                        "#ffffff",
+                                      color:
+                                        "#374151",
+                                      textDecoration:
+                                        "none",
+                                      fontSize:
+                                        13,
+                                      fontWeight:
+                                        600,
+                                      }}
+                                  >
+                                    編輯
+                                  </Link>
+
+
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleDeleteItinerary(
+                                        item.id
+                                         )
+                                    }
+                                    style={{
+                                      height:
+                                        36,
+                                      padding:
+                                        "0 12px",
+                                      border:
+                                        "1px solid #fecaca",
+                                      borderRadius:
+                                        8,
+                                      background:
+                                        "#ffffff",
+                                      color:
+                                        "#dc2626",
+                                      fontSize:
+                                        13,
+                                      fontWeight:
+                                        600,
+                                      cursor:
+                                        "pointer",
+                                      }}
+                                  >
+                                    刪除
+                                  </button>
+                                </div>
+                                </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                      )
+                  )}
+                </div>
+              )}
+                      
                         <div
                           style={{
                             display:
