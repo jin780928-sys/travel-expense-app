@@ -76,6 +76,49 @@ function formatAmount(
 }
 
 /* =========================================================
+   日期顯示格式
+   例如：2026-11-04 → 11/04（三）
+   ========================================================= */
+function formatTripDate(
+  dateString: string
+) {
+  if (dateString === "日期未設定") {
+    return dateString;
+  }
+
+  const date = new Date(
+    `${dateString}T00:00:00`
+  );
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString;
+  }
+
+  const weekdays = [
+    "日",
+    "一",
+    "二",
+    "三",
+    "四",
+    "五",
+    "六",
+  ];
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+
+  const weekday =
+    weekdays[date.getDay()];
+
+  return `${month}/${day}（${weekday}）`;
+}
+/* =========================================================
    Trip 詳細頁
    ========================================================= */
 export default function TripDetailPage() {
@@ -837,7 +880,7 @@ return (
                             color: "#111827",
                           }}
                           >
-                          {date}
+                            {formatTripDate(date)}
                         </div>
 
                         {/* ===================================
