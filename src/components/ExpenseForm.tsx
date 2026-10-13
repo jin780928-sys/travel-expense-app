@@ -786,91 +786,120 @@ if (!category) {
         </div>
       </section>
 
-      {/* 支出類型 */}
-      <section style={cardStyle}>
-        <h2
-          style={{
-            marginTop: 0,
-            marginBottom: 16,
-            fontSize: 20,
-            fontWeight: 700,
-            color: "#111827",
-          }}
-        >
-          支出類型
-        </h2>
+     {/* =========================================================
+    支出類型
+    - 一般新增花費時顯示
+    - 從旅程頁進來時隱藏
+   ========================================================= */}
+     {!openedFromTrip && (
+  <div
+    style={{
+      marginBottom: 16,
+    }}
+  >
+    <div
+      style={{
+        marginBottom: 6,
+        fontSize: 14,
+        fontWeight: 600,
+        color: "#374151",
+      }}
+    >
+      類型
+    </div>
 
-        <div style={fieldStyle}>
-          <label
-            style={labelStyle}
-          >
-            類型
-          </label>
+    <select
+      value={expenseScope}
+      onChange={(e) =>
+        setExpenseScope(
+          e.target.value
+        )
+      }
+      style={{
+        width: "100%",
+        height: 42,
+        padding: "0 12px",
+        border:
+          "1px solid #d1d5db",
+        borderRadius: 10,
+        background: "#ffffff",
+        color: "#111827",
+        boxSizing: "border-box",
+      }}
+    >
+      <option value="daily">
+        日常
+        </option>
 
-          <select
-  value={expenseScope}
-  onChange={(e) => {
-    const newScope =
-      e.target.value;
+      <option value="trip">
+        旅程
+      </option>
+    </select>
+  </div>
+)}
 
-    setExpenseScope(
-      newScope
-    );
-
-    if (
-      newScope !== "trip"
-    ) {
-      setTripId("");
-    }
-  }}
-  style={inputStyle}
->
-            <option value="daily">
-              日常花費
-            </option>
-
-            <option value="travel">
-              旅遊花費
-            </option>
-            </select>
-        </div>
-
-      
-          {expenseScope === "trip" && (
-  <div style={fieldStyle}>
-    <label style={labelStyle}>
+     {/* =========================================================
+    所屬旅程
+    - 旅程支出時顯示
+    - 從旅程頁進來時鎖定
+   ========================================================= */}
+     {expenseScope === "trip" && (
+  <div
+    style={{
+      marginBottom: 16,
+    }}
+  >
+    <div
+      style={{
+        marginBottom: 6,
+        fontSize: 14,
+        fontWeight: 600,
+        color: "#374151",
+        }}
+    >
       所屬旅程
-    </label>
+    </div>
 
     <select
       value={tripId}
       onChange={(e) =>
         setTripId(e.target.value)
       }
-      style={inputStyle}
+      disabled={openedFromTrip}
+      style={{
+        width: "100%",
+        height: 42,
+        padding: "0 12px",
+        border:
+          "1px solid #d1d5db",
+        borderRadius: 10,
+        background:
+          openedFromTrip
+            ? "#f9fafb"
+            : "#ffffff",
+        color: "#111827",
+        boxSizing: "border-box",
+        cursor:
+          openedFromTrip
+            ? "not-allowed"
+            : "pointer",
+      }}
     >
       <option value="">
-        無
-      </option>
+        請選擇旅程
+        </option>
 
-              {trips.map(
-                (trip) => (
-                  <option
-                    key={trip.id}
-                    value={String(
-                      trip.id
-                    )}
-                  >
-                    {getTripName(
-                      trip
-                    )}
-                  </option>
-                )
-              )}
-            </select>
-            </div>
-        )}
-      </section>
+      {trips.map((trip) => (
+        <option
+          key={trip.id}
+          value={trip.id}
+        >
+          {trip.name}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
 
       {/* 分攤設定 */}
       <section style={cardStyle}>
