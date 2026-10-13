@@ -1431,73 +1431,55 @@ return (
       {item.title}
     </div>
 
-                                  {/* =========================
-                                      地點
-                                     ========================= */}
-                                  {item.location && (
-                                    <div
-                                      style={{
-                                        marginTop:
-                                          6,
-                                        fontSize:
-                                          14,
-                                        color:
-                                          "#374151",
-                                      }}
-                                    >
-                                      地點：
-                                      {
-                                        item.location
-                                      }
-                                    </div>
-                                  )}
+{/* =========================
+    地點
+   ========================= */}
+{item.location && (
+  <div
+    style={{
+      marginTop: 6,
+      fontSize: 14,
+      color: "#6b7280",
+    }}
+  >
+    📍 {item.location}
+  </div>
+)}
 
-                                  {/* =========================
-                                      交通
-                                     ========================= */}
-                                  {item.transportation && (
-                                    <div
-                                      style={{
-                                        marginTop:
-                                          6,
-                                        fontSize:
-                                          14,
-                                        color:
-                                          "#374151",
-                                      }}
-                                    >
-                                      交通：
-                                      {
-                                        item.transportation
-                                      }
-                                    </div>
-                                  )}
+{/* =========================
+    交通
+   ========================= */}
+{item.transportation && (
+  <div
+    style={{
+      marginTop: 6,
+      fontSize: 14,
+      color: "#6b7280",
+    }}
+  >
+    🚗 {item.transportation}
+  </div>
+)}
 
-                                  {/* =========================
-                                      備註
-                                     ========================= */}
-                                  {item.notes && (
-                                    <div
-                                      style={{
-                                        marginTop:
-                                          6,
-                                        fontSize:
-                                          14,
-                                        lineHeight:
-                                          1.6,
-                                        color:
-                                          "#6b7280",
-                                        whiteSpace:
-                                          "pre-wrap",
-                                      }}
-                                    >
-                                      備註：
-                                      {
-                                        item.notes
-                                      }
-                                    </div>
-                                    )}
-                                </div>
+{/* =========================
+    備註
+   ========================= */}
+{item.notes && (
+  <div
+    style={{
+      marginTop: 8,
+      padding: "8px 10px",
+      background: "#f9fafb",
+      borderRadius: 8,
+      fontSize: 13,
+      lineHeight: 1.6,
+      color: "#6b7280",
+      whiteSpace: "pre-wrap",
+    }}
+  >
+    備註：{item.notes}
+  </div>
+)}
 
                                 {/* ===========================
                                     編輯 / 刪除
