@@ -119,6 +119,107 @@ function formatTripDate(
   return `${month}/${day}（${weekday}）`;
 }
 /* =========================================================
+   旅程狀態
+   - upcoming = 即將出發
+   - active   = 進行中
+   - ended    = 已結束
+   - unknown  = 日期未設定
+   ========================================================= */
+function getTripStatus(
+  startDate: string | null,
+  endDate: string | null
+) {
+  if (!startDate || !endDate) {
+    return "unknown";
+  }
+
+  const today = new Date();
+
+  const year = today.getFullYear();
+
+  const month = String(
+    today.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    today.getDate()
+  ).padStart(2, "0");
+
+  const todayString =
+    `${year}-${month}-${day}`;
+
+  if (todayString < startDate) {
+    return "upcoming";
+  }
+
+  if (
+    todayString >= startDate &&
+    todayString <= endDate
+  ) {
+    return "active";
+  }
+
+  return "ended";
+}
+
+/* =========================================================
+   旅程狀態文字
+   ========================================================= */
+function getTripStatusLabel(
+  status: string
+) {
+  if (status === "upcoming") {
+    return "即將出發";
+  }
+
+  if (status === "active") {
+    return "進行中";
+  }
+
+  if (status === "ended") {
+    return "已結束";
+  }
+
+  return "日期未設定";
+}
+
+/* =========================================================
+   旅程狀態顏色
+   ========================================================= */
+function getTripStatusStyle(
+  status: string
+) {
+  if (status === "upcoming") {
+    return {
+      background: "#eff6ff",
+      color: "#1d4ed8",
+      border: "1px solid #bfdbfe",
+    };
+  }
+
+  if (status === "active") {
+    return {
+      background: "#ecfdf5",
+      color: "#047857",
+      border: "1px solid #a7f3d0",
+    };
+  }
+
+  if (status === "ended") {
+    return {
+      background: "#f3f4f6",
+      color: "#6b7280",
+      border: "1px solid #e5e7eb",
+    };
+  }
+
+  return {
+    background: "#f9fafb",
+    color: "#6b7280",
+    border: "1px solid #e5e7eb",
+  };
+}
+/* =========================================================
    Trip 詳細頁
    ========================================================= */
 export default function TripDetailPage() {
@@ -590,33 +691,73 @@ return (
                 </div>
               </div>
 
-              <Link
-                href={`/trips/${trip.id}/edit`}
-                style={{
-                  height: 40,
-                  padding: "0 14px",
-                  display:
-                    "inline-flex",
-                  alignItems:
-                    "center",
-                  justifyContent:
-                    "center",
-                  border:
-                    "1px solid #d1d5db",
-                  borderRadius: 10,
-                  background:
-                    "#ffffff",
-                  color: "#374151",
-                  textDecoration:
-                    "none",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  whiteSpace:
-                    "nowrap",
-                }}
-              >
-                編輯旅程
-                </Link>
+              {/* =============================================
+    右側：旅程狀態 + 編輯
+   ============================================= */}
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    flexWrap: "wrap",
+  }}
+  >
+  {/* ===========================================
+      旅程狀態
+     =========================================== */}
+  <span
+    style={{
+      ...getTripStatusStyle(
+        getTripStatus(
+          trip.start_date,
+          trip.end_date
+        )
+      ),
+      minHeight: 32,
+      padding: "0 10px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 999,
+      fontSize: 13,
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      boxSizing: "border-box",
+    }}
+    >
+    {getTripStatusLabel(
+      getTripStatus(
+        trip.start_date,
+        trip.end_date
+      )
+    )}
+  </span>
+
+   {/* ===========================================
+      編輯旅程
+     =========================================== */}
+  <Link
+    href={`/trips/${trip.id}/edit`}
+    style={{
+      height: 40,
+      padding: "0 14px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border:
+        "1px solid #d1d5db",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#374151",
+      textDecoration: "none",
+      fontSize: 14,
+      fontWeight: 600,
+      whiteSpace: "nowrap",
+    }}
+  >
+    編輯旅程
+  </Link>
+</div>
             </div>
 
             {trip.notes && (
