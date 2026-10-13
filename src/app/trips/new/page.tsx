@@ -214,16 +214,78 @@ const textareaStyle = {
   </div>
 </div>
 
-      <textarea
-        placeholder="備註"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        style={{ width: "100%", padding: 10, marginBottom: 12 }}
-      />
+     {/* =========================================================
+    備註
+   ========================================================= */}
+     <div style={fieldStyle}>
+  <label style={labelStyle}>
+    備註
+  </label>
 
-      <button onClick={handleSubmit} style={{ padding: "12px 20px" }}>
-        儲存旅程
-      </button>
+       <textarea
+    placeholder="例如：住宿、交通或行程備註"
+    value={notes}
+    onChange={(e) =>
+      setNotes(e.target.value)
+    }
+    style={textareaStyle}
+  />
+</div>
+
+     {/* =========================================================
+    底部操作按鈕
+    - 左側：取消
+    - 右側：新增旅程
+   ========================================================= */}
+     <div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 18,
+    flexWrap: "wrap",
+  }}
+>
+       <Link
+    href="/trips"
+    style={{
+      height: 42,
+      padding: "0 18px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#ffffff",
+      color: "#374151",
+      border: "1px solid #d1d5db",
+      borderRadius: 10,
+      textDecoration: "none",
+      fontSize: 14,
+      fontWeight: 600,
+      whiteSpace: "nowrap",
+    }}
+  >
+         取消
+  </Link>
+
+  <button
+    type="button"
+    onClick={handleSubmit}
+    style={{
+      height: 42,
+      padding: "0 18px",
+      background: "#2563eb",
+      color: "#ffffff",
+      border: "1px solid #2563eb",
+      borderRadius: 10,
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    }}
+    >
+    新增旅程
+  </button>
+</div>
 
       {message && <p style={{ marginTop: 20 }}>{message}</p>}
     </main>
