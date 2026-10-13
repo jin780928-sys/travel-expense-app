@@ -608,7 +608,7 @@ export default function TripDetailPage() {
                   <p>分類：{expense.category}</p>
                 )}
               </div>
-            )}
+            
   </>
           )}
         </>
