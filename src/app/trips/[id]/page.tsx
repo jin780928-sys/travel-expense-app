@@ -162,6 +162,59 @@ function getTripDayCount(
     ) + 1
   );
 }
+
+/* =========================================================
+   計算某日期是旅程 Day 幾
+   - 依旅程開始日期計算
+   - 例如 11/04 開始：
+     11/04 = Day 1
+     11/05 = Day 2
+     11/06 = Day 3
+   ========================================================= */
+function getTripDayNumber(
+  dateString: string,
+  tripStartDate: string | null
+) {
+  if (
+    dateString === "日期未設定" ||
+    !tripStartDate
+    ) {
+    return null;
+  }
+
+  const start = new Date(
+    `${tripStartDate}T00:00:00`
+  );
+
+  const current = new Date(
+    `${dateString}T00:00:00`
+  );
+  if (
+    Number.isNaN(start.getTime()) ||
+    Number.isNaN(current.getTime())
+  ) {
+    return null;
+  }
+
+  const millisecondsPerDay =
+    1000 * 60 * 60 * 24;
+
+  const difference =
+    current.getTime() -
+    start.getTime();
+
+  const dayNumber =
+    Math.floor(
+      difference /
+        millisecondsPerDay
+    ) + 1;
+
+  if (dayNumber < 1) {
+    return null;
+  }
+  return dayNumber;
+}
+
 /* =========================================================
    旅程狀態
    - upcoming = 即將出發
@@ -1190,12 +1243,12 @@ return (
                    =========================================== */
                 <div>
                   {Object.entries(
-                    groupedItineraryItems
-                    ).map(
-                    ([
-                      date,
-                      items,
-                    ], dayIndex) => (
+  groupedItineraryItems
+).map(
+  ([
+    date,
+    items,
+  ]) => (
                       <div
                         key={date}
                         style={{
@@ -1219,21 +1272,30 @@ return (
                           "1px solid #e5e7eb",
                           }}
                           >
-                          <div
-                          style={{
-                          padding: "4px 9px",
-                           background: "#eff6ff",
-                          border:
-                                  "1px solid #bfdbfe",
-                           borderRadius: 999,
-                          fontSize: 12,
-                          fontWeight: 700,
-                          color: "#1d4ed8",
-                           whiteSpace: "nowrap",
-                           }}
-                            >
-                            Day {dayIndex + 1}
+                       {getTripDayNumber(
+  date,
+  trip.start_date
+) !== null && (
+  <div
+    style={{
+      padding: "4px 9px",
+      background: "#eff6ff",
+      border:
+        "1px solid #bfdbfe",
+      borderRadius: 999,
+      fontSize: 12,
+      fontWeight: 700,
+      color: "#1d4ed8",
+      whiteSpace: "nowrap",
+    }}
+    >
+    Day{" "}
+    {getTripDayNumber(
+      date,
+      trip.start_date
+    )}
   </div>
+)}
 
   <div
     style={{
