@@ -593,7 +593,26 @@ const categoryTotals =
       return result;
     }, {});
 
+  /* =========================================================
+     計算單日支出小計
+     - 不同幣別分開計算
+     ========================================================= */
+  function getDailyExpenseTotals(
+    dayExpenses: Expense[]
+  ) {
+    return dayExpenses.reduce<
+      Record<string, number>
+    >((result, expense) => {
+      const currency =
+        expense.currency || "USD";
 
+      result[currency] =
+        (result[currency] || 0) +
+        Number(expense.amount || 0);
+
+      return result;
+    }, {});
+  }
   
 /* =========================================================
      Loading
@@ -1587,22 +1606,67 @@ return (
           marginBottom: 20,
           }}
       >
-        {/* ===================================
-            支出日期
-           =================================== */}
-        <div
+       {/* ===================================
+    支出日期 + 當日小計
+   =================================== */}
+<div
+  style={{
+    display: "flex",
+    justifyContent:
+      "space-between",
+    alignItems: "center",
+    gap: 10,
+    flexWrap: "wrap",
+    marginBottom: 8,
+    paddingBottom: 8,
+    borderBottom:
+      "1px solid #e5e7eb",
+  }}
+  >
+  {/* 日期 */}
+  <div
+    style={{
+      fontSize: 15,
+      fontWeight: 700,
+      color: "#111827",
+    }}
+  >
+    {formatTripDate(date)}
+  </div>
+  {/* 當日小計 */}
+  <div
+    style={{
+      display: "flex",
+      gap: 8,
+      flexWrap: "wrap",
+      justifyContent: "flex-end",
+    }}
+  >
+    {Object.entries(
+      getDailyExpenseTotals(
+        dayExpenses
+      )
+    ).map(
+      ([
+        currency,
+        amount,
+      ]) => (
+        <span
+          key={currency}
           style={{
-            marginBottom: 8,
-            paddingBottom: 8,
-            borderBottom:
-              "1px solid #e5e7eb",
-            fontSize: 15,
+            fontSize: 13,
             fontWeight: 700,
-            color: "#111827",
+            color: "#374151",
+            whiteSpace: "nowrap",
           }}
         >
-          {formatTripDate(date)}
-        </div>
+          {currency}{" "}
+          {formatAmount(amount)}
+        </span>
+      )
+    )}
+  </div>
+</div>
 
         {/* ===================================
             當日支出
