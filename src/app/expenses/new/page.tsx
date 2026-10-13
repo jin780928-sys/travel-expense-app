@@ -724,6 +724,7 @@ setTripId(tripIdFromUrl);
           共用支出表單
          ===================================================== */}
       <ExpenseForm
+        openedFromTrip={openedFromTrip}
         item={item}
         setItem={setItem}
         amount={amount}
