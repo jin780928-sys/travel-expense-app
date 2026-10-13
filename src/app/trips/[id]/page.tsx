@@ -1439,10 +1439,11 @@ return (
     style={{
       marginTop: 6,
       fontSize: 14,
-      color: "#6b7280",
+      color: "#374151",
     }}
   >
-    📍 {item.location}
+    地點：
+    {item.location}
   </div>
 )}
 
@@ -1454,10 +1455,11 @@ return (
     style={{
       marginTop: 6,
       fontSize: 14,
-      color: "#6b7280",
+      color: "#374151",
     }}
   >
-    🚗 {item.transportation}
+    交通：
+    {item.transportation}
   </div>
 )}
 
@@ -1467,17 +1469,15 @@ return (
 {item.notes && (
   <div
     style={{
-      marginTop: 8,
-      padding: "8px 10px",
-      background: "#f9fafb",
-      borderRadius: 8,
-      fontSize: 13,
+      marginTop: 6,
+      fontSize: 14,
       lineHeight: 1.6,
       color: "#6b7280",
       whiteSpace: "pre-wrap",
     }}
   >
-    備註：{item.notes}
+    備註：
+    {item.notes}
   </div>
 )}
 
