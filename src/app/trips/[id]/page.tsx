@@ -193,16 +193,37 @@ export default function TripDetailPage() {
   }
 
   return (
-    <main
+  <main
+    style={{
+      maxWidth: 1100,
+      margin: "0 auto",
+      padding: 20,
+      background: "#f7f7f8",
+      minHeight: "100vh",
+      boxSizing: "border-box",
+      width: "100%",
+    }}
+  >
+
+      {/* =========================================================
+        返回我的旅程
+       ========================================================= */}
+    <Link
+      href="/trips"
       style={{
-        maxWidth: 800,
-        margin: "40px auto",
-        padding: 20,
+        display: "inline-flex",
+        alignItems: "center",
+        marginBottom: 16,
+        color: "#2563eb",
+        fontSize: 14,
+        fontWeight: 600,
+        textDecoration: "none",
       }}
     >
-      <p>
-        <Link href="/trips">← 回到我的旅程</Link>
-      </p>
+      ← 我的旅程
+    </Link>
+    
+    
 
       {message && <p>{message}</p>}
 
