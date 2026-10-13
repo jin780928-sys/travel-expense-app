@@ -1420,155 +1420,132 @@ return (
 
      {/* =========================
         行程標題
-       ========================= */}
+     ========================= */}     
     <div
-      style={{
-        fontSize: 16,
-        fontWeight: 700,
-        color: "#111827",
-      }}
-      >
-      {item.title}
-    </div>
+                                    style={{
+                                      fontSize: 16,
+                                      fontWeight: 700,
+                                      color: "#111827",
+                                      }}
+                                  >
+                                    {item.title}
+                                  </div>
+     {/* =========================
+                                      地點
+                                     ========================= */}
+                                  {item.location && (
+                                    <div
+                                      style={{
+                                        marginTop: 6,
+                                        fontSize: 14,
+                                        color: "#374151",
+                                        }}
+                                    >
+                                      地點：
+                                      {item.location}
+                                    </div>
+    )}
 
-{/* =========================
-    地點
-   ========================= */}
-{item.location && (
-  <div
-    style={{
-      marginTop: 6,
-      fontSize: 14,
-      color: "#374151",
-    }}
-  >
-    地點：
-    {item.location}
-  </div>
-)}
+                                  {/* =========================
+                                      交通
+                                     ========================= */}
+    {item.transportation && (
+                                    <div
+                                      style={{
+                                        marginTop: 6,
+                                        fontSize: 14,
+                                        color: "#374151",
+                                      }}
+                                    >
+                                      交通：
+                                      {item.transportation}
+                                    </div>
+                                  )}
 
-{/* =========================
-    交通
-   ========================= */}
-{item.transportation && (
-  <div
-    style={{
-      marginTop: 6,
-      fontSize: 14,
-      color: "#374151",
-    }}
-  >
-    交通：
-    {item.transportation}
-  </div>
-)}
-
-{/* =========================
-    備註
-   ========================= */}
-{item.notes && (
-  <div
-    style={{
-      marginTop: 6,
-      fontSize: 14,
-      lineHeight: 1.6,
-      color: "#6b7280",
-      whiteSpace: "pre-wrap",
-    }}
-  >
-    備註：
-    {item.notes}
-  </div>
-)}
+    {/* =========================
+                                      備註
+                                     ========================= */}
+    {item.notes && (
+                                    <div
+                                      style={{
+                                        marginTop: 6,
+                                        fontSize: 14,
+                                        lineHeight: 1.6,
+                                        color: "#6b7280",
+                                        whiteSpace: "pre-wrap",
+                                        }}
+                                    >
+                                      備註：
+                                      {item.notes}
+                                    </div>
+    )}
+                                </div>
 
                                 {/* ===========================
                                     編輯 / 刪除
-                                   =========================== */}
+                                    =========================== */}
                                 <div
                                   style={{
-                                    display:
-                                      "flex",
+                                    display: "flex",
                                     gap: 8,
-                                    flexWrap:
-                                      "wrap",
+                                    flexWrap: "wrap",
                                   }}
                                 >
                                   <Link
                                     href={`/trips/${trip.id}/itinerary/${item.id}/edit`}
                                     style={{
-                                      height:
-                                        36,
-                                      padding:
-                                        "0 12px",
-                                      display:
-                                        "inline-flex",
-                                      alignItems:
-                                        "center",
-                                      justifyContent:
-                                        "center",
+                                      height: 36,
+                                      padding: "0 12px",
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
                                       border:
                                         "1px solid #d1d5db",
-                                      borderRadius:
-                                        8,
-                                      background:
-                                        "#ffffff",
-                                      color:
-                                        "#374151",
-                                      textDecoration:
-                                        "none",
-                                      fontSize:
-                                        13,
-                                      fontWeight:
-                                        600,
-                                      }}
+                                      borderRadius: 8,
+                                      background: "#ffffff",
+                                      color: "#374151",
+                                      textDecoration: "none",
+                                      fontSize: 13,
+                                      fontWeight: 600,
+                                    }}
                                   >
                                     編輯
                                   </Link>
-
 
                                   <button
                                     type="button"
                                     onClick={() =>
                                       handleDeleteItinerary(
                                         item.id
-                                         )
+                                      )
                                     }
                                     style={{
-                                      height:
-                                        36,
-                                      padding:
-                                        "0 12px",
+                                      height: 36,
+                                      padding: "0 12px",
                                       border:
                                         "1px solid #fecaca",
-                                      borderRadius:
-                                        8,
-                                      background:
-                                        "#ffffff",
-                                      color:
-                                        "#dc2626",
-                                      fontSize:
-                                        13,
-                                      fontWeight:
-                                        600,
-                                      cursor:
-                                        "pointer",
+                                      borderRadius: 8,
+                                      background: "#ffffff",
+                                      color: "#dc2626",
+                                      fontSize: 13,
+                                      fontWeight: 600,
+                                      cursor: "pointer",
                                     }}
                                   >
                                     刪除
                                   </button>
-                                  </div>
+                                </div>
                               </div>
                             </div>
-                          )
-                        
-        </div>
+      )
+                        )}
+                      </div>
                     )
                   )}
                 </div>
-              
+                )}
             </section>
           )}
-                                    
                       
           
 
