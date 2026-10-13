@@ -1472,6 +1472,63 @@ return (
               </div>
 
               {/* =============================================
+                  旅程支出小計
+                 ============================================= */}
+              {Object.keys(
+              totalsByCurrency
+              ).length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 8,
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    marginBottom: 16,
+                    padding: 12,
+                    background: "#f9fafb",
+                    border:
+                      "1px solid #e5e7eb",
+                    borderRadius: 10,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "#6b7280",
+                    }}
+                  >
+                    支出小計
+                  </span>
+
+                  {Object.entries(
+                    totalsByCurrency
+                  ).map(
+                    ([
+                      currency,
+                      amount,
+                    ]) => (
+                      <span
+                        key={currency}
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 700,
+                          color: "#111827",
+                          whiteSpace:
+                            "nowrap",
+                        }}
+                      >
+                        {currency}{" "}
+                        {formatAmount(
+                          amount
+                        )}
+                        </span>
+                    )
+                  )}
+                </div>
+              )}
+              
+              {/* =============================================
                   沒有支出
                  ============================================= */}
               {expenses.length ===
