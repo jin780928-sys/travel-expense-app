@@ -43,6 +43,15 @@ export default function NewExpensePage() {
         .slice(0, 10)
     );
 
+  // =========================================
+// 付款工具 ID
+// =========================================
+
+const [
+  paymentMethodId,
+  setPaymentMethodId,
+] = useState<string>("");
+  
   const [
     majorCategory,
     setMajorCategory,
