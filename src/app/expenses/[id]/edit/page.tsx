@@ -250,22 +250,34 @@ useEffect(() => {
         data.category || ""
       );
 
-      setPaymentMethod(
-        data.payment_method || ""
-      );
+     // =========================================
+// 載入原本的付款方式
+// =========================================
 
-    setCardName(
-        data.card_name || ""
-      );
+setPaymentMethod(
+  data.payment_method || ""
+);
+
+    // =========================================
+// 載入原本的信用卡
+// =========================================
+
+setCardName(
+  data.card_name || ""
+);
 
     // =========================================
 // 載入原本的付款工具 ID
+// 金融卡 / Apple Pay / Google Pay
 // =========================================
-    setPaymentMethodId(
-  expense.payment_method_id != null
-    ? String(expense.payment_method_id)
+
+setPaymentMethodId(
+  data.payment_method_id != null
+    ? String(data.payment_method_id)
     : ""
 );
+
+   
 
       setCurrency(
         data.currency || "USD"
