@@ -885,39 +885,43 @@ const selectedManagedMethod =
   </select>
 </div>
 
-        {/* =========================================
-    03. 信用卡
-    ========================================= */}
-        {paymentMethod === "信用卡" && (
+      {/* =========================================
+    信用卡選擇
+    編輯時保留原本信用卡
+   ========================================= */}
+
+{paymentMethod === "信用卡" && (
   <div style={fieldStyle}>
     <label style={labelStyle}>
       選擇信用卡
     </label>
 
-
     <select
-      value={cardName}
-      onChange={(e) =>
-        setCardName(e.target.value)
-      }
+      value={cardName || ""}
+      onChange={(e) => {
+        setCardName(e.target.value);
+      }}
       style={inputStyle}
     >
       <option value="">
         請選擇信用卡
       </option>
 
+      {/* 保留舊信用卡名稱 */}
       {cardName &&
         !creditCards.some(
-          (card) => card.name === cardName
+          (card) =>
+            card.name.trim() === cardName.trim()
         ) && (
           <option value={cardName}>
             {cardName}（原資料）
           </option>
         )}
 
+      {/* 已建立的信用卡 */}
       {creditCards.map((card) => (
         <option
-          key={card.id}
+          key={String(card.id)}
           value={card.name}
         >
           {card.name}
@@ -926,6 +930,7 @@ const selectedManagedMethod =
     </select>
   </div>
 )}
+        
 
         {/* =========================================
     04. 金融卡 / Apple Pay / Google Pay
