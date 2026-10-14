@@ -184,14 +184,23 @@ const loadData = useCallback(async () => {
         (methodResult.data ?? []) as PaymentMethod[]
         );
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "讀取付款方式失敗"
-      );
-    } finally {
-      setLoading(false);
-       }
+  console.error(
+    "付款方式讀取錯誤：",
+    error
+  );
+
+  const errorText =
+    error instanceof Error
+      ? error.message
+      : JSON.stringify(error, null, 2);
+
+  setMessage(
+    `讀取付款方式失敗：${errorText}`
+  );
+
+} finally {
+  setLoading(false);
+}
   }, []);
 
   useEffect(() => {
