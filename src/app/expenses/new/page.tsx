@@ -643,13 +643,15 @@ setTripId(tripIdFromUrl);
         }
       }
 
-      // =====================================================
-      // 新增成功
-      // =====================================================
-      router.push(
-        "/dashboard"
-      );
-    } catch (error) {
+     // =========================================
+// 儲存成功後，自動返回原本旅程的支出分頁
+// =========================================
+
+if (expenseScope === "trip" && tripId) {
+  router.push(`/trips/${tripId}?tab=expenses`);
+} else {
+  router.push("/dashboard");
+} catch (error) {
       console.error(
         "新增支出失敗:",
         error
