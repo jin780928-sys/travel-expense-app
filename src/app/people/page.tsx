@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
-
+import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 
 
@@ -392,32 +392,66 @@ const inactivePeople = people.filter(
       <div className="people-container">
 
         {/* ==================================
-            13. HEADER / 頁面標題
-        ================================== */}
+    13. HEADER / 頁面標題＋回首頁
+================================== */}
 
-        <header className="page-header">
+<header className="page-header">
 
-          <div>
-            <h1 className="page-title">
-              人員管理
-            </h1>
+  <div>
+    <h1 className="page-title">
+      人員管理
+    </h1>
 
-            <p className="page-description">
-              管理日常記帳成員與旅遊同行人員
-            </p>
-          </div>
+    <p className="page-description">
+      管理日常記帳成員與旅遊同行人員
+    </p>
+  </div>
 
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      flexWrap: "wrap",
+      justifyContent: "flex-end",
+    }}
+  >
 
-          <div className="people-count">
-            <span className="count-number">
-              {activePeople.length}
-            </span>
-            <span className="count-label">
-              位啟用中
-            </span>
-          </div>
+    {/* 啟用人員數量 */}
+    <div className="people-count">
+      <span className="count-number">
+        {activePeople.length}
+      </span>
+      <span className="count-label">
+        位啟用中
+      </span>
+    </div>
 
-        </header>
+     {/* 回首頁按鈕 */}
+    <Link
+      href="/"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: 42,
+        padding: "0 14px",
+        background: "#ffffff",
+        border: "1px solid #d1d5db",
+        borderRadius: 10,
+        color: "#374151",
+        fontSize: 14,
+        fontWeight: 650,
+        textDecoration: "none",
+        whiteSpace: "nowrap",
+      }}
+    >
+      ← 回首頁
+    </Link>
+
+  </div>
+
+</header>
 
         {/* ==================================
             14. MESSAGE / 提示訊息
