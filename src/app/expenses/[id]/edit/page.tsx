@@ -603,6 +603,15 @@ async function handleSave(
       } = await supabase
         .from("Expenses")
         .update({
+          // =========================================
+// 付款工具 ID
+// 金融卡 / Apple Pay / Google Pay
+// =========================================
+payment_method_id:
+  paymentMethodId
+    ? Number(paymentMethodId)
+    : null,
+          
           item: item.trim(),
           amount:
             numericAmount,
