@@ -427,27 +427,30 @@ const inactivePeople = people.filter(
       </span>
     </div>
 
-     {/* 回首頁按鈕 */}
-    <Link
-      href="/"
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: 42,
-        padding: "0 14px",
-        background: "#ffffff",
-        border: "1px solid #d1d5db",
-        borderRadius: 10,
-        color: "#374151",
-        fontSize: 14,
-        fontWeight: 650,
-        textDecoration: "none",
-        whiteSpace: "nowrap",
-      }}
-    >
-      ← 回首頁
-    </Link>
+     {/* =========================================
+    返回首頁按鈕
+    與花費紀錄頁面統一樣式
+   ========================================= */}
+
+<Link
+  href="/"
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "12px 20px",
+    backgroundColor: "#eff6ff",
+    color: "#2563eb",
+    border: "1px solid #bfdbfe",
+    borderRadius: 12,
+    fontSize: 16,
+    fontWeight: 700,
+    textDecoration: "none",
+    whiteSpace: "nowrap",
+  }}
+>
+  ← 回首頁
+</Link>
 
   </div>
 
