@@ -578,8 +578,30 @@ return (
               </div>
 
               <div className="itemInfo">
-                <strong>{item.name}</strong>
-                <span>{LABELS[item.type]} · {item.description}</span>
+  {/* =====================================
+      點擊付款工具名稱 → 獨立明細頁
+     ===================================== */}
+
+  <Link
+    href={
+      item.type === "credit_card"
+        ? `/cards/credit-${item.id}`
+        : `/cards/method-${item.id}`
+    }
+    style={{
+      color: "#4338ca",
+      textDecoration: "none",
+      fontSize: 14,
+      fontWeight: 700,
+    }}
+  >
+    {item.name} ↗
+  </Link>
+
+  <span>
+    {LABELS[item.type]} · {item.description}
+  </span>
+                
                 {!item.is_active && (
               <small>已停用</small>
                 )}
