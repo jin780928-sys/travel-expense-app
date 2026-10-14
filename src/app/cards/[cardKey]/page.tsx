@@ -22,6 +22,7 @@ import { useParams } from "next/navigation";
 
 import {
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -207,6 +208,16 @@ const [expenseMonth, setExpenseMonth] =
 
 const [expensePage, setExpensePage] =
   useState(1);
+
+// =========================================
+// 22. 統計分析篩選
+// =========================================
+
+const [analysisMonth, setAnalysisMonth] =
+  useState("all");
+
+const [analysisCurrency, setAnalysisCurrency] =
+  useState("USD");
 
 // =========================================
 // 18. 歷史帳單展開狀態
@@ -519,6 +530,154 @@ const totalExpensePages = Math.max(
   currentExpensePage * EXPENSE_PAGE_SIZE
 );
 
+// =========================================
+// 23. 統計分析資料計算
+// =========================================
+
+// 可選月份
+const analysisMonths = useMemo(() => {
+  return Array.from(
+    new Set(
+      cardExpenses
+        .map((e) => e.date?.slice(0, 7))
+        .filter((v): v is string => Boolean(v))
+    )
+  ).sort((a, b) => b.localeCompare(a));
+}, [cardExpenses]);
+
+// 可選幣別
+const analysisCurrencies = useMemo(() => {
+  return Array.from(
+    new Set(
+      cardExpenses.map(
+        (e) => e.currency || "USD"
+      )
+    )
+  ).sort();
+}, [cardExpenses]);
+
+// 依照指定月份和幣別篩選
+const analysisExpenses = useMemo(() => {
+  return cardExpenses.filter((e) => {
+    const matchesMonth =
+      analysisMonth === "all" ||
+      e.date?.slice(0, 7) === analysisMonth;
+
+    const matchesCurrency =
+      (e.currency || "USD") === analysisCurrency;
+
+    return matchesMonth && matchesCurrency;
+  });
+}, [
+  cardExpenses,
+  analysisMonth,
+  analysisCurrency,
+]);
+
+// 消費總金額
+const analysisTotal = analysisExpenses.reduce(
+  (total, expense) =>
+    total + Number(expense.amount || 0),
+  0
+);
+
+// 消費筆數
+const analysisCount = analysisExpenses.length;
+
+// 平均每筆消費
+const analysisAverage =
+  analysisCount > 0
+    ? analysisTotal / analysisCount
+    : 0;
+
+// 大分類統計
+const analysisCategories = useMemo(() => {
+  const totals: Record<string, number> = {};
+
+  analysisExpenses.forEach((e) => {
+    const category =
+      e.major_category || "未分類";
+
+    totals[category] =
+      (totals[category] || 0) +
+      Number(e.amount || 0);
+  });
+
+  return Object.entries(totals)
+    .map(([name, amount]) => ({
+      name,
+      amount,
+      percentage:
+        analysisTotal !== 0
+          ? (amount / analysisTotal) * 100
+          : 0,
+    }))
+    .sort((a, b) => b.amount - a.amount);
+}, [analysisExpenses, analysisTotal]);
+
+// 日常、旅程分別加總
+const analysisScopeTotals = useMemo(() => {
+  let daily = 0;
+  let trip = 0;
+
+  analysisExpenses.forEach((e) => {
+    const amount = Number(e.amount || 0);
+
+    if (
+      e.expense_scope === "trip" ||
+      e.trip_id != null
+    ) {
+      trip += amount;
+    } else {
+      daily += amount;
+    }
+  });
+
+  return { daily, trip };
+}, [analysisExpenses]);
+
+// 每月趨勢
+// 固定最近 12 個月，不包含未來月份
+const analysisMonthlyTrend = useMemo(() => {
+  const now = new Date();
+  const result: {
+    month: string;
+    amount: number;
+  }[] = [];
+
+  for (let i = 11; i >= 0; i--) {
+    const date = new Date(
+      now.getFullYear(),
+      now.getMonth() - i,
+      1
+    );
+
+    const month = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+    ].join("-");
+
+    const total = cardExpenses
+      .filter(
+        (e) =>
+          e.date?.slice(0, 7) === month &&
+          (e.currency || "USD") === analysisCurrency
+      )
+      .reduce(
+        (sum, e) =>
+          sum + Number(e.amount || 0),
+        0
+      );
+
+    result.push({
+      month,
+      amount: total,
+    });
+  }
+
+  return result;
+}, [cardExpenses, analysisCurrency]);
+  
 // =========================================
 // 19. 計算信用卡歷史帳單
 // =========================================
