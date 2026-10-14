@@ -1,4566 +1,1205 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
+// =========================================
+// 01. Import
+// =========================================
 
-type Expense = {
-  id: number | string;
-  date: string;
-  item: string;
-  amount: number;
-  major_category: string | null;
-  category: string | null;
-  currency: string | null;
-  card_name: string | null;
-};
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+} from "react";
+
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+
+// =========================================
+// 02. TypeScript 型別
+// =========================================
 
 type CreditCard = {
   id: number;
   name: string;
+  is_active: boolean;
+  user_id: string;
+  created_at: string | null;
   statement_day: number | null;
   due_day: number | null;
+  is_paid: boolean | null;
   due_month_offset: number | null;
 };
 
-type CreditCardStatement = {
-  id: number | string;
-  card_id: number;
-  period_start: string;
-  period_end: string;
-  is_paid: boolean;
-  paid_date: string | null;
+
+type CardForm = {
+  name: string;
+  statement_day: string;
+  due_day: string;
+  due_month_offset: string;
 };
 
-type CurrentCardStatement = CreditCard & {
-  periodStart: string | null;
-  periodEnd: string | null;
-  totals: Record<string, number>;
-  statementStatusId: number | string | null;
-  isPaid: boolean;
-  paidDate: string | null;
+type Notice = {
+  type: "success" | "error";
+  text: string;
 };
 
-export default function DashboardPage() {
-  const today = new Date();
+// =========================================
+// 03. 預設表單
+// =========================================
 
-  const [selectedYear, setSelectedYear] = useState(
-    today.getFullYear()
-  );
+const EMPTY_FORM: CardForm = {
+  name: "",
+  statement_day: "",
+  due_day: "",
+  due_month_offset: "1",
+};
 
-  const [selectedMonth, setSelectedMonth] = useState(
-    today.getMonth() + 1
-  );
+// =========================================
+// 04. 共用顏色
+// =========================================
 
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+const COLOR = {
+  background: "#f5f7fb",
+  white: "#ffffff",
+  text: "#111827",
+  muted: "#6b7280",
+  border: "#e5e7eb",
 
-  const [statementExpenses, setStatementExpenses] = useState<
-    Expense[]
-  >([]);
+  blue: "#2563eb",
+  blueLight: "#eff6ff",
 
-  const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
+  green: "#15803d",
+  greenLight: "#f0fdf4",
 
-  const [cardStatements, setCardStatements] = useState<
-    CreditCardStatement[]
-  >([]);
 
-  const [message, setMessage] = useState("");
+  // =========================================
+// 05. 共用樣式
+// =========================================
 
-  const [selectedCard, setSelectedCard] = useState<string | null>(
+const panelStyle: CSSProperties = {
+  background: COLOR.white,
+  border: `1px solid ${COLOR.border}`,
+  borderRadius: 16,
+  padding: 20,
+  marginBottom: 20,
+  boxShadow: "0 2px 12px rgba(17,24,39,0.03)",
+};
+
+const labelStyle: CSSProperties = {
+  display: "block",
+  marginBottom: 7,
+  color: "#374151",
+  fontSize: 13,
+  fontWeight: 600,
+};
+
+const inputStyle: CSSProperties = {
+  width: "100%",
+  minHeight: 46,
+  padding: "11px 12px",
+  border: `1px solid ${COLOR.border}`,
+  borderRadius: 10,
+  background: COLOR.white,
+  color: COLOR.text,
+  fontSize: 15,
+  boxSizing: "border-box",
+};
+
+const primaryButtonStyle: CSSProperties = {
+  minHeight: 44,
+  padding: "12px 18px",
+  border: "none",
+  borderRadius: 10,
+  background: COLOR.blue,
+  color: COLOR.white,
+  fontSize: 14,
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const secondaryButtonStyle: CSSProperties = {
+  minHeight: 44,
+  padding: "11px 16px",
+  border: `1px solid ${COLOR.border}`,
+  borderRadius: 10,
+  background: COLOR.white,
+  color: "#374151",
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: "pointer",
+};
+
+// =========================================
+// 06. 共用工具
+// =========================================
+
+// 將結帳日及繳款日轉換為數字
+function parseDay(value: string) {
+  return Number(value);
+}
+
+// 取得信用卡結帳資訊
+function getCardDescription(card: CreditCard) {
+  const statement = card.statement_day
+    ? `每月 ${card.statement_day} 日結帳`
+    : "尚未設定結帳日";
+
+  let due = "尚未設定繳款日";
+
+  if (card.due_day) {
+    const offset = card.due_month_offset ?? 1;
+
+
+    const monthText =
+      offset === 0
+        ? "當月"
+        : offset === 1
+        ? "次月"
+        : `${offset} 個月後`;
+
+    due = `${monthText} ${card.due_day} 日繳款`;
+  }
+
+  return `${statement} · ${due}`;
+}
+
+// =========================================
+// 07. 主頁面
+// =========================================
+
+export default function CardsPage() {
+  // =======================================
+  // 07-1. State
+  // =======================================
+
+  const [cards, setCards] = useState<CreditCard[]>([]);
+
+  const [userId, setUserId] = useState<string | null>(
     null
   );
 
-  const [showZeroBalanceCards, setShowZeroBalanceCards] =
+  const [loading, setLoading] = useState(true);
+
+  const [saving, setSaving] = useState(false);
+
+  const [busyCardId, setBusyCardId] = useState<
+    number | null
+  >(null);
+
+  const [form, setForm] = useState<CardForm>({
+    ...EMPTY_FORM,
+  });
+
+  const [editingCardId, setEditingCardId] = useState<
+    number | null
+  >(null);
+
+  const [showInactiveCards, setShowInactiveCards] =
     useState(false);
 
-  const [selectedStatementCard, setSelectedStatementCard] =
-    useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice | null>(
+    null
+  );
 
-  const [editingPaidStatementId, setEditingPaidStatementId] =
-    useState<number | string | null>(null);
-
-  const [editingPaidDate, setEditingPaidDate] = useState("");
-
-  const [showStatementHistory, setShowStatementHistory] =
-    useState(false);
-
-  const [expandedHistoryIds, setExpandedHistoryIds] = useState<
-    Array<number | string>
-  >([]);
-
-  const [historyMonthFilter, setHistoryMonthFilter] =
-    useState("all");
-
-  const [historyCardFilter, setHistoryCardFilter] =
-    useState("all");
-
-  const [historyStatusFilter, setHistoryStatusFilter] =
-    useState("all");
-
-  const [historySort, setHistorySort] = useState("newest");
-
-  const [historySearch, setHistorySearch] = useState("");
-
-  const [historyVisibleCount, setHistoryVisibleCount] =
-    useState(20);
-
-  const [monthlyExpenseSearch, setMonthlyExpenseSearch] =
-    useState("");
-
-  const [
-    monthlyExpenseCategoryFilter,
-    setMonthlyExpenseCategoryFilter,
-  ] = useState("all");
-
-  const [monthlyExpenseCardFilter, setMonthlyExpenseCardFilter] =
-    useState("all");
-
-  const [monthlyExpenseStartDate, setMonthlyExpenseStartDate] =
-    useState("");
-
-  const [monthlyExpenseEndDate, setMonthlyExpenseEndDate] =
-    useState("");
-
-  const [monthlyExpenseSort, setMonthlyExpenseSort] =
-    useState("date_desc");
-
-  const [
-    monthlyExpenseVisibleCount,
-    setMonthlyExpenseVisibleCount,
-  ] = useState(20);
+  // =======================================
+  // 08. 取得登入使用者
+  // =======================================
 
   useEffect(() => {
-    loadDashboardData();
-  }, [selectedYear, selectedMonth]);
+    let mounted = true;
 
-  useEffect(() => {
-    setHistoryVisibleCount(20);
-  }, [
-    historyMonthFilter,
-    historyCardFilter,
-    historyStatusFilter,
-    historySort,
-    historySearch,
-  ]);
+    async function initialize() {
+      setLoading(true);
 
-  useEffect(() => {
-    setMonthlyExpenseVisibleCount(20);
-  }, [
-    monthlyExpenseSearch,
-    monthlyExpenseCategoryFilter,
-    monthlyExpenseCardFilter,
-    monthlyExpenseStartDate,
-    monthlyExpenseEndDate,
-    monthlyExpenseSort,
-  ]);
+      const { data, error } =
+        await supabase.auth.getUser();
 
-  function dateToString(date: Date) {
-    const year = date.getFullYear();
+      if (!mounted) return;
 
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+      if (error || !data.user) {
+        setNotice({
+          type: "error",
+          text: "無法取得登入資訊，請重新登入。",
+        });
 
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  }
-
-  function createSafeDate(
-    year: number,
-    monthIndex: number,
-    day: number
-  ) {
-    const lastDay = new Date(
-      year,
-      monthIndex + 1,
-      0
-    ).getDate();
-
-    return new Date(
-      year,
-      monthIndex,
-      Math.min(day, lastDay)
-    );
-  }
-
-  function formatDate(dateString: string) {
-    if (!dateString) {
-      return "";
-    }
-
-    const [year, month, day] = dateString.split("-");
-
-    return `${year}/${month}/${day}`;
-  }
-
-  async function loadDashboardData() {
-    setMessage("載入中...");
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setMessage("請先登入");
-      return;
-    }
-
-    const monthStart = new Date(
-      selectedYear,
-      selectedMonth - 1,
-      1
-    );
-
-    const monthEnd = new Date(
-      selectedYear,
-      selectedMonth,
-      0
-    );
-
-    const [
-      monthlyExpenseResult,
-      statementExpenseResult,
-      cardResult,
-      statementResult,
-    ] = await Promise.all([
-      supabase
-        .from("Expenses")
-        .select(`
-          id,
-          date,
-          item,
-          amount,
-          major_category,
-          category,
-          currency,
-          card_name
-        `)
-        .eq("expense_scope", "daily")
-        .gte("date", dateToString(monthStart))
-        .lte("date", dateToString(monthEnd))
-        .order("date", {
-          ascending: false,
-        }),
-
-      supabase
-        .from("Expenses")
-        .select(`
-          id,
-          date,
-          item,
-          amount,
-          major_category,
-          category,
-          currency,
-          card_name
-        `)
-        .eq("expense_scope", "daily")
-        .order("date", {
-          ascending: false,
-        }),
-
-      supabase
-        .from("CreditCards")
-        .select(`
-          id,
-          name,
-          statement_day,
-          due_day,
-          due_month_offset
-        `)
-        .eq("is_active", true)
-        .order("name"),
-
-      supabase
-        .from("CreditCardStatements")
-        .select(`
-          id,
-          card_id,
-          period_start,
-          period_end,
-          is_paid,
-          paid_date
-        `),
-    ]);
-
-    if (monthlyExpenseResult.error) {
-      setMessage(monthlyExpenseResult.error.message);
-      return;
-    }
-
-    if (statementExpenseResult.error) {
-      setMessage(statementExpenseResult.error.message);
-      return;
-    }
-
-    if (cardResult.error) {
-      setMessage(cardResult.error.message);
-      return;
-    }
-
-    if (statementResult.error) {
-      setMessage(statementResult.error.message);
-      return;
-    }
-
-    setExpenses(
-      (monthlyExpenseResult.data || []) as Expense[]
-    );
-
-    setStatementExpenses(
-      (statementExpenseResult.data || []) as Expense[]
-    );
-
-    setCreditCards(
-      (cardResult.data || []) as CreditCard[]
-    );
-
-    setCardStatements(
-      (statementResult.data || []) as CreditCardStatement[]
-    );
-
-    setMessage("");
-  }
-
-  const totalsByCurrency = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    for (const expense of expenses) {
-      const currency = expense.currency || "USD";
-
-      totals[currency] =
-        (totals[currency] || 0) +
-        Number(expense.amount || 0);
-    }
-
-    return totals;
-  }, [expenses]);
-
-  const totalsByCategory = useMemo(() => {
-    const totals: Record<
-      string,
-      Record<string, number>
-    > = {};
-
-    for (const expense of expenses) {
-      const category =
-        expense.major_category || "未分類";
-
-      const currency =
-        expense.currency || "USD";
-
-      if (!totals[category]) {
-        totals[category] = {};
-      }
-
-      totals[category][currency] =
-        (totals[category][currency] || 0) +
-        Number(expense.amount || 0);
-    }
-
-    return totals;
-  }, [expenses]);
-
-  const totalsByCard = useMemo(() => {
-    const totals: Record<
-      string,
-      Record<string, number>
-    > = {};
-
-    for (const expense of expenses) {
-      if (!expense.card_name) {
-        continue;
-      }
-
-      const cardName = expense.card_name;
-
-      const currency =
-        expense.currency || "USD";
-
-      if (!totals[cardName]) {
-        totals[cardName] = {};
-      }
-
-      totals[cardName][currency] =
-        (totals[cardName][currency] || 0) +
-        Number(expense.amount || 0);
-    }
-
-    return totals;
-  }, [expenses]);
-
-  const filteredCardExpenses = useMemo(() => {
-    if (!selectedCard) {
-      return [];
-    }
-
-    return expenses.filter(
-      (expense) =>
-        expense.card_name === selectedCard
-    );
-  }, [expenses, selectedCard]);
-
-  const filteredMonthlyExpenses = useMemo(() => {
-    const keyword =
-      monthlyExpenseSearch
-        .trim()
-        .toLowerCase();
-
-    const filtered = expenses.filter((expense) => {
-      const matchesSearch =
-        keyword === "" ||
-        expense.item
-          .toLowerCase()
-          .includes(keyword) ||
-        (expense.major_category || "")
-          .toLowerCase()
-          .includes(keyword) ||
-        (expense.category || "")
-          .toLowerCase()
-          .includes(keyword) ||
-        (expense.card_name || "")
-          .toLowerCase()
-          .includes(keyword);
-
-      const matchesCategory =
-        monthlyExpenseCategoryFilter === "all" ||
-        expense.major_category ===
-          monthlyExpenseCategoryFilter;
-
-      const matchesCard =
-        monthlyExpenseCardFilter === "all" ||
-        (monthlyExpenseCardFilter === "non-card"
-          ? !expense.card_name
-          : expense.card_name ===
-            monthlyExpenseCardFilter);
-
-      const matchesStartDate =
-        monthlyExpenseStartDate === "" ||
-        expense.date >= monthlyExpenseStartDate;
-
-      const matchesEndDate =
-        monthlyExpenseEndDate === "" ||
-        expense.date <= monthlyExpenseEndDate;
-
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesCard &&
-        matchesStartDate &&
-        matchesEndDate
-      );
-    });
-
-    return [...filtered].sort((a, b) => {
-      if (monthlyExpenseSort === "date_asc") {
-        return a.date.localeCompare(b.date);
-      }
-
-      if (monthlyExpenseSort === "amount_desc") {
-        return Number(b.amount) - Number(a.amount);
-      }
-
-      if (monthlyExpenseSort === "amount_asc") {
-        return Number(a.amount) - Number(b.amount);
-      }
-
-      return b.date.localeCompare(a.date);
-    });
-  }, [
-    expenses,
-    monthlyExpenseSearch,
-    monthlyExpenseCategoryFilter,
-    monthlyExpenseCardFilter,
-    monthlyExpenseStartDate,
-    monthlyExpenseEndDate,
-    monthlyExpenseSort,
-  ]);
-
-  const filteredMonthlyTotals = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    for (const expense of filteredMonthlyExpenses) {
-      const currency =
-        expense.currency || "USD";
-
-      totals[currency] =
-        (totals[currency] || 0) +
-        Number(expense.amount || 0);
-    }
-
-    return totals;
-  }, [filteredMonthlyExpenses]);
-
-  const visibleMonthlyExpenses = useMemo(() => {
-    return filteredMonthlyExpenses.slice(
-      0,
-      monthlyExpenseVisibleCount
-    );
-  }, [
-    filteredMonthlyExpenses,
-    monthlyExpenseVisibleCount,
-  ]);
-
-  function getDueDateText(
-    dueDay: number | null,
-    dueMonthOffset: number | null = 1
-  ) {
-    if (!dueDay) {
-      return "未設定";
-    }
-
-    const offset = dueMonthOffset ?? 1;
-
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1 + offset,
-      dueDay
-    );
-
-    return `${dueDate.getFullYear()}/${String(
-      dueDate.getMonth() + 1
-    ).padStart(2, "0")}/${String(
-      dueDate.getDate()
-    ).padStart(2, "0")}`;
-  }
-
-  function getDueMonthText(
-    dueMonthOffset: number | null = 1
-  ) {
-    const offset = dueMonthOffset ?? 1;
-
-    const dueDate = new Date(
-      selectedYear,
-      selectedMonth - 1 + offset,
-      1
-    );
-
-    return `${dueDate.getFullYear()}/${String(
-      dueDate.getMonth() + 1
-    ).padStart(2, "0")}`;
-  }
-
-  function getDueStatus(
-    dueDay: number | null,
-    isPaid: boolean,
-    dueMonthOffset: number | null = 1
-  ) {
-    if (isPaid) {
-      return "✅ 已完成繳款";
-    }
-
-    if (!dueDay) {
-      return "未設定繳款日";
-    }
-
-    const now = new Date();
-
-    const todayOnly = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-
-    const offset = dueMonthOffset ?? 1;
-
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1 + offset,
-      dueDay
-    );
-
-    const diffMs =
-      dueDate.getTime() -
-      todayOnly.getTime();
-
-    const diffDays = Math.ceil(
-      diffMs /
-        (1000 * 60 * 60 * 24)
-    );
-
-    if (diffDays > 0) {
-      return `距離繳款日還有 ${diffDays} 天`;
-    }
-
-    if (diffDays === 0) {
-      return "⚠️ 今天到期";
-    }
-
-    return `⚠️ 已逾期 ${Math.abs(
-      diffDays
-    )} 天`;
-  }
-
-  function getDueLevel(
-    dueDay: number | null,
-    isPaid: boolean,
-    dueMonthOffset: number | null = 1
-  ) {
-    if (isPaid || !dueDay) {
-      return "normal";
-    }
-
-    const now = new Date();
-
-    const todayOnly = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-
-    const offset = dueMonthOffset ?? 1;
-
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1 + offset,
-      dueDay
-    );
-
-    const diffMs =
-      dueDate.getTime() -
-      todayOnly.getTime();
-
-    const diffDays = Math.ceil(
-      diffMs /
-        (1000 * 60 * 60 * 24)
-    );
-
-    if (diffDays < 0) {
-      return "overdue";
-    }
-
-    if (diffDays === 0) {
-      return "today";
-    }
-
-    return "soon";
-  }
-
-  function getStatementBadge(
-    dueDay: number | null,
-    isPaid: boolean,
-    dueMonthOffset: number | null = 1
-  ) {
-    if (isPaid) {
-      return "已繳";
-    }
-
-    if (!dueDay) {
-      return "未設定";
-    }
-
-    const now = new Date();
-
-    const todayOnly = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-
-    const offset = dueMonthOffset ?? 1;
-
-    const dueDate = createSafeDate(
-      selectedYear,
-      selectedMonth - 1 + offset,
-      dueDay
-    );
-
-    const diffMs =
-      dueDate.getTime() -
-      todayOnly.getTime();
-
-    const diffDays = Math.ceil(
-      diffMs /
-        (1000 * 60 * 60 * 24)
-    );
-
-    if (diffDays < 0) {
-      return "已逾期";
-    }
-
-    if (diffDays === 0) {
-      return "今天到期";
-    }
-
-    return "未繳";
-  }
-
-  const currentCardStatements =
-    useMemo<CurrentCardStatement[]>(() => {
-      return creditCards.map((card) => {
-        if (!card.statement_day) {
-          return {
-            ...card,
-            periodStart: null,
-            periodEnd: null,
-            totals: {},
-            statementStatusId: null,
-            isPaid: false,
-            paidDate: null,
-          };
-        }
-
-        const endDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1,
-          card.statement_day
-        );
-
-        const previousEndDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 2,
-          card.statement_day
-        );
-
-        const startDate =
-          new Date(previousEndDate);
-
-        startDate.setDate(
-          startDate.getDate() + 1
-        );
-
-        const periodStart =
-          dateToString(startDate);
-
-        const periodEnd =
-          dateToString(endDate);
-
-        const totals: Record<string, number> = {};
-
-        for (const expense of statementExpenses) {
-          if (
-            expense.card_name !== card.name
-          ) {
-            continue;
-          }
-
-          if (
-            expense.date < periodStart ||
-            expense.date > periodEnd
-          ) {
-            continue;
-          }
-
-          const currency =
-            expense.currency || "USD";
-
-          totals[currency] =
-            (totals[currency] || 0) +
-            Number(expense.amount || 0);
-        }
-
-        const statementStatus =
-          cardStatements.find(
-            (statement) =>
-              Number(statement.card_id) ===
-                Number(card.id) &&
-              statement.period_start ===
-                periodStart &&
-              statement.period_end ===
-                periodEnd
-          );
-
-        return {
-          ...card,
-          periodStart,
-          periodEnd,
-          totals,
-          statementStatusId:
-            statementStatus?.id ?? null,
-          isPaid:
-            statementStatus?.is_paid ?? false,
-          paidDate:
-            statementStatus?.paid_date ?? null,
-        };
-      });
-    }, [
-      creditCards,
-      cardStatements,
-      statementExpenses,
-      selectedYear,
-      selectedMonth,
-    ]);
-
-  const sortedCardStatements = useMemo(() => {
-    return [...currentCardStatements].sort(
-      (a, b) => {
-        if (a.isPaid !== b.isPaid) {
-          return a.isPaid ? 1 : -1;
-        }
-
-        const aDue =
-          a.due_day ?? 99;
-
-        const bDue =
-          b.due_day ?? 99;
-
-        return aDue - bDue;
-      }
-    );
-  }, [currentCardStatements]);
-
-  const visibleCardStatements = useMemo(() => {
-    if (showZeroBalanceCards) {
-      return sortedCardStatements;
-    }
-
-    return sortedCardStatements.filter(
-      (card) =>
-        Object.values(
-          card.totals
-        ).some(
-          (total) => total > 0
-        )
-    );
-  }, [
-    sortedCardStatements,
-    showZeroBalanceCards,
-  ]);
-
-  const statementSummary = useMemo(() => {
-    const cardsWithAmount =
-      sortedCardStatements.filter(
-        (card) =>
-          Object.values(
-            card.totals
-          ).some(
-            (total) => total > 0
-          )
-      );
-
-    return {
-      total:
-        cardsWithAmount.length,
-
-      unpaid:
-        cardsWithAmount.filter(
-          (card) => !card.isPaid
-        ).length,
-
-      paid:
-        cardsWithAmount.filter(
-          (card) => card.isPaid
-        ).length,
-    };
-  }, [sortedCardStatements]);
-
-  const paidProgress =
-    statementSummary.total === 0
-      ? 0
-      : Math.round(
-          (statementSummary.paid /
-            statementSummary.total) *
-            100
-        );
-
-  const unpaidStatements = useMemo(() => {
-    const now = new Date();
-
-    const todayOnly = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-
-    return currentCardStatements
-      .filter((card) => {
-        if (
-          card.isPaid ||
-          !card.due_day
-        ) {
-          return false;
-        }
-
-        const hasAmount =
-          Object.values(
-            card.totals
-          ).some(
-            (total) => total > 0
-          );
-
-        if (!hasAmount) {
-          return false;
-        }
-
-        const offset =
-          card.due_month_offset ?? 1;
-
-        const dueDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1 + offset,
-          card.due_day
-        );
-
-        const diffMs =
-          dueDate.getTime() -
-          todayOnly.getTime();
-
-        const diffDays = Math.ceil(
-          diffMs /
-            (1000 * 60 * 60 * 24)
-        );
-
-        return diffDays <= 7;
-      })
-      .sort((a, b) => {
-        const aOffset =
-          a.due_month_offset ?? 1;
-
-        const bOffset =
-          b.due_month_offset ?? 1;
-
-        const aDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1 + aOffset,
-          a.due_day || 1
-        );
-
-        const bDate = createSafeDate(
-          selectedYear,
-          selectedMonth - 1 + bOffset,
-          b.due_day || 1
-        );
-
-        return (
-          aDate.getTime() -
-          bDate.getTime()
-        );
-      });
-  }, [
-    currentCardStatements,
-    selectedYear,
-    selectedMonth,
-  ]);
-
-  const nextDueStatement =
-    unpaidStatements.length > 0
-      ? unpaidStatements[0]
-      : null;
-
-  const unpaidTotalsByCurrency = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    for (const card of unpaidStatements) {
-      for (const [currency, total] of Object.entries(
-        card.totals
-      )) {
-        totals[currency] =
-          (totals[currency] || 0) +
-          total;
-      }
-    }
-
-    return totals;
-  }, [unpaidStatements]);
-
-  const paidTotalsByCurrency = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    for (const card of sortedCardStatements) {
-      if (!card.isPaid) {
-        continue;
-      }
-
-      for (const [currency, total] of Object.entries(
-        card.totals
-      )) {
-        totals[currency] =
-          (totals[currency] || 0) +
-          total;
-      }
-    }
-
-    return totals;
-  }, [sortedCardStatements]);
-
-  const statementTotalsByCurrency = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    for (const card of sortedCardStatements) {
-      for (const [currency, total] of Object.entries(
-        card.totals
-      )) {
-        totals[currency] =
-          (totals[currency] || 0) +
-          total;
-      }
-    }
-
-    return totals;
-  }, [sortedCardStatements]);
-
-  const selectedStatement = useMemo(() => {
-    if (!selectedStatementCard) {
-      return null;
-    }
-
-    return (
-      currentCardStatements.find(
-        (card) =>
-          card.name === selectedStatementCard
-      ) || null
-    );
-  }, [
-    currentCardStatements,
-    selectedStatementCard,
-  ]);
-
-  const selectedStatementExpenses = useMemo(() => {
-    if (
-      !selectedStatement ||
-      !selectedStatement.periodStart ||
-      !selectedStatement.periodEnd
-    ) {
-      return [];
-    }
-
-    return statementExpenses.filter(
-      (expense) =>
-        expense.card_name ===
-          selectedStatement.name &&
-        expense.date >=
-          selectedStatement.periodStart! &&
-        expense.date <=
-          selectedStatement.periodEnd!
-    );
-  }, [
-    selectedStatement,
-    statementExpenses,
-  ]);
-
-  const statementHistory = useMemo(() => {
-    return [...cardStatements].sort((a, b) => {
-      if (
-        a.period_end ===
-        b.period_end
-      ) {
-        return Number(b.id) - Number(a.id);
-      }
-
-      return b.period_end.localeCompare(
-        a.period_end
-      );
-    });
-  }, [cardStatements]);
-
-  const historyMonthOptions = useMemo(() => {
-    const months =
-      new Set<string>();
-
-    for (const statement of statementHistory) {
-      months.add(
-        statement.period_end.slice(
-          0,
-          7
-        )
-      );
-    }
-
-    return Array.from(
-      months
-    ).sort((a, b) =>
-      b.localeCompare(a)
-    );
-  }, [statementHistory]);
-
-  function getHistoricalStatementTotals(
-    statement: CreditCardStatement
-  ) {
-    const card = creditCards.find(
-      (item) =>
-        Number(item.id) ===
-        Number(statement.card_id)
-    );
-
-    if (!card) {
-      return {};
-    }
-
-    const totals: Record<string, number> = {};
-
-    for (const expense of statementExpenses) {
-      if (
-        expense.card_name !== card.name
-      ) {
-        continue;
-      }
-
-      if (
-        expense.date <
-          statement.period_start ||
-        expense.date >
-          statement.period_end
-      ) {
-        continue;
-      }
-
-      const currency =
-        expense.currency || "USD";
-
-      totals[currency] =
-        (totals[currency] || 0) +
-        Number(expense.amount || 0);
-    }
-
-    return totals;
-  }
-
-  const historyCountByCard = useMemo(() => {
-    const counts: Record<string, number> = {};
-
-    const keyword =
-      historySearch
-        .trim()
-        .toLowerCase();
-
-    for (const statement of statementHistory) {
-      const monthMatches =
-        historyMonthFilter === "all" ||
-        statement.period_end.slice(
-          0,
-          7
-        ) === historyMonthFilter;
-
-      const statusMatches =
-        historyStatusFilter === "all" ||
-        (historyStatusFilter ===
-          "paid" &&
-          statement.is_paid) ||
-        (historyStatusFilter ===
-          "unpaid" &&
-          !statement.is_paid);
-
-      const card = creditCards.find(
-        (item) =>
-          Number(item.id) ===
-          Number(statement.card_id)
-      );
-
-      const expensesForStatement =
-        statementExpenses.filter(
-          (expense) => {
-            if (!card) {
-              return false;
-            }
-
-            return (
-              expense.card_name ===
-                card.name &&
-              expense.date >=
-                statement.period_start &&
-              expense.date <=
-                statement.period_end
-            );
-          }
-        );
-
-      const searchMatches =
-        keyword === "" ||
-        (card?.name || "")
-          .toLowerCase()
-          .includes(keyword) ||
-        expensesForStatement.some(
-          (expense) =>
-            expense.item
-              .toLowerCase()
-              .includes(keyword)
-        );
-
-      if (
-        monthMatches &&
-        statusMatches &&
-        searchMatches
-      ) {
-        const cardId =
-          String(statement.card_id);
-
-        counts[cardId] =
-          (counts[cardId] || 0) + 1;
-      }
-    }
-
-    return counts;
-  }, [
-    statementHistory,
-    historyMonthFilter,
-    historyStatusFilter,
-    historySearch,
-    creditCards,
-    statementExpenses,
-  ]);
-
-  useEffect(() => {
-    if (historyCardFilter === "all") {
-      return;
-    }
-
-    const count =
-      historyCountByCard[
-        historyCardFilter
-      ] || 0;
-
-    if (count === 0) {
-      setHistoryCardFilter("all");
-    }
-  }, [
-    historyCardFilter,
-    historyCountByCard,
-  ]);
-
-  const filteredStatementHistory = useMemo(() => {
-    const keyword =
-      historySearch
-        .trim()
-        .toLowerCase();
-
-    const filtered =
-      statementHistory.filter(
-        (statement) => {
-          const monthMatches =
-            historyMonthFilter ===
-              "all" ||
-            statement.period_end.slice(
-              0,
-              7
-            ) === historyMonthFilter;
-
-          const cardMatches =
-            historyCardFilter ===
-              "all" ||
-            String(statement.card_id) ===
-              historyCardFilter;
-
-          const statusMatches =
-            historyStatusFilter ===
-              "all" ||
-            (historyStatusFilter ===
-              "paid" &&
-              statement.is_paid) ||
-            (historyStatusFilter ===
-              "unpaid" &&
-              !statement.is_paid);
-
-          const card =
-            creditCards.find(
-              (item) =>
-                Number(item.id) ===
-                Number(
-                  statement.card_id
-                )
-            );
-
-          const expensesForStatement =
-            statementExpenses.filter(
-              (expense) => {
-                if (!card) {
-                  return false;
-                }
-
-                return (
-                  expense.card_name ===
-                    card.name &&
-                  expense.date >=
-                    statement.period_start &&
-                  expense.date <=
-                    statement.period_end
-                );
-              }
-            );
-
-          const searchMatches =
-            keyword === "" ||
-            (card?.name || "")
-              .toLowerCase()
-              .includes(keyword) ||
-            expensesForStatement.some(
-              (expense) =>
-                expense.item
-                  .toLowerCase()
-                  .includes(keyword)
-            );
-
-          return (
-            monthMatches &&
-            cardMatches &&
-            statusMatches &&
-            searchMatches
-          );
-        }
-      );
-
-    return [...filtered].sort(
-      (a, b) => {
-        if (
-          historySort === "oldest"
-        ) {
-          return a.period_end.localeCompare(
-            b.period_end
-          );
-        }
-
-        if (
-          historySort ===
-          "amount_desc"
-        ) {
-          const aTotals =
-            getHistoricalStatementTotals(
-              a
-            );
-
-          const bTotals =
-            getHistoricalStatementTotals(
-              b
-            );
-
-          const aAmount =
-            Object.values(
-              aTotals
-            ).reduce(
-              (sum, total) =>
-                sum + total,
-              0
-            );
-
-          const bAmount =
-            Object.values(
-              bTotals
-            ).reduce(
-              (sum, total) =>
-                sum + total,
-              0
-            );
-
-          return bAmount - aAmount;
-        }
-
-        return b.period_end.localeCompare(
-          a.period_end
-        );
-      }
-    );
-  }, [
-    statementHistory,
-    historyMonthFilter,
-    historyCardFilter,
-    historyStatusFilter,
-    historySort,
-    historySearch,
-    statementExpenses,
-    creditCards,
-  ]);
-
-  const visibleStatementHistory = useMemo(() => {
-    return filteredStatementHistory.slice(
-      0,
-      historyVisibleCount
-    );
-  }, [
-    filteredStatementHistory,
-    historyVisibleCount,
-  ]);
-
-  const filteredHistoryTotals = useMemo(() => {
-    const totals: Record<string, number> = {};
-
-    for (const statement of filteredStatementHistory) {
-      const statementTotals =
-        getHistoricalStatementTotals(
-          statement
-        );
-
-      for (const [currency, total] of Object.entries(
-        statementTotals
-      )) {
-        totals[currency] =
-          (totals[currency] || 0) +
-          total;
-      }
-    }
-
-    return totals;
-  }, [
-    filteredStatementHistory,
-    statementExpenses,
-    creditCards,
-  ]);
-
-  const filteredHistorySummary = useMemo(() => {
-    return {
-      total:
-        filteredStatementHistory.length,
-
-      paid:
-        filteredStatementHistory.filter(
-          (statement) =>
-            statement.is_paid
-        ).length,
-
-      unpaid:
-        filteredStatementHistory.filter(
-          (statement) =>
-            !statement.is_paid
-        ).length,
-    };
-  }, [filteredStatementHistory]);
-
-  async function togglePaidStatus(
-    card: CurrentCardStatement
-  ) {
-    if (
-      !card.periodStart ||
-      !card.periodEnd
-    ) {
-      return;
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setMessage("請先登入");
-      return;
-    }
-
-    const newPaidStatus =
-      !card.isPaid;
-
-    const paidDate =
-      newPaidStatus
-        ? dateToString(new Date())
-        : null;
-
-    if (
-      card.statementStatusId !== null
-    ) {
-      const { error } =
-        await supabase
-          .from(
-            "CreditCardStatements"
-          )
-          .update({
-            is_paid:
-              newPaidStatus,
-            paid_date: paidDate,
-          })
-          .eq(
-            "id",
-            card.statementStatusId
-          );
-
-      if (error) {
-        setMessage(error.message);
+        setLoading(false);
         return;
       }
-    } else {
-      const { error } =
-        await supabase
-          .from(
-            "CreditCardStatements"
-          )
-          .insert({
-            card_id: card.id,
-            period_start:
-              card.periodStart,
-            period_end:
-              card.periodEnd,
-            is_paid: true,
-            paid_date: paidDate,
-            user_id: user.id,
-          });
 
-      if (error) {
-        setMessage(error.message);
-        return;
-      }
+      setUserId(data.user.id);
     }
 
-    setEditingPaidStatementId(null);
+    void initialize();
 
-    setEditingPaidDate("");
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-    await loadDashboardData();
-  }
+  // =======================================
+  // 09. 讀取信用卡資料
+  // =======================================
 
-  async function savePaidDate(
-    statementId: number | string
-  ) {
-    if (!editingPaidDate) {
-      setMessage("請選擇繳款日期");
-      return;
-    }
+  const loadCards = useCallback(async () => {
+    if (!userId) return;
 
-    const { error } =
-      await supabase
-        .from(
-          "CreditCardStatements"
-        )
-        .update({
-          paid_date:
-            editingPaidDate,
-        })
-        .eq(
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from("CreditCards")
+      .select(
+        [
           "id",
-          statementId
-        );
+          "name",
+          "is_active",
+          "user_id",
+          "created_at",
+          "statement_day",
+          "due_day",
+          "is_paid",
+          "due_month_offset",
+        ].join(",")
+        )
+      .eq("user_id", userId)
+      .order("name", {
+        ascending: true,
+      });
 
     if (error) {
-      setMessage(error.message);
+      setNotice({
+        type: "error",
+        text: `讀取信用卡失敗：${error.message}`,
+      });
+    } else {
+      setCards((data ?? []) as CreditCard[]);
+    }
+
+    setLoading(false);
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      void loadCards();
+    }
+    }, [userId, loadCards]);
+
+  // =======================================
+  // 10. 表單管理
+  // =======================================
+
+  function updateForm(
+    field: keyof CardForm,
+    value: string
+  ) {
+    setForm((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
+  }
+
+  function resetForm() {
+    setForm({ ...EMPTY_FORM });
+    setEditingCardId(null);
+  }
+
+  // =======================================
+  // 11. 表單驗證
+  // =======================================
+
+  function validateForm(): string | null {
+    const name = form.name.trim();
+
+
+    if (!name) {
+      return "請輸入信用卡名稱。";
+    }
+
+    const statementDay = parseDay(
+      form.statement_day
+    );
+
+    const dueDay = parseDay(form.due_day);
+
+    if (
+      !form.statement_day ||
+      !Number.isInteger(statementDay) ||
+      statementDay < 1 ||
+      statementDay > 31
+    ) {
+      return "結帳日必須是 1～31 的整數。";
+    }
+
+    if (
+      !form.due_day ||
+      !Number.isInteger(dueDay) ||
+      dueDay < 1 ||
+      dueDay > 31
+    ) {
+      return "繳款日必須是 1～31 的整數。";
+    }
+
+    const offset = Number(form.due_month_offset);
+
+    if (offset !== 0 && offset !== 1) {
+      return "請選擇正確的繳款月份。";
+    }
+
+    const duplicate = cards.some(
+      (card) =>
+        card.id !== editingCardId &&
+        card.name.trim().toLowerCase() ===
+          name.toLowerCase()
+    );
+
+    if (duplicate) {
+      return "已有相同名稱的信用卡。";
+    }
+
+    return null;
+  }
+
+
+  // =======================================
+  // 12. 新增／編輯信用卡儲存
+  // =======================================
+
+  async function handleSave(
+    event: FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    if (!userId || saving) return;
+
+    const validationError = validateForm();
+
+    if (validationError) {
+      setNotice({
+        type: "error",
+        text: validationError,
+      });
       return;
     }
 
-    setEditingPaidStatementId(null);
+    setSaving(true);
+    setNotice(null);
 
-    setEditingPaidDate("");
+    const isEditing = editingCardId !== null;
 
-    await loadDashboardData();
+    // 僅儲存卡片基本設定
+    // 不覆寫 is_paid 或 created_at
+
+    const payload = {
+      name: form.name.trim(),
+      statement_day: parseDay(form.statement_day),
+      due_day: parseDay(form.due_day),
+      due_month_offset: Number(
+        form.due_month_offset
+      ),
+    };
+
+    const result = isEditing
+      ? await supabase
+          .from("CreditCards")
+          .update(payload)
+          .eq("id", editingCardId)
+          .eq("user_id", userId)
+          .select("id")
+      : await supabase
+    .from("CreditCards")
+          .insert({
+            ...payload,
+            user_id: userId,
+            is_active: true,
+          })
+          .select("id");
+
+
+    if (result.error || !result.data?.length) {
+      setNotice({
+        type: "error",
+        text: result.error
+          ? `儲存失敗：${result.error.message}`
+          : "儲存失敗，沒有新增或更新到資料。",
+      });
+
+      setSaving(false);
+      return;
+    }
+
+    resetForm();
+
+    await loadCards();
+
+    setNotice({
+      type: "success",
+      text: isEditing
+        ? "信用卡資料更新成功。"
+        : "信用卡新增成功。",
+    });
+
+    setSaving(false);
   }
 
-  function exportHistoryCsv() {
-    const rows: string[][] = [
-      [
-        "信用卡",
-        "帳單開始日",
-        "帳單結束日",
-        "狀態",
-        "實際繳款日",
-        "消費日期",
-        "消費項目",
-        "大分類",
-        "小分類",
-        "幣別",
-        "消費金額",
-      ],
-    ];
+  // =======================================
+  // 13. 編輯信用卡
+  // =======================================
 
-    let exportedExpenseCount = 0;
+  function handleEdit(card: CreditCard) {
+    setEditingCardId(card.id);
 
-    for (const statement of filteredStatementHistory) {
-      const card =
-        creditCards.find(
-          (item) =>
-            Number(item.id) ===
-            Number(statement.card_id)
-        );
+    setForm({
+      name: card.name,
+      statement_day: String(
+        card.statement_day ?? ""
+      ),
+      due_day: String(card.due_day ?? ""),
+      due_month_offset: String(
+        card.due_month_offset ?? 1
+      ),
+    });
 
-      const expensesForStatement =
-        statementExpenses.filter(
-          (expense) => {
-            if (!card) {
-              return false;
-            }
+    setNotice(null);
 
-            return (
-              expense.card_name ===
-                card.name &&
-              expense.date >=
-                statement.period_start &&
-              expense.date <=
-                statement.period_end
-            );
-          }
-        );
-
-      if (
-        expensesForStatement.length === 0
-      ) {
-        rows.push([
-          card?.name ||
-            "未知信用卡",
-          statement.period_start,
-          statement.period_end,
-          statement.is_paid
-            ? "已繳"
-            : "未繳",
-          statement.paid_date ||
-            "",
-          "",
-          "",
-          "",
-          "",
-          "",
-          "0",
-        ]);
-      } else {
-        for (const expense of expensesForStatement) {
-          exportedExpenseCount += 1;
-
-          rows.push([
-            card?.name ||
-              "未知信用卡",
-            statement.period_start,
-            statement.period_end,
-            statement.is_paid
-              ? "已繳"
-              : "未繳",
-            statement.paid_date ||
-              "",
-            expense.date,
-            expense.item,
-            expense.major_category ||
-              "",
-            expense.category || "",
-            expense.currency ||
-              "USD",
-            Number(
-              expense.amount
-            ).toFixed(2),
-          ]);
-        }
-      }
-    }
-
-    const csvTotals: Record<string, number> = {};
-    const csvPaidTotals: Record<string, number> = {};
-    const csvUnpaidTotals: Record<string, number> = {};
-    const csvExpenseCounts: Record<string, number> = {};
-
-    for (const statement of filteredStatementHistory) {
-      const card =
-        creditCards.find(
-          (item) =>
-            Number(item.id) ===
-            Number(statement.card_id)
-        );
-
-      if (!card) {
-        continue;
-      }
-
-      const expensesForStatement =
-        statementExpenses.filter(
-          (expense) =>
-            expense.card_name ===
-              card.name &&
-            expense.date >=
-              statement.period_start &&
-            expense.date <=
-              statement.period_end
-        );
-
-      for (const expense of expensesForStatement) {
-        const currency =
-          expense.currency || "USD";
-
-        const amount =
-          Number(expense.amount || 0);
-
-        csvTotals[currency] =
-          (csvTotals[currency] || 0) +
-          amount;
-
-        csvExpenseCounts[currency] =
-          (csvExpenseCounts[currency] || 0) +
-          1;
-
-        if (statement.is_paid) {
-          csvPaidTotals[currency] =
-            (csvPaidTotals[currency] || 0) +
-            amount;
-        } else {
-          csvUnpaidTotals[currency] =
-            (csvUnpaidTotals[currency] || 0) +
-            amount;
-        }
-      }
-    }
-
-    rows.push([
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    for (const [currency, total] of Object.entries(
-      csvPaidTotals
-    )) {
-      rows.push([
-        "已繳總計",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        currency,
-        total.toFixed(2),
-      ]);
-    }
-
-    for (const [currency, total] of Object.entries(
-      csvUnpaidTotals
-    )) {
-      rows.push([
-        "未繳總計",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        currency,
-        total.toFixed(2),
-      ]);
-    }
-
-    for (const [currency, total] of Object.entries(
-      csvTotals
-    )) {
-      rows.push([
-        "總計",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        currency,
-        total.toFixed(2),
-      ]);
-    }
-
-    for (const [currency, total] of Object.entries(
-      csvTotals
-    )) {
-      const count =
-        csvExpenseCounts[currency] || 0;
-
-      const average =
-        count === 0
-          ? 0
-          : total / count;
-
-      rows.push([
-        "平均每筆消費",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        currency,
-        average.toFixed(2),
-      ]);
-    }
-
-    const exportCardName =
-      historyCardFilter === "all"
-        ? "全部信用卡"
-        : creditCards.find(
-            (card) =>
-              String(card.id) ===
-              historyCardFilter
-          )?.name ||
-          "未知信用卡";
-
-    const exportMonth =
-      historyMonthFilter === "all"
-        ? "全部月份"
-        : historyMonthFilter;
-
-    const exportStatus =
-      historyStatusFilter === "all"
-        ? "全部狀態"
-        : historyStatusFilter ===
-          "paid"
-        ? "已繳"
-        : "未繳";
-
-    const exportSearch =
-      historySearch.trim() === ""
-        ? "無"
-        : historySearch.trim();
-
-    const exportSort =
-      historySort === "newest"
-        ? "最新帳單優先"
-        : historySort ===
-          "oldest"
-        ? "最舊帳單優先"
-        : "金額高到低";
-
-    rows.push([
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "篩選條件",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "月份",
-      exportMonth,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "信用卡",
-      exportCardName,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "狀態",
-      exportStatus,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "搜尋",
-      exportSearch,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "排序",
-      exportSort,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "匯出筆數",
-      `${filteredStatementHistory.length} 筆帳單`,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "消費明細筆數",
-      `${exportedExpenseCount} 筆`,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    const exportTime = new Date();
-
-    const exportTimeText =
-      `${exportTime.getFullYear()}/${String(
-        exportTime.getMonth() + 1
-      ).padStart(2, "0")}/${String(
-        exportTime.getDate()
-      ).padStart(2, "0")} ${String(
-        exportTime.getHours()
-      ).padStart(2, "0")}:${String(
-        exportTime.getMinutes()
-      ).padStart(2, "0")}`;
-
-    rows.push([
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    rows.push([
-      "匯出時間",
-      exportTimeText,
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    const csv = rows
-      .map((row) =>
-        row
-          .map(
-            (value) =>
-              `"${String(value).replace(
-                /"/g,
-                '""'
-              )}"`
-          )
-          .join(",")
-      )
-      .join("\n");
-
-    const blob = new Blob(
-      ["\uFEFF" + csv],
-      {
-        type:
-          "text/csv;charset=utf-8;",
-      }
-    );
-
-    const url =
-      URL.createObjectURL(blob);
-
-    const link =
-      document.createElement("a");
-
-    link.href = url;
-
-    const selectedCardName =
-      historyCardFilter === "all"
-        ? "all-cards"
-        : creditCards.find(
-            (card) =>
-              String(card.id) ===
-              historyCardFilter
-          )?.name ||
-          "card";
-
-    const fileMonth =
-      historyMonthFilter === "all"
-        ? "all-months"
-        : historyMonthFilter;
-
-    const fileStatus =
-      historyStatusFilter === "all"
-        ? "all-status"
-        : historyStatusFilter;
-
-    const safeCardName =
-      selectedCardName.replace(
-        /[\\/:*?"<>|]/g,
-        "-"
-      );
-
-    link.download =
-      `statement-history-${fileMonth}-${safeCardName}-${fileStatus}.csv`;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
 
-  function exportMonthlyExpensesCsv() {
-    const rows: string[][] = [
-      [
-        "日期",
-        "項目",
-        "大分類",
-        "小分類",
-        "幣別",
-        "金額",
-        "信用卡",
-      ],
-    ];
+  // =======================================
+  // 14. 啟用／停用信用卡
+  // =======================================
 
-    for (const expense of filteredMonthlyExpenses) {
-      rows.push([
-        expense.date,
-        expense.item,
-        expense.major_category || "",
-        expense.category || "",
-        expense.currency || "USD",
-        Number(expense.amount).toFixed(2),
-        expense.card_name || "",
-      ]);
-    }
-
-    rows.push([
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    ]);
-
-    for (const [currency, total] of Object.entries(
-      filteredMonthlyTotals
-    )) {
-      rows.push([
-        "篩選後總額",
-        "",
-        "",
-        "",
-        currency,
-        total.toFixed(2),
-        "",
-      ]);
-    }
-
-    const csv = rows
-      .map((row) =>
-        row
-          .map(
-            (value) =>
-              `"${String(value).replace(
-                /"/g,
-                '""'
-              )}"`
-          )
-          .join(",")
-      )
-      .join("\n");
-
-    const blob = new Blob(
-      ["\uFEFF" + csv],
-      {
-        type:
-          "text/csv;charset=utf-8;",
-      }
-    );
-
-    const url =
-      URL.createObjectURL(blob);
-
-    const link =
-      document.createElement("a");
-
-    link.href = url;
-
-    link.download =
-      `monthly-expenses-${selectedYear}-${String(
-        selectedMonth
-      ).padStart(2, "0")}.csv`;
-
-    document.body.appendChild(link);
-
-    link.click();
-
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(url);
-  }
-
-  const years: number[] = [];
-
-  for (
-    let year =
-      today.getFullYear() - 2;
-    year <=
-    today.getFullYear() + 2;
-    year++
+  async function handleToggleActive(
+    card: CreditCard
   ) {
-    years.push(year);
+    if (!userId || busyCardId !== null) return;
+
+    const nextActive = !card.is_active;
+
+    const confirmed = window.confirm(
+      nextActive
+        ? `確定重新啟用「${card.name}」嗎？`
+        : `確定停用「${card.name}」嗎？\n\n停用不會刪除歷史花費及帳單紀錄。`
+    );
+
+
+    if (!confirmed) return;
+
+    setBusyCardId(card.id);
+    setNotice(null);
+
+    const { data, error } = await supabase
+      .from("CreditCards")
+      .update({
+        is_active: nextActive,
+        })
+      .eq("id", card.id)
+      .eq("user_id", userId)
+      .select("id");
+
+    if (error || !data?.length) {
+      setNotice({
+        type: "error",
+        text: error
+          ? `更新失敗：${error.message}`
+          : "更新失敗，沒有更新到信用卡。",
+      });
+
+      setBusyCardId(null);
+      return;
+    }
+
+    if (
+      editingCardId === card.id &&
+      !nextActive
+    ) {
+      resetForm();
+    }
+
+    await loadCards();
+
+    setNotice({
+      type: "success",
+      text: nextActive
+        ? `已重新啟用「${card.name}」。`
+        : `已停用「${card.name}」。`,
+    });
+
+    setBusyCardId(null);
   }
 
-  return (
-    <main
-      id="dashboard-top"
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: 20,
-      }}
-    >
-      <h1>📊 記帳 Dashboard</h1>
+  // =======================================
+  // 15. 信用卡分類
+  // =======================================
 
-      <p>
-        <Link href="/">
-          ← 回首頁
-        </Link>
-      </p>
+  const activeCards = cards.filter(
+    (card) => card.is_active
+  );
 
-      <div
+  const inactiveCards = cards.filter(
+    (card) => !card.is_active
+  );
+
+  // =======================================
+  // 16. 信用卡卡片 UI
+  // =======================================
+
+  function renderCard(card: CreditCard) {
+    const isBusy = busyCardId === card.id;
+
+    return (
+      <article
+        key={card.id}
         style={{
-          display: "flex",
-          gap: 10,
-          marginBottom: 20,
+          border: `1px solid ${COLOR.border}`,
+          borderRadius: 12,
+          padding: 16,
+          marginBottom: 12,
+          background: card.is_active
+            ? COLOR.white
+            : "#f9fafb",
         }}
       >
-        <select
-          value={selectedYear}
-          onChange={(e) =>
-            setSelectedYear(
-              Number(e.target.value)
-            )
-          }
-        >
-          {years.map((year) => (
-            <option
-              key={year}
-              value={year}
-            >
-              {year} 年
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={selectedMonth}
-          onChange={(e) =>
-            setSelectedMonth(
-              Number(e.target.value)
-            )
-          }
-        >
-          {Array.from(
-            { length: 12 },
-            (_, index) =>
-              index + 1
-          ).map((month) => (
-            <option
-              key={month}
-              value={month}
-            >
-              {month} 月
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <p>
-        目前查看：
-        <strong>
-          {selectedYear} 年{" "}
-          {selectedMonth} 月
-        </strong>
-      </p>
-
-      <section
-        style={{
-          marginBottom: 30,
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(180px, 1fr))",
-          gap: 12,
-        }}
-      >
-        <div
-          style={{
-            padding: 14,
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            background: "white",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 14,
-              color: "#666",
-            }}
-          >
-            本月交易筆數
-          </div>
-
-          <div
-            style={{
-              marginTop: 6,
-              fontSize: 24,
-              fontWeight: "bold",
-            }}
-          >
-            {expenses.length} 筆
-          </div>
-        </div>
+        {/* 16-1. 名稱與使用狀態 */}
 
         <div
           style={{
-            padding: 14,
-            border: "1px solid #f3b3b3",
-            borderRadius: 12,
-            background: "#fff8f8",
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 12,
           }}
         >
           <div
             style={{
-              fontSize: 14,
-              color: "#666",
-            }}
+              flex: 1,
+              minWidth: 0,
+              }}
           >
-            未繳信用卡
-          </div>
-
-          <div
-            style={{
-              marginTop: 6,
-              fontSize: 24,
-              fontWeight: "bold",
-            }}
-          >
-            {
-              visibleCardStatements.filter(
-                (card) => !card.isPaid
-              ).length
-            }{" "}
-            張
-          </div>
-        </div>
-
-        <div
-          style={{
-            padding: 14,
-            border: "1px solid #b8d7f0",
-            borderRadius: 12,
-            background: "#eef7ff",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 14,
-              color: "#666",
-            }}
-          >
-            本月總支出
-          </div>
-
-          <div
-            style={{
-              marginTop: 6,
-              fontSize: 24,
-              fontWeight: "bold",
-            }}
-          >
-            {Object.keys(
-              totalsByCurrency
-            ).length === 0 ? (
-              <span>0</span>
-            ) : (
-              Object.entries(
-                totalsByCurrency
-              ).map(
-                ([currency, total], index) => (
-                  <span key={currency}>
-                    {index > 0 ? " / " : ""}
-                    {currency}{" "}
-                    {total.toFixed(2)}
-                  </span>
-                )
-              )
-            )}
-          </div>
-        </div>
-
-        <div
-          style={{
-            padding: 14,
-            border: "1px solid #f0d98a",
-            borderRadius: 12,
-            background: "#fffbe6",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 14,
-              color: "#666",
-            }}
-          >
-            最近繳款日
-          </div>
-
-          <div
-            style={{
-              marginTop: 6,
-              fontSize: 18,
-              fontWeight: "bold",
-            }}
-          >
-            {nextDueStatement
-              ? `${nextDueStatement.name}｜${getDueDateText(
-                  nextDueStatement.due_day,
-                  nextDueStatement.due_month_offset
-                )}`
-              : "目前沒有待繳帳單"}
-          </div>
-        </div>
-      </section>
-
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 8,
-          marginBottom: 24,
-        }}
-      >
-        <button
-          onClick={() =>
-            document
-              .getElementById(
-                "card-statements"
-              )
-              ?.scrollIntoView({
-                behavior: "smooth",
-              })
-          }
-          style={{
-            padding: "8px 12px",
-          }}
-        >
-          💳 本期帳單
-        </button>
-
-        <button
-          onClick={() => {
-            setShowStatementHistory(true);
-
-            setTimeout(() => {
-              document
-                .getElementById(
-                  "statement-history"
-                )
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                });
-            }, 50);
-          }}
-          style={{
-            padding: "8px 12px",
-          }}
-        >
-          📚 歷史帳單
-        </button>
-
-        <button
-          onClick={() =>
-            document
-              .getElementById(
-                "monthly-expenses"
-              )
-              ?.scrollIntoView({
-                behavior: "smooth",
-              })
-          }
-          style={{
-            padding: "8px 12px",
-          }}
-        >
-          🧾 本月支出明細
-        </button>
-      </div>
-
-      {message && <p>{message}</p>}
-
-      {unpaidStatements.length > 0 && (
-        <section
-          style={{
-            marginTop: 20,
-            marginBottom: 30,
-            padding: 16,
-            border: "1px solid #ddd",
-            borderRadius: 10,
-          }}
-        >
-          <h2>
-            ⚠️ 未繳帳單提醒（
-            {unpaidStatements.length} 張）
-          </h2>
-
-          {nextDueStatement && (
             <div
               style={{
-                marginBottom: 10,
-                fontWeight: "bold",
+                fontSize: 16,
+                fontWeight: 700,
+                color: COLOR.text,
+                overflowWrap: "anywhere",
               }}
             >
-              最近要繳：
-              {nextDueStatement.name}
-              {" ｜ "}
-              {getDueDateText(
-                nextDueStatement.due_day,
-                nextDueStatement.due_month_offset
-              )}
+              {card.name}
             </div>
-          )}
 
-          <div
-            style={{
-              marginBottom: 12,
-              fontWeight: "bold",
-            }}
-          >
-            未繳總額：
-            {Object.keys(
-              unpaidTotalsByCurrency
-            ).length === 0 ? (
-              <span>0</span>
-            ) : (
-              Object.entries(
-                unpaidTotalsByCurrency
-              ).map(
-                ([currency, total], index) => (
-                  <span key={currency}>
-                    {index > 0 ? " / " : " "}
-                    {currency}{" "}
-                    {total.toFixed(2)}
-                  </span>
-                )
-              )
-            )}
+            <div
+              style={{
+                marginTop: 7,
+                fontSize: 13,
+                lineHeight: 1.7,
+                color: COLOR.muted,
+              }}
+            >
+              {getCardDescription(card)}
+            </div>
           </div>
 
-          {unpaidStatements.map((card) => (
-            <div
-              key={card.id}
-              style={{
-                marginBottom: 10,
-                padding: 10,
-                borderRadius: 8,
-                background:
-                  getDueLevel(
-                    card.due_day,
-                    card.isPaid,
-                    card.due_month_offset
-                  ) === "overdue"
-                    ? "#ffe5e5"
-                    : getDueLevel(
-                        card.due_day,
-                        card.isPaid,
-                        card.due_month_offset
-                      ) === "today"
-                    ? "#fff1d6"
-                    : "#fffbe6",
-              }}
-            >
-              <button
-                onClick={() => {
-                  setSelectedStatementCard(
-                    card.name
-                  );
-
-                  setTimeout(() => {
-                    document
-                      .getElementById(
-                        "card-statements"
-                      )
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                  }, 50);
-                }}
-                style={{
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  textDecoration: "underline",
-                }}
-              >
-                {card.name}
-              </button>
-
-              <div
-                style={{
-                  marginTop: 4,
-                }}
-              >
-                {getDueStatus(
-                  card.due_day,
-                  card.isPaid,
-                  card.due_month_offset
-                )}
-              </div>
-
-              <div
-                style={{
-                  marginTop: 4,
-                }}
-              >
-                繳款截止：
-                {getDueDateText(
-                  card.due_day,
-                  card.due_month_offset
-                )}
-              </div>
-
-              <div
-                style={{
-                  marginTop: 4,
-                }}
-              >
-                {Object.keys(
-                  card.totals
-                ).length === 0 ? (
-                  <span>
-                    本期金額：0
-                  </span>
-                ) : (
-                  Object.entries(
-                    card.totals
-                  ).map(
-                    ([currency, total]) => (
-                      <div key={currency}>
-                        本期金額：
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </div>
-                    )
-                  )
-                )}
-              </div>
-
-              <button
-                onClick={() =>
-                  togglePaidStatus(card)
-                }
-                style={{
-                  marginTop: 8,
-                  padding: "6px 10px",
-                }}
-              >
-                標記已繳
-              </button>
-            </div>
-          ))}
-        </section>
-      )}
-
-      <section
-        style={{
-          marginBottom: 30,
-          padding: 16,
-          border: "1px solid #ddd",
-          borderRadius: 12,
-          background: "white",
-        }}
-      >
-        <h2
-          style={{
-            marginTop: 0,
-            marginBottom: 12,
-          }}
-        >
-          本月支出總額
-        </h2>
-
-        {Object.keys(
-          totalsByCurrency
-        ).length === 0 ? (
-          <p>本月沒有支出</p>
-        ) : (
-          Object.entries(
-            totalsByCurrency
-          ).map(([currency, total]) => (
-            <div
-              key={currency}
-              style={{
-                fontSize: 24,
-                fontWeight: "bold",
-                marginBottom: 6,
-              }}
-            >
-              {currency}{" "}
-              {total.toFixed(2)}
-            </div>
-          ))
-        )}
-      </section>
-
-      <section
-        style={{
-          marginBottom: 30,
-          padding: 16,
-          border: "1px solid #ddd",
-          borderRadius: 12,
-          background: "white",
-        }}
-      >
-        <h2
-          style={{
-            marginTop: 0,
-            marginBottom: 12,
-          }}
-        >
-          支出分類
-        </h2>
-
-        {Object.keys(
-          totalsByCategory
-        ).length === 0 ? (
-          <p>沒有資料</p>
-        ) : (
-          Object.entries(
-            totalsByCategory
-          ).map(
-            ([category, currencies]) => (
-              <div
-                key={category}
-                style={{
-                  marginBottom: 12,
-                  padding: 12,
-                  border:
-                    "1px solid #eee",
-                  borderRadius: 10,
-                  background: "#fafafa",
-                }}
-              >
-                <strong>{category}</strong>
-
-                {Object.entries(
-                  currencies
-                ).map(
-                  ([currency, total]) => (
-                    <div key={currency}>
-                      {currency}:{" "}
-                      {total.toFixed(2)}
-                    </div>
-                  )
-                )}
-              </div>
-            )
-          )
-        )}
-      </section>
-
-      <section
-        style={{
-          marginBottom: 30,
-          padding: 16,
-          border: "1px solid #ddd",
-          borderRadius: 12,
-          background: "white",
-        }}
-      >
-        <h2
-          style={{
-            marginTop: 0,
-            marginBottom: 12,
-          }}
-        >
-          信用卡支出
-        </h2>
-
-        {Object.keys(
-          totalsByCard
-        ).length === 0 ? (
-          <p>本月沒有信用卡支出</p>
-        ) : (
-          Object.entries(
-            totalsByCard
-          ).map(
-            ([cardName, currencies]) => (
-              <div
-                key={cardName}
-                style={{
-                  marginBottom: 12,
-                  padding: 12,
-                  border:
-                    "1px solid #eee",
-                  borderRadius: 10,
-                  background: "#fafafa",
-                }}
-              >
-                <button
-                  onClick={() =>
-                    setSelectedCard(
-                      selectedCard === cardName
-                        ? null
-                        : cardName
-                    )
-                  }
-                  style={{
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  {cardName}
-                </button>
-
-                {Object.entries(
-                  currencies
-                ).map(
-                  ([currency, total]) => (
-                    <div key={currency}>
-                      {currency}:{" "}
-                      {total.toFixed(2)}
-                    </div>
-                  )
-                )}
-
-                {selectedCard === cardName && (
-                  <div
-                    style={{
-                      marginTop: 10,
-                    }}
-                  >
-                    {filteredCardExpenses.map(
-                      (expense) => (
-                        <div
-                          key={expense.id}
-                          style={{
-                            padding: "6px 0",
-                            borderTop:
-                              "1px solid #eee",
-                          }}
-                        >
-                          <Link
-                            href={`/expenses/${expense.id}`}
-                          >
-                            {expense.date}{" "}
-                            {expense.item}
-                          </Link>{" "}
-                          —{" "}
-                          {expense.currency ||
-                            "USD"}{" "}
-                          {Number(
-                            expense.amount
-                          ).toFixed(2)}
-                        </div>
-                      )
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          )
-        )}
-      </section>
-
-      <section
-        id="card-statements"
-        style={{
-          marginBottom: 30,
-          padding: 16,
-          border: "1px solid #ddd",
-          borderRadius: 12,
-          background: "white",
-        }}
-      >
-        <h2
-          style={{
-            marginTop: 0,
-            marginBottom: 12,
-          }}
-        >
-          💳 信用卡本期帳單（共{" "}
-          {visibleCardStatements.length} 張｜未繳{" "}
-          {
-            visibleCardStatements.filter(
-              (card) => !card.isPaid
-            ).length
-          }{" "}
-          張）
-        </h2>
-
-        <button
-          onClick={() =>
-            setShowZeroBalanceCards(
-              !showZeroBalanceCards
-            )
-          }
-          style={{
-            marginBottom: 10,
-            padding: "6px 10px",
-          }}
-        >
-          {showZeroBalanceCards
-            ? "隱藏 0 元帳單"
-            : "顯示 0 元帳單"}
-        </button>
-
-        <button
-          onClick={() => {
-            const nextValue =
-              !showStatementHistory;
-
-            setShowStatementHistory(
-              nextValue
-            );
-
-            if (!nextValue) {
-              setExpandedHistoryIds([]);
-
-              setHistoryMonthFilter("all");
-
-              setHistoryCardFilter("all");
-
-              setHistoryStatusFilter("all");
-
-              setHistorySort("newest");
-
-              setHistorySearch("");
-
-              setHistoryVisibleCount(20);
-            }
-          }}
-          style={{
-            marginLeft: 8,
-            marginBottom: 10,
-            padding: "6px 10px",
-          }}
-        >
-          {showStatementHistory
-            ? "隱藏歷史帳單"
-            : "顯示歷史帳單"}
-        </button>
-
-        <p
-          style={{
-            marginTop: 0,
-            marginBottom: 12,
-          }}
-        >
-          目前帳單月份：
-          <strong>
-            {selectedYear} 年{" "}
-            {selectedMonth} 月
-          </strong>
-        </p>
-
-        <div
-          style={{
-            marginBottom: 12,
-            fontWeight: "bold",
-            lineHeight: 1.8,
-          }}
-        >
-          <div>
-            本期有消費：
-            {statementSummary.total} 張
-            {" ｜ "}
-            未繳：
-            {statementSummary.unpaid} 張
-            {" ｜ "}
-            已繳：
-            {statementSummary.paid} 張
-            {" ｜ "}
-            已繳進度：
-            {statementSummary.paid}
-            {" / "}
-            {statementSummary.total}
-            {" 張（"}
-            {paidProgress}%）
-          </div>
-
-          <div
+          <span
             style={{
-              marginTop: 8,
-              height: 12,
-              background: "#eee",
+              flexShrink: 0,
+              padding: "5px 9px",
               borderRadius: 999,
-              overflow: "hidden",
+              fontSize: 12,
+              fontWeight: 700,
+              background: card.is_active
+                ? COLOR.greenLight
+                : "#f3f4f6",
+              color: card.is_active
+                ? COLOR.green
+                : COLOR.muted,
             }}
-          >
-            <div
-              style={{
-                width: `${paidProgress}%`,
-                height: "100%",
-                background: "#b7dfc3",
-                transition:
-                  "width 0.3s ease",
-              }}
-            />
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 10,
-              marginTop: 8,
-            }}
-          >
-            <div
-              style={{
-                padding: 12,
-                border:
-                  "1px solid #f0d98a",
-                borderRadius: 10,
-                background: "#fffbe6",
-              }}
             >
-              <div>⏳ 未繳總額</div>
-
-              <div
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  marginTop: 4,
-                }}
-              >
-                {Object.keys(
-                  unpaidTotalsByCurrency
-                ).length === 0 ? (
-                  <span>0</span>
-                ) : (
-                  Object.entries(
-                    unpaidTotalsByCurrency
-                  ).map(
-                    ([currency, total], index) => (
-                      <span key={currency}>
-                        {index > 0 ? " / " : ""}
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </span>
-                    )
-                  )
-                )}
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: 12,
-                border:
-                  "1px solid #b7dfc3",
-                borderRadius: 10,
-                background: "#eef9f1",
-              }}
-            >
-              <div>✅ 已繳總額</div>
-
-              <div
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  marginTop: 4,
-                }}
-              >
-                {Object.keys(
-                  paidTotalsByCurrency
-                ).length === 0 ? (
-                  <span>0</span>
-                ) : (
-                  Object.entries(
-                    paidTotalsByCurrency
-                  ).map(
-                    ([currency, total], index) => (
-                      <span key={currency}>
-                        {index > 0 ? " / " : ""}
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </span>
-                    )
-                  )
-                )}
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: 12,
-                border:
-                  "1px solid #b8d7f0",
-                borderRadius: 10,
-                background: "#eef7ff",
-              }}
-            >
-              <div>💳 本期總額</div>
-
-              <div
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  marginTop: 4,
-                }}
-              >
-                {Object.keys(
-                  statementTotalsByCurrency
-                ).length === 0 ? (
-                  <span>0</span>
-                ) : (
-                  Object.entries(
-                    statementTotalsByCurrency
-                  ).map(
-                    ([currency, total], index) => (
-                      <span key={currency}>
-                        {index > 0 ? " / " : ""}
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </span>
-                    )
-                  )
-                )}
-              </div>
-            </div>
-          </div>
+            {card.is_active
+              ? "使用中"
+              : "已停用"}
+          </span>
         </div>
 
-        {visibleCardStatements.length === 0 ? (
-          <p>本期沒有信用卡帳單</p>
-        ) : (
-          visibleCardStatements.map((card) => (
-            <div
-              key={card.id}
-              style={{
-                marginBottom: 16,
-                padding: 14,
-                border:
-                  selectedStatementCard ===
-                  card.name
-                    ? "2px solid #777"
-                    : card.isPaid
-                    ? "1px solid #ddd"
-                    : "1px solid #f3b3b3",
-                borderRadius: 10,
-                background: card.isPaid
-                  ? "white"
-                  : "#fff8f8",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: 8,
-                }}
-              >
-                <button
-                  onClick={() =>
-                    setSelectedStatementCard(
-                      selectedStatementCard ===
-                        card.name
-                        ? null
-                        : card.name
-                    )
-                  }
-                  style={{
-                    fontSize: 17,
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                >
-                  {card.name}
-                </button>
-
-                <span
-                  style={{
-                    padding: "3px 8px",
-                    borderRadius: 999,
-                    fontSize: 12,
-                    fontWeight: "bold",
-                    background:
-                      card.isPaid
-                        ? "#e7f7ed"
-                        : getDueLevel(
-                            card.due_day,
-                            card.isPaid,
-                            card.due_month_offset
-                          ) === "overdue"
-                        ? "#ffe5e5"
-                        : getDueLevel(
-                            card.due_day,
-                            card.isPaid,
-                            card.due_month_offset
-                          ) === "today"
-                        ? "#fff1d6"
-                        : "#fffbe6",
-                  }}
-                >
-                  {getStatementBadge(
-                    card.due_day,
-                    card.isPaid,
-                    card.due_month_offset
-                  )}
-                </span>
-              </div>
-
-              <div
-                style={{
-                  marginTop: 8,
-                  marginBottom: 8,
-                  fontSize: 20,
-                  fontWeight: "bold",
-                }}
-              >
-                {Object.keys(
-                  card.totals
-                ).length === 0 ? (
-                  <span>
-                    本期金額：0
-                  </span>
-                ) : (
-                  Object.entries(
-                    card.totals
-                  ).map(
-                    ([currency, total]) => (
-                      <div key={currency}>
-                        本期金額：
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </div>
-                    )
-                  )
-                )}
-              </div>
-
-              <div>
-                繳款截止：
-                {getDueDateText(
-                  card.due_day,
-                  card.due_month_offset
-                )}
-              </div>
-
-              {selectedStatementCard ===
-                card.name && (
-                <>
-                  <div>
-                    結帳日：
-                    {card.statement_day
-                      ? `每月 ${card.statement_day} 日`
-                      : "未設定"}
-                  </div>
-
-                  <div>
-                    繳款日：
-                    {card.due_day
-                      ? `每月 ${card.due_day} 日`
-                      : "未設定"}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: 10,
-                      padding: 10,
-                      background: "#fafafa",
-                      borderRadius: 8,
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    <div>
-                      帳單月份：
-                      {selectedYear}/
-                      {String(
-                        selectedMonth
-                      ).padStart(2, "0")}
-                    </div>
-
-                    <div>
-                      繳款月份：
-                      {getDueMonthText(
-                        card.due_month_offset
-                      )}
-                    </div>
-
-                    <div>
-                      本期區間：
-                      {card.periodStart &&
-                      card.periodEnd
-                        ? `${formatDate(
-                            card.periodStart
-                          )} ～ ${formatDate(
-                            card.periodEnd
-                          )}`
-                        : "未設定"}
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: 10,
-                      padding: 10,
-                      background: "#fafafa",
-                      borderRadius: 8,
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "bold",
-                        marginBottom: 4,
-                      }}
-                    >
-                      繳款狀態
-                    </div>
-
-                    <div>
-                      狀態：
-                      {card.isPaid
-                        ? "✅ 已繳"
-                        : "⏳ 未繳"}
-                    </div>
-
-                    <div>
-                      {getDueStatus(
-                        card.due_day,
-                        card.isPaid,
-                        card.due_month_offset
-                      )}
-                    </div>
-
-                    {card.isPaid && (
-                      <div
-                        style={{
-                          marginTop: 8,
-                        }}
-                      >
-                        <div>
-                          實際繳款日：
-                          {card.paidDate ||
-                            "未記錄"}
-                        </div>
-
-                        {card.statementStatusId !==
-                          null && (
-                          <button
-                            onClick={() => {
-                              setEditingPaidStatementId(
-                                card.statementStatusId
-                              );
-
-                              setEditingPaidDate(
-                                card.paidDate ||
-                                  ""
-                              );
-                            }}
-                            style={{
-                              padding:
-                                "6px 10px",
-                              marginTop: 6,
-                              marginBottom: 8,
-                            }}
-                          >
-                            修改繳款日
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-
-              <button
-                onClick={() =>
-                  togglePaidStatus(card)
-                }
-                disabled={
-                  !card.periodStart ||
-                  !card.periodEnd
-                }
-                style={{
-                  padding: "6px 10px",
-                  marginTop: 8,
-                  marginBottom: 8,
-                }}
-              >
-                {card.isPaid
-                  ? "標記未繳"
-                  : "標記已繳"}
-              </button>
-
-              {card.statementStatusId !==
-                null &&
-                editingPaidStatementId ===
-                  card.statementStatusId && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                    }}
-                  >
-                    <input
-                      type="date"
-                      value={editingPaidDate}
-                      onChange={(e) =>
-                        setEditingPaidDate(
-                          e.target.value
-                        )
-                      }
-                    />
-
-                    <button
-                      onClick={() =>
-                        savePaidDate(
-                          card.statementStatusId!
-                        )
-                      }
-                      style={{
-                        marginLeft: 8,
-                        padding: "6px 10px",
-                      }}
-                    >
-                      儲存
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setEditingPaidStatementId(
-                          null
-                        );
-
-                        setEditingPaidDate("");
-                      }}
-                      style={{
-                        marginLeft: 6,
-                        padding: "6px 10px",
-                      }}
-                    >
-                      取消
-                    </button>
-                  </div>
-                )}
-
-              {selectedStatementCard ===
-                card.name && (
-                <div
-                  style={{
-                    marginTop: 14,
-                    paddingTop: 10,
-                    borderTop:
-                      "1px solid #ddd",
-                  }}
-                >
-                  <strong>
-                    本期消費明細
-                  </strong>
-
-                  {selectedStatementExpenses.length ===
-                  0 ? (
-                    <p>本期沒有消費</p>
-                  ) : (
-                    selectedStatementExpenses.map(
-                      (expense) => (
-                        <div
-                          key={expense.id}
-                          style={{
-                            padding: "8px 0",
-                            borderBottom:
-                              "1px solid #eee",
-                          }}
-                        >
-                          <Link
-                            href={`/expenses/${expense.id}`}
-                          >
-                            {expense.date}{" "}
-                            {expense.item}
-                          </Link>
-
-                          <div>
-                            {expense.currency ||
-                              "USD"}{" "}
-                            {Number(
-                              expense.amount
-                            ).toFixed(2)}
-                          </div>
-                        </div>
-                      )
-                    )
-                  )}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </section>
-
-      {showStatementHistory && (
-        <section
-          id="statement-history"
-          style={{
-            marginBottom: 30,
-            padding: 16,
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            background: "white",
-          }}
-        >
-          <h2
-            style={{
-              marginTop: 0,
-              marginBottom: 12,
-            }}
-          >
-            📚 歷史帳單（
-            {filteredStatementHistory.length} 筆）
-          </h2>
-
-          <div
-            style={{
-              marginBottom: 12,
-              fontSize: 14,
-            }}
-          >
-            目前顯示{" "}
-            {visibleStatementHistory.length}
-            {" / "}
-            {filteredStatementHistory.length} 筆
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 8,
-              marginBottom: 12,
-            }}
-          >
-            <button
-              onClick={() =>
-                setHistoryCardFilter("all")
-              }
-              style={{
-                padding: "6px 10px",
-                fontWeight:
-                  historyCardFilter ===
-                  "all"
-                    ? "bold"
-                    : "normal",
-                background:
-                  historyCardFilter ===
-                  "all"
-                    ? "#eef7ff"
-                    : "white",
-                border:
-                  historyCardFilter ===
-                  "all"
-                    ? "1px solid #b8d7f0"
-                    : "1px solid #ddd",
-                borderRadius: 8,
-              }}
-            >
-              全部信用卡
-            </button>
-
-            {creditCards.map((card) => {
-              const count =
-                historyCountByCard[
-                  String(card.id)
-                ] || 0;
-
-              const isActive =
-                historyCardFilter ===
-                String(card.id);
-
-              return (
-                <button
-                  key={card.id}
-                  disabled={count === 0}
-                  onClick={() =>
-                    setHistoryCardFilter(
-                      String(card.id)
-                    )
-                  }
-                  style={{
-                    padding: "6px 10px",
-                    fontWeight:
-                      isActive
-                        ? "bold"
-                        : "normal",
-                    background:
-                      isActive
-                        ? "#eef7ff"
-                        : "white",
-                    border:
-                      isActive
-                        ? "1px solid #b8d7f0"
-                        : "1px solid #ddd",
-                    borderRadius: 8,
-                    opacity:
-                      count === 0 ? 0.4 : 1,
-                    cursor:
-                      count === 0
-                        ? "not-allowed"
-                        : "pointer",
-                  }}
-                >
-                  {card.name}（{count}）
-                </button>
-              );
-            })}
-          </div>
-
-          <input
-            type="text"
-            value={historySearch}
-            onChange={(e) =>
-              setHistorySearch(
-                e.target.value
-              )
-            }
-            placeholder="搜尋信用卡名稱或消費項目"
-            style={{
-              width: "100%",
-              maxWidth: 360,
-              marginBottom: 12,
-              padding: "8px 10px",
-            }}
-          />
-
-          {historySearch.trim() !== "" && (
-            <div
-              style={{
-                marginBottom: 12,
-                fontSize: 14,
-              }}
-            >
-              搜尋：
-              <strong>
-                {historySearch}
-              </strong>
-              {" ｜ "}
-              結果{" "}
-              {filteredStatementHistory.length} 筆
-            </div>
-          )}
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit, minmax(140px, 1fr))",
-              gap: 10,
-              marginBottom: 12,
-            }}
-          >
-            <div
-              style={{
-                padding: 12,
-                border: "1px solid #ddd",
-                borderRadius: 10,
-              }}
-            >
-              <div>📚 總筆數</div>
-
-              <div
-                style={{
-                  marginTop: 4,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                {filteredHistorySummary.total} 筆
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: 12,
-                border:
-                  "1px solid #b7dfc3",
-                borderRadius: 10,
-                background: "#eef9f1",
-              }}
-            >
-              <div>✅ 已繳</div>
-
-              <div
-                style={{
-                  marginTop: 4,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                {filteredHistorySummary.paid} 筆
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: 12,
-                border:
-                  "1px solid #f0d98a",
-                borderRadius: 10,
-                background: "#fffbe6",
-              }}
-            >
-              <div>⏳ 未繳</div>
-
-              <div
-                style={{
-                  marginTop: 4,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                {filteredHistorySummary.unpaid} 筆
-              </div>
-            </div>
-
-            <div
-              style={{
-                padding: 12,
-                border:
-                  "1px solid #b8d7f0",
-                borderRadius: 10,
-                background: "#eef7ff",
-              }}
-            >
-              <div>💰 總額</div>
-
-              <div
-                style={{
-                  marginTop: 4,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                {Object.keys(
-                  filteredHistoryTotals
-                ).length === 0 ? (
-                  <span>0</span>
-                ) : (
-                  Object.entries(
-                    filteredHistoryTotals
-                  ).map(
-                    ([currency, total], index) => (
-                      <span key={currency}>
-                        {index > 0 ? " / " : ""}
-                        {currency}{" "}
-                        {total.toFixed(2)}
-                      </span>
-                    )
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{
-              marginBottom: 12,
-              fontWeight: "bold",
-            }}
-          >
-            篩選總額：
-            {Object.keys(
-              filteredHistoryTotals
-            ).length === 0 ? (
-              <span>0</span>
-            ) : (
-              Object.entries(
-                filteredHistoryTotals
-              ).map(
-                ([currency, total], index) => (
-                  <span key={currency}>
-                    {index > 0 ? " / " : " "}
-                    {currency}{" "}
-                    {total.toFixed(2)}
-                  </span>
-                )
-              )
-            )}
-          </div>
-
-          <select
-            value={historyMonthFilter}
-            onChange={(e) =>
-              setHistoryMonthFilter(
-                e.target.value
-              )
-            }
-            style={{
-              marginBottom: 12,
-              padding: "6px 8px",
-            }}
-          >
-            <option value="all">
-              全部月份
-            </option>
-
-            {historyMonthOptions.map((month) => {
-              const [year, monthNumber] =
-                month.split("-");
-
-              return (
-                <option
-                  key={month}
-                  value={month}
-                >
-                  {year} 年{" "}
-                  {Number(monthNumber)} 月
-                </option>
-              );
-            })}
-          </select>
-
-          <select
-            value={historyCardFilter}
-            onChange={(e) =>
-              setHistoryCardFilter(
-                e.target.value
-              )
-            }
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 8px",
-            }}
-          >
-            <option value="all">
-              全部信用卡
-            </option>
-
-            {creditCards.map((card) => (
-              <option
-                key={card.id}
-                value={String(card.id)}
-              >
-                {card.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={historyStatusFilter}
-            onChange={(e) =>
-              setHistoryStatusFilter(
-                e.target.value
-              )
-            }
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 8px",
-            }}
-          >
-            <option value="all">
-              全部狀態
-            </option>
-
-            <option value="unpaid">
-              未繳
-            </option>
-
-            <option value="paid">
-              已繳
-            </option>
-          </select>
-
-          <select
-            value={historySort}
-            onChange={(e) =>
-              setHistorySort(
-                e.target.value
-              )
-            }
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 8px",
-            }}
-          >
-            <option value="newest">
-              最新帳單優先
-            </option>
-
-            <option value="oldest">
-              最舊帳單優先
-            </option>
-
-            <option value="amount_desc">
-              金額高到低
-            </option>
-          </select>
-
-          <button
-            onClick={() => {
-              setHistoryMonthFilter("all");
-              setHistoryCardFilter("all");
-              setHistoryStatusFilter("all");
-              setHistorySort("newest");
-              setHistorySearch("");
-            }}
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 10px",
-            }}
-          >
-            清除篩選
-          </button>
-
-          <button
-            onClick={() =>
-              setExpandedHistoryIds(
-                filteredStatementHistory.map(
-                  (statement) =>
-                    statement.id
-                )
-              )
-            }
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 10px",
-            }}
-          >
-            全部展開
-          </button>
-
-          <button
-            onClick={() =>
-              setExpandedHistoryIds([])
-            }
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 10px",
-            }}
-          >
-            全部收合
-          </button>
-
-          <button
-            onClick={exportHistoryCsv}
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 10px",
-            }}
-          >
-            匯出 CSV
-          </button>
-
-          <button
-            onClick={() =>
-              document
-                .getElementById(
-                  "statement-history-bottom"
-                )
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                })
-            }
-            style={{
-              marginLeft: 8,
-              marginBottom: 12,
-              padding: "6px 10px",
-            }}
-          >
-            ⬇️ 跳到歷史帳單底部
-          </button>
-
-          {filteredStatementHistory.length === 0 ? (
-            <p>
-              找不到符合目前搜尋／篩選條件的歷史帳單
-            </p>
-          ) : (
-            visibleStatementHistory.map(
-              (statement) => {
-                const card =
-                  creditCards.find(
-                    (item) =>
-                      Number(item.id) ===
-                      Number(
-                        statement.card_id
-                      )
-                  );
-
-                const totals =
-                  getHistoricalStatementTotals(
-                    statement
-                  );
-
-                const statementDetailExpenses =
-                  statementExpenses.filter(
-                    (expense) => {
-                      if (!card) {
-                        return false;
-                      }
-
-                      return (
-                        expense.card_name ===
-                          card.name &&
-                        expense.date >=
-                          statement.period_start &&
-                        expense.date <=
-                          statement.period_end
-                      );
-                    }
-                  );
-
-                const isExpanded =
-                  expandedHistoryIds.includes(
-                    statement.id
-                  );
-
-                return (
-                  <div
-                    key={statement.id}
-                    style={{
-                      marginBottom: 12,
-                      padding: 12,
-                      border:
-                        statement.is_paid
-                          ? "1px solid #ddd"
-                          : "1px solid #f3b3b3",
-                      borderRadius: 8,
-                      background:
-                        statement.is_paid
-                          ? "white"
-                          : "#fff8f8",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexWrap: "wrap",
-                        gap: 8,
-                        marginBottom: 8,
-                      }}
-                    >
-                      <button
-                        onClick={() =>
-                          setExpandedHistoryIds(
-                            (current) =>
-                              current.includes(
-                                statement.id
-                              )
-                                ? current.filter(
-                                    (id) =>
-                                      id !==
-                                      statement.id
-                                  )
-                                : [
-                                    ...current,
-                                    statement.id,
-                                  ]
-                          )
-                        }
-                        style={{
-                          fontWeight: "bold",
-                          cursor: "pointer",
-                          background: "none",
-                          border: "none",
-                          padding: 0,
-                          textDecoration:
-                            "underline",
-                        }}
-                      >
-                        {isExpanded
-                          ? "▼ "
-                          : "▶ "}
-                        {card?.name ||
-                          "未知信用卡"}
-                      </button>
-
-                      <span
-                        style={{
-                          fontSize: 13,
-                          color: "#666",
-                        }}
-                      >
-                        {Number(
-                          statement.period_end.slice(
-                            0,
-                            4
-                          )
-                        )}{" "}
-                        年{" "}
-                        {Number(
-                          statement.period_end.slice(
-                            5,
-                            7
-                          )
-                        )}{" "}
-                        月
-                      </span>
-
-                      <span
-                        style={{
-                          padding: "3px 8px",
-                          borderRadius: 999,
-                          fontSize: 12,
-                          fontWeight: "bold",
-                          background:
-                            statement.is_paid
-                              ? "#e7f7ed"
-                              : "#ffe5e5",
-                        }}
-                      >
-                        {statement.is_paid
-                          ? "✅ 已繳"
-                          : "⏳ 未繳"}
-                      </span>
-                    </div>
-
-                    <div
-                      style={{
-                        marginTop: 10,
-                        padding: 10,
-                        background: "#fafafa",
-                        borderRadius: 8,
-                        lineHeight: 1.7,
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 18,
-                          fontWeight: "bold",
-                        }}
-                      >
-                        帳單金額：
-                        {Object.keys(
-                          totals
-                        ).length === 0 ? (
-                          <span>0</span>
-                        ) : (
-                          Object.entries(
-                            totals
-                          ).map(
-                            (
-                              [currency, total],
-                              index
-                            ) => (
-                              <span
-                                key={currency}
-                              >
-                                {index > 0
-                                  ? " / "
-                                  : " "}
-                                {currency}{" "}
-                                {total.toFixed(
-                                  2
-                                )}
-                              </span>
-                            )
-                          )
-                        )}
-                      </div>
-
-                      {isExpanded && (
-                        <>
-                          <div>
-                            帳單期間：
-                            {formatDate(
-                              statement.period_start
-                            )}
-                            {" ～ "}
-                            {formatDate(
-                              statement.period_end
-                            )}
-                          </div>
-
-                          <div>
-                            實際繳款日：
-                            {statement.paid_date
-                              ? formatDate(
-                                  statement.paid_date
-                                )
-                              : "未記錄"}
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                    {isExpanded && (
-                      <div
-                        style={{
-                          marginTop: 10,
-                          paddingTop: 10,
-                          borderTop:
-                            "1px solid #eee",
-                        }}
-                      >
-                        <strong>
-                          消費明細
-                        </strong>
-
-                        {statementDetailExpenses.length ===
-                        0 ? (
-                          <p>本期沒有消費</p>
-                        ) : (
-                          statementDetailExpenses.map(
-                            (expense) => (
-                              <div
-                                key={expense.id}
-                                style={{
-                                  padding: "8px 0",
-                                  borderBottom:
-                                    "1px solid #eee",
-                                }}
-                              >
-                                <Link
-                                  href={`/expenses/${expense.id}`}
-                                >
-                                  {expense.date}{" "}
-                                  {expense.item}
-                                </Link>
-
-                                <div>
-                                  {expense.currency ||
-                                    "USD"}{" "}
-                                  {Number(
-                                    expense.amount
-                                  ).toFixed(2)}
-                                </div>
-                              </div>
-                            )
-                          )
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-            )
-          )}
-
-          {historyVisibleCount <
-            filteredStatementHistory.length && (
-            <button
-              onClick={() =>
-                setHistoryVisibleCount(
-                  (count) =>
-                    count + 20
-                )
-              }
-              style={{
-                marginTop: 12,
-                padding: "8px 12px",
-              }}
-            >
-              載入更多
-            </button>
-          )}
-
-          <div id="statement-history-bottom" />
-
-          <button
-            onClick={() =>
-              document
-                .getElementById(
-                  "statement-history"
-                )
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                })
-            }
-            style={{
-              marginTop: 12,
-              marginLeft: 8,
-              padding: "8px 12px",
-            }}
-          >
-            ⬆️ 回到歷史帳單頂部
-          </button>
-        </section>
-      )}
-
-      <section
-        id="monthly-expenses"
-        style={{
-          marginBottom: 30,
-          padding: 16,
-          border: "1px solid #ddd",
-          borderRadius: 12,
-          background: "white",
-        }}
-      >
-        <h2
-          style={{
-            marginTop: 0,
-            marginBottom: 12,
-          }}
-        >
-          本月支出明細
-        </h2>
+        {/* 16-2. 操作按鈕 */}
 
         <div
           style={{
             display: "flex",
             flexWrap: "wrap",
             gap: 10,
-            alignItems: "center",
-            marginBottom: 12,
+            marginTop: 16,
+            paddingTop: 14,
+            borderTop: `1px solid ${COLOR.border}`,
           }}
-        >
-          <input
-            type="text"
-            value={monthlyExpenseSearch}
-            onChange={(e) =>
-              setMonthlyExpenseSearch(
-                e.target.value
-              )
-            }
-            placeholder="搜尋項目、分類或信用卡"
-            style={{
-              width: "100%",
-              maxWidth: 360,
-              padding: "8px 10px",
-            }}
-          />
-
-          <select
-            value={monthlyExpenseCategoryFilter}
-            onChange={(e) =>
-              setMonthlyExpenseCategoryFilter(
-                e.target.value
-              )
-            }
-            style={{
-              padding: "8px 10px",
-            }}
           >
-            <option value="all">
-              全部分類
-            </option>
-
-            <option value="餐飲">
-              餐飲
-            </option>
-
-            <option value="交通">
-              交通
-            </option>
-
-            <option value="住宿">
-              住宿
-            </option>
-
-            <option value="購物">
-              購物
-            </option>
-
-            <option value="娛樂旅遊">
-              娛樂旅遊
-            </option>
-
-            <option value="居家">
-              居家
-            </option>
-
-            <option value="汽車">
-              汽車
-            </option>
-
-            <option value="其他">
-              其他
-            </option>
-          </select>
-
-          <select
-            value={monthlyExpenseCardFilter}
-            onChange={(e) =>
-              setMonthlyExpenseCardFilter(
-                e.target.value
-              )
-            }
-            style={{
-              padding: "8px 10px",
-            }}
-          >
-            <option value="all">
-              全部付款方式
-            </option>
-
-            <option value="non-card">
-              非信用卡支出
-            </option>
-
-            {creditCards.map((card) => (
-              <option
-                key={card.id}
-                value={card.name}
-              >
-                {card.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            value={monthlyExpenseStartDate}
-            onChange={(e) =>
-              setMonthlyExpenseStartDate(
-                e.target.value
-              )
-            }
-            style={{
-              padding: "8px 10px",
-            }}
-          />
-
-          <input
-            type="date"
-            value={monthlyExpenseEndDate}
-            onChange={(e) =>
-              setMonthlyExpenseEndDate(
-                e.target.value
-              )
-            }
-            style={{
-              padding: "8px 10px",
-            }}
-          />
-
-          <select
-            value={monthlyExpenseSort}
-            onChange={(e) =>
-              setMonthlyExpenseSort(
-                e.target.value
-              )
-            }
-            style={{
-              padding: "8px 10px",
-            }}
-          >
-            <option value="date_desc">
-              日期新到舊
-            </option>
-
-            <option value="date_asc">
-              日期舊到新
-            </option>
-
-            <option value="amount_desc">
-              金額高到低
-            </option>
-
-            <option value="amount_asc">
-              金額低到高
-            </option>
-          </select>
-
           <button
-            onClick={() => {
-              setMonthlyExpenseSearch("");
-              setMonthlyExpenseCategoryFilter(
-                "all"
-              );
-              setMonthlyExpenseCardFilter(
-                "all"
-              );
-              setMonthlyExpenseStartDate("");
-              setMonthlyExpenseEndDate("");
-              setMonthlyExpenseSort(
-                "date_desc"
-              );
-            }}
+            type="button"
             style={{
-              padding: "8px 12px",
+              ...secondaryButtonStyle,
+              flex: "1 1 110px",
             }}
-          >
-            清除篩選
+            onClick={() => handleEdit(card)}
+            disabled={isBusy || saving}
+            >
+            ✏️ 編輯資料
           </button>
 
           <button
-            onClick={exportMonthlyExpensesCsv}
+            type="button"
             style={{
-              padding: "8px 12px",
+              ...secondaryButtonStyle,
+              flex: "1 1 110px",
+              background: card.is_active
+                ? COLOR.redLight
+                : COLOR.greenLight,
+              color: card.is_active
+                ? COLOR.red
+                : COLOR.green,
             }}
-          >
-            匯出 CSV
+            onClick={() =>
+              void handleToggleActive(card)
+            }
+            disabled={
+              busyCardId !== null ||
+              saving ||
+              loading
+            }
+            >
+            {isBusy
+              ? "處理中..."
+              : card.is_active
+              ? "停用信用卡"
+              : "重新啟用"}
           </button>
         </div>
+      </article>
+    );
+  }
 
-        <div
+  // =======================================
+  // 17. 主畫面 JSX
+  // =======================================
+
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        padding: "24px 14px 60px",
+        background: COLOR.background,
+        color: COLOR.text,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 800,
+          margin: "0 auto",
+        }}
+      >
+        {/* =================================
+            17-1. 頁面標題
+        ================================= */}
+
+        <header
           style={{
-            marginBottom: 12,
-            padding: 10,
-            border: "1px solid #eee",
-            borderRadius: 10,
-            background: "#fafafa",
-            lineHeight: 1.7,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: 14,
+            marginBottom: 24,
           }}
-        >
+          >
           <div>
-            目前顯示：
-            <strong>
-              {filteredMonthlyExpenses.length} 筆
-            </strong>
-          </div>
-
-          <div>
-            篩選後總額：
-            {Object.keys(
-              filteredMonthlyTotals
-            ).length === 0 ? (
-              <strong>0</strong>
-            ) : (
-              Object.entries(
-                filteredMonthlyTotals
-              ).map(
-                ([currency, total], index) => (
-                  <strong key={currency}>
-                    {index > 0 ? " / " : " "}
-                    {currency}{" "}
-                    {total.toFixed(2)}
-                  </strong>
-                )
-              )
-            )}
-          </div>
-        </div>
-
-        {filteredMonthlyExpenses.length === 0 ? (
-          <p>
-            {monthlyExpenseSearch.trim() === "" &&
-            monthlyExpenseCategoryFilter === "all" &&
-            monthlyExpenseCardFilter === "all" &&
-            monthlyExpenseStartDate === "" &&
-            monthlyExpenseEndDate === ""
-              ? "沒有資料"
-              : "找不到符合搜尋／篩選條件的支出"}
-          </p>
-        ) : (
-          visibleMonthlyExpenses.map((expense) => (
-            <div
-              key={expense.id}
+            <h1
               style={{
-                marginBottom: 10,
-                padding: 12,
-                border: "1px solid #eee",
-                borderRadius: 10,
-                background: "#fafafa",
+                margin: 0,
+                fontSize: 26,
+                fontWeight: 800,
+              }}
+              >
+              💳 信用卡管理
+            </h1>
+
+            <p
+              style={{
+                margin: "8px 0 0",
+                fontSize: 14,
+                color: COLOR.muted,
               }}
             >
-              <Link
-                href={`/expenses/${expense.id}`}
-              >
-                <strong>
-                  {expense.date}{" "}
-                  {expense.item}
-                </strong>
-              </Link>
+              管理信用卡、結帳日與繳款設定
+            </p>
+          </div>
 
-              <div>
-                {expense.major_category ||
-                  "未分類"}
-
-                {expense.category
-                  ? ` / ${expense.category}`
-                  : ""}
-              </div>
-
-              <div>
-                {expense.currency ||
-                  "USD"}{" "}
-                {Number(
-                  expense.amount
-                ).toFixed(2)}
-              </div>
-
-              {expense.card_name && (
-                <div>
-                  💳 {expense.card_name}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-
-        {monthlyExpenseVisibleCount <
-          filteredMonthlyExpenses.length && (
-          <button
-            onClick={() =>
-              setMonthlyExpenseVisibleCount(
-                (count) => count + 20
-              )
-            }
+          <Link
+            href="/"
             style={{
-              marginTop: 12,
-              padding: "8px 12px",
+              ...secondaryButtonStyle,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textDecoration: "none",
             }}
           >
-            載入更多
-          </button>
-        )}
-      </section>
+            ← 返回首頁
+          </Link>
+        </header>
 
-      <button
-        onClick={() =>
-          document
-            .getElementById(
-              "dashboard-top"
-            )
-            ?.scrollIntoView({
-              behavior: "smooth",
-            })
-        }
-        style={{
-          position: "fixed",
-          right: 20,
-          bottom: 20,
-          width: 44,
-          height: 44,
-          borderRadius: "50%",
-          border: "1px solid #ddd",
-          background: "white",
-          cursor: "pointer",
-          fontSize: 18,
-          boxShadow:
-            "0 2px 8px rgba(0,0,0,0.12)",
-        }}
-        aria-label="返回頂部"
-        title="返回頂部"
-      >
-        ↑
-      </button>
+        {/* =================================
+            17-2. 成功／錯誤提示
+        ================================= */}
+
+        {notice && (
+          <div
+            role="status"
+            style={{
+              padding: 14,
+              marginBottom: 20,
+              borderRadius: 10,
+              fontSize: 14,
+              lineHeight: 1.6,
+              overflowWrap: "anywhere",
+              color:
+                notice.type === "success"
+                ? COLOR.green
+                  : COLOR.red,
+              background:
+                notice.type === "success"
+                  ? COLOR.greenLight
+                  : COLOR.redLight,
+            }}
+          >
+            {notice.text}
+          </div>
+        )}
+
+        {/* =================================
+            17-3. 信用卡新增／編輯區
+        ================================= */}
+        <section style={panelStyle}>
+          <h2
+            style={{
+              margin: "0 0 18px",
+              fontSize: 18,
+              fontWeight: 750,
+            }}
+          >
+            {editingCardId !== null
+              ? "✏️ 編輯信用卡"
+              : "＋ 新增信用卡"}
+          </h2>
+
+          <form onSubmit={handleSave}>
+            {/* 信用卡名稱 */}
+
+            <div style={{ marginBottom: 16 }}>
+              <label
+                htmlFor="card-name"
+                style={labelStyle}
+              >
+                信用卡名稱
+              </label>
+
+              <input
+                id="card-name"
+                type="text"
+                style={inputStyle}
+                value={form.name}
+                placeholder="例如：Chase Sapphire Preferred"
+                onChange={(event) =>
+                  updateForm(
+                    "name",
+                    event.target.value
+                  )
+                }
+                required
+                />
+            </div>
+
+            {/* 結帳日／繳款日 */}
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: 14,
+                marginBottom: 16,
+              }}
+            >
+              <div>
+                <label
+                  htmlFor="statement-day"
+                  style={labelStyle}
+                >
+                  結帳日（每月幾號）
+                </label>
+
+                <input
+                  id="statement-day"
+                  type="number"
+                  min="1"
+                  max="31"
+                  step="1"
+                  placeholder="例如：15"
+                  style={inputStyle}
+                  value={form.statement_day}
+                  onChange={(event) =>
+                    updateForm(
+                      "statement_day",
+                      event.target.value
+                    )
+                  }
+                  required
+                  />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="due-day"
+                  style={labelStyle}
+                  >
+                  繳款日（每月幾號）
+                </label>
+
+                <input
+                  id="due-day"
+                  type="number"
+                  min="1"
+                  max="31"
+                  step="1"
+                  placeholder="例如：10"
+                  style={inputStyle}
+                  value={form.due_day}
+                  onChange={(event) =>
+                    updateForm(
+                      "due_day",
+                      event.target.value
+                    )
+                  }
+                  required
+                  />
+              </div>
+            </div>
+
+            {/* 繳款月份 */}
+
+            <div style={{ marginBottom: 20 }}>
+              <label
+                htmlFor="due-month"
+                style={labelStyle}
+              >
+                繳款月份
+              </label>
+
+              <select
+                id="due-month"
+                style={inputStyle}
+                value={form.due_month_offset}
+                onChange={(event) =>
+                  updateForm(
+                    "due_month_offset",
+                    event.target.value
+                  )
+                }
+              >
+                <option value="0">
+                  結帳當月繳款
+                </option>
+
+                <option value="1">
+                  結帳次月繳款
+                </option>
+              </select>
+
+              <p
+                style={{
+                  margin: "8px 0 0",
+                  fontSize: 12,
+                  color: COLOR.muted,
+                  lineHeight: 1.7,
+                }}
+              >
+                例如：10/15 結帳、11/10 繳款，
+                請選擇「結帳次月繳款」。
+              </p>
+            </div>
+
+            {/* 儲存／取消編輯 */}
+
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 10,
+              }}
+            >
+              <button
+                type="submit"
+                style={{
+                  ...primaryButtonStyle,
+                  flex: "1 1 170px",
+                  opacity:
+                    saving || !userId ? 0.6 : 1,
+                }}
+                disabled={
+                  saving ||
+                  !userId ||
+                  loading
+                }
+              >
+                {saving
+                  ? "儲存中..."
+                  : editingCardId !== null
+                  ? "儲存修改"
+                  : "新增信用卡"}
+              </button>
+
+              {editingCardId !== null && (
+                <button
+                  type="button"
+                  style={secondaryButtonStyle}
+                  onClick={resetForm}
+                  disabled={saving}
+                >
+                  取消編輯
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
+
+        {/* =================================
+            17-4. 信用卡統計區
+        ================================= */}
+
+        <section
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(2, minmax(0, 1fr))",
+            gap: 12,
+            marginBottom: 20,
+            }}
+        >
+          {/* 使用中數量 */}
+
+          <div
+            style={{
+              ...panelStyle,
+              padding: 16,
+              marginBottom: 0,
+            }}
+            >
+            <div
+              style={{
+                marginBottom: 8,
+                fontSize: 13,
+                color: COLOR.muted,
+              }}
+            >
+              使用中信用卡
+            </div>
+
+            <div
+              style={{
+                fontSize: 28,
+                fontWeight: 800,
+                color: COLOR.blue,
+              }}
+            >
+              {activeCards.length}
+            </div>
+          </div>
+
+          {/* 已停用數量 */}
+
+          <div
+            style={{
+              ...panelStyle,
+              padding: 16,
+              marginBottom: 0,
+            }}
+          >
+            <div
+              style={{
+                marginBottom: 8,
+                fontSize: 13,
+                color: COLOR.muted,
+                }}
+            >
+              已停用信用卡
+            </div>
+
+            <div
+              style={{
+                fontSize: 28,
+                fontWeight: 800,
+                color: COLOR.text,
+              }}
+            >
+              {inactiveCards.length}
+            </div>
+          </div>
+        </section>
+
+        {/* =================================
+            17-5. 使用中的信用卡
+        ================================= */}
+
+
+        <section style={panelStyle}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 12,
+              marginBottom: 18,
+            }}
+            >
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 18,
+                fontWeight: 750,
+              }}
+            >
+              💳 使用中的信用卡
+            </h2>
+
+            <button
+              type="button"
+              style={{
+                ...secondaryButtonStyle,
+                minHeight: 36,
+                padding: "7px 11px",
+                fontSize: 12,
+              }}
+              onClick={() => void loadCards()}
+              disabled={loading}
+            >
+              重新整理
+            </button>
+          </div>
+
+          {loading ? (
+            <div
+              style={{
+                padding: 24,
+                textAlign: "center",
+                color: COLOR.muted,
+              }}
+            >
+              載入信用卡資料中...
+            </div>
+          ) : activeCards.length === 0 ? (
+            <div
+              style={{
+                padding: 24,
+                textAlign: "center",
+                borderRadius: 12,
+                background: "#f9fafb",
+                color: COLOR.muted,
+                fontSize: 14,
+              }}
+            >
+              尚無使用中的信用卡
+              </div>
+          ) : (
+            activeCards.map(renderCard)
+          )}
+        </section>
+
+        {/* =================================
+            17-6. 已停用信用卡
+        ================================= */}
+
+        <section style={panelStyle}>
+          <button
+            type="button"
+            onClick={() =>
+              setShowInactiveCards(
+                (previous) => !previous
+                  )
+            }
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              gap: 12,
+              padding: 0,
+              border: "none",
+              background: "transparent",
+              color: COLOR.text,
+              cursor: "pointer",
+            }}
+            >
+            <span
+              style={{
+                fontSize: 17,
+                fontWeight: 700,
+              }}
+            >
+              📁 已停用信用卡
+              （{inactiveCards.length}）
+            </span>
+
+            <span
+              style={{
+                color: COLOR.muted,
+                fontSize: 13,
+                 }}
+            >
+              {showInactiveCards
+                ? "收合 ▲"
+                : "展開 ▼"}
+            </span>
+          </button>
+
+           {showInactiveCards && (
+            <div style={{ marginTop: 18 }}>
+              {inactiveCards.length === 0 ? (
+                <div
+                  style={{
+                    padding: 16,
+                    textAlign: "center",
+                    color: COLOR.muted,
+                    fontSize: 14,
+                  }}
+                >
+                  目前沒有已停用的信用卡
+                  </div>
+              ) : (
+                inactiveCards.map(renderCard)
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* =================================
+            17-7. 頁面底部
+        ================================= */}
+
+
+        <footer
+          style={{
+            textAlign: "center",
+            padding: "10px 0 20px",
+            color: "#9ca3af",
+            fontSize: 12,
+          }}
+
+           >
+          Travel Expense App · 信用卡管理
+        </footer>
+      </div>
     </main>
   );
 }
+  red: "#b91c1c",
+  redLight: "#fef2f2",
+};
