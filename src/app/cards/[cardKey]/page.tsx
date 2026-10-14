@@ -1186,24 +1186,262 @@ if (
   </section>
 )}
 
-          {/* ==================== 08. 統計分析 ==================== */}
+          
+{/* =========================================
+    24. 統計分析分頁
+   ========================================= */}
 
-          {activeTab === "analytics" && (
+{activeTab === "analytics" && (
+  <section className="panel">
 
-            <section className="panel">
+    <h2>統計分析</h2>
 
-              <h2>統計分析</h2>
+    {/* 月份及幣別篩選 */}
+    <div className="analysisFilters">
 
-              <p>
-                將提供每月支出趨勢、消費分類、
-                日常與旅程占比，以及各幣別統計。
-              </p>
+      <label>
+        <span>統計月份</span>
 
-              <div className="placeholder">
-                下一步串接統計圖表
+        <select
+          value={analysisMonth}
+          onChange={(e) =>
+            setAnalysisMonth(e.target.value)
+          }
+        >
+          <option value="all">全部月份</option>
+
+          {analysisMonths.map((month) => (
+            <option key={month} value={month}>
+              {month.replace("-", " 年 ")} 月
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        <span>幣別</span>
+
+        <select
+          value={analysisCurrency}
+          onChange={(e) =>
+            setAnalysisCurrency(e.target.value)
+          }
+        >
+          {analysisCurrencies.length === 0 && (
+            <option value="USD">USD</option>
+          )}
+
+          {analysisCurrencies.map((currency) => (
+            <option key={currency} value={currency}>
+              {currency}
+            </option>
+          ))}
+        </select>
+      </label>
+
+    </div>
+
+    {expenseLoading ? (
+      <div className="placeholder">
+        正在載入統計資料...
+      </div>
+    ) : expenseError ? (
+      <div className="placeholder">
+        統計資料讀取失敗：{expenseError}
+      </div>
+    ) : analysisCount === 0 ? (
+      <div className="placeholder">
+        目前沒有符合條件的消費紀錄
+      </div>
+    ) : (
+      <>
+
+        {/* =====================================
+            統計摘要
+           ===================================== */}
+
+        <div className="analysisSummary">
+
+          <div>
+            <span>總消費</span>
+            <strong>
+              {analysisCurrency}{" "}
+              {analysisTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </strong>
+          </div>
+
+          <div>
+            <span>消費筆數</span>
+            <strong>{analysisCount} 筆</strong>
+          </div>
+
+          <div>
+            <span>平均每筆</span>
+            <strong>
+              {analysisCurrency}{" "}
+              {analysisAverage.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </strong>
+          </div>
+
+        </div>
+
+        {/* =====================================
+            最近 12 個月消費趨勢
+           ===================================== */}
+
+        <div className="analysisSection">
+          <h3>最近 12 個月消費趨勢</h3>
+
+          {(() => {
+            const maxValue = Math.max(
+              1,
+              ...analysisMonthlyTrend.map(
+                (entry) => entry.amount
+              )
+            );
+
+            return (
+              <div className="trendChart">
+                {analysisMonthlyTrend.map((entry) => (
+                  <div
+                    key={entry.month}
+                    className="trendColumn"
+                  >
+                    <span className="trendAmount">
+                      {entry.amount > 0
+                        ? entry.amount.toLocaleString(
+                            "en-US",
+                            { maximumFractionDigits: 0 }
+                          )
+                        : ""}
+                    </span>
+
+                    <div className="trendTrack">
+                      <div
+                        className="trendBar"
+                        style={{
+                          height: `${
+                            (entry.amount / maxValue) * 100
+                          }%`,
+                        }}
+                      />
+                    </div>
+
+                    <span className="trendMonth">
+                      {entry.month.slice(5)}
+                    </span>
+                  </div>
+                ))}
               </div>
+            );
+          })()}
+        </div>
 
-            </section>
+        {/* =====================================
+            大分類支出
+           ===================================== */}
+
+        <div className="analysisSection">
+          <h3>大分類支出統計</h3>
+
+          <div className="categoryAnalysis">
+
+            {analysisCategories.map((category) => (
+              <div
+                key={category.name}
+                className="categoryAnalysisItem"
+              >
+                <div className="categoryAnalysisInfo">
+                  <strong>{category.name}</strong>
+
+                  <span>
+                    {analysisCurrency}{" "}
+                    {category.amount.toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
+                  </span>
+                </div>
+
+                <div className="categoryTrack">
+                  <div
+                    className="categoryBar"
+                    style={{
+                      width: `${Math.max(
+                        0,
+                        Math.min(
+                          100,
+                          category.percentage
+                        )
+                      )}%`,
+                    }}
+                  />
+                </div>
+
+                <span className="categoryPercent">
+                  {category.percentage.toFixed(1)}%
+                </span>
+              </div>
+            ))}
+
+          </div>
+        </div>
+
+        {/* =====================================
+            日常 / 旅程消費比較
+           ===================================== */}
+
+        <div className="analysisSection">
+          <h3>日常與旅程消費</h3>
+
+          <div className="scopeAnalysis">
+
+            <div className="scopeAnalysisItem">
+              <span>日常花費</span>
+              <strong>
+                {analysisCurrency}{" "}
+                {analysisScopeTotals.daily.toLocaleString(
+                  "en-US",
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}
+              </strong>
+            </div>
+
+            <div className="scopeAnalysisItem">
+              <span>旅程花費</span>
+              <strong>
+                {analysisCurrency}{" "}
+                {analysisScopeTotals.trip.toLocaleString(
+                  "en-US",
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}
+              </strong>
+            </div>
+
+          </div>
+        </div>
+
+      </>
+    )}
+
+  </section>
+)}
+
 
           )}
 
@@ -1638,6 +1876,224 @@ display: flex;
 
   .statementDetails {
     padding: 0 11px;
+  }
+}
+
+
+
+/* =========================================
+   25. 統計分析排版
+   ========================================= */
+
+.analysisFilters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.analysisFilters label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.analysisFilters label span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.analysisFilters select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  background: #fff;
+  color: #172033;
+  font-size: 13px;
+}
+
+.analysisSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 11px;
+  margin-bottom: 24px;
+}
+
+.analysisSummary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.analysisSummary span,
+.scopeAnalysisItem span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.analysisSummary strong {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+.analysisSection {
+  padding-top: 22px;
+  margin-top: 22px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.analysisSection h3 {
+  font-size: 16px;
+  margin: 0 0 19px;
+}
+
+.trendChart {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 7px;
+  height: 200px;
+}
+
+.trendColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  height: 100%;
+}
+
+.trendAmount {
+  font-size: 10px;
+  color: #64748b;
+  height: 20px;
+  white-space: nowrap;
+}
+
+.trendTrack {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  background: #f1f5f9;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.trendBar {
+  width: 100%;
+  background: #6366f1;
+  border-radius: 5px 5px 0 0;
+  min-height: 0;
+}
+
+.trendMonth {
+  margin-top: 8px;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.categoryAnalysis {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.categoryAnalysisItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 60px;
+  gap: 8px 12px;
+}
+
+.categoryAnalysisInfo {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.categoryAnalysisInfo strong {
+  font-size: 13px;
+}
+
+.categoryAnalysisInfo span,
+.categoryPercent {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.categoryTrack {
+  background: #e2e8f0;
+  border-radius: 6px;
+  height: 9px;
+  overflow: hidden;
+}
+
+.categoryBar {
+  background: #6366f1;
+  height: 100%;
+  border-radius: 6px;
+}
+
+.categoryPercent {
+  text-align: right;
+}
+
+.scopeAnalysis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.scopeAnalysisItem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.scopeAnalysisItem strong {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .analysisSummary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .analysisSummary > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .analysisSummary strong {
+    font-size: 16px;
+  }
+
+  .trendChart {
+    gap: 3px;
+    height: 160px;
+  }
+
+  .trendAmount {
+    font-size: 8px;
+  }
+
+  .trendMonth {
+    font-size: 9px;
+  }
+
+  .scopeAnalysis {
+    grid-template-columns: 1fr;
   }
 }
 
