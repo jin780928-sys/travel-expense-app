@@ -94,6 +94,11 @@ type ExpenseFormProps = {
     value: string
   ) => void;
 
+  paymentMethodId: string;
+setPaymentMethodId: (
+  value: string
+) => void;
+
   currency: string;
   setCurrency: (
     value: string
@@ -208,6 +213,9 @@ export default function ExpenseForm({
   cardName,
   setCardName,
 
+  paymentMethodId,
+setPaymentMethodId,
+
   currency,
   setCurrency,
 
@@ -256,10 +264,6 @@ expenseScope,
   setManagedMethods,
 ] = useState<ManagedPaymentMethod[]>([]);
 
-const [
-  selectedMethodId,
-  setSelectedMethodId,
-] = useState("");
 
   const [
   paymentLoading,
@@ -331,7 +335,7 @@ const availableMethods = managedMethods.filter(
 
 // 選擇電子支付後，取得實際扣款卡片
 function selectManagedMethod(value: string) {
-  setSelectedMethodId(value);
+  setpaymentMethodId(value);
 
   const selected = managedMethods.find(
     (method) => String(method.id) === value
@@ -480,7 +484,7 @@ if (
   ["金融卡", "Apple Pay", "Google Pay"].includes(
     paymentMethod
   ) &&
-  !selectedMethodId
+  !paymentMethodId
 ) {
   e.preventDefault();
   alert("請選擇已建立的付款工具");
@@ -491,7 +495,7 @@ if (
 const selectedManagedMethod =
   managedMethods.find(
     (method) =>
-      String(method.id) === selectedMethodId
+      String(method.id) === paymentMethodId
   );
 
     if (
@@ -835,7 +839,7 @@ const selectedManagedMethod =
       const value = e.target.value;
 
       setPaymentMethod(value);
-      setSelectedMethodId("");
+      setpaymentMethodId("");
       setCardName("");
     }}
     style={inputStyle}
@@ -940,7 +944,7 @@ const selectedManagedMethod =
     </label>
 
     <select
-      value={selectedMethodId}
+      value={paymentMethodId}
       onChange={(e) =>
         selectManagedMethod(e.target.value)
       }
@@ -978,7 +982,7 @@ const selectedManagedMethod =
       )}
 
     {/* 顯示實際扣款卡片 */}
-    {selectedMethodId &&
+    {paymentMethodId &&
       cardName && (
         <p
           style={{
@@ -991,7 +995,7 @@ const selectedManagedMethod =
           </p>
       )}
 
-    {selectedMethodId &&
+    {paymentMethodId &&
       !cardName && (
         <p
           style={{
