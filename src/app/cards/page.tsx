@@ -1204,6 +1204,5 @@ export default function CardsPage() {
     </main>
   );
 }
-  red: "#b91c1c",
-  redLight: "#fef2f2",
+ 
 };
