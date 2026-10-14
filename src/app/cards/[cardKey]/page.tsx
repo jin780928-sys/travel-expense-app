@@ -62,6 +62,26 @@ type DetailItem = {
   description: string;
 };
 
+// =========================================
+// 10. 消費紀錄資料型別
+// =========================================
+type CardExpense = {
+  id: number | string;
+  item: string | null;
+  date: string;
+  amount: number;
+  currency: string | null;
+  major_category: string | null;
+  category: string | null;
+  payment_method: string | null;
+  card_name: string | null;
+  payment_method_id: number | null;
+  expense_scope: string | null;
+  trip_id: number | string | null;
+};
+
+const EXPENSE_PAGE_SIZE = 20;
+
 // ==================== 02. 頁面狀態 ====================
 
 export default function CardDetailPage() {
@@ -84,6 +104,28 @@ const [activeTab, setActiveTab] =
 
 const [errorMessage, setErrorMessage] =
     useState("");
+
+  // =========================================
+// 11. 消費紀錄狀態
+// =========================================
+
+  const [cardExpenses, setCardExpenses] =
+  useState<CardExpense[]>([]);
+
+const [expenseLoading, setExpenseLoading] =
+  useState(true);
+
+const [expenseError, setExpenseError] =
+  useState("");
+
+  const [expenseSearch, setExpenseSearch] =
+  useState("");
+
+const [expenseMonth, setExpenseMonth] =
+  useState("all");
+
+const [expensePage, setExpensePage] =
+  useState(1);
 
 // ==================== 03. Supabase 資料讀取 ====================
 
@@ -234,6 +276,161 @@ useEffect(() => {
 
   }, [cardKey]);
 
+  // =========================================
+// 12. 讀取付款工具的消費紀錄
+// =========================================
+
+  useEffect(() => {
+  if (!detail) return;
+
+  let active = true;
+
+  async function loadExpenses() {
+    setExpenseLoading(true);
+    setExpenseError("");
+
+    try {
+      const { data: auth, error: authError } =
+        await supabase.auth.getUser();
+
+      if (authError) throw authError;
+
+      if (!auth.user) {
+        throw new Error("請先登入");
+      }
+
+      const isCredit = cardKey.startsWith("credit-");
+
+      const all: CardExpense[] = [];
+      const batchSize = 1000;
+
+      for (let from = 0; ; from += batchSize) {
+        let query = supabase
+          .from("Expenses")
+          .select(
+            "id,item,date,amount,currency,major_category,category,payment_method,card_name,payment_method_id,expense_scope,trip_id"
+          )
+        .eq("user_id", auth.user.id);
+
+        if (isCredit) {
+          query = query.eq("card_name", detail.name);
+        } else {
+          query = query.eq(
+            "payment_method_id",
+            detail.id
+          );
+        }
+
+        const { data, error } = await query
+        .order("date", { ascending: false })
+          .order("id", { ascending: false })
+          .range(from, from + batchSize - 1);
+
+        if (error) throw error;
+
+        const batch = (data ?? []) as CardExpense[];
+
+        all.push(...batch);
+
+        if (batch.length < batchSize) break;
+      }
+
+
+       if (active) {
+        setCardExpenses(all);
+      }
+    } catch (error) {
+      console.error("讀取消費紀錄失敗:", error);
+
+      if (active) {
+        setExpenseError(
+          error instanceof Error
+            ? error.message
+            : "讀取消費紀錄失敗"
+        );
+      }
+      } finally {
+      if (active) setExpenseLoading(false);
+    }
+  }
+
+  void loadExpenses();
+
+
+    return () => {
+    active = false;
+  };
+}, [cardKey, detail]);
+
+
+  // =========================================
+// 13. 搜尋、月份與分頁
+// =========================================
+
+  const expenseMonths = Array.from(
+  new Set(
+    cardExpenses
+      .map((e) => e.date?.slice(0, 7))
+      .filter((v): v is string => Boolean(v))
+  )
+    ).sort((a, b) => b.localeCompare(a));
+
+const filteredCardExpenses = cardExpenses.filter(
+  (expense) => {
+    if (
+      expenseMonth !== "all" &&
+      expense.date?.slice(0, 7) !== expenseMonth
+
+      ) {
+      return false;
+    }
+
+    const keyword = expenseSearch.trim().toLowerCase();
+
+    if (!keyword) return true;
+
+    return [
+      expense.item,
+      expense.major_category,
+      expense.category,
+      expense.payment_method,
+      expense.card_name,
+      expense.date,
+    ].some((value) =>
+       String(value ?? "").toLowerCase().includes(keyword)
+    );
+  }
+);
+
+const totalsByCurrency = filteredCardExpenses.reduce<
+  Record<string, number>
+>((result, expense) => {
+  const currency = expense.currency || "USD";
+
+  result[currency] =
+    (result[currency] || 0) +
+    Number(expense.amount || 0);
+
+   return result;
+}, {});
+
+const totalExpensePages = Math.max(
+  1,
+  Math.ceil(
+    filteredCardExpenses.length / EXPENSE_PAGE_SIZE
+  )
+);
+
+  const currentExpensePage = Math.min(
+  expensePage,
+  totalExpensePages
+);
+
+  const visibleCardExpenses = filteredCardExpenses.slice(
+  (currentExpensePage - 1) * EXPENSE_PAGE_SIZE,
+  currentExpensePage * EXPENSE_PAGE_SIZE
+);
+
 // ==================== 04. 頁面 ====================
 
   return (
@@ -355,27 +552,178 @@ useEffect(() => {
 
           </nav>
 
-          {/* ==================== 06. 消費紀錄 ==================== */}
+          
+
+         {/* =========================================
+    14. 消費紀錄：完整清單
+   ========================================= */}
 
           {activeTab === "expenses" && (
+  <section className="panel">
 
-            <section className="panel">
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 12,
+        marginBottom: 18,
+      }}
+    >
+      <h2 style={{ margin: 0 }}>
+        消費紀錄
+      </h2>
 
-              <h2>消費紀錄</h2>
+      <span style={{ fontSize: 13, color: "#64748b" }}>
+        共 {filteredCardExpenses.length} 筆
+      </span>
+    </div>
 
-              <p>
-                將顯示這個付款工具的所有日常與
-                旅程花費，支援月份篩選、
-                搜尋及每頁 20 筆。
-                </p>
+    {/* 搜尋與月份 */}
+    <div className="expenseFilters">
+      <input
+        type="search"
+        placeholder="搜尋品項、分類、付款方式..."
+        value={expenseSearch}
+        onChange={(e) => {
+          setExpenseSearch(e.target.value);
+          setExpensePage(1);
+        }}
+      />
 
-              <div className="placeholder">
-                下一步串接 Expenses 單筆消費資料
+      <select
+        value={expenseMonth}
+        onChange={(e) => {
+          setExpenseMonth(e.target.value);
+          setExpensePage(1);
+        }}
+      >
+        <option value="all">全部月份</option>
+
+        {expenseMonths.map((month) => (
+          <option key={month} value={month}>
+            {month.replace("-", " 年 ")} 月
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* 各幣別合計 */}
+    {!expenseLoading && !expenseError && (
+      <div className="expenseTotals">
+        {Object.entries(totalsByCurrency).map(
+          ([currency, amount]) => (
+            <div key={currency}>
+              <span>{currency}</span>
+              <strong>
+                {amount.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+                </strong>
+            </div>
+          )
+        )}
+      </div>
+    )}
+
+    {expenseLoading ? (
+      <div className="expenseEmpty">
+        正在載入消費紀錄...
+      </div>
+    ) : expenseError ? (
+      <div className="expenseEmpty">
+        {expenseError}
+      </div>
+    ) : visibleCardExpenses.length === 0 ? (
+      <div className="expenseEmpty">
+        沒有符合條件的消費紀錄
+      </div>
+    ) : (
+      <div className="expenseList">
+        {visibleCardExpenses.map((expense) => (
+          <Link
+            key={String(expense.id)}
+            href={`/expenses/${expense.id}`}
+            className="expenseItem"
+          >
+            <div className="expenseInfo">
+              <strong>
+                {expense.item || "未命名花費"}
+              </strong>
+
+              <span>
+                {expense.date} ·{" "}
+                {expense.major_category || "未分類"}
+                {expense.category &&
+                  ` / ${expense.category}`}
+              </span>
+
+              <span>
+                {expense.expense_scope === "trip" ||
+                expense.trip_id != null
+                  ? "旅程花費"
+                  : "日常花費"}
+                {" · "}
+                {expense.payment_method || "未設定"}
+              </span>
+            </div>
+
+            <div className="expenseAmount">
+              <small>{expense.currency || "USD"}</small>
+              <strong>
+                {Number(expense.amount || 0).toLocaleString(
+                  "en-US",
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}
+              </strong>
+              <span>›</span>
               </div>
+          </Link>
+        ))}
+      </div>
+    )}
 
-            </section>
+    {/* 分頁 */}
+    {!expenseLoading &&
+      !expenseError &&
+      filteredCardExpenses.length > 0 && (
+        <div className="expensePagination">
+          <span>
+            第 {currentExpensePage} /{" "}
+            {totalExpensePages} 頁
+          </span>
 
-            )}
+
+          <div>
+            <button
+              disabled={currentExpensePage <= 1}
+              onClick={() =>
+                setExpensePage(currentExpensePage - 1)
+              }
+            >
+              ← 上一頁
+            </button>
+
+            <button
+              disabled={
+                currentExpensePage >= totalExpensePages
+              }
+              onClick={() =>
+                setExpensePage(currentExpensePage + 1)
+              }
+            >
+              下一頁 →
+            </button>
+          </div>
+        </div>
+      )}
+  </section>
+)}
 
 
 {/* ==================== 07. 歷史帳單 ==================== */}
@@ -581,6 +929,169 @@ useEffect(() => {
 
         }
 
+/* =========================================
+   15. 消費紀錄排版
+   ========================================= */
+   .expenseFilters {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.expenseFilters input,
+.expenseFilters select {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #dbe2ea;
+   border-radius: 10px;
+  background: white;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.expenseTotals {
+display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 14px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.expenseTotals div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.expenseTotals span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.expenseTotals strong {
+  font-size: 17px;
+}
+
+.expenseList {
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.expenseItem {
+display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border-bottom: 1px solid #edf0f4;
+  color: inherit;
+  text-decoration: none;
+}
+
+.expenseItem:last-child {
+  border-bottom: 0;
+}
+
+.expenseItem:hover {
+  background: #f8faff;
+}
+
+.expenseInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.expenseInfo strong {
+  font-size: 14px;
+}
+
+.expenseInfo span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.expenseAmount {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.expenseAmount small {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.expenseAmount strong {
+  font-size: 15px;
+}
+
+.expenseAmount > span {
+  color: #94a3b8;
+  font-size: 20px;
+  margin-left: 4px;
+}
+
+.expenseEmpty {
+  text-align: center;
+  color: #64748b;
+  padding: 35px 12px;
+  font-size: 13px;
+}
+
+.expensePagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.expensePagination div {
+  display: flex;
+  gap: 7px;
+}
+
+
+.expensePagination button {
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: white;
+  cursor: pointer;
+}
+
+.expensePagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .expenseFilters {
+    grid-template-columns: 1fr;
+  }
+
+  .expenseItem {
+    padding: 11px 9px;
+  }
+
+  .expenseAmount strong {
+    font-size: 14px;
+  }
+
+  .expensePagination {
+    flex-direction: column;
+  }
+}
       `}</style>
 
     </main>
