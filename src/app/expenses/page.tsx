@@ -581,11 +581,15 @@ return (
 
     <main className="expensesPage">
 
-      <div className="topNavigation">
-        <Link href="/">
-          ← 返回首頁
-        </Link>
-      </div>
+      {/* =========================================
+    返回首頁按鈕
+   ========================================= */}
+
+<div className="topNavigation">
+  <Link href="/" className="homeButton">
+    ← 回首頁
+  </Link>
+</div>
 
       <header className="pageHeader">
 
@@ -1059,15 +1063,39 @@ return (
           color: #172033;
         }
 
-        .topNavigation {
-          margin-bottom: 20px;
-          font-size: 14px;
-        }
+        /* =========================================
+   返回首頁按鈕
+   與「我的旅程」頁面一致
+   ========================================= */
 
-        .topNavigation a {
-          color: #64748b;
-          text-decoration: none;
-        }
+.topNavigation {
+  margin-bottom: 28px;
+}
+
+.topNavigation .homeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 20px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition: all 0.2s ease;
+}
+
+.topNavigation .homeButton:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
 
         .topNavigation a:hover {
           color: #4f46e5;
