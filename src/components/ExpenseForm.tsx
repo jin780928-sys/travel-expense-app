@@ -674,16 +674,20 @@ if (!category) {
             付款方式
           </label>
 
+          {/* =========================================
+    付款方式選單
+    現金 / 信用卡 / 金融卡 / 電子支付
+   ========================================= */}
+
           <select
   value={paymentMethod}
   onChange={(e) => {
-    const newPaymentMethod =
-      e.target.value;
+    const newPaymentMethod = e.target.value;
 
-    setPaymentMethod(
-      newPaymentMethod
-    );
+    setPaymentMethod(newPaymentMethod);
 
+    // 不需要信用卡資訊的付款方式
+    // 清除之前選擇的信用卡
     if (
       !CARD_PAYMENT_METHODS.includes(
         newPaymentMethod
@@ -691,9 +695,37 @@ if (!category) {
     ) {
       setCardName("");
     }
-  }}
+    }}
   style={inputStyle}
 >
+  <option value="">
+    請選擇付款方式
+  </option>
+
+  <option value="現金">
+    現金
+    </option>
+
+  <option value="信用卡">
+    信用卡
+  </option>
+
+  <option value="金融卡">
+    金融卡
+  </option>
+
+  <option value="Apple Pay">
+    Apple Pay
+  </option>
+
+  <option value="Google Pay">
+    Google Pay
+  </option>
+
+  <option value="其他">
+    其他
+  </option>
+</select>
             <option value="">
     請選擇付款方式
   </option>
