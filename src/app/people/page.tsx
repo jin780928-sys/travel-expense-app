@@ -390,8 +390,34 @@ const inactivePeople = people.filter(
     <main className="people-page">
 
       <div className="people-container">
+{/* =========================================
+    返回首頁按鈕
+    顯示在人員管理標題上方
+    ========================================= */}
 
-        {/* ==================================
+<div style={{ marginBottom: 28 }}>
+  <Link
+    href="/"
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "12px 20px",
+      backgroundColor: "#eff6ff",
+      color: "#2563eb",
+      border: "1px solid #bfdbfe",
+      borderRadius: 12,
+      fontSize: 16,
+      fontWeight: 700,
+      textDecoration: "none",
+      whiteSpace: "nowrap",
+    }}
+  >
+    ← 回首頁
+  </Link>
+</div>
+        
+{/* ==================================
     13. HEADER / 頁面標題＋回首頁
 ================================== */}
 
@@ -427,30 +453,6 @@ const inactivePeople = people.filter(
       </span>
     </div>
 
-     {/* =========================================
-    返回首頁按鈕
-    與花費紀錄頁面統一樣式
-   ========================================= */}
-
-<Link
-  href="/"
-  style={{
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "12px 20px",
-    backgroundColor: "#eff6ff",
-    color: "#2563eb",
-    border: "1px solid #bfdbfe",
-    borderRadius: 12,
-    fontSize: 16,
-    fontWeight: 700,
-    textDecoration: "none",
-    whiteSpace: "nowrap",
-  }}
->
-  ← 回首頁
-</Link>
 
   </div>
 
