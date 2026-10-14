@@ -20,7 +20,7 @@ const ROUTES = {
   newExpense: "/expenses/new",
   dashboard: "/dashboard",
   people: "/people",
-  creditCards: "/credit-cards",
+  creditCards: "/cards",
   login: "/login",
 };
 
