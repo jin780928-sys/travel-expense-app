@@ -643,27 +643,28 @@ setTripId(tripIdFromUrl);
         }
       }
 
-     // =========================================
-// 儲存成功後，自動返回原本旅程的支出分頁
+    // =========================================
+// 儲存成功後，自動返回對應頁面
 // =========================================
 
 if (expenseScope === "trip" && tripId) {
   router.push(`/trips/${tripId}?tab=expenses`);
 } else {
   router.push("/dashboard");
-} catch (error) {
-      console.error(
-        "新增支出失敗:",
-        error
-      );
+}
 
-      alert(
-        "新增支出時發生錯誤"
-      );
-    } finally {
-      setSaving(false);
-    }
-  }
+      } catch (error) {
+  console.error(
+    "新增支出失敗:",
+    error
+  );
+
+  alert("新增支出時發生錯誤");
+
+} finally {
+  setSaving(false);
+}
+}
 
   // =========================================================
   // Loading
