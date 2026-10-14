@@ -258,6 +258,15 @@ useEffect(() => {
         data.card_name || ""
       );
 
+    // =========================================
+// 載入原本的付款工具 ID
+// =========================================
+    setPaymentMethodId(
+  expense.payment_method_id != null
+    ? String(expense.payment_method_id)
+    : ""
+);
+
       setCurrency(
         data.currency || "USD"
       );
