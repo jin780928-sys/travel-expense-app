@@ -389,18 +389,19 @@ const [
 const [
   activeTab,
   setActiveTab,
-] = useState<ActiveTab>(() => {
-  if (
-    typeof window !== "undefined" &&
-    new URLSearchParams(
-      window.location.search
-    ).get("tab") === "expenses"
-  ) {
-    return "expenses";
-  }
+] = useState<ActiveTab>(
+  "ininerary"
+);
 
-  return "ininerary";
-});
+  useEffect(() => {
+  const params = new URLSearchParams(
+    window.location.search
+  );
+
+  if (params.get("tab") === "expenses") {
+    setActiveTab("expenses");
+  }
+}, []);
 
   /* =========================================================
    統計分頁內部切換
