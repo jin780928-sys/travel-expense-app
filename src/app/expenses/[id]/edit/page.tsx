@@ -830,6 +830,9 @@ if (loading) {
   paymentMethod={paymentMethod}
   setPaymentMethod={setPaymentMethod}
 
+        paymentMethodId={paymentMethodId}
+  setPaymentMethodId={setPaymentMethodId}
+
   cardName={cardName}
   setCardName={setCardName}
 
