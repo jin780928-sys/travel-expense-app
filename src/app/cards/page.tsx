@@ -716,13 +716,7 @@ return (
                           last_four: e.target.value.replace(/\D/g, ""),
                         })}
                       />
-                      </label>
-                  </div>
-                </>
-              )}
-
-          
-                </label>
+                    </label>
                   </div>
                 </>
               )}
