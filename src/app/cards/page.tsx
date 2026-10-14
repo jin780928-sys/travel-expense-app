@@ -1205,4 +1205,4 @@ export default function CardsPage() {
   );
 }
  
-};
+
