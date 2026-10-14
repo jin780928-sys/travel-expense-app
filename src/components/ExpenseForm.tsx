@@ -839,7 +839,7 @@ const selectedManagedMethod =
       const value = e.target.value;
 
       setPaymentMethod(value);
-      setpaymentMethodId("");
+      setPaymentMethodId("");
       setCardName("");
     }}
     style={inputStyle}
