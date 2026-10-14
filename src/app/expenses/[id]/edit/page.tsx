@@ -149,6 +149,8 @@ const [people, setPeople] =
   const [trips, setTrips] =
     useState<Trip[]>([]);
 
+  const [paymentMethodId, setPaymentMethodId] = useState<string | number>("");
+
 
 useEffect(() => {
     if (!id) return;
