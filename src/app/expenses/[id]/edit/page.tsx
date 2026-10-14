@@ -149,8 +149,11 @@ const [people, setPeople] =
   const [trips, setTrips] =
     useState<Trip[]>([]);
 
-  const [paymentMethodId, setPaymentMethodId] = useState<string | number>("");
-
+  
+const [
+  paymentMethodId,
+  setPaymentMethodId,
+] = useState<string>("");
 
 useEffect(() => {
     if (!id) return;
@@ -814,6 +817,9 @@ if (loading) {
       <ExpenseForm
   item={item}
   setItem={setItem}
+
+        paymentMethodId={paymentMethodId}
+  setPaymentMethodId={setPaymentMethodId}
 
   amount={amount}
   setAmount={setAmount}
