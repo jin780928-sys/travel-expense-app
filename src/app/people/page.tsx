@@ -5,17 +5,33 @@
 // ==========================================
 
 import { useCallback, useEffect, useState } from "react";
+import type { FormEvent } from "react";
+
 import { supabase } from "../../lib/supabase";
 
+
 // ==========================================
-// 02. TYPE / 人員資料型別
+// 02. TYPE / 資料型別
 // ==========================================
+
+type PersonType = "regular" | "travel";
 
 type Person = {
   id: number | string;
   name: string;
   notes: string | null;
+  person_type: string | null;
+  trip_id: number | null;
+  is_active: boolean;
 };
+
+type Trip = {
+  id: number;
+  name: string;
+  start_date: string | null;
+  end_date: string | null;
+};
+
 
 // ==========================================
 // 03. PAGE / 人員管理主頁面
@@ -23,88 +39,157 @@ type Person = {
 
 export default function PeoplePage() {
 
-  // ==========================================
-  // 04. STATE / 狀態管理
-  // ==========================================
+// ========================================
+  // 04. STATE / 頁面狀態
+  // ========================================
+
 
 const [people, setPeople] = useState<Person[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
 
   const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
 
-  const [loading, setLoading] = useState(true);
+const [personType, setPersonType] =
+    useState<PersonType>("regular");
+
+  const [tripId, setTripId] = useState("");
+
+const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-const [errorMessage, setErrorMessage] = useState("");
+  const [changingId, setChangingId] =
+    useState<number | string | null>(null);
+
+const [activeTab, setActiveTab] =
+    useState<"active" | "inactive">("active");
+
+  const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  // ==========================================
-  // 05. SUPABASE / 取得登入使用者
-  // ==========================================
+// ========================================
+  // 05. AUTH / 取得目前登入者
+  // ========================================
 
-const getCurrentUser = async () => {
+  const getCurrentUser = async () => {
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
 
     if (error || !user) {
-      throw new Error("請先登入後再使用人員管理。");
+      throw new Error("請先登入後再管理人員。");
     }
 
-  return user;
+    return user;
   };
 
-  // ==========================================
-  // 06. LOAD / 載入目前人員
-  // ==========================================
+// ========================================
+  // 06. LOAD / 讀取人員與旅程
+  // ========================================
 
-const loadPeople = useCallback(async () => {
+const loadData = useCallback(async () => {
+
     setLoading(true);
     setErrorMessage("");
 
-    try {
+                             try {
       const user = await getCurrentUser();
 
-  const { data, error } = await supabase
-        .from("People")
-        .select("id,name,notes")
-        .eq("user_id", user.id)
-        .order("name", { ascending: true });
+      const [peopleResult, tripsResult] =
+        await Promise.all([
+          supabase
+            .from("People")
+            .select(
+              "id,name,notes,person_type,trip_id,is_active"
+            )
+            .eq("user_id", user.id)
+            .order("name", { ascending: true }),
 
-      if (error) {
-        throw error;
+
+          supabase
+            .from("Trips")
+            .select(
+              "id,name,start_date,end_date"
+            )
+            .eq("user_id", user.id)
+            .order("start_date", { ascending: false }),
+        ]);
+
+  if (peopleResult.error) {
+        throw peopleResult.error;
       }
 
-  setPeople((data ?? []) as Person[]);
-    } catch (error) {
-      console.error("載入人員失敗：", error);
+      if (tripsResult.error) {
+        throw tripsResult.error;
+      }
+
+
+  setPeople(
+        (peopleResult.data ?? []) as Person[]
+      );
+
+      setTrips(
+        (tripsResult.data ?? []) as Trip[]
+      );
+
+
+  } catch (error) {
+      console.error("載入資料失敗：", error);
 
       setErrorMessage(
         error instanceof Error
           ? error.message
-          : "載入人員資料失敗"
-        );
-    } finally {
+          : "載入資料失敗"
+      );
+
+  } finally {
       setLoading(false);
     }
+
   }, []);
 
-
-// ==========================================
-  // 07. USE EFFECT / 初次載入
-  // ==========================================
+// ========================================
+  // 07. EFFECT / 初次載入資料
+  // ========================================
 
   useEffect(() => {
-    void loadPeople();
-  }, [loadPeople]);
+    void loadData();
+  }, [loadData]);
 
-// ==========================================
-  // 08. ADD / 新增人員
-  // ==========================================
+// ========================================
+  // 08. HELPERS / 旅程名稱與日期
+  // ========================================
+
+  const getTripName = (id: number | null) => {
+    if (id === null) return "未指定旅程";
+
+
+    const trip = trips.find(
+      (item) => Number(item.id) === Number(id)
+    );
+
+    return trip?.name ?? "旅程已不存在";
+  };
+
+const getTripDateLabel = (trip: Trip) => {
+    if (!trip.start_date && !trip.end_date) {
+      return "";
+    }
+
+  return [
+      trip.start_date ?? "?",
+      trip.end_date ?? "?",
+    ].join(" ～ ");
+  };
+
+
+// ========================================
+  // 09. ADD PERSON / 新增人員
+  // ========================================
 
   const handleAddPerson = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
@@ -117,7 +202,12 @@ const loadPeople = useCallback(async () => {
     const cleanNotes = notes.trim();
 
     if (!cleanName) {
-      setErrorMessage("請輸入人員姓名。");
+      setErrorMessage("請輸入姓名。");
+      return;
+    }
+
+    if (personType === "travel" && !tripId) {
+      setErrorMessage("請選擇所屬旅程。");
       return;
     }
 
@@ -126,143 +216,263 @@ const loadPeople = useCallback(async () => {
     try {
       const user = await getCurrentUser();
 
-    // 檢查目前使用者是否已有相同姓名
-      const { data: existingPeople, error: checkError } =
-        await supabase
-          .from("People")
-          .select("id,name")
-          .eq("user_id", user.id);
+    // ------------------------------------
+      // 09-1. 檢查是否重複
+      // 同一旅程不可有同名人員
+      // 常用人員不可重複同名
+      // ------------------------------------
 
-      if (checkError) {
-        throw checkError;
-      }
+    const duplicate = people.some((person) => {
 
-    const isDuplicate = (existingPeople ?? []).some(
-        (person) =>
-          String(person.name).trim().toLocaleLowerCase() ===
+        if (
+          person.name.trim().toLocaleLowerCase() !==
           cleanName.toLocaleLowerCase()
-      );
+        ) {
+          return false;
+        }
 
-     if (isDuplicate) {
-        setErrorMessage("這個人員名稱已經存在。");
+                                  if (personType === "regular") {
+          return person.person_type !== "travel";
+        }
+
+        return (
+          person.person_type === "travel" &&
+          Number(person.trip_id) === Number(tripId)
+        );
+      });
+
+    if (duplicate) {
+        setErrorMessage(
+          "此人員已存在於相同用途或旅程中。"
+        );
         return;
       }
 
-      // 寫入 Supabase People 資料表
-      const { error } = await supabase
+    // ------------------------------------
+      // 09-2. 新增到 Supabase
+      // ------------------------------------
+
+    const { error } = await supabase
         .from("People")
-      .insert({
+        .insert({
           name: cleanName,
           notes: cleanNotes || null,
+          person_type: personType,
+          trip_id:
+            personType === "travel"
+              ? Number(tripId)
+              : null,
+          is_active: true,
           user_id: user.id,
         });
 
-      if (error) {
+    if (error) {
         throw error;
       }
 
+      // ------------------------------------
+      // 09-3. 新增成功，清空表單
+      // ------------------------------------
 
-    // 清空輸入欄位
-      setName("");
+    setName("");
       setNotes("");
+      setPersonType("regular");
+      setTripId("");
 
-      setSuccessMessage(`已成功新增「${cleanName}」。`);
+    await loadData();
 
-    // 重新載入人員清單
-      await loadPeople();
+      setSuccessMessage(
+        `已成功新增「${cleanName}」。`
+      );
+
+      setActiveTab("active");
+
+
     } catch (error) {
       console.error("新增人員失敗：", error);
 
-    setErrorMessage(
+      setErrorMessage(
         error instanceof Error
           ? error.message
-          : "新增人員失敗，請稍後再試。"
+          : "新增人員失敗"
       );
+
     } finally {
       setSaving(false);
     }
   };
 
-// ==========================================
-  // 09. RETURN / 頁面主要結構
-  // ==========================================
+// ========================================
+  // 10. STATUS / 停用與重新啟用
+  // ========================================
+
+const handleChangeStatus = async (
+    person: Person
+  ) => {
+
+    if (changingId !== null) return;
+
+    const newStatus = !person.is_active;
+
+  const actionName = newStatus
+      ? "重新啟用"
+      : "停用";
+
+    const confirmed = window.confirm(
+      `確定要${actionName}「${person.name}」嗎？\n\n` +
+      "此操作不會刪除歷史花費與分攤紀錄。"
+    );
+
+  if (!confirmed) return;
+
+    setChangingId(person.id);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      const user = await getCurrentUser();
+
+  const { error } = await supabase
+        .from("People")
+        .update({
+          is_active: newStatus,
+        })
+        .eq("id", person.id)
+        .eq("user_id", user.id);
+
+
+  if (error) {
+        throw error;
+      }
+
+      await loadData();
+
+      setSuccessMessage(
+        `已${actionName}「${person.name}」。`
+      );
+
+  } catch (error) {
+      console.error("更新人員狀態失敗：", error);
+
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "更新狀態失敗"
+      );
+
+    } finally {
+      setChangingId(null);
+    }
+  };
+
+// ========================================
+  // 11. FILTER / 分類人員
+  // ========================================
+
+  const activePeople = people.filter(
+    (person) => person.is_active !== false
+  );
+
+const inactivePeople = people.filter(
+    (person) => person.is_active === false
+  );
+
+  const displayedPeople =
+    activeTab === "active"
+      ? activePeople
+      : inactivePeople;
+
+// ========================================
+  // 12. RETURN / 頁面結構
+  // ========================================
 
   return (
     <main className="people-page">
 
       <div className="people-container">
 
-        {/* ======================================
-            10. HEADER / 頁面標題
-        ====================================== */}
+        {/* ==================================
+            13. HEADER / 頁面標題
+        ================================== */}
 
         <header className="page-header">
+
           <div>
             <h1 className="page-title">
               人員管理
             </h1>
 
             <p className="page-description">
-              建立與管理記帳成員，
-              方便日常及旅遊花費分攤。
+              管理日常記帳成員與旅遊同行人員
             </p>
           </div>
 
+
           <div className="people-count">
             <span className="count-number">
-              {people.length}
+              {activePeople.length}
             </span>
             <span className="count-label">
-              位人員
+              位啟用中
             </span>
           </div>
+
         </header>
 
-        {/* ======================================
-            11. MESSAGE / 成功與錯誤提示
-        ====================================== */}
+        {/* ==================================
+            14. MESSAGE / 提示訊息
+        ================================== */}
 
         {errorMessage && (
-          <div className="message error-message" role="alert">
+      <div
+            className="message error-message"
+            role="alert"
+          >
             {errorMessage}
           </div>
         )}
 
         {successMessage && (
-          <div className="message success-message" role="status">
+      <div
+            className="message success-message"
+            role="status"
+          >
             {successMessage}
           </div>
         )}
 
-        {/* ======================================
-            12. ADD PERSON / 新增人員區塊
-        ====================================== */}
+
+        {/* ==================================
+            15. ADD CARD / 新增人員
+        ================================== */}
 
         <section className="content-card">
 
           <div className="section-header">
+
             <h2 className="section-title">
               新增人員
             </h2>
 
             <p className="section-description">
-              新增可以參與付款及分攤的人員。
-            </p>
+              選擇常用人員或指定旅程專用成員
+              </p>
+
           </div>
 
           <form
-            onSubmit={handleAddPerson}
             className="person-form"
+            onSubmit={handleAddPerson}
           >
-
-            {/* ==================================
-                13. NAME / 姓名欄位
-            ================================== */}
+            {/* ==============================
+                16. NAME / 姓名
+            ============================== */}
 
             <div className="form-group">
+
               <label
-                className="form-label"
                 htmlFor="person-name"
+                className="form-label"
               >
                 姓名
                 <span className="required">
@@ -272,26 +482,149 @@ const loadPeople = useCallback(async () => {
 
               <input
                 id="person-name"
-                type="text"
                 className="form-input"
-                placeholder="例如：朋友A、朋友B"
+                type="text"
                 value={name}
                 onChange={(event) =>
                   setName(event.target.value)
                 }
+                placeholder="例如：怡靜、朋友A"
                 maxLength={100}
                 required
               />
+
             </div>
 
-            {/* ==================================
-                14. NOTES / 備註欄位
-            ================================== */}
+            {/* ==============================
+                17. PERSON TYPE / 人員用途
+            ============================== */}
 
             <div className="form-group">
+
+              <label className="form-label">
+                人員用途
+              </label>
+
+              <div className="type-selector">
+
+                <label
+                  className={
+                    "type-option " +
+                    (personType === "regular"
+                      ? "selected"
+                      : "")
+                  }
+                >
+                  <input
+                    type="radio"
+                    name="personType"
+                    value="regular"
+                    checked={personType === "regular"}
+                    onChange={() => {
+                      setPersonType("regular");
+                      setTripId("");
+                    }}
+                  />
+
+                  <span>常用人員</span>
+                </label>
+
+                <label
+                  className={
+                    "type-option " +
+                    (personType === "travel"
+                      ? "selected"
+                      : "")
+                  }
+                >
+                  <input
+                    type="radio"
+                    name="personType"
+                    value="travel"
+                    checked={personType === "travel"}
+                    onChange={() =>
+                      setPersonType("travel")
+                    }
+                  />
+
+                  <span>旅遊專用</span>
+                </label>
+
+              </div>
+
+              <p className="field-hint">
+                常用人員可長期使用；
+                旅遊專用人員可指定所屬旅程。
+              </p>
+
+              </div>
+
+            {/* ==============================
+                18. TRIP / 所屬旅程
+            ============================== */}
+
+            {personType === "travel" && (
+
+              <div className="form-group">
+
+                <label
+                  htmlFor="person-trip"
+                  className="form-label"
+                >
+                  所屬旅程
+                  <span className="required">
+                    *
+                  </span>
+                </label>
+
+                <select
+                  id="person-trip"
+                  className="form-input"
+                  value={tripId}
+                  onChange={(event) =>
+                    setTripId(event.target.value)
+                  }
+                  required
+                >
+
+                  <option value="">
+                    請選擇旅程
+                  </option>
+
+                  {trips.map((trip) => (
+
+                    <option
+                      key={trip.id}
+                      value={trip.id}
+                    >
+                      {trip.name}
+                      {getTripDateLabel(trip)
+                        ? `（${getTripDateLabel(trip)}）`
+                        : ""}
+                    </option>
+                  ))}
+
+                </select>
+
+                {trips.length === 0 && (
+                  <p className="field-hint">
+                    尚無可選擇的旅程，
+                    請先至新增旅程建立資料。
+                  </p>
+                )}
+                </div>
+
+            )}
+
+            {/* ==============================
+                19. NOTES / 備註
+            ============================== */}
+
+            <div className="form-group">
+
               <label
-                className="form-label"
                 htmlFor="person-notes"
+                className="form-label"
               >
                 備註
                 <span className="optional">
@@ -302,74 +635,120 @@ const loadPeople = useCallback(async () => {
               <textarea
                 id="person-notes"
                 className="form-textarea"
-                placeholder="例如：家人、朋友、旅遊成員"
+                rows={3}
                 value={notes}
                 onChange={(event) =>
                   setNotes(event.target.value)
                 }
-                rows={3}
-              />
+                placeholder="例如：朋友、家人、同行旅伴"
+                />
+
             </div>
 
-            {/* ==================================
-                15. SUBMIT / 新增按鈕
-            ================================== */}
-
+            {/* ==============================
+                20. SUBMIT / 新增按鈕
+            ============================== */}
             <div className="form-actions">
+
               <button
                 type="submit"
                 className="primary-button"
-                disabled={saving}
-              >
+                disabled={saving || loading}
+                >
                 {saving
                   ? "新增中..."
                   : "＋ 新增人員"}
               </button>
+
             </div>
 
-          </form>
+            </form>
+
         </section>
 
-        {/* ======================================
-            16. PEOPLE LIST / 目前人員清單
-        ====================================== */}
+        {/* ==================================
+            21. LIST / 目前人員
+        ================================== */}
 
         <section className="content-card">
 
-          <div className="section-header list-header">
+          <div className="list-heading">
+
             <div>
               <h2 className="section-title">
                 目前人員
               </h2>
 
               <p className="section-description">
-                已建立的人員會顯示在這裡。
+                停用人員不會從資料庫刪除
               </p>
             </div>
 
             <button
               type="button"
               className="refresh-button"
-              onClick={() => void loadPeople()}
+              onClick={() => void loadData()}
               disabled={loading}
             >
               重新整理
             </button>
+
           </div>
 
-          {/* ==================================
-              17. LOADING / 載入中
-          ================================== */}
+          {/* ==============================
+              22. TABS / 啟用與停用篩選
+          ============================== */}
+
+          <div className="status-tabs">
+
+            <button
+              type="button"
+              className={
+                "status-tab " +
+                (activeTab === "active"
+                  ? "active-tab"
+                  : "")
+                }
+              onClick={() =>
+                setActiveTab("active")
+              }
+            >
+              啟用中（{activePeople.length}）
+            </button>
+
+            <button
+              type="button"
+              className={
+                "status-tab " +
+                (activeTab === "inactive"
+                  ? "active-tab"
+                  : "")
+              }
+              onClick={() =>
+                setActiveTab("inactive")
+              }
+            >
+              已停用（{inactivePeople.length}）
+            </button>
+
+          </div>
+
+          {/* ==============================
+              23. LOADING / 載入中
+          ============================== */}
 
           {loading ? (
+
             <div className="empty-state">
               正在載入人員資料...
             </div>
-          ) : people.length === 0 ? (
 
-            /* ==================================
-                18. EMPTY / 尚無人員
-            ================================== */
+          ) : displayedPeople.length === 0 ? (
+
+
+            /* ============================
+                24. EMPTY / 無人員
+            ============================ */
 
             <div className="empty-state">
               <div className="empty-icon">
@@ -377,28 +756,30 @@ const loadPeople = useCallback(async () => {
               </div>
 
               <p className="empty-title">
-                尚未新增人員
-              </p>
-
-              <p className="empty-description">
-                請使用上方表單新增第一位人員。
+                {activeTab === "active"
+                  ? "目前沒有啟用中的人員"
+                  : "目前沒有已停用的人員"}
               </p>
             </div>
 
-          ) : (
 
-            /* ==================================
-                19. PERSON CARDS / 人員卡片
-            ================================== */
+            ) : (
+
+            /* ============================
+                25. PERSON CARDS / 人員卡片
+            ============================ */
 
             <div className="people-list">
-              {people.map((person) => (
+
+              {displayedPeople.map((person) => (
+
                 <div
                   key={person.id}
                   className="person-card"
                 >
 
-                  {/* 人員頭像 */}
+                  {/* 25-1. 人員頭像 */}
+
                   <div className="person-avatar">
                     {person.name
                       .trim()
@@ -406,22 +787,92 @@ const loadPeople = useCallback(async () => {
                       .toUpperCase()}
                   </div>
 
-                  {/* 人員資料 */}
+                  {/* 25-2. 人員資訊 */}
                   <div className="person-info">
+
                     <div className="person-name">
                       {person.name}
                     </div>
 
-                    {person.notes && (
-                      <div className="person-notes">
-                        {person.notes}
+                    <div className="person-meta">
+                      <span
+                        className={
+                          "person-badge " +
+                          (person.person_type === "travel"
+                           ? "travel-badge"
+                            : "regular-badge")
+                        }
+                      >
+                        {person.person_type === "travel"
+                          ? "旅遊專用"
+                          : "常用人員"}
+                      </span>
+
+                      <span
+                        className={
+                          "person-badge " +
+                          (person.is_active
+                            ? "enabled-badge"
+                            : "disabled-badge")
+                          }
+                      >
+                        {person.is_active
+                          ? "啟用中"
+                          : "已停用"}
+                      </span>
+
+                      </div>
+
+                    {person.person_type === "travel" && (
+                      <div className="person-detail">
+                        旅程：
+                        {getTripName(person.trip_id)}
                       </div>
                     )}
-                  </div>
 
-                  </div>
+                    {person.notes && (
+                      <div className="person-detail">
+                        備註：{person.notes}
+                      </div>
+                    )}
+
+                    </div>
+
+                  {/* ========================
+                      26. STATUS BUTTON
+                      停用／重新啟用
+                  ======================== */}
+
+                  <div className="person-actions">
+
+                    <button
+                      type="button"
+                      className={
+                        "status-button " +
+                        (person.is_active
+                          ? "disable-button"
+                          : "enable-button")
+                      }
+                      onClick={() =>
+                        void handleChangeStatus(person)
+                      }
+                      disabled={changingId !== null}
+                    >
+                      {changingId === person.id
+                        ? "處理中..."
+                        : person.is_active
+                        ? "停用"
+                        : "重新啟用"}
+                    </button>
+
+                    </div>
+
+                </div>
+
               ))}
-            </div>
+
+
+              </div>
 
           )}
 
@@ -429,13 +880,13 @@ const loadPeople = useCallback(async () => {
 
       </div>
 
-      {/* ======================================
-          20. STYLE / 頁面整體排版
-      ====================================== */}
+      {/* ==================================
+          27. CSS / 頁面排版
+      ================================== */}
 
       <style jsx>{`
 
-        * {
+      * {
           box-sizing: border-box;
         }
 
@@ -452,9 +903,9 @@ const loadPeople = useCallback(async () => {
           margin: 0 auto;
         }
 
-        /* ====================================
-           21. HEADER STYLE / 標題樣式
-        ==================================== */
+ /* ================================
+           28. HEADER / 標題
+        ================================ */
 
         .page-header {
           display: flex;
@@ -468,23 +919,22 @@ const loadPeople = useCallback(async () => {
           font-size: 28px;
           font-weight: 800;
           margin: 0 0 8px;
-          color: #111827;
         }
 
         .page-description {
           font-size: 14px;
-          line-height: 1.7;
+          line-height: 1.6;
           color: #6b7280;
           margin: 0;
         }
 
-        .people-count {
+.people-count {
           display: flex;
           align-items: baseline;
           gap: 5px;
-          background: #eff6ff;
-          padding: 12px 18px;
+          padding: 12px 16px;
           border-radius: 12px;
+          background: #eff6ff;
           white-space: nowrap;
         }
 
@@ -495,14 +945,14 @@ const loadPeople = useCallback(async () => {
         }
 
         .count-label {
-          font-size: 13px;
-          color: #2563eb;
+          font-size: 12px;
           font-weight: 600;
+          color: #2563eb;
         }
 
-        /* ====================================
-           22. CARD STYLE / 區塊卡片
-        ==================================== */
+        /* ================================
+           29. CONTENT CARD / 主卡片
+        ================================ */
 
         .content-card {
           background: #ffffff;
@@ -521,19 +971,19 @@ const loadPeople = useCallback(async () => {
           font-size: 20px;
           font-weight: 750;
           margin: 0 0 6px;
-          color: #111827;
         }
 
-        .section-description {
+
+.section-description {
           font-size: 13px;
           line-height: 1.6;
           color: #6b7280;
           margin: 0;
         }
 
-        /* ====================================
-           23. FORM STYLE / 表單
-        ==================================== */
+        /* ================================
+           30. FORM / 表單
+        ================================ */
 
         .person-form {
           display: flex;
@@ -569,14 +1019,12 @@ const loadPeople = useCallback(async () => {
           width: 100%;
           border: 1px solid #d1d5db;
           border-radius: 10px;
-          background: #ffffff;
-          color: #111827;
+          padding: 12px 14px;
           font-size: 15px;
           font-family: inherit;
-          padding: 12px 14px;
+          color: #111827;
+          background: #ffffff;
           outline: none;
-          transition: border-color 0.2s,
-                      box-shadow 0.2s;
         }
 
         .form-input {
@@ -584,16 +1032,15 @@ const loadPeople = useCallback(async () => {
         }
 
         .form-textarea {
-          resize: vertical;
           min-height: 90px;
+          resize: vertical;
           line-height: 1.6;
         }
 
         .form-input:focus,
         .form-textarea:focus {
           border-color: #2563eb;
-          box-shadow: 0 0 0 3px
-            rgba(37,99,235,0.12);
+          box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
         }
 
         .form-input::placeholder,
@@ -601,30 +1048,71 @@ const loadPeople = useCallback(async () => {
           color: #9ca3af;
         }
 
-        /* ====================================
-           24. BUTTON STYLE / 按鈕
-        ==================================== */
+        .field-hint {
+          font-size: 12px;
+          line-height: 1.6;
+          color: #6b7280;
+          margin: 0;
+        }
+
+        /* ================================
+           31. TYPE SELECTOR / 人員用途
+        ================================ */
+
+        .type-selector {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+
+        .type-option {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          min-height: 46px;
+          padding: 10px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 10px;
+          background: #ffffff;
+          color: #374151;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .type-option.selected {
+          background: #eff6ff;
+          border-color: #2563eb;
+          color: #1d4ed8;
+        }
+
+        .type-option input {
+          accent-color: #2563eb;
+        }
+
+        /* ================================
+           32. BUTTON / 按鈕
+        ================================ */
 
         .form-actions {
           display: flex;
-          justify-content: flex-start;
         }
 
         .primary-button {
-          background: #2563eb;
-          color: #ffffff;
-          border: none;
-          border-radius: 10px;
           min-height: 44px;
           padding: 0 22px;
+          background: #2563eb;
+          border: none;
+          border-radius: 10px;
+          color: white;
           font-size: 14px;
           font-weight: 700;
           font-family: inherit;
           cursor: pointer;
-          transition: background 0.2s;
         }
 
-         .primary-button:hover:not(:disabled) {
+        .primary-button:hover:not(:disabled) {
           background: #1d4ed8;
         }
 
@@ -633,8 +1121,8 @@ const loadPeople = useCallback(async () => {
           cursor: not-allowed;
         }
 
-         .refresh-button {
-          background: #ffffff;
+        .refresh-button {
+          background: white;
           border: 1px solid #d1d5db;
           border-radius: 9px;
           color: #374151;
@@ -643,11 +1131,6 @@ const loadPeople = useCallback(async () => {
           font-weight: 600;
           font-family: inherit;
           cursor: pointer;
-          white-space: nowrap;
-        }
-
-        .refresh-button:hover:not(:disabled) {
-          background: #f9fafb;
         }
 
         .refresh-button:disabled {
@@ -655,16 +1138,48 @@ const loadPeople = useCallback(async () => {
           cursor: not-allowed;
         }
 
-        /* ====================================
-           25. PERSON STYLE / 人員清單
-        ==================================== */
+        /* ================================
+           33. LIST HEADER / 人員清單標題
+        ================================ */
 
-          .list-header {
+        .list-heading {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 12px;
+          margin-bottom: 20px;
         }
+
+        /* ================================
+           34. TABS / 啟用狀態切換
+        ================================ */
+
+        .status-tabs {
+          display: flex;
+          gap: 8px;
+          border-bottom: 1px solid #e5e7eb;
+          margin-bottom: 18px;
+        }
+        .status-tab {
+          border: none;
+          border-bottom: 3px solid transparent;
+          background: transparent;
+          padding: 11px 14px;
+          color: #6b7280;
+          font-size: 14px;
+          font-weight: 650;
+          font-family: inherit;
+          cursor: pointer;
+        }
+
+        .active-tab {
+          color: #2563eb;
+          border-bottom-color: #2563eb;
+        }
+
+        /* ================================
+           35. PEOPLE LIST / 人員卡片
+        ================================ */
 
         .people-list {
           display: flex;
@@ -676,22 +1191,15 @@ const loadPeople = useCallback(async () => {
           display: flex;
           align-items: center;
           gap: 14px;
-          background: #ffffff;
+          background: white;
           border: 1px solid #e5e7eb;
           border-radius: 12px;
           padding: 14px 16px;
-          min-height: 74px;
-          transition: border-color 0.2s,
-                      background 0.2s;
-        }
-
-        .person-card:hover {
-        border-color: #bfdbfe;
-          background: #fafcff;
+          min-height: 76px;
         }
 
         .person-avatar {
-          width: 44px;
+        width: 44px;
           height: 44px;
           min-width: 44px;
           border-radius: 50%;
@@ -708,30 +1216,96 @@ const loadPeople = useCallback(async () => {
           flex: 1;
           min-width: 0;
         }
-
         .person-name {
           font-size: 16px;
           font-weight: 750;
-          color: #111827;
           overflow-wrap: anywhere;
         }
 
-        .person-notes {
+        .person-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 7px;
+        }
+
+        .person-badge {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 999px;
+          padding: 4px 9px;
+          font-size: 11px;
+          font-weight: 650;
+        }
+
+        .regular-badge {
+          background: #eff6ff;
+          color: #1d4ed8;
+        }
+
+        .travel-badge {
+          background: #f5f3ff;
+          color: #6d28d9;
+        }
+
+        .enabled-badge {
+          background: #f0fdf4;
+          color: #15803d;
+        }
+
+        .disabled-badge {
+          background: #f3f4f6;
+          color: #6b7280;
+        }
+
+        .person-detail {
+          margin-top: 6px;
           font-size: 13px;
           color: #6b7280;
-          margin-top: 5px;
           line-height: 1.5;
           white-space: pre-wrap;
           overflow-wrap: anywhere;
         }
 
-        /* ====================================
-           26. EMPTY STYLE / 無資料狀態
-        ==================================== */
+        .person-actions {
+          flex-shrink: 0;
+        }
+
+        .status-button {
+          border-radius: 9px;
+          padding: 9px 13px;
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 650;
+          cursor: pointer;
+          white-space: nowrap;
+        }
+
+        .disable-button {
+          background: #ffffff;
+          color: #b91c1c;
+          border: 1px solid #fecaca;
+        }
+
+        .enable-button {
+          background: #eff6ff;
+          color: #1d4ed8;
+          border: 1px solid #bfdbfe;
+        }
+
+        .status-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+
+/* ================================
+           36. EMPTY / 無資料
+        ================================ */
 
         .empty-state {
-          text-align: center;
           padding: 36px 16px;
+          text-align: center;
           color: #6b7280;
           font-size: 14px;
         }
@@ -742,32 +1316,27 @@ const loadPeople = useCallback(async () => {
         }
 
         .empty-title {
-          font-size: 16px;
-          font-weight: 700;
-          color: #374151;
-          margin: 0 0 6px;
-        }
-
-
-.empty-description {
-          font-size: 13px;
           margin: 0;
+          font-size: 15px;
+          font-weight: 650;
+          color: #374151;
         }
 
-        /* ====================================
-           27. MESSAGE STYLE / 提示訊息
-        ==================================== */
+        /* ================================
+           37. MESSAGE / 提示訊息
+        ================================ */
 
         .message {
+          margin-bottom: 16px;
           padding: 12px 16px;
           border-radius: 10px;
           font-size: 14px;
-          margin-bottom: 16px;
           line-height: 1.6;
           overflow-wrap: anywhere;
         }
 
-        .error-message {
+
+.error-message {
           background: #fef2f2;
           border: 1px solid #fecaca;
           color: #b91c1c;
@@ -779,19 +1348,14 @@ const loadPeople = useCallback(async () => {
           color: #15803d;
         }
 
-         /* ====================================
-           28. MOBILE / 手機版 RWD
-        ==================================== */
+        /* ================================
+           38. MOBILE / 手機版排版
+        ================================ */
 
         @media (max-width: 600px) {
 
           .people-page {
             padding: 20px 12px 40px;
-          }
-
-          .page-header {
-            align-items: flex-start;
-            gap: 10px;
           }
 
           .page-title {
@@ -803,20 +1367,15 @@ const loadPeople = useCallback(async () => {
           }
 
           .people-count {
-            padding: 8px 12px;
-            border-radius: 10px;
+            padding: 8px 10px;
           }
 
           .count-number {
             font-size: 20px;
           }
 
-          .count-label {
-            font-size: 12px;
-          }
-
           .content-card {
-            padding: 18px 16px;
+            padding: 18px 14px;
             border-radius: 14px;
             margin-bottom: 14px;
           }
@@ -825,13 +1384,9 @@ const loadPeople = useCallback(async () => {
             font-size: 18px;
           }
 
-          .form-input,
+           .form-input,
           .form-textarea {
             font-size: 16px;
-          }
-
-          .form-actions {
-            display: block;
           }
 
           .primary-button {
@@ -840,8 +1395,9 @@ const loadPeople = useCallback(async () => {
           }
 
           .person-card {
+            flex-wrap: wrap;
             padding: 12px;
-            gap: 12px;
+            gap: 10px;
           }
 
           .person-avatar {
@@ -855,7 +1411,22 @@ const loadPeople = useCallback(async () => {
             font-size: 15px;
           }
 
-        }
+          .person-actions {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+          }
+
+          .status-tab {
+            font-size: 13px;
+            padding: 10px;
+          }
+
+          .list-heading {
+            align-items: flex-start;
+          }
+
+          }
 
       `}</style>
 
