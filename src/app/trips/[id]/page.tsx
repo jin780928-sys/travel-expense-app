@@ -381,15 +381,26 @@ const [
     setLoading,
   ] = useState(true);
 
-/* =========================================================
-     State：目前分頁
-     ========================================================= */
+// =========================================
+// 旅程分頁控制
+// 支援從新增花費返回支出分頁
+// =========================================
+
 const [
-    activeTab,
-    setActiveTab,
-  ] = useState<ActiveTab>(
-    "itinerary"
-  );
+  activeTab,
+  setActiveTab,
+] = useState<ActiveTab>(() => {
+  if (
+    typeof window !== "undefined" &&
+    new URLSearchParams(
+      window.location.search
+    ).get("tab") === "expenses"
+  ) {
+    return "expenses";
+  }
+
+  return "ininerary";
+});
 
   /* =========================================================
    統計分頁內部切換
