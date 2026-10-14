@@ -38,6 +38,7 @@ type ExpenseData = {
   major_category: string | null;
   category: string | null;
   payment_method: string | null;
+  payment_method_id: number | null;
   card_name: string | null;
   currency: string | null;
   trip_id: number | string | null;
