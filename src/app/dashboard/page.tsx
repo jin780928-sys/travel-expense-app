@@ -1807,37 +1807,36 @@ XLSX.writeFile(
 		minWidth: 0,
       }}
     >
-      {/* ======================================================================
-          A01. Dashboard 標題 / 系統訊息
-      ====================================================================== */}
+     {/* =========================================
+    返回首頁按鈕
+    與花費紀錄頁面統一樣式
+   ========================================= */}
 
-      <h1
+<div
   style={{
-    marginTop: 0,
-    marginBottom: 14,
-    fontSize: 32,
-    fontWeight: 700,
-    color: "#111827",
-    letterSpacing: "-0.02em",
-	lineHeight: 1.2,
+    marginBottom: 28,
   }}
 >
-  Dashboard
-</h1>
-      {message && (
-        <div
-          style={{
-            marginBottom: 14,
-            padding: "10px 12px",
-            background: "#fee2e2",
-            borderRadius: 10,
-            color: "#991b1b",
-            fontSize: 14,
-          }}
-        >
-          {message}
-        </div>
-      )}
+  <a
+    href="/"
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "12px 20px",
+      backgroundColor: "#eff6ff",
+      color: "#2563eb",
+      border: "1px solid #bfdbfe",
+      borderRadius: 12,
+      fontSize: 16,
+      fontWeight: 700,
+      textDecoration: "none",
+      whiteSpace: "nowrap",
+    }}
+  >
+    ← 回首頁
+  </a>
+</div>
 
       {/* ======================================================================
           A02. 統計月份
