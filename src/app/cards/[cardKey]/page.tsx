@@ -82,6 +82,74 @@ type CardExpense = {
 
 const EXPENSE_PAGE_SIZE = 20;
 
+// =========================================
+// 16. 信用卡帳單週期計算
+// =========================================
+
+// 取得指定月份的安全結帳日
+function getStatementDate(
+  year: number,
+  monthIndex: number,
+  statementDay: number
+) {
+  const lastDay = new Date(
+    year,
+    monthIndex + 1,
+    0
+  ).getDate();
+
+  return new Date(
+    year,
+    monthIndex,
+    Math.min(statementDay, lastDay)
+  );
+}
+
+// 日期轉 YYYY-MM-DD
+function toDateString(date: Date) {
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+// 計算指定月份的帳單起訖日期
+function getStatementPeriod(
+  year: number,
+  monthIndex: number,
+  statementDay: number
+) {
+  const periodEnd = getStatementDate(
+    year,
+    monthIndex,
+    statementDay
+  );
+
+  const previousEnd = getStatementDate(
+    year,
+    monthIndex - 1,
+    statementDay
+  );
+
+  const periodStart = new Date(previousEnd);
+
+  periodStart.setDate(
+    periodStart.getDate() + 1
+  );
+
+  return {
+    start: toDateString(periodStart),
+    end: toDateString(periodEnd),
+  };
+}
+
 // ==================== 02. 頁面狀態 ====================
 
 export default function CardDetailPage() {
