@@ -201,20 +201,23 @@ useEffect(() => {
 
       } catch (error) {
 
-        console.error(
-          "讀取付款工具失敗:",
-          error
-        );
+  console.error(
+    "讀取付款工具失敗:",
+    error
+  );
 
-      if (active) {
-          setErrorMessage(
-            error instanceof Error
-              ? error.message
-              : "讀取失敗"
-          );
-        }
+  if (active) {
+    const errorText =
+      error instanceof Error
+        ? error.message
+        : JSON.stringify(error, null, 2);
 
-      } finally {
+    setErrorMessage(
+      `讀取付款工具失敗：${errorText}`
+    );
+  }
+
+} finally {
 
         if (active) {
           setLoading(false);
