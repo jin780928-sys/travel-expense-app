@@ -488,8 +488,7 @@ const inactivePeople = people.filter(
                 onChange={(event) =>
                   setName(event.target.value)
                 }
-                placeholder="例如：朋友A
-                A、朋友"
+                placeholder="例如：朋友A、朋友B"
                 maxLength={100}
                 required
               />
