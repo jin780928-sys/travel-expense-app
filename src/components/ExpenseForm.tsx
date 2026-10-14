@@ -1012,7 +1012,8 @@ const selectedManagedMethod =
     付款方式選單
     現金 / 信用卡 / 金融卡 / 電子支付
    ========================================= */}
-
+<div style={fieldStyle}>
+    <label style={labelStyle}>付款方式</label>
           <select
   value={paymentMethod}
   onChange={(e) => {
