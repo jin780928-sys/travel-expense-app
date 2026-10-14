@@ -335,7 +335,7 @@ const availableMethods = managedMethods.filter(
 
 // 選擇電子支付後，取得實際扣款卡片
 function selectManagedMethod(value: string) {
-  setpaymentMethodId(value);
+  setPaymentMethodId(value);
 
   const selected = managedMethods.find(
     (method) => String(method.id) === value
