@@ -1,8 +1,15 @@
 "use client";
 
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import type {
   CSSProperties,
 } from "react";
+
+import { supabase } from "../lib/supabase";
 
 import {
   CATEGORY_OPTIONS,
@@ -27,6 +34,18 @@ export type Person = {
 export type CreditCard = {
   id: number | string;
   name: string;
+};
+
+// =========================================
+// PaymentMethods 資料表型別
+// =========================================
+type ManagedPaymentMethod = {
+  id: number;
+  name: string;
+  payment_type: string;
+  linked_type: string | null;
+  linked_id: string | null;
+  is_active: boolean;
 };
 
 export type Trip = {
@@ -229,6 +248,112 @@ expenseScope,
 
   cancelContent,
 }: ExpenseFormProps) {
+  // =========================================
+// 01. 讀取金融卡與電子支付
+// =========================================
+  const [
+  managedMethods,
+  setManagedMethods,
+] = useState<ManagedPaymentMethod[]>([]);
+
+const [
+  selectedMethodId,
+  setSelectedMethodId,
+] = useState("");
+
+  const [
+  paymentLoading,
+  setPaymentLoading,
+] = useState(true);
+
+useEffect(() => {
+  let active = true;
+
+  async function loadPaymentMethods() {
+    setPaymentLoading(true);
+
+    const { data: auth } =
+      await supabase.auth.getUser();
+
+    if (!auth.user) {
+      if (active) setPaymentLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("PaymentMethods")
+      .select(
+        "id, name, payment_type, linked_type, linked_id, is_active"
+        )
+      .eq("user_id", auth.user.id)
+      .eq("is_active", true)
+      .order("name");
+
+    if (error) {
+      console.error(
+        "讀取付款工具失敗:",
+        error
+      );
+    }
+
+     if (active) {
+      setManagedMethods(
+        (data ?? []) as ManagedPaymentMethod[]
+      );
+      setPaymentLoading(false);
+    }
+  }
+
+  void loadPaymentMethods();
+
+  return () => {
+    active = false;
+  };
+}, []);
+
+// 根據付款方式取得已建立的工具
+const availableMethods = managedMethods.filter(
+  (method) => {
+    if (paymentMethod === "金融卡") {
+      return method.payment_type === "debit_card";
+    }
+
+    if (paymentMethod === "Apple Pay") {
+      return method.payment_type === "apple_pay";
+    }
+
+    if (paymentMethod === "Google Pay") {
+      return method.payment_type === "google_pay";
+    }
+    return false;
+  }
+);
+
+// 選擇電子支付後，取得實際扣款卡片
+function selectManagedMethod(value: string) {
+  setSelectedMethodId(value);
+
+  const selected = managedMethods.find(
+    (method) => String(method.id) === value
+  );
+
+  if (
+    selected?.linked_type === "credit_card" &&
+    selected.linked_id
+  ) {
+    const card = creditCards.find(
+
+      (card) =>
+        String(card.id) === selected.linked_id
+    );
+
+    setCardName(card?.name ?? "");
+  } else {
+    // 金融卡不能歸入信用卡帳單
+    setCardName("");
+  }
+}
+  
   const cardStyle: CSSProperties = {
     background: "#ffffff",
     border:
@@ -336,20 +461,49 @@ if (!category) {
       return;
     }
 
+    // =========================================
+// 05. 付款工具驗證
+// =========================================
+
+// 信用卡必須選擇卡別
     if (
-  CARD_PAYMENT_METHODS.includes(
-    paymentMethod
-  ) &&
+  paymentMethod === "信用卡" &&
   !cardName
 ) {
   e.preventDefault();
-
-  alert(
-    "這個付款方式請先選擇卡別"
-  );
-
+  alert("請選擇信用卡");
   return;
 }
+
+    // 金融卡及電子支付必須選擇已建立工具
+if (
+  ["金融卡", "Apple Pay", "Google Pay"].includes(
+    paymentMethod
+  ) &&
+  !selectedMethodId
+) {
+  e.preventDefault();
+  alert("請選擇已建立的付款工具");
+  return;
+}
+
+    // 確認綁定的信用卡存在
+const selectedManagedMethod =
+  managedMethods.find(
+    (method) =>
+      String(method.id) === selectedMethodId
+  );
+
+    if (
+  selectedManagedMethod?.linked_type ===
+    "credit_card" &&
+  !cardName
+) {
+  e.preventDefault();
+  alert("找不到綁定的信用卡，請檢查付款方式管理");
+  return;
+}
+    
 
     if (
   selectedPeople.length > 0 &&
@@ -667,12 +821,192 @@ if (!category) {
           付款資料
         </h2>
 
+        {/* =========================================
+    02. 付款方式
+    ========================================= */}
         <div style={fieldStyle}>
-          <label
-            style={labelStyle}
-          >
-            付款方式
-          </label>
+  <label style={labelStyle}>
+    付款方式
+  </label>
+
+  <select
+    value={paymentMethod}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      setPaymentMethod(value);
+      setSelectedMethodId("");
+      setCardName("");
+    }}
+    style={inputStyle}
+  >
+    <option value="">
+      請選擇付款方式
+    </option>
+
+    {/* 保留舊資料相容性 */}
+    {paymentMethod &&
+      ![
+        ...PAYMENT_METHODS,
+        "信用卡",
+        "金融卡",
+        "Apple Pay",
+        "Google Pay",
+        "現金",
+        "其他",
+      ].includes(paymentMethod) && (
+        <option value={paymentMethod}>
+          {paymentMethod}（原資料）
+        </option>
+        )}
+
+    {Array.from(
+      new Set([
+        ...PAYMENT_METHODS,
+        "信用卡",
+        "金融卡",
+        "Apple Pay",
+        "Google Pay",
+        "現金",
+        "其他",
+      ])
+    ).map((method) => (
+    <option
+        key={method}
+        value={method}
+      >
+        {method}
+      </option>
+    ))}
+  </select>
+</div>
+
+        {/* =========================================
+    03. 信用卡
+    ========================================= */}
+        {paymentMethod === "信用卡" && (
+  <div style={fieldStyle}>
+    <label style={labelStyle}>
+      選擇信用卡
+    </label>
+
+
+    <select
+      value={cardName}
+      onChange={(e) =>
+        setCardName(e.target.value)
+      }
+      style={inputStyle}
+    >
+      <option value="">
+        請選擇信用卡
+      </option>
+
+      {cardName &&
+        !creditCards.some(
+          (card) => card.name === cardName
+        ) && (
+          <option value={cardName}>
+            {cardName}（原資料）
+          </option>
+        )}
+
+      {creditCards.map((card) => (
+        <option
+          key={card.id}
+          value={card.name}
+        >
+          {card.name}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
+
+        {/* =========================================
+    04. 金融卡 / Apple Pay / Google Pay
+    ========================================= */}
+
+        {[
+  "金融卡",
+  "Apple Pay",
+  "Google Pay",
+].includes(paymentMethod) && (
+  <div style={fieldStyle}>
+    <label style={labelStyle}>
+      {paymentMethod === "金融卡"
+        ? "選擇金融卡"
+        : `選擇 ${paymentMethod} 付款工具`}
+    </label>
+
+    <select
+      value={selectedMethodId}
+      onChange={(e) =>
+        selectManagedMethod(e.target.value)
+      }
+      style={inputStyle}
+      disabled={paymentLoading}
+    >
+       <option value="">
+        {paymentLoading
+          ? "正在載入..."
+          : "請選擇已建立的付款工具"}
+      </option>
+
+      {availableMethods.map((method) => (
+        <option
+          key={method.id}
+          value={String(method.id)}
+        >
+          {method.name}
+        </option>
+      ))}
+    </select>
+
+    {!paymentLoading &&
+      availableMethods.length === 0 && (
+        <p
+          style={{
+            fontSize: 12,
+            color: "#b45309",
+            marginTop: 7,
+          }}
+        >
+          尚未建立此類付款工具，請先至
+          「付款方式管理」新增。
+        </p>
+      )}
+
+    {/* 顯示實際扣款卡片 */}
+    {selectedMethodId &&
+      cardName && (
+        <p
+          style={{
+            fontSize: 12,
+            color: "#047857",
+            marginTop: 8,
+          }}
+        >
+          ✓ 實際扣款信用卡：{cardName}
+          </p>
+      )}
+
+    {selectedMethodId &&
+      !cardName && (
+        <p
+          style={{
+            fontSize: 12,
+            color: "#64748b",
+            marginTop: 8,
+            }}
+        >
+          此付款工具沒有指定信用卡，
+          不會歸入信用卡帳單。
+        </p>
+      )}
+  </div>
+)}
+        
 
           {/* =========================================
     付款方式選單
