@@ -390,7 +390,7 @@ const [
   activeTab,
   setActiveTab,
 ] = useState<ActiveTab>(
-  "ininerary"
+  "itinerary"
 );
 
   useEffect(() => {
