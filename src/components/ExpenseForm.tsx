@@ -751,7 +751,7 @@ if (!category) {
       </option>
     )
   )}
-</select>
+>
         </div>
 
        {CARD_PAYMENT_METHODS.includes(
