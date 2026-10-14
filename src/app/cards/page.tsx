@@ -253,18 +253,8 @@ export default function CardsPage() {
     const { data, error } = await supabase
       .from("CreditCards")
       .select(
-        [
-          "id",
-          "name",
-          "is_active",
-          "user_id",
-          "created_at",
-          "statement_day",
-          "due_day",
-          "is_paid",
-          "due_month_offset",
-        ].join(",")
-        )
+  "id,name,is_active,user_id,created_at,statement_day,due_day,is_paid,due_month_offset"
+)
       .eq("user_id", userId)
       .order("name", {
         ascending: true,
