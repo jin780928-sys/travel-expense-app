@@ -150,6 +150,19 @@ function getStatementPeriod(
   };
 }
 
+// =========================================
+// 17. 歷史帳單資料型別
+// =========================================
+
+type HistoricalStatement = {
+  key: string;
+  label: string;
+  start: string;
+  end: string;
+  expenses: CardExpense[];
+  totals: Record<string, number>;
+};
+
 // ==================== 02. 頁面狀態 ====================
 
 export default function CardDetailPage() {
@@ -194,6 +207,13 @@ const [expenseMonth, setExpenseMonth] =
 
 const [expensePage, setExpensePage] =
   useState(1);
+
+// =========================================
+// 18. 歷史帳單展開狀態
+// =========================================
+
+const [expandedStatement, setExpandedStatement] =
+  useState<string | null>(null);
 
 // ==================== 03. Supabase 資料讀取 ====================
 
@@ -499,6 +519,92 @@ const totalExpensePages = Math.max(
   currentExpensePage * EXPENSE_PAGE_SIZE
 );
 
+// =========================================
+// 19. 計算信用卡歷史帳單
+// =========================================
+
+const historicalStatements: HistoricalStatement[] = [];
+
+if (
+  detail?.type === "信用卡" &&
+  detail.statementDay &&
+  !expenseLoading &&
+  !expenseError
+) {
+  const statementDay = detail.statementDay;
+
+  // 從現有消費日期決定帳單月份
+  const months = new Set<string>();
+
+  cardExpenses.forEach((expense) => {
+    if (!expense.date) return;
+
+    const date = new Date(
+      `${expense.date.slice(0, 10)}T12:00:00`
+    );
+
+    if (Number.isNaN(date.getTime())) return;
+
+    // 當月結帳日
+    const closingDate = getStatementDate(
+      date.getFullYear(),
+      date.getMonth(),
+      statementDay
+    );
+
+    // 如果消費超過當月結帳日，
+    // 就歸入下一個月的帳單
+    if (date > closingDate) {
+      date.setMonth(date.getMonth() + 1);
+    }
+
+    months.add(
+      `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`
+    );
+  });
+
+  Array.from(months)
+    .sort((a, b) => b.localeCompare(a))
+    .forEach((monthKey) => {
+      const [year, month] = monthKey
+        .split("-")
+        .map(Number);
+
+      const period = getStatementPeriod(
+        year,
+        month - 1,
+        statementDay
+      );
+
+      const statementExpenses = cardExpenses.filter(
+        (expense) =>
+          expense.date >= period.start &&
+          expense.date <= period.end
+      );
+
+      const totals: Record<string, number> = {};
+
+      statementExpenses.forEach((expense) => {
+        const currency = expense.currency || "USD";
+
+        totals[currency] =
+          (totals[currency] || 0) +
+          Number(expense.amount || 0);
+      });
+
+      historicalStatements.push({
+        key: monthKey,
+        label: `${year} 年 ${month} 月帳單`,
+        start: period.start,
+        end: period.end,
+        expenses: statementExpenses,
+        totals,
+      });
+    });
+}
+  
 // ==================== 04. 頁面 ====================
 
   return (
@@ -794,33 +900,132 @@ const totalExpensePages = Math.max(
 )}
 
 
-{/* ==================== 07. 歷史帳單 ==================== */}
+{/* =========================================
+    20. 信用卡歷史帳單
+   ========================================= */}
 
-          {activeTab === "statements" && (
+{activeTab === "statements" && (
+  <section className="panel">
 
-            <section className="panel">
+    <h2>
+      {detail.type === "信用卡"
+        ? "信用卡歷史帳單"
+        : "歷史消費彙總"}
+    </h2>
 
-              <h2>
-                {detail.type === "信用卡"
-                  ? "信用卡歷史帳單"
-                  : "歷史消費彙總"}
+    {detail.type !== "信用卡" ? (
+      <p>
+        此付款方式沒有信用卡結帳週期。
+        後續將依自然月份顯示消費彙總。
+      </p>
+    ) : !detail.statementDay ? (
+      <p>
+        這張信用卡尚未設定結帳日，
+        請先至付款方式管理設定。
+      </p>
+    ) : expenseLoading ? (
+      <div className="placeholder">
+        正在載入歷史帳單...
+      </div>
+    ) : expenseError ? (
+      <div className="placeholder">
+        讀取消費資料失敗：{expenseError}
+      </div>
+    ) : historicalStatements.length === 0 ? (
+      <div className="placeholder">
+        目前沒有可計算的歷史帳單。
+      </div>
+    ) : (
+      <div className="statementList">
 
-                </h2>
+        {historicalStatements.map((statement) => {
+          const opened =
+            expandedStatement === statement.key;
 
-              <p>
-                {detail.type === "信用卡"
-                  ? "依照這張信用卡設定的結帳日，計算每期帳單金額、繳款狀態及歷史明細。"
-                  : "非信用卡付款工具將依自然月份彙總消費，不產生信用卡繳款帳單。"}
+          return (
+            <div
+              key={statement.key}
+              className="statementItem"
+            >
+              <button
+                type="button"
+                className="statementButton"
+                onClick={() =>
+                  setExpandedStatement(
+                    opened ? null : statement.key
+                  )
+                }
+              >
+                <div className="statementInfo">
+                  <strong>{statement.label}</strong>
 
-                </p>
+                  <span>
+                    {statement.start.replace(/-/g, "/")}
+                    {" ～ "}
+                    {statement.end.replace(/-/g, "/")}
+                  </span>
 
-              <div className="placeholder">
-                下一步串接歷史帳單與結帳週期
-              </div>
+                  <small>
+                    {statement.expenses.length} 筆消費
+                  </small>
+                </div>
 
-            </section>
+                <div className="statementAmount">
+                  {Object.entries(statement.totals).map(
+                    ([currency, amount]) => (
+                      <strong key={currency}>
+                        {currency}{" "}
+                        {amount.toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </strong>
+                    )
+                  )}
 
-          )}
+                  <span>{opened ? "▲" : "▼"}</span>
+                </div>
+              </button>
+
+              {opened && (
+                <div className="statementDetails">
+                  {statement.expenses.map((expense) => (
+                    <Link
+                      key={String(expense.id)}
+                      href={`/expenses/${expense.id}`}
+                      className="statementExpense"
+                    >
+                      <div>
+                        <strong>
+                          {expense.item || "未命名花費"}
+                        </strong>
+                        <span>
+                          {expense.date}
+                          {" · "}
+                          {expense.major_category ||
+                            "未分類"}
+                        </span>
+                      </div>
+
+                      <strong>
+                        {expense.currency || "USD"}{" "}
+                        {Number(
+                          expense.amount || 0
+                        ).toFixed(2)}
+                      </strong>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+      </div>
+    )}
+
+  </section>
+)}
 
           {/* ==================== 08. 統計分析 ==================== */}
 
@@ -1160,6 +1365,123 @@ display: flex;
     flex-direction: column;
   }
 }
+
+/* =========================================
+   21. 歷史帳單排版
+   ========================================= */
+
+.statementList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.statementItem {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.statementButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  background: #fff;
+  color: #172033;
+  cursor: pointer;
+  text-align: left;
+}
+
+.statementButton:hover {
+  background: #f8fafc;
+}
+
+.statementInfo,
+.statementAmount {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.statementInfo strong {
+  font-size: 15px;
+}
+
+.statementInfo span,
+.statementInfo small {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.statementAmount {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.statementAmount strong {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.statementAmount span {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.statementDetails {
+  border-top: 1px solid #e2e8f0;
+  padding: 0 15px;
+  background: #f8fafc;
+}
+
+.statementExpense {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #e2e8f0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.statementExpense:last-child {
+  border-bottom: 0;
+}
+
+.statementExpense > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.statementExpense strong {
+  font-size: 13px;
+}
+
+.statementExpense span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .statementButton {
+    padding: 13px 11px;
+  }
+
+  .statementAmount strong {
+    font-size: 12px;
+  }
+
+  .statementDetails {
+    padding: 0 11px;
+  }
+}
+
       `}</style>
 
     </main>
