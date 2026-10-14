@@ -737,8 +737,13 @@ if (expenseScope === "trip" && tripId) {
          ===================================================== */}
       <ExpenseForm
         openedFromTrip={openedFromTrip}
-        item={item}
-        setItem={setItem}
+  item={item}
+  setItem={setItem}
+
+  // 付款工具 ID
+  paymentMethodId={paymentMethodId}
+  setPaymentMethodId={setPaymentMethodId
+  }
         amount={amount}
         setAmount={setAmount}
         date={date}
