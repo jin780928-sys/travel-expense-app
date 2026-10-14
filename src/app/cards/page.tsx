@@ -71,7 +71,11 @@ const COLOR = {
 
   green: "#15803d",
   greenLight: "#f0fdf4",
+
+  red: "#b91c1c",
+  redLight: "#fef2f2",
 };
+
 
   // =========================================
 // 05. 共用樣式
