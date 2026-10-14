@@ -5,7 +5,7 @@
 // ==========================================
 
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "../../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 // ==========================================
 // 02. TYPE / 人員資料型別
