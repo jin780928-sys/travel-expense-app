@@ -1,1198 +1,1009 @@
 "use client";
 
-// =========================================
-// 01. Import
-// =========================================
+// ======================================================
+// 付款方式管理
+// src/app/cards/page.tsx
+//
+// 01. Imports / Types
+// 02. 設定與樣式
+// 03. 狀態與資料讀取
+// 04. 新增 / 修改 / 停用
+// 05. 分類與清單
+// 06. 新增編輯表單
+// 07. 頁面樣式
+// ======================================================
 
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type CSSProperties,
-  type FormEvent,
-} from "react";
+// ==================== 01. Imports ====================
 
 import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
-// =========================================
-// 02. TypeScript 型別
-// =========================================
+type MethodType =
+  | "credit_card"
+  | "debit_card"
+  | "apple_pay"
+  | "google_pay"
+  | "other";
 
 type CreditCard = {
   id: number;
-  name: string;
-  is_active: boolean;
   user_id: string;
-  created_at: string | null;
+  name: string;
   statement_day: number | null;
   due_day: number | null;
-  is_paid: boolean | null;
-  due_month_offset: number | null;
+  is_active: boolean;
 };
 
-
-type CardForm = {
+type PaymentMethod = {
+  id: number;
+  user_id: string;
   name: string;
-  statement_day: string;
-  due_day: string;
-  due_month_offset: string;
+  payment_type: Exclude<MethodType, "credit_card">;
+  bank_name: string | null;
+  currency: string | null;
+  last_four: string | null;
+  linked_type: string | null;
+  linked_id: string | null;
+  notes: string | null;
+  is_active: boolean;
 };
 
-type Notice = {
-  type: "success" | "error";
-  text: string;
-};
-
-// =========================================
-// 03. 預設表單
-// =========================================
-
-const EMPTY_FORM: CardForm = {
-  name: "",
-  statement_day: "",
-  due_day: "",
-  due_month_offset: "1",
-};
-
-// =========================================
-// 04. 共用顏色
-// =========================================
-
-const COLOR = {
-  background: "#f5f7fb",
-  white: "#ffffff",
-  text: "#111827",
-  muted: "#6b7280",
-  border: "#e5e7eb",
-
-  blue: "#2563eb",
-  blueLight: "#eff6ff",
-
-  green: "#15803d",
-  greenLight: "#f0fdf4",
-
-  red: "#b91c1c",
-  redLight: "#fef2f2",
+type DisplayItem = {
+  key: string;
+  id: number;
+  type: MethodType;
+  name: string;
+  description: string;
+  is_active: boolean;
 };
 
 
-  // =========================================
-// 05. 共用樣式
-// =========================================
-
-const panelStyle: CSSProperties = {
-  background: COLOR.white,
-  border: `1px solid ${COLOR.border}`,
-  borderRadius: 16,
-  padding: 20,
-  marginBottom: 20,
-  boxShadow: "0 2px 12px rgba(17,24,39,0.03)",
+const LABELS: Record<MethodType, string> = {
+  credit_card: "信用卡",
+  debit_card: "金融卡",
+  apple_pay: "Apple Pay",
+  google_pay: "Google Pay",
+  other: "其他",
 };
 
-const labelStyle: CSSProperties = {
-  display: "block",
-  marginBottom: 7,
-  color: "#374151",
-  fontSize: 13,
-  fontWeight: 600,
-};
+const TYPES: MethodType[] = [
+  "credit_card",
+  "debit_card",
+  "apple_pay",
+  "google_pay",
+  "other",
+];
 
-const inputStyle: CSSProperties = {
+// ==================== 02. 樣式 ====================
+
+const inputStyle: React.CSSProperties = {
   width: "100%",
-  minHeight: 46,
-  padding: "11px 12px",
-  border: `1px solid ${COLOR.border}`,
-  borderRadius: 10,
-  background: COLOR.white,
-  color: COLOR.text,
-  fontSize: 15,
+  minWidth: 0,
   boxSizing: "border-box",
+  padding: "11px 12px",
+  border: "1px solid #dbe2ea",
+  borderRadius: 10,
+  background: "#fff",
+  color: "#172033",
+  fontSize: 14,
 };
 
-const primaryButtonStyle: CSSProperties = {
-  minHeight: 44,
-  padding: "12px 18px",
-  border: "none",
-  borderRadius: 10,
-  background: COLOR.blue,
-  color: COLOR.white,
-  fontSize: 14,
+const primaryButton: React.CSSProperties = {
+  border: 0,
+  borderRadius: 11,
+  padding: "11px 18px",
+  background: "#4f46e5",
+  color: "white",
   fontWeight: 700,
   cursor: "pointer",
 };
 
-const secondaryButtonStyle: CSSProperties = {
-  minHeight: 44,
-  padding: "11px 16px",
-  border: `1px solid ${COLOR.border}`,
-  borderRadius: 10,
-  background: COLOR.white,
-  color: "#374151",
-  fontSize: 14,
+
+const labelStyle: React.CSSProperties = {
+  display: "grid",
+  gap: 7,
+  fontSize: 13,
   fontWeight: 600,
-  cursor: "pointer",
+  color: "#475569",
 };
 
-// =========================================
-// 06. 共用工具
-// =========================================
-
-// 將結帳日及繳款日轉換為數字
-function parseDay(value: string) {
-  return Number(value);
+function blankForm(type: MethodType = "credit_card") {
+  return {
+    type,
+    name: "",
+    statement_day: "",
+    due_day: "",
+    bank_name: "",
+    currency: "USD",
+    last_four: "",
+    linked_type: "",
+    linked_id: "",
+    notes: "",
+  };
 }
 
-// 取得信用卡結帳資訊
-function getCardDescription(card: CreditCard) {
-  const statement = card.statement_day
-    ? `每月 ${card.statement_day} 日結帳`
-    : "尚未設定結帳日";
-
-  let due = "尚未設定繳款日";
-
-  if (card.due_day) {
-    const offset = card.due_month_offset ?? 1;
-
-
-    const monthText =
-      offset === 0
-        ? "當月"
-        : offset === 1
-        ? "次月"
-        : `${offset} 個月後`;
-
-    due = `${monthText} ${card.due_day} 日繳款`;
-  }
-
-  return `${statement} · ${due}`;
-}
-
-// =========================================
-// 07. 主頁面
-// =========================================
+// ==================== 03. 狀態與資料讀取 ====================
 
 export default function CardsPage() {
-  // =======================================
-  // 07-1. State
-  // =======================================
-
   const [cards, setCards] = useState<CreditCard[]>([]);
-
-  const [userId, setUserId] = useState<string | null>(
-    null
-  );
-
+  const [methods, setMethods] = useState<PaymentMethod[]>([]);
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
-
   const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const [busyCardId, setBusyCardId] = useState<
-    number | null
-  >(null);
+const [filter, setFilter] =
+    useState<"all" | MethodType>("all");
 
-  const [form, setForm] = useState<CardForm>({
-    ...EMPTY_FORM,
-  });
+  const [search, setSearch] = useState("");
+  const [showInactive, setShowInactive] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  const [editingCardId, setEditingCardId] = useState<
-    number | null
-  >(null);
+const [editing, setEditing] = useState<{
+    id: number;
+    type: MethodType;
+  } | null>(null);
 
-  const [showInactiveCards, setShowInactiveCards] =
-    useState(false);
+  const [form, setForm] = useState(blankForm());
 
-  const [notice, setNotice] = useState<Notice | null>(
-    null
-  );
 
-  // =======================================
-  // 08. 取得登入使用者
-  // =======================================
+const loadData = useCallback(async () => {
+    setLoading(true);
+    setMessage("");
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function initialize() {
-      setLoading(true);
-
-      const { data, error } =
+    try {
+      const { data: auth, error: authError } =
         await supabase.auth.getUser();
 
-      if (!mounted) return;
+  if (authError) throw authError;
+      if (!auth.user) throw new Error("請先登入");
 
-      if (error || !data.user) {
-        setNotice({
-          type: "error",
-          text: "無法取得登入資訊，請重新登入。",
-        });
+      const uid = auth.user.id;
+      setUserId(uid);
 
-        setLoading(false);
-        return;
-      }
+      const [cardResult, methodResult] = await Promise.all([
+        supabase
+          .from("CreditCards")
+          .select("*")
+          .eq("user_id", uid)
+          .order("name"),
 
-      setUserId(data.user.id);
-    }
+        supabase
+          .from("PaymentMethods")
+          .select("*")
+          .eq("user_id", uid)
+          .order("name"),
+      ]);
 
-    void initialize();
+  if (cardResult.error) throw cardResult.error;
+      if (methodResult.error) throw methodResult.error;
 
-    return () => {
-      mounted = false;
-    };
+      setCards((cardResult.data ?? []) as CreditCard[]);
+      setMethods(
+        (methodResult.data ?? []) as PaymentMethod[]
+        );
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "讀取付款方式失敗"
+      );
+    } finally {
+      setLoading(false);
+       }
   }, []);
 
-  // =======================================
-  // 09. 讀取信用卡資料
-  // =======================================
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
 
-  const loadCards = useCallback(async () => {
-    if (!userId) return;
+// ==================== 04. 新增 / 修改 / 停用 ====================
 
-    setLoading(true);
+function openNew() {
+    setEditing(null);
+    setForm(blankForm());
+    setShowForm(true);
+    setMessage("");
+  }
 
-    const { data, error } = await supabase
-      .from("CreditCards")
-      .select(
-  "id,name,is_active,user_id,created_at,statement_day,due_day,is_paid,due_month_offset"
-)
-      .eq("user_id", userId)
-      .order("name", {
-        ascending: true,
-      });
 
-    if (error) {
-      setNotice({
-        type: "error",
-        text: `讀取信用卡失敗：${error.message}`,
+function openEdit(item: DisplayItem) {
+    setEditing({ id: item.id, type: item.type });
+
+    if (item.type === "credit_card") {
+      const card = cards.find(c => c.id === item.id);
+      if (!card) return;
+
+  setForm({
+        ...blankForm("credit_card"),
+        name: card.name,
+        statement_day: String(card.statement_day ?? ""),
+        due_day: String(card.due_day ?? ""),
       });
     } else {
-      setCards((data ?? []) as CreditCard[]);
-    }
+      const method = methods.find(m => m.id === item.id);
+      if (!method) return;
 
-    setLoading(false);
-  }, [userId]);
-
-  useEffect(() => {
-    if (userId) {
-      void loadCards();
-    }
-    }, [userId, loadCards]);
-
-  // =======================================
-  // 10. 表單管理
-  // =======================================
-
-  function updateForm(
-    field: keyof CardForm,
-    value: string
-  ) {
-    setForm((previous) => ({
-      ...previous,
-      [field]: value,
-    }));
-  }
-
-  function resetForm() {
-    setForm({ ...EMPTY_FORM });
-    setEditingCardId(null);
-  }
-
-  // =======================================
-  // 11. 表單驗證
-  // =======================================
-
-  function validateForm(): string | null {
-    const name = form.name.trim();
-
-
-    if (!name) {
-      return "請輸入信用卡名稱。";
-    }
-
-    const statementDay = parseDay(
-      form.statement_day
-    );
-
-    const dueDay = parseDay(form.due_day);
-
-    if (
-      !form.statement_day ||
-      !Number.isInteger(statementDay) ||
-      statementDay < 1 ||
-      statementDay > 31
-    ) {
-      return "結帳日必須是 1～31 的整數。";
-    }
-
-    if (
-      !form.due_day ||
-      !Number.isInteger(dueDay) ||
-      dueDay < 1 ||
-      dueDay > 31
-    ) {
-      return "繳款日必須是 1～31 的整數。";
-    }
-
-    const offset = Number(form.due_month_offset);
-
-    if (offset !== 0 && offset !== 1) {
-      return "請選擇正確的繳款月份。";
-    }
-
-    const duplicate = cards.some(
-      (card) =>
-        card.id !== editingCardId &&
-        card.name.trim().toLowerCase() ===
-          name.toLowerCase()
-    );
-
-    if (duplicate) {
-      return "已有相同名稱的信用卡。";
-    }
-
-    return null;
-  }
-
-
-  // =======================================
-  // 12. 新增／編輯信用卡儲存
-  // =======================================
-
-  async function handleSave(
-    event: FormEvent<HTMLFormElement>
-  ) {
-    event.preventDefault();
-
-    if (!userId || saving) return;
-
-    const validationError = validateForm();
-
-    if (validationError) {
-      setNotice({
-        type: "error",
-        text: validationError,
+      setForm({
+        type: method.payment_type,
+        name: method.name,
+        statement_day: "",
+        due_day: "",
+        bank_name: method.bank_name ?? "",
+        currency: method.currency ?? "USD",
+        last_four: method.last_four ?? "",
+        linked_type: method.linked_type ?? "",
+        linked_id: method.linked_id ?? "",
+        notes: method.notes ?? "",
       });
+    }
+
+    setShowForm(true);
+  }
+
+async function save() {
+    if (saving) return;
+
+    if (!form.name.trim()) {
+      alert("請輸入名稱");
+      return;
+    }
+
+    if (!userId) {
+      alert("請先登入");
+      return;
+    }
+
+
+  // 電子支付必須選擇實際扣款卡片
+    if (
+      (form.type === "apple_pay" ||
+        form.type === "google_pay") &&
+      !form.linked_id
+    ) {
+      alert("請選擇綁定的信用卡或金融卡");
+      return;
+    }
+
+  const day = (value: string) =>
+      value === "" ? null : Number(value);
+
+    if (form.type === "credit_card") {
+      for (const value of [
+        form.statement_day,
+        form.due_day,
+      ]) {
+        if (
+          value !== "" &&
+          (!Number.isInteger(Number(value)) ||
+            Number(value) < 1 ||
+            Number(value) > 31)
+        ) {
+          alert("日期請填入 1～31");
+          return;
+        }
+      }
+    }
+
+  if (
+      form.last_four &&
+      !/^\d{4}$/.test(form.last_four)
+    ) {
+      alert("卡片末四碼請輸入四位數字");
       return;
     }
 
     setSaving(true);
-    setNotice(null);
 
-    const isEditing = editingCardId !== null;
+  try {
+      if (form.type === "credit_card") {
+        const payload = {
+          name: form.name.trim(),
+          statement_day: day(form.statement_day),
+          due_day: day(form.due_day),
+        };
 
-    // 僅儲存卡片基本設定
-    // 不覆寫 is_paid 或 created_at
+    const result = editing
+          ? await supabase
+              .from("CreditCards")
+              .update(payload)
+              .eq("id", editing.id)
+              .eq("user_id", userId)
+          : await supabase
+        .from("CreditCards")
+              .insert({
+                ...payload,
+                user_id: userId,
+                is_active: true,
+              });
 
-    const payload = {
-      name: form.name.trim(),
-      statement_day: parseDay(form.statement_day),
-      due_day: parseDay(form.due_day),
-      due_month_offset: Number(
-        form.due_month_offset
-      ),
-    };
 
-    const result = isEditing
-      ? await supabase
-          .from("CreditCards")
-          .update(payload)
-          .eq("id", editingCardId)
-          .eq("user_id", userId)
-          .select("id")
+    if (result.error) throw result.error;
+      } else {
+        const payload = {
+          name: form.name.trim(),
+          payment_type: form.type,
+          bank_name: form.bank_name.trim() || null,
+          currency: form.currency || "USD",
+          last_four: form.last_four || null,
+          linked_type: form.linked_type || null,
+          linked_id: form.linked_id || null,
+          notes: form.notes.trim() || null,
+        };
+
+    const result = editing
+          ? await supabase
+              .from("PaymentMethods")
+              .update(payload)
+              .eq("id", editing.id)
+              .eq("user_id", userId)
       : await supabase
-    .from("CreditCards")
-          .insert({
-            ...payload,
-            user_id: userId,
-            is_active: true,
-          })
-          .select("id");
+              .from("PaymentMethods")
+              .insert({
+                ...payload,
+                user_id: userId,
+                is_active: true,
+              });
 
 
-    if (result.error || !result.data?.length) {
-      setNotice({
-        type: "error",
-        text: result.error
-          ? `儲存失敗：${result.error.message}`
-          : "儲存失敗，沒有新增或更新到資料。",
-      });
+    if (result.error) throw result.error;
+      }
 
+      setShowForm(false);
+      setEditing(null);
+      await loadData();
+    } catch (error) {
+      console.error(error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "儲存失敗"
+        );
+    } finally {
       setSaving(false);
+    }
+  }
+
+async function toggleActive(item: DisplayItem) {
+    if (!userId) return;
+
+    const table =
+      item.type === "credit_card"
+        ? "CreditCards"
+        : "PaymentMethods";
+
+  const { error } = await supabase
+      .from(table)
+      .update({ is_active: !item.is_active })
+      .eq("id", item.id)
+      .eq("user_id", userId);
+
+  if (error) {
+      alert(error.message);
       return;
     }
 
-    resetForm();
-
-    await loadCards();
-
-    setNotice({
-      type: "success",
-      text: isEditing
-        ? "信用卡資料更新成功。"
-        : "信用卡新增成功。",
-    });
-
-    setSaving(false);
+    await loadData();
   }
 
-  // =======================================
-  // 13. 編輯信用卡
-  // =======================================
+// ==================== 05. 分類與清單 ====================
 
-  function handleEdit(card: CreditCard) {
-    setEditingCardId(card.id);
-
-    setForm({
+const items = useMemo<DisplayItem[]>(() => {
+    const creditItems: DisplayItem[] = cards.map(card => ({
+      key: `credit-${card.id}`,
+      id: card.id,
+      type: "credit_card",
       name: card.name,
-      statement_day: String(
-        card.statement_day ?? ""
-      ),
-      due_day: String(card.due_day ?? ""),
-      due_month_offset: String(
-        card.due_month_offset ?? 1
-      ),
+      description:
+        `結帳日 ${card.statement_day ?? "未設定"} · ` +
+        `繳款日 ${card.due_day ?? "未設定"}`,
+      is_active: card.is_active !== false,
+    }));
+
+                                     const methodItems: DisplayItem[] = methods.map(m => {
+      let description = [
+        m.bank_name,
+        m.currency,
+        m.last_four ? `末四碼 ${m.last_four}` : "",
+      ].filter(Boolean).join(" · ");
+
+                                                                                    if (
+        (m.payment_type === "apple_pay" ||
+          m.payment_type === "google_pay") &&
+        m.linked_id
+      ) {
+        const linkedName =
+          m.linked_type === "credit_card"
+            ? cards.find(c =>
+                String(c.id) === m.linked_id
+              )?.name
+            : methods.find(c =>
+              String(c.id) === m.linked_id &&
+                c.payment_type === "debit_card"
+              )?.name;
+
+        description = `綁定 ${linkedName ?? "原始卡片"}`;
+      }
+
+                                                                                    return {
+        key: `method-${m.id}`,
+        id: m.id,
+        type: m.payment_type,
+        name: m.name,
+        description: description || "未設定詳細資訊",
+                                                                                      is_active: m.is_active !== false,
+      };
     });
 
-    setNotice(null);
+    return [...creditItems, ...methodItems];
+  }, [cards, methods]);
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }
-
-  // =======================================
-  // 14. 啟用／停用信用卡
-  // =======================================
-
-  async function handleToggleActive(
-    card: CreditCard
-  ) {
-    if (!userId || busyCardId !== null) return;
-
-    const nextActive = !card.is_active;
-
-    const confirmed = window.confirm(
-      nextActive
-        ? `確定重新啟用「${card.name}」嗎？`
-        : `確定停用「${card.name}」嗎？\n\n停用不會刪除歷史花費及帳單紀錄。`
-    );
-
-
-    if (!confirmed) return;
-
-    setBusyCardId(card.id);
-    setNotice(null);
-
-    const { data, error } = await supabase
-      .from("CreditCards")
-      .update({
-        is_active: nextActive,
-        })
-      .eq("id", card.id)
-      .eq("user_id", userId)
-      .select("id");
-
-    if (error || !data?.length) {
-      setNotice({
-        type: "error",
-        text: error
-          ? `更新失敗：${error.message}`
-          : "更新失敗，沒有更新到信用卡。",
-      });
-
-      setBusyCardId(null);
-      return;
+const filteredItems = items.filter(item => {
+    if (filter !== "all" && item.type !== filter) {
+      return false;
     }
 
-    if (
-      editingCardId === card.id &&
-      !nextActive
-    ) {
-      resetForm();
-    }
+    if (!showInactive && !item.is_active) {
+      return false;
+      }
 
-    await loadCards();
-
-    setNotice({
-      type: "success",
-      text: nextActive
-        ? `已重新啟用「${card.name}」。`
-        : `已停用「${card.name}」。`,
-    });
-
-    setBusyCardId(null);
-  }
-
-  // =======================================
-  // 15. 信用卡分類
-  // =======================================
-
-  const activeCards = cards.filter(
-    (card) => card.is_active
-  );
-
-  const inactiveCards = cards.filter(
-    (card) => !card.is_active
-  );
-
-  // =======================================
-  // 16. 信用卡卡片 UI
-  // =======================================
-
-  function renderCard(card: CreditCard) {
-    const isBusy = busyCardId === card.id;
+    const keyword = search.trim().toLowerCase();
 
     return (
-      <article
-        key={card.id}
-        style={{
-          border: `1px solid ${COLOR.border}`,
-          borderRadius: 12,
-          padding: 16,
-          marginBottom: 12,
-          background: card.is_active
-            ? COLOR.white
-            : "#f9fafb",
-        }}
-      >
-        {/* 16-1. 名稱與使用狀態 */}
+      !keyword ||
+      `${item.name} ${item.description} ${LABELS[item.type]}`
+        .toLowerCase()
+        .includes(keyword)
+      );
+  });
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: 12,
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              minWidth: 0,
-              }}
-          >
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                color: COLOR.text,
-                overflowWrap: "anywhere",
-              }}
-            >
-              {card.name}
-            </div>
+  const linkedOptions = [
+    ...cards.filter(c => c.is_active !== false).map(c => ({
+      value: `credit_card:${c.id}`,
+      label: `信用卡 · ${c.name}`,
+      })),
+    ...methods
+      .filter(m =>
+        m.payment_type === "debit_card" &&
+        m.is_active !== false
+      )
+     .map(m => ({
+        value: `debit_card:${m.id}`,
+        label: `金融卡 · ${m.name}`,
+      })),
+  ];
 
-            <div
-              style={{
-                marginTop: 7,
-                fontSize: 13,
-                lineHeight: 1.7,
-                color: COLOR.muted,
-              }}
-            >
-              {getCardDescription(card)}
-            </div>
-          </div>
+// ==================== 06. 頁面介面 ====================
 
-          <span
-            style={{
-              flexShrink: 0,
-              padding: "5px 9px",
-              borderRadius: 999,
-              fontSize: 12,
-              fontWeight: 700,
-              background: card.is_active
-                ? COLOR.greenLight
-                : "#f3f4f6",
-              color: card.is_active
-                ? COLOR.green
-                : COLOR.muted,
-            }}
-            >
-            {card.is_active
-              ? "使用中"
-              : "已停用"}
-          </span>
+
+return (
+    <main className="page">
+
+      <Link href="/" className="homeLink">
+        ← 返回首頁
+      </Link>
+
+      <header className="header">
+        <div>
+          <h1>付款方式管理</h1>
+          <p>信用卡、金融卡與電子支付集中管理</p>
         </div>
 
-        {/* 16-2. 操作按鈕 */}
+        <button onClick={openNew} style={primaryButton}>
+          ＋ 新增
+        </button>
+      </header>
 
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 10,
-            marginTop: 16,
-            paddingTop: 14,
-            borderTop: `1px solid ${COLOR.border}`,
-          }}
-          >
-          <button
-            type="button"
-            style={{
-              ...secondaryButtonStyle,
-              flex: "1 1 110px",
-            }}
-            onClick={() => handleEdit(card)}
-            disabled={isBusy || saving}
-            >
-            ✏️ 編輯資料
-          </button>
+      <section className="overview">
+        <div>
 
-          <button
-            type="button"
-            style={{
-              ...secondaryButtonStyle,
-              flex: "1 1 110px",
-              background: card.is_active
-                ? COLOR.redLight
-                : COLOR.greenLight,
-              color: card.is_active
-                ? COLOR.red
-                : COLOR.green,
-            }}
-            onClick={() =>
-              void handleToggleActive(card)
-            }
-            disabled={
-              busyCardId !== null ||
-              saving ||
-              loading
-            }
-            >
-            {isBusy
-              ? "處理中..."
-              : card.is_active
-              ? "停用信用卡"
-              : "重新啟用"}
-          </button>
+          <span>付款工具</span>
+          <strong>{items.length}</strong>
         </div>
-      </article>
-    );
-  }
+        <div>
+          <span>啟用中</span>
+          <strong>
+            {items.filter(i => i.is_active).length}
+          </strong>
 
-  // =======================================
-  // 17. 主畫面 JSX
-  // =======================================
+          </div>
+        <div>
+          <span>已停用</span>
+          <strong>
+            {items.filter(i => !i.is_active).length}
+          </strong>
+        </div>
+      </section>
 
-  return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: "24px 14px 60px",
-        background: COLOR.background,
-        color: COLOR.text,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 800,
-          margin: "0 auto",
-        }}
-      >
-        {/* =================================
-            17-1. 頁面標題
-        ================================= */}
+      <section className="toolbar">
 
-        <header
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 14,
-            marginBottom: 24,
-          }}
-          >
-          <div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: 26,
-                fontWeight: 800,
-              }}
-              >
-              💳 信用卡管理
-            </h1>
-
-            <p
-              style={{
-                margin: "8px 0 0",
-                fontSize: 14,
-                color: COLOR.muted,
-              }}
+        <nav className="tabs">
+          {(["all", ...TYPES] as const).map(type => (
+            <button
+              key={type}
+              type="button"
+              className={filter === type ? "active" : ""}
+              onClick={() => setFilter(type)}
             >
-              管理信用卡、結帳日與繳款設定
-            </p>
-          </div>
+              {type === "all" ? "全部" : LABELS[type]}
+            </button>
+          ))}
+        </nav>
 
-          <Link
-            href="/"
-            style={{
-              ...secondaryButtonStyle,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textDecoration: "none",
-            }}
-          >
-            ← 返回首頁
-          </Link>
-        </header>
+        <div className="searchRow">
+          <input
+            style={inputStyle}
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="搜尋名稱、銀行、末四碼…"
+          />
 
-        {/* =================================
-            17-2. 成功／錯誤提示
-        ================================= */}
+          <label className="inactiveToggle">
+            <input
+              type="checkbox"
+              checked={showInactive}
+              onChange={e => setShowInactive(e.target.checked)}
+            />
+            顯示停用
+          </label>
+        </div>
+      </section>
 
-        {notice && (
-          <div
-            role="status"
-            style={{
-              padding: 14,
-              marginBottom: 20,
-              borderRadius: 10,
-              fontSize: 14,
-              lineHeight: 1.6,
-              overflowWrap: "anywhere",
-              color:
-                notice.type === "success"
-                ? COLOR.green
-                  : COLOR.red,
-              background:
-                notice.type === "success"
-                  ? COLOR.greenLight
-                  : COLOR.redLight,
-            }}
-          >
-            {notice.text}
-          </div>
+      <section className="list">
+        {loading ? (
+          <div className="empty">正在載入…</div>
+        ) : message ? (
+          <div className="empty">{message}</div>
+      ) : filteredItems.length === 0 ? (
+          <div className="empty">目前沒有符合條件的付款方式</div>
+        ) : (
+          filteredItems.map(item => (
+            <div className="item" key={item.key}>
+
+              <div className="itemIcon">
+                {item.type === "credit_card" ? "💳" :
+                 item.type === "debit_card" ? "🏦" :
+                  item.type === "apple_pay" ? "📱" :
+                 item.type === "google_pay" ? "📲" : "💰"}
+              </div>
+
+              <div className="itemInfo">
+                <strong>{item.name}</strong>
+                <span>{LABELS[item.type]} · {item.description}</span>
+                {!item.is_active && (
+              <small>已停用</small>
+                )}
+              </div>
+
+              <div className="itemActions">
+                <button onClick={() => openEdit(item)}>
+                  編輯
+                </button>
+                <button onClick={() => void toggleActive(item)}>
+                  {item.is_active ? "停用" : "啟用"}
+                  </button>
+              </div>
+            </div>
+          ))
         )}
+      </section>
 
-        {/* =================================
-            17-3. 信用卡新增／編輯區
-        ================================= */}
-        <section style={panelStyle}>
-          <h2
-            style={{
-              margin: "0 0 18px",
-              fontSize: 18,
-              fontWeight: 750,
-            }}
+      {/* 新增 / 編輯表單 */}
+      {showForm && (
+        <div className="modalBackdrop">
+          <section
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="付款方式編輯"
           >
-            {editingCardId !== null
-              ? "✏️ 編輯信用卡"
-              : "＋ 新增信用卡"}
-          </h2>
-
-          <form onSubmit={handleSave}>
-            {/* 信用卡名稱 */}
-
-            <div style={{ marginBottom: 16 }}>
-              <label
-                htmlFor="card-name"
-                style={labelStyle}
-              >
-                信用卡名稱
-              </label>
-
-              <input
-                id="card-name"
-                type="text"
-                style={inputStyle}
-                value={form.name}
-                placeholder="例如：Chase Sapphire Preferred"
-                onChange={(event) =>
-                  updateForm(
-                    "name",
-                    event.target.value
-                  )
-                }
-                required
-                />
+            <div className="modalHeader">
+              <h2>
+                {editing ? "編輯付款方式" : "新增付款方式"}
+              </h2>
+              <button onClick={() => setShowForm(false)}>
+                ✕
+              </button>
             </div>
+            <div className="formFields">
 
-            {/* 結帳日／繳款日 */}
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: 14,
-                marginBottom: 16,
-              }}
-            >
-              <div>
-                <label
-                  htmlFor="statement-day"
-                  style={labelStyle}
-                >
-                  結帳日（每月幾號）
-                </label>
-
-                <input
-                  id="statement-day"
-                  type="number"
-                  min="1"
-                  max="31"
-                  step="1"
-                  placeholder="例如：15"
+              <label style={labelStyle}>
+                類型
+                <select
                   style={inputStyle}
-                  value={form.statement_day}
-                  onChange={(event) =>
-                    updateForm(
-                      "statement_day",
-                      event.target.value
-                    )
-                  }
-                  required
-                  />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="due-day"
-                  style={labelStyle}
+                  value={form.type}
+                  disabled={Boolean(editing)}
+                  onChange={e => setForm(
+                    blankForm(e.target.value as MethodType)
+                  )}
                   >
-                  繳款日（每月幾號）
-                </label>
-
-                <input
-                  id="due-day"
-                  type="number"
-                  min="1"
-                  max="31"
-                  step="1"
-                  placeholder="例如：10"
-                  style={inputStyle}
-                  value={form.due_day}
-                  onChange={(event) =>
-                    updateForm(
-                      "due_day",
-                      event.target.value
-                    )
-                  }
-                  required
-                  />
-              </div>
-            </div>
-
-            {/* 繳款月份 */}
-
-            <div style={{ marginBottom: 20 }}>
-              <label
-                htmlFor="due-month"
-                style={labelStyle}
-              >
-                繳款月份
+                  {TYPES.map(type => (
+                    <option key={type} value={type}>
+                      {LABELS[type]}
+                    </option>
+                  ))}
+                </select>
               </label>
 
-              <select
-                id="due-month"
-                style={inputStyle}
-                value={form.due_month_offset}
-                onChange={(event) =>
-                  updateForm(
-                    "due_month_offset",
-                    event.target.value
-                  )
+              <label style={labelStyle}>
+                名稱
+                <input
+                  style={inputStyle}
+                  value={form.name}
+                  onChange={e => setForm({
+                    ...form,
+                    name: e.target.value,
+                  })}
+                  placeholder="例如 Chase Sapphire Preferred"
+                />
+              </label>
+
+              {form.type === "credit_card" && (
+                <div className="twoColumns">
+                  <label style={labelStyle}>
+                    結帳日（1～31）
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      style={inputStyle}
+                      value={form.statement_day}
+                      onChange={e => setForm({
+                        ...form,
+                        statement_day: e.target.value,
+                      })}
+                    />
+                  </label>
+
+                  <label style={labelStyle}>
+                    繳款日（1～31）
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      style={inputStyle}
+                      value={form.due_day}
+                      onChange={e => setForm({
+                        ...form,
+                        due_day: e.target.value,
+                      })}
+                    />
+                  </label>
+                  </div>
+              )}
+
+              {form.type === "debit_card" && (
+                <>
+                  <label style={labelStyle}>
+                    銀行名稱
+                    <input
+                      style={inputStyle}
+                      value={form.bank_name}
+                      onChange={e => setForm({
+                        ...form,
+                        bank_name: e.target.value,
+                      })}
+                    />
+                  </label>
+
+                  <div className="twoColumns">
+                    <label style={labelStyle}>
+                      幣別
+                      <select
+                        style={inputStyle}
+                        value={form.currency}
+                        onChange={e => setForm({
+                          ...form,
+                          currency: e.target.value,
+                        })}
+                      >
+                        {["USD", "TWD", "JPY", "EUR", "KRW",
+                          "GBP", "CAD", "其他"].map(c => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label style={labelStyle}>
+                      卡片末四碼
+                      <input
+                        style={inputStyle}
+                        maxLength={4}
+                        value={form.last_four}
+                        onChange={e => setForm({
+                          ...form,
+                          last_four: e.target.value.replace(/\D/g, ""),
+                        })}
+                      />
+                      </label>
+                  </div>
+                </>
+              )}
+
+              {(form.type === "apple_pay" ||
+                </label>
+                  </div>
+                </>
+              )}
+
+              {(form.type === "apple_pay" ||
+
+                form.linked_type && form.linked_id
+                        ? `${form.linked_type}:${form.linked_id}`
+                        : ""
                 }
-              >
-                <option value="0">
-                  結帳當月繳款
-                </option>
+                    onChange={e => {
+                      const [linkedType, linkedId] =
+                        e.target.value.split(":");
 
-                <option value="1">
-                  結帳次月繳款
-                </option>
-              </select>
+                      setForm({
+                        ...form,
+                        linked_type: linkedType || "",
+                        linked_id: linkedId || "",
+                      });
+                    }}
+                  >
+              <option value="">請選擇</option>
+                    {linkedOptions.map(option => (
+                      <option
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+          <label style={labelStyle}>
+                備註（選填）
+                <textarea
+                  style={{ ...inputStyle, minHeight: 72 }}
+                  value={form.notes}
+                  onChange={e => setForm({
+                    ...form,
+                    notes: e.target.value,
+                  })}
+                />
+              </label>
 
-              <p
-                style={{
-                  margin: "8px 0 0",
-                  fontSize: 12,
-                  color: COLOR.muted,
-                  lineHeight: 1.7,
-                }}
-              >
-                例如：10/15 結帳、11/10 繳款，
-                請選擇「結帳次月繳款」。
-              </p>
-            </div>
+          </div>
 
-            {/* 儲存／取消編輯 */}
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 10,
-              }}
-            >
+            <div className="formActions">
               <button
-                type="submit"
-                style={{
-                  ...primaryButtonStyle,
-                  flex: "1 1 170px",
-                  opacity:
-                    saving || !userId ? 0.6 : 1,
-                }}
-                disabled={
-                  saving ||
-                  !userId ||
-                  loading
-                }
+                className="cancelButton"
+                onClick={() => setShowForm(false)}
+                disabled={saving}
               >
-                {saving
-                  ? "儲存中..."
-                  : editingCardId !== null
-                  ? "儲存修改"
-                  : "新增信用卡"}
+                取消
               </button>
 
-              {editingCardId !== null && (
-                <button
-                  type="button"
-                  style={secondaryButtonStyle}
-                  onClick={resetForm}
-                  disabled={saving}
-                >
-                  取消編輯
-                </button>
-              )}
-            </div>
-          </form>
-        </section>
-
-        {/* =================================
-            17-4. 信用卡統計區
-        ================================= */}
-
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(2, minmax(0, 1fr))",
-            gap: 12,
-            marginBottom: 20,
-            }}
-        >
-          {/* 使用中數量 */}
-
-          <div
-            style={{
-              ...panelStyle,
-              padding: 16,
-              marginBottom: 0,
-            }}
-            >
-            <div
-              style={{
-                marginBottom: 8,
-                fontSize: 13,
-                color: COLOR.muted,
-              }}
-            >
-              使用中信用卡
+              <button
+                style={primaryButton}
+                disabled={saving}
+                onClick={() => void save()}
+      >
+                {saving ? "儲存中…" : "儲存"}
+              </button>
             </div>
 
-            <div
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: COLOR.blue,
-              }}
-            >
-              {activeCards.length}
-            </div>
-          </div>
+          </section>
+        </div>
+      )}
 
-          {/* 已停用數量 */}
+{/* ==================== 07. 排版 ==================== */}
 
-          <div
-            style={{
-              ...panelStyle,
-              padding: 16,
-              marginBottom: 0,
-            }}
-          >
-            <div
-              style={{
-                marginBottom: 8,
-                fontSize: 13,
-                color: COLOR.muted,
-                }}
-            >
-              已停用信用卡
-            </div>
-
-            <div
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: COLOR.text,
-              }}
-            >
-              {inactiveCards.length}
-            </div>
-          </div>
-        </section>
-
-        {/* =================================
-            17-5. 使用中的信用卡
-        ================================= */}
-
-
-        <section style={panelStyle}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 18,
-            }}
-            >
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 18,
-                fontWeight: 750,
-              }}
-            >
-              💳 使用中的信用卡
-            </h2>
-
-            <button
-              type="button"
-              style={{
-                ...secondaryButtonStyle,
-                minHeight: 36,
-                padding: "7px 11px",
-                fontSize: 12,
-              }}
-              onClick={() => void loadCards()}
-              disabled={loading}
-            >
-              重新整理
-            </button>
-          </div>
-
-          {loading ? (
-            <div
-              style={{
-                padding: 24,
-                textAlign: "center",
-                color: COLOR.muted,
-              }}
-            >
-              載入信用卡資料中...
-            </div>
-          ) : activeCards.length === 0 ? (
-            <div
-              style={{
-                padding: 24,
-                textAlign: "center",
-                borderRadius: 12,
-                background: "#f9fafb",
-                color: COLOR.muted,
-                fontSize: 14,
-              }}
-            >
-              尚無使用中的信用卡
-              </div>
-          ) : (
-            activeCards.map(renderCard)
-          )}
-        </section>
-
-        {/* =================================
-            17-6. 已停用信用卡
-        ================================= */}
-
-        <section style={panelStyle}>
-          <button
-            type="button"
-            onClick={() =>
-              setShowInactiveCards(
-                (previous) => !previous
-                  )
-            }
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              gap: 12,
-              padding: 0,
-              border: "none",
-              background: "transparent",
-              color: COLOR.text,
-              cursor: "pointer",
-            }}
-            >
-            <span
-              style={{
-                fontSize: 17,
-                fontWeight: 700,
-              }}
-            >
-              📁 已停用信用卡
-              （{inactiveCards.length}）
-            </span>
-
-            <span
-              style={{
-                color: COLOR.muted,
-                fontSize: 13,
-                 }}
-            >
-              {showInactiveCards
-                ? "收合 ▲"
-                : "展開 ▼"}
-            </span>
-          </button>
-
-           {showInactiveCards && (
-            <div style={{ marginTop: 18 }}>
-              {inactiveCards.length === 0 ? (
-                <div
-                  style={{
-                    padding: 16,
-                    textAlign: "center",
-                    color: COLOR.muted,
-                    fontSize: 14,
-                  }}
-                >
-                  目前沒有已停用的信用卡
-                  </div>
-              ) : (
-                inactiveCards.map(renderCard)
-              )}
-            </div>
-          )}
-        </section>
-
-        {/* =================================
-            17-7. 頁面底部
-        ================================= */}
-
-
-        <footer
-          style={{
-            textAlign: "center",
-            padding: "10px 0 20px",
-            color: "#9ca3af",
-            fontSize: 12,
-          }}
-
-           >
-          Travel Expense App · 信用卡管理
-        </footer>
-      </div>
+<style jsx>{`
+        .page {
+          max-width: 1050px;
+          margin: 0 auto;
+          padding: 26px 18px 65px;
+          color: #172033;
+        }
+        .homeLink {
+          display: inline-block;
+          margin-bottom: 22px;
+          text-decoration: none;
+          color: #64748b;
+          font-size: 14px;
+        }
+        .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 14px;
+          margin-bottom: 22px;
+        }
+        h1 {
+          font-size: 28px;
+          margin: 0;
+        }
+        .header p {
+          color: #64748b;
+          margin: 7px 0 0;
+          font-size: 13px;
+        }
+        .overview {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          background: #f1f5f9;
+          padding: 17px;
+          border-radius: 13px;
+          gap: 15px;
+          margin-bottom: 18px;
+        }
+        .overview div {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .overview span {
+          font-size: 12px;
+          color: #64748b;
+        }
+        .overview strong {
+          font-size: 22px;
+        }
+        .toolbar {
+          margin-bottom: 16px;
+        }
+        .tabs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 14px;
+        }
+        .tabs button {
+          border: 1px solid #dbe2ea;
+          background: #fff;
+          padding: 9px 13px;
+          border-radius: 9px;
+          color: #475569;
+          cursor: pointer;
+        }
+        .tabs button.active {
+          color: #4338ca;
+          background: #eef2ff;
+          border-color: #c7d2fe;
+          font-weight: 700;
+        }
+        .searchRow {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+        .inactiveToggle {
+          white-space: nowrap;
+          font-size: 13px;
+          color: #64748b;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .list {
+          border: 1px solid #e2e8f0;
+          border-radius: 13px;
+          overflow: hidden;
+          background: #fff;
+        }
+        .item {
+          padding: 13px 15px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          border-bottom: 1px solid #eef2f6;
+        }
+        .item:last-child {
+          border-bottom: 0;
+        }
+        .itemIcon {
+          width: 38px;
+          height: 38px;
+          display: grid;
+          place-items: center;
+          border-radius: 10px;
+          background: #f1f5f9;
+          flex-shrink: 0;
+        }
+        .itemInfo {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          flex: 1;
+          min-width: 0;
+        }
+        .itemInfo strong {
+          font-size: 14px;
+          overflow-wrap: anywhere;
+        }
+        .itemInfo span {
+          font-size: 12px;
+          color: #64748b;
+        }
+        .itemInfo small {
+          color: #dc2626;
+        }
+        .itemActions {
+          display: flex;
+          gap: 7px;
+        }
+        .itemActions button, .cancelButton {
+          border: 1px solid #dbe2ea;
+          border-radius: 8px;
+          background: #fff;
+          padding: 8px 11px;
+          color: #475569;
+          cursor: pointer;
+        }
+        .empty {
+          padding: 48px 15px;
+          text-align: center;
+          color: #64748b;
+          }
+        .modalBackdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 100;
+          background: rgba(15,23,42,.55);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 15px;
+        }
+        .modal {
+          width: 100%;
+          max-width: 500px;
+          max-height: 90vh;
+          overflow-y: auto;
+          padding: 22px;
+          border-radius: 16px;
+          background: #fff;
+          box-sizing: border-box;
+        }
+        .modalHeader {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 22px;
+        }
+        .modalHeader h2 {
+          margin: 0;
+          font-size: 20px;
+        }
+        .modalHeader button {
+          border: 0;
+          background: transparent;
+          font-size: 20px;
+          cursor: pointer;
+        }
+        .formFields {
+          display: grid;
+          gap: 16px;
+        }
+        .twoColumns {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .formActions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          margin-top: 24px;
+        }
+        @media(max-width:600px) {
+          .page { padding: 18px 12px 60px; }
+          h1 { font-size: 23px; }
+          .overview { padding: 12px; }
+          .item { padding: 12px 10px; gap: 8px; }
+          .itemActions { flex-direction: column; }
+          .itemActions button { font-size: 12px; }
+          .itemIcon { width: 32px; height: 32px; }
+          .searchRow { flex-wrap: wrap; }
+          .modal { padding: 17px; }
+          }
+      `}</style>
     </main>
   );
 }
- 
-
