@@ -721,18 +721,23 @@ return (
                 </>
               )}
 
-              {(form.type === "apple_pay" ||
+          
                 </label>
                   </div>
                 </>
               )}
 
-              {(form.type === "apple_pay" ||
-
-                form.linked_type && form.linked_id
+            {(form.type === "apple_pay" ||
+                form.type === "google_pay") && (
+                <label style={labelStyle}>
+                  綁定實際扣款卡片
+                  <select
+                    style={inputStyle}
+                    value={
+                      form.linked_type && form.linked_id
                         ? `${form.linked_type}:${form.linked_id}`
                         : ""
-                }
+                    }
                     onChange={e => {
                       const [linkedType, linkedId] =
                         e.target.value.split(":");
