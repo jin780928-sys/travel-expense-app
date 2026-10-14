@@ -741,5 +741,842 @@ return (
             className="sortSelect"
             aria-label="排序方式"
             value={sort}
+            onChange={(event) => {
+              setSort(
+                event.target.value as SortOption
+              );
+              resetPage();
+            }}
+          >
+            <option value="newest">
+              日期：最新優先
+            </option>
+
+            <option value="oldest">
+              日期：最舊優先
+            </option>
+            
+            <option value="amount_desc">
+              金額：高到低
+            </option>
+
+            <option value="amount_asc">
+              金額：低到高
+            </option>
+          </select>
+
+          </div>
+
+      </section>
+
+
+{/* ============================================================
+    09. 統計區
+============================================================ */}
+
+      {!loading && !errorMessage && (
+
+        <section className="summaryPanel">
+
+          <div className="summaryCount">
+
+            <span>符合條件</span>
+
+            <strong>
+              {totalCount} 筆
+            </strong>
+
+          </div>
+
+
+          <div className="summaryTotals">
+
+            {totalsByCurrency.map(
+              ([currency, amount]) => (
+
+                <div
+                  className="currencyTotal"
+                  key={currency}
+                >
+
+                  <span>{currency}</span>
+
+                  <strong>
+                    {formatAmount(amount)}
+                  </strong>
+
+                  </div>
+
+              )
+            )}
+
+          </div>
+
+        </section>
+
+      )}
+
+      {/* ============================================================
+    10. 花費清單
+    每筆只有一列，不再使用大卡片
+============================================================ */}
+
+      <section className="listPanel">
+
+        {/* 表頭 */}
+        <div className="listHeader">
+
+          <div>日期 / 品項</div>
+
+          <div>分類 / 付款 / 來源</div>
+
+          <div className="amountHeader">
+            金額
+          </div>
+
+        </div>
+
+        {/* 載入中 */}
+        {loading && (
+
+          <div className="statusMessage">
+            正在載入花費紀錄...
+          </div>
+
+        )}
+
+        {/* 錯誤 */}
+        {!loading && errorMessage && (
+
+          <div className="statusMessage error">
+            {errorMessage}
+          </div>
+
+        )}
+
+        {/* 無紀錄 */}
+        {!loading &&
+           !errorMessage &&
+          pagedExpenses.length === 0 && (
+
+            <div className="emptyState">
+
+              <div className="emptyIcon">
+                🧾
+              </div>
+
+
+              <strong>
+                沒有符合條件的花費
+              </strong>
+
+              <p>
+                請調整搜尋或篩選條件
+              </p>
+
+              <button
+                type="button"
+                onClick={clearFilters}
+              >
+                清除篩選
+              </button>
+
+            </div>
+
+          )}
+
+        {/* 單筆花費 */}
+        {!loading &&
+          !errorMessage &&
+          pagedExpenses.map((expense) => {
+
+            const trip = isTripExpense(expense);
+
+            return (
+
+              <Link
+                key={String(expense.id)}
+                href={`/expenses/${encodeURIComponent(
+                  String(expense.id)
+                )}`}
+                className="expenseRow"
+              >
+
+                {/* 第一欄：日期與品項 */}
+                <div className="itemColumn">
+
+                  <span className="itemDate">
+                    {formatDate(expense.date)}
+                  </span>
+
+                  <strong className="itemName">
+                    {expense.item || "未命名花費"}
+                  </strong>
+
+                </div>
+
+                {/* 第二欄：分類及來源 */}
+                <div className="detailColumn">
+
+                  <div className="categoryName">
+                    {formatCategory(expense)}
+                  </div>
+
+                  <div className="paymentName">
+
+                    {expense.payment_method ||
+                      "未設定付款方式"}
+
+                    {expense.card_name && (
+                      <span>
+                        {" · "}
+                        {expense.card_name}
+                      </span>
+                    )}
+
+                  </div>
+
+                  <div className="scopeLine">
+
+                    <span
+                      className={
+                        trip
+                          ? "scopeLabel trip"
+                          : "scopeLabel daily"
+                      }
+                      >
+                      {trip ? "旅程" : "日常"}
+                    </span>
+
+                    {trip && (
+
+                      <span className="tripName">
+                        {getTripName(expense)}
+                      </span>
+
+                    )}
+
+                  </div>
+
+                </div>
+
+                {/* 第三欄：幣別及金額 */}
+                <div className="amountColumn">
+
+                  <span className="currency">
+                    {expense.currency || "USD"}
+                  </span>
+
+                  <strong className="amount">
+                    {formatAmount(expense.amount)}
+                  </strong>
+
+                  <span className="rowArrow">
+                    ›
+                  </span>
+                  </div>
+
+              </Link>
+
+            );
+
+          })}
+
+      </section>
+
+      {/* ============================================================
+    11. 分頁控制
+    每頁最多顯示 20 筆
+============================================================ */}
+
+      {!loading &&
+        !errorMessage &&
+        totalCount > 0 && (
+
+          <footer className="pagination">
+
+            <div className="pageInfo">
+
+               顯示{" "}
+              {(currentPage - 1) * PAGE_SIZE + 1}
+              {" - "}
+              {Math.min(
+                currentPage * PAGE_SIZE,
+                totalCount
+              )}
+              {" / "}
+              {totalCount} 筆
+
+              </div>
+
+            <div className="pageButtons">
+
+              <button
+                type="button"
+                disabled={currentPage <= 1}
+                onClick={() => {
+                  setPage(currentPage - 1);
+                }}
+
+                >
+                ← 上一頁
+              </button>
+
+              <span className="pageNumber">
+                {currentPage} / {totalPages}
+              </span>
+
+              <button
+                type="button"
+                disabled={
+                  currentPage >= totalPages
+                }
+                onClick={() => {
+                  setPage(currentPage + 1);
+                }}
+                >
+                下一頁 →
+              </button>
+
+            </div>
+
+          </footer>
+
+        )}
+
+      {/* ============================================================
+    12. 響應式排版樣式
+    電腦：三欄清單
+    手機：精簡排列
+============================================================ */}
+
+      <style jsx>{`
+
+        .expensesPage {
+          max-width: 1100px;
+          margin: 0 auto;
+          padding: 28px 20px 70px;
+          color: #172033;
+        }
+
+        .topNavigation {
+          margin-bottom: 20px;
+          font-size: 14px;
+        }
+
+        .topNavigation a {
+          color: #64748b;
+          text-decoration: none;
+        }
+
+        .topNavigation a:hover {
+          color: #4f46e5;
+        }
+
+        /* 頁首 */
+        .pageHeader {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+.pageHeader h1 {
+          font-size: 30px;
+          font-weight: 800;
+          margin: 0;
+        }
+
+
+.pageHeader p {
+          font-size: 13px;
+          color: #64748b;
+          margin: 8px 0 0;
+        }
+
+        .addButton {
+          background: #4f46e5;
+          color: #fff;
+          padding: 12px 17px;
+          border-radius: 11px;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+
+        .addButton:hover {
+          background: #4338ca;
+        }
+
+        /* 篩選 */
+        .filterPanel {
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 17px;
+          margin-bottom: 16px;
+        }
+
+        .filterRow {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr;
+          gap: 12px;
+        }
+
+        .field {
+          display: flex;
+          flex-direction: column;
+          gap: 7px;
+          min-width: 0;
+        }
+
+        .field span {
+          font-size: 12px;
+          font-weight: 700;
+          color: #475569;
+        }
+
+        .field input,
+        .field select,
+        .sortSelect {
+          width: 100%;
+          min-width: 0;
+          min-height: 40px;
+          box-sizing: border-box;
+          padding: 9px 11px;
+          border: 1px solid #d9e0ea;
+          border-radius: 9px;
+          background: #fff;
+          color: #1e293b;
+          font-size: 13px;
+          outline: none;
+          }
+
+        .field input:focus,
+        .field select:focus,
+        .sortSelect:focus {
+          border-color: #6366f1;
+        }
+
+        .filterBottom {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-top: 14px;
+        }
+
+
+.typeTabs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 7px;
+        }
+
+        .typeButton {
+          padding: 8px 12px;
+          border: 1px solid #e2e8f0;
+          border-radius: 9px;
+          background: #f8fafc;
+          color: #64748b;
+          font-size: 12px;
+          cursor: pointer;
+        }
+
+
+        .typeButton.selected {
+          background: #eef2ff;
+          border-color: #c7d2fe;
+          color: #4338ca;
+          font-weight: 700;
+        }
+
+        .sortSelect {
+          width: auto;
+          min-width: 145px;
+        }
+
+        /* 統計 */
+        .summaryPanel {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 13px 17px;
+          background: #f1f5f9;
+          border-radius: 12px;
+          margin-bottom: 15px;
+        }
+
+
+.summaryCount,
+        .currencyTotal {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+
+        .summaryCount span,
+        .currencyTotal span {
+          font-size: 11px;
+          color: #64748b;
+        }
+
+        .summaryCount strong {
+          font-size: 19px;
+        }
+
+        .summaryTotals {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 18px;
+        }
+
+        .currencyTotal strong {
+          font-size: 15px;
+          font-variant-numeric: tabular-nums;
+        }
+
+         /* 清單 */
+        .listPanel {
+          overflow: hidden;
+          border: 1px solid #e2e8f0;
+          border-radius: 13px;
+          background: #fff;
+        }
+
+        .listHeader {
+          display: grid;
+          grid-template-columns: 1.2fr 1.8fr 1fr;
+          gap: 15px;
+          padding: 12px 17px;
+          background: #f8fafc;
+          color: #64748b;
+          font-size: 12px;
+          font-weight: 700;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .amountHeader {
+          text-align: right;
+        }
+
+        .expenseRow {
+          display: grid;
+          grid-template-columns: 1.2fr 1.8fr 1fr;
+          gap: 15px;
+          align-items: center;
+          padding: 12px 17px;
+          border-bottom: 1px solid #edf0f4;
+          text-decoration: none;
+          color: inherit;
+          transition: background 0.15s;
+        }
+
+        .expenseRow:last-child {
+          border-bottom: 0;
+        }
+
+        .expenseRow:hover {
+          background: #f8faff;
+        }
+
+        .expenseRow:focus-visible {
+          outline: 2px solid #6366f1;
+          outline-offset: -2px;
+        }
+
+        /* 日期、品項 */
+        .itemColumn {
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        }
+
+        .itemDate {
+          font-size: 11px;
+          color: #94a3b8;
+        }
+
+        .itemName {
+          font-size: 14px;
+          font-weight: 750;
+          overflow-wrap: anywhere;
+        }
+
+        /* 分類、付款 */
+        .detailColumn {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          gap: 4px;
+        }
+
+        .categoryName {
+          font-size: 12px;
+          color: #475569;
+          overflow-wrap: anywhere;
+        }
+
+        .paymentName {
+          font-size: 11px;
+          color: #94a3b8;
+          overflow-wrap: anywhere;
+        }
+
+        .scopeLine {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .scopeLabel {
+          display: inline-block;
+          padding: 2px 7px;
+          border-radius: 5px;
+          font-size: 10px;
+          font-weight: 700;
+        }
+
+
+.scopeLabel.daily {
+          color: #0f766e;
+          background: #ccfbf1;
+        }
+
+        .scopeLabel.trip {
+          color: #6d28d9;
+          background: #ede9fe;
+        }
+
+        .tripName {
+          font-size: 11px;
+          color: #64748b;
+          overflow-wrap: anywhere;
+        }
+
+        /* 金額 */
+        .amountColumn {
+          min-width: 0;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 6px;
+          text-align: right;
+        }
+
+        .currency {
+          font-size: 11px;
+          color: #64748b;
+          font-weight: 700;
+        }
+
+        .amount {
+          font-size: 16px;
+          font-weight: 800;
+          font-variant-numeric: tabular-nums;
+          white-space: nowrap;
+        }
+
+        .rowArrow {
+          font-size: 22px;
+          font-weight: 400;
+          color: #cbd5e1;
+          margin-left: 3px;
+        }
+
+        /* 空狀態 */
+        .statusMessage {
+          text-align: center;
+          padding: 42px 15px;
+          color: #64748b;
+          font-size: 14px;
+        }
+
+        .statusMessage.error {
+          color: #dc2626;
+        }
+
+        .emptyState {
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          gap: 10px;
+          padding: 45px 15px;
+        }
+
+        .emptyIcon {
+          font-size: 30px;
+        }
+
+        .emptyState p {
+          margin: 0;
+          color: #64748b;
+          font-size: 13px;
+        }
+
+        .emptyState button {
+          padding: 9px 15px;
+          background: #fff;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+
+        /* 分頁 */
+        .pagination {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 17px;
+        }
+
+        .pageInfo {
+          font-size: 12px;
+          color: #64748b;
+        }
+
+        .pageButtons {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .pageButtons button {
+          padding: 9px 12px;
+          border: 1px solid #dce2eb;
+          border-radius: 9px;
+          background: white;
+          color: #334155;
+          cursor: pointer;
+          font-size: 12px;
+        }
+
+         .pageButtons button:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
+        .pageNumber {
+          font-size: 12px;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+
+        /* 手機版 */
+        @media (max-width: 650px) {
+
+        .expensesPage {
+            padding: 19px 12px 60px;
+          }
+
+          .pageHeader {
+            align-items: flex-start;
+          }
+
+          .pageHeader h1 {
+            font-size: 24px;
+          }
+
+
+ .pageHeader p {
+            font-size: 12px;
+          }
+
+          .addButton {
+            padding: 10px 11px;
+            font-size: 12px;
+          }
+
+          .filterPanel {
+            padding: 12px;
+          }
+
+          .filterRow {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+          }
+
+          .searchField {
+            grid-column: 1 / -1;
+          }
+
+          .filterBottom {
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .sortSelect {
+            width: 100%;
+          }
+
+           .summaryPanel {
+            padding: 11px 12px;
+          }
+
+          .listHeader {
+            display: none;
+          }
+
+          .expenseRow {
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 5px 8px;
+            padding: 11px 12px;
+          }
+
+          .itemColumn {
+            grid-column: 1;
+            grid-row: 1;
+          }
+
+          .detailColumn {
+            grid-column: 1;
+            grid-row: 2;
+          }
+
+          .amountColumn {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            align-self: center;
+          }
+
+          .itemName {
+            font-size: 14px;
+          }
+
+          .amount {
+            font-size: 15px;
+          }
+
+          .categoryName {
+            font-size: 11px;
+          }
+
+          .paymentName {
+            font-size: 10px;
+          }
+
+          .pagination {
+            justify-content: center;
+          }
+
+          .pageInfo {
+          width: 100%;
+            text-align: center;
+          }
+        }
+
+      `}</style>
+
+    </main>
+  );
+}
             
             
