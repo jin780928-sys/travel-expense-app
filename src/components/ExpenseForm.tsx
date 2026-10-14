@@ -726,32 +726,7 @@ if (!category) {
     其他
   </option>
 </select>
-            <option value="">
-    請選擇付款方式
-  </option>
-
-  {paymentMethod &&
-    !PAYMENT_METHODS.includes(
-      paymentMethod
-    ) && (
-      <option
-        value={paymentMethod}
-      >
-        {paymentMethod}（原資料）
-      </option>
-    )}
-
-            {PAYMENT_METHODS.map(
-    (method) => (
-      <option
-        key={method}
-        value={method}
-      >
-        {method}
-      </option>
-    )
-  )}
->
+            
         </div>
 
        {CARD_PAYMENT_METHODS.includes(
