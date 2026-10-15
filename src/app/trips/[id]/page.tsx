@@ -576,7 +576,10 @@ const saveHotel = async () => {
       throw error;
     }
 
-    // 7. 儲存成功
+    
+    // 7. 儲存成功後重新讀取飯店列表
+    await loadHotels();
+
     alert("飯店資料儲存成功！");
 
     // 8. 清空表單
