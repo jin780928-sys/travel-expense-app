@@ -644,10 +644,14 @@ const saveHotel = async () => {
     // 7. 儲存成功後重新讀取飯店列表
     await loadHotels();
 
-    alert("飯店資料儲存成功！");
+alert(
+  editingHotelId !== null
+    ? "飯店資料更新成功！"
+    : "飯店資料儲存成功！"
+);
 
-    // 8. 清空表單
-    setHotelForm({
+// 8. 清空表單
+setHotelForm({
       hotel_name: "",
       check_in: "",
       check_out: "",
@@ -663,7 +667,9 @@ const saveHotel = async () => {
     });
 
     setShowHotelForm(false);
-  } catch (error) {
+setEditingHotelId(null);
+
+} catch (error) {
     console.error("儲存飯店失敗：", error);
 
     alert(
@@ -2712,9 +2718,33 @@ return (
                 
 <button
   type="button"
-  onClick={() =>
-    setShowHotelForm((prev) => !prev)
+  
+onClick={() => {
+  if (showHotelForm) {
+    setShowHotelForm(false);
+    setEditingHotelId(null);
+  } else {
+    setEditingHotelId(null);
+
+    setHotelForm({
+      hotel_name: "",
+      check_in: "",
+      check_out: "",
+      address: "",
+      room_type: "",
+      confirmation_number: "",
+      booking_platform: "",
+      amount: "",
+      currency: "USD",
+      payment_status: "unpaid",
+      booking_url: "",
+      notes: "",
+    });
+
+    setShowHotelForm(true);
   }
+}}
+
   style={{
     padding: "11px 18px",
     borderRadius: 12,
