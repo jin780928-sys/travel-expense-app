@@ -318,9 +318,12 @@ useEffect(() => {
 // 根據付款方式取得已建立的工具
 const availableMethods = managedMethods.filter(
   (method) => {
-    if (paymentMethod === "金融卡") {
-      return method.payment_type === "debit_card";
-    }
+    if (
+  paymentMethod === "金融卡" ||
+  paymentMethod === "Debit Card"
+) {
+  return method.payment_type === "debit_card";
+}
 
     if (paymentMethod === "Apple Pay") {
       return method.payment_type === "apple_pay";
@@ -825,20 +828,31 @@ const selectedManagedMethod =
           付款資料
         </h2>
 
-        {/* =========================================
+  
+{/* =========================================
     02. 付款方式
-    ========================================= */}
-        <div style={fieldStyle}>
+    Debit Card 與金融卡統一顯示
+    保留舊資料相容性
+   ========================================= */}
+
+<div style={fieldStyle}>
   <label style={labelStyle}>
     付款方式
   </label>
 
   <select
-    value={paymentMethod}
+    value={
+      paymentMethod === "Debit Card"
+        ? "金融卡"
+        : paymentMethod
+    }
     onChange={(e) => {
       const value = e.target.value;
 
       setPaymentMethod(value);
+
+      // 只有真正更換付款方式時，
+      // 才清除原本選擇的卡片
       setPaymentMethodId("");
       setCardName("");
     }}
@@ -848,34 +862,42 @@ const selectedManagedMethod =
       請選擇付款方式
     </option>
 
-    {/* 保留舊資料相容性 */}
+    {/* 保留其他舊付款方式 */}
     {paymentMethod &&
       ![
         ...PAYMENT_METHODS,
-        "信用卡",
+        "Debit Card",
         "金融卡",
+        "信用卡",
         "Apple Pay",
         "Google Pay",
         "現金",
+        "轉帳",
         "其他",
       ].includes(paymentMethod) && (
         <option value={paymentMethod}>
           {paymentMethod}（原資料）
         </option>
-        )}
+      )}
 
+    {/* 統一付款方式選項 */}
     {Array.from(
       new Set([
-        ...PAYMENT_METHODS,
+        ...PAYMENT_METHODS.map((method) =>
+          method === "Debit Card"
+            ? "金融卡"
+            : method
+        ),
+        "現金",
         "信用卡",
         "金融卡",
         "Apple Pay",
         "Google Pay",
-        "現金",
+        "轉帳",
         "其他",
       ])
     ).map((method) => (
-    <option
+      <option
         key={method}
         value={method}
       >
@@ -885,9 +907,9 @@ const selectedManagedMethod =
   </select>
 </div>
 
-      {/* =========================================
+
+{/* =========================================
     信用卡選擇
-    編輯時保留原本信用卡
    ========================================= */}
 
 {paymentMethod === "信用卡" && (
@@ -932,20 +954,22 @@ const selectedManagedMethod =
 )}
         
 
-        {/* =========================================
+{/* =========================================
     04. 金融卡 / Apple Pay / Google Pay
     ========================================= */}
 
         {[
   "金融卡",
+  "Debit Card",
   "Apple Pay",
   "Google Pay",
 ].includes(paymentMethod) && (
   <div style={fieldStyle}>
     <label style={labelStyle}>
-      {paymentMethod === "金融卡"
-        ? "選擇金融卡"
-        : `選擇 ${paymentMethod} 付款工具`}
+      {paymentMethod === "金融卡" ||
+ paymentMethod === "Debit Card"
+  ? "選擇金融卡"
+  : `選擇 ${paymentMethod} 付款工具`}
     </label>
 
     <select
