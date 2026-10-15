@@ -599,8 +599,9 @@ async function handleSave(
 
 
   const {
-        error: expenseError,
-      } = await supabase
+  data: expenseData,
+  error: expenseError,
+} = await supabase
         .from("Expenses")
         
 .update({
@@ -679,11 +680,34 @@ async function handleSave(
   split_type:
     splitType,
 })
-        .eq("id", id);
+        .eq("id", id)
+.select(
+  "id, payment_method, card_name, payment_method_id"
+);
 
-      if (expenseError) {
-        throw expenseError;
-      }
+if (expenseError) {
+  console.error(
+    "Supabase 更新錯誤:",
+    expenseError
+  );
+
+  throw expenseError;
+}
+
+// =========================================
+// 確認是否真的更新到資料庫
+// =========================================
+
+console.log(
+  "Supabase 更新結果:",
+  expenseData
+);
+
+if (!expenseData || expenseData.length === 0) {
+  throw new Error(
+    "Supabase 沒有更新任何資料，請檢查交易 ID 或 RLS 權限"
+  );
+}
 
 
   const {
