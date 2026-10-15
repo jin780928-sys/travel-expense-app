@@ -1092,110 +1092,63 @@ return (
               marginBottom: 18,
             }}
             >
-            {/* 行程 */}
-            <button
-              type="button"
-              onClick={() =>
-                setActiveTab(
-                  "itinerary"
-                )
-                }
-              style={{
-                height: 40,
-                padding: "0 16px",
-                borderRadius: 10,
-                border:
-                  activeTab ===
-                  "itinerary"
-                    ? "1px solid #2563eb"
-                    : "1px solid #d1d5db",
-                background:
-                  activeTab ===
-                  "itinerary"
-                ? "#2563eb"
-                    : "#ffffff",
-                color:
-                  activeTab ===
-                  "itinerary"
-                    ? "#ffffff"
-                    : "#374151",
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              行程
-            </button>
+          
+{/* =========================================
+    旅程分頁導覽
+    原本 3 個 + 新增 6 個
+    奶油米色系 / 自動換行
+   ========================================= */}
 
-            {/* 支出 */}
-            <button
-              type="button"
-              onClick={() =>
-                setActiveTab(
-                  "expenses"
-                )
-              }
-              style={{
-                height: 40,
-                padding: "0 16px",
-                borderRadius: 10,
-                border:
-                  activeTab ===
-                  "expenses"
-                 ? "1px solid #2563eb"
-                    : "1px solid #d1d5db",
-                background:
-                  activeTab ===
-                  "expenses"
-                    ? "#2563eb"
-                    : "#ffffff",
-                color:
-                  activeTab ===
-                  "expenses"
-                    ? "#ffffff"
-                    : "#374151",
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-              >
-              支出
-            </button>
+{(
+  [
+    { key: "itinerary", label: "行程", icon: "📅" },
+    { key: "expenses", label: "支出", icon: "💰" },
+    { key: "stats", label: "統計", icon: "📊" },
+    { key: "hotels", label: "飯店", icon: "🏨" },
+    { key: "flights", label: "機票", icon: "✈️" },
+    { key: "carRentals", label: "租車", icon: "🚗" },
+    { key: "bookings", label: "預約行程", icon: "🎟️" },
+    { key: "packing", label: "打包清單", icon: "🧳" },
+    { key: "notes", label: "備註", icon: "📝" },
+  ] as const
+).map((tab) => {
+  const selected = activeTab === tab.key;
 
-            {/* 統計 */}
-            <button
-              type="button"
-              onClick={() =>
-                setActiveTab(
-                  "stats"
-                )
-              }
-              style={{
-                height: 40,
-                padding: "0 16px",
-                borderRadius: 10,
-                border:
-                  activeTab ===
-                  "stats"
-                    ? "1px solid #2563eb"
-                    : "1px solid #d1d5db",
-                background:
-                  activeTab ===
-                  "stats"
-                    ? "#2563eb"
-                    : "#ffffff",
-                color:
-                  activeTab ===
-                  "stats"
-                    ? "#ffffff"
-                    : "#374151",
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: "pointer",
-                }}
-            >
-              統計
-            </button>
+  return (
+    <button
+      key={tab.key}
+      type="button"
+      onClick={() => setActiveTab(tab.key)}
+      style={{
+        height: 44,
+        padding: "0 17px",
+        borderRadius: 12,
+        border: selected
+          ? "1px solid #826349"
+          : "1px solid #e6dcd0",
+        background: selected
+          ? "#826349"
+          : "#ffffff",
+        color: selected
+          ? "#ffffff"
+          : "#674b39",
+        fontSize: 14,
+        fontWeight: selected ? 700 : 600,
+        cursor: "pointer",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 7,
+        whiteSpace: "nowrap",
+        transition: "all 0.15s ease",
+      }}
+    >
+      <span>{tab.icon}</span>
+      <span>{tab.label}</span>
+    </button>
+  );
+})}
+
           </div>
 
           {/* =================================================
