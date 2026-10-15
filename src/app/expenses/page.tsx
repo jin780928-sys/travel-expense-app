@@ -857,7 +857,7 @@ return (
   <div>花費資訊</div>
   <div className="amountHeader">金額</div>
 </div>
-  </div>
+ 
 
   {/* 載入中 */}
   {loading && (
