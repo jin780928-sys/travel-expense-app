@@ -770,6 +770,62 @@ setHotels((data ?? []) as TripHotel[]);
   }
 }
 
+
+/* =========================================
+   刪除飯店
+   ========================================= */
+
+const deleteHotel = async (hotel: TripHotel) => {
+  const confirmed = window.confirm(
+    `確定要刪除「${hotel.hotel_name}」嗎？\n\n刪除後無法復原。`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripHotels")
+      .delete()
+      .eq("id", hotel.id)
+      .eq("trip_id", hotel.trip_id)
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可刪除的飯店資料，請確認權限");
+    }
+
+    // 如果正在編輯被刪除的飯店，關閉表單
+    if (editingHotelId === hotel.id) {
+      setEditingHotelId(null);
+      setShowHotelForm(false);
+    }
+
+    await loadHotels();
+
+    alert("飯店已成功刪除！");
+  } catch (error) {
+    console.error("刪除飯店失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `刪除失敗：${error.message}`
+        : "刪除飯店失敗"
+    );
+  }
+};
+
   
 /* =========================================================
      載入 Trip 詳細資料
