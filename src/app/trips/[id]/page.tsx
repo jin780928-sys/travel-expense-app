@@ -708,6 +708,145 @@ const updateFlightField = (
 
 
 /* =========================================
+   UTC 轉換成機場當地時間
+   用於 datetime-local 編輯表單
+   ========================================= */
+
+function flightUTCToLocalInput(
+  utcDateTime: string | null,
+  timeZone: string | null
+): string {
+  if (!utcDateTime || !timeZone) return "";
+
+  const date = new Date(utcDateTime);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(date);
+
+    const values: Record<string, string> = {};
+
+    parts.forEach((part) => {
+      values[part.type] = part.value;
+    });
+
+    return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`;
+  } catch {
+    return "";
+  }
+}
+
+/* =========================================
+   編輯機票：帶入原本資料
+   ========================================= */
+
+const startEditFlight = (flight: TripFlight) => {
+  setEditingFlightId(flight.id);
+
+  setFlightForm({
+    airline: flight.airline || "",
+    flight_number: flight.flight_number || "",
+    departure_airport: flight.departure_airport || "",
+    arrival_airport: flight.arrival_airport || "",
+
+    departure_at: flightUTCToLocalInput(
+      flight.departure_at,
+      flight.departure_timezone
+    ),
+
+    arrival_at: flightUTCToLocalInput(
+      flight.arrival_at,
+      flight.arrival_timezone
+    ),
+
+    departure_timezone: flight.departure_timezone || "",
+    arrival_timezone: flight.arrival_timezone || "",
+    confirmation_number: flight.confirmation_number || "",
+    cabin_class: flight.cabin_class || "",
+    baggage_allowance: flight.baggage_allowance || "",
+    amount:
+      flight.amount === null
+        ? ""
+        : String(flight.amount),
+    currency: flight.currency || "USD",
+    payment_status: flight.payment_status || "unpaid",
+    booking_platform: flight.booking_platform || "",
+    booking_url: flight.booking_url || "",
+    notes: flight.notes || "",
+  });
+
+  setShowFlightForm(true);
+};
+
+
+/* =========================================
+   刪除機票
+   ========================================= */
+
+const deleteFlight = async (flight: TripFlight) => {
+  const confirmed = window.confirm(
+    `確定要刪除航班「${flight.flight_number || "未命名航班"}」嗎？\n\n刪除後無法復原。`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    if (!id) {
+      throw new Error("找不到旅程 ID");
+    }
+
+    const { data, error } = await supabase
+      .from("TripFlights")
+      .delete()
+      .eq("id", flight.id)
+      .eq("trip_id", Number(id))
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可刪除的機票資料，請確認權限");
+    }
+
+    if (editingFlightId === flight.id) {
+      setEditingFlightId(null);
+      setShowFlightForm(false);
+    }
+
+    await loadFlights();
+
+    alert("機票已成功刪除！");
+  } catch (error) {
+    console.error("刪除機票失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `刪除失敗：${error.message}`
+        : "刪除機票失敗"
+    );
+  }
+};
+
+/* =========================================
    新增／編輯機票資料
    儲存至 Supabase TripFlights
    ========================================= */
@@ -864,6 +1003,10 @@ const saveFlight = async () => {
       }
     }
 
+    
+    // 儲存成功後重新讀取機票列表
+    await loadFlights();
+
     alert(
       editingFlightId !== null
         ? "機票資料更新成功！"
@@ -872,6 +1015,7 @@ const saveFlight = async () => {
 
     // 9. 重設表單
     setFlightForm({
+
       airline: "",
       flight_number: "",
       departure_airport: "",
@@ -3874,9 +4018,37 @@ onClick={() => {
 
       <button
         type="button"
-        onClick={() =>
-          setShowFlightForm((prev) => !prev)
-        }
+        
+onClick={() => {
+  if (showFlightForm) {
+    setShowFlightForm(false);
+    setEditingFlightId(null);
+  } else {
+    setEditingFlightId(null);
+    setFlightForm({
+      airline: "",
+      flight_number: "",
+      departure_airport: "",
+      arrival_airport: "",
+      departure_at: "",
+      arrival_at: "",
+      departure_timezone: "",
+      arrival_timezone: "",
+      confirmation_number: "",
+      cabin_class: "",
+      baggage_allowance: "",
+      amount: "",
+      currency: "USD",
+      payment_status: "unpaid",
+      booking_platform: "",
+      booking_url: "",
+      notes: "",
+    });
+
+    setShowFlightForm(true);
+  }
+}}
+
         style={{
           padding: "11px 18px",
           borderRadius: 12,
@@ -4556,6 +4728,59 @@ onClick={() => {
         )}
       </div>
     ))}
+
+    
+{/* =========================================
+    機票操作：編輯 / 刪除
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+    marginTop: 18,
+    paddingTop: 16,
+    borderTop: "1px solid #e6dcd0",
+  }}
+>
+  <button
+    type="button"
+    onClick={() => startEditFlight(flight)}
+    style={{
+      padding: "9px 16px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#674b39",
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    ✏️ 編輯
+  </button>
+
+  <button
+    type="button"
+    onClick={() => deleteFlight(flight)}
+    style={{
+      padding: "9px 16px",
+      border: "1px solid #e7c9c3",
+      borderRadius: 10,
+      background: "#fff7f5",
+      color: "#b4534b",
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    🗑️ 刪除
+  </button>
+</div>
+
   </div>
 )}
 
