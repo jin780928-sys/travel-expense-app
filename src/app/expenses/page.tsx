@@ -840,173 +840,159 @@ return (
 
       )}
 
-      {/* ============================================================
-    10. 花費清單
-    每筆只有一列，不再使用大卡片
+     
+{/* ============================================================
+    10. 花費清單｜奶油米色版
+    電腦三欄 / 手機雙區塊
+    每筆花費一列，避免畫面過長
 ============================================================ */}
 
-      <section className="listPanel">
+<section className="listPanel">
 
-        {/* 表頭 */}
-        <div className="listHeader">
+  {/* =========================================
+      清單表頭
+     ========================================= */}
 
-          <div>日期 / 品項</div>
+  <div className="listHeader">
+    <div>日期 / 品項</div>
+    <div>分類 / 付款 / 來源</div>
+    <div className="amountHeader">金額</div>
+  </div>
 
-          <div>分類 / 付款 / 來源</div>
+  {/* 載入中 */}
+  {loading && (
+    <div className="statusMessage">
+      正在載入花費紀錄...
+    </div>
+  )}
 
-          <div className="amountHeader">
-            金額
+  {/* 載入錯誤 */}
+  {!loading && errorMessage && (
+    <div className="statusMessage error">
+      {errorMessage}
+    </div>
+  )}
+
+  {/* 無紀錄 */}
+  {!loading &&
+    !errorMessage &&
+    pagedExpenses.length === 0 && (
+      <div className="emptyState">
+
+        <div className="emptyIcon">🧾</div>
+
+        <strong>沒有符合條件的花費</strong>
+
+        <p>請調整搜尋或篩選條件</p>
+
+        <button
+          type="button"
+          onClick={clearFilters}
+        >
+          清除篩選
+        </button>
+
+      </div>
+    )}
+
+  {/* =========================================
+      單筆花費
+     ========================================= */}
+
+  {!loading &&
+    !errorMessage &&
+    pagedExpenses.map((expense) => {
+
+      const trip = isTripExpense(expense);
+
+      return (
+        <Link
+          key={String(expense.id)}
+          href={`/expenses/${encodeURIComponent(
+            String(expense.id)
+          )}`}
+          className="expenseRow"
+        >
+
+          {/* 第一欄：日期 / 品項 */}
+          <div className="itemColumn">
+
+            <span className="itemDate">
+              {formatDate(expense.date)}
+            </span>
+
+            <strong className="itemName">
+              {expense.item || "未命名花費"}
+            </strong>
+
           </div>
 
-        </div>
+          {/* 第二欄：分類 / 付款方式 */}
+          <div className="detailColumn">
 
-        {/* 載入中 */}
-        {loading && (
+            <div className="categoryName">
+              {formatCategory(expense)}
+            </div>
 
-          <div className="statusMessage">
-            正在載入花費紀錄...
-          </div>
+            <div className="paymentName">
+              {expense.payment_method === "Debit Card" ||
+               expense.payment_method === "debit_card"
+                ? "金融卡"
+                : expense.payment_method || "未設定付款方式"}
 
-        )}
+              {expense.card_name && (
+                <span className="cardName">
+                  {" · "}
+                  {expense.card_name}
+                </span>
+              )}
+            </div>
 
-        {/* 錯誤 */}
-        {!loading && errorMessage && (
+            <div className="scopeLine">
 
-          <div className="statusMessage error">
-            {errorMessage}
-          </div>
-
-        )}
-
-        {/* 無紀錄 */}
-        {!loading &&
-           !errorMessage &&
-          pagedExpenses.length === 0 && (
-
-            <div className="emptyState">
-
-              <div className="emptyIcon">
-                🧾
-              </div>
-
-
-              <strong>
-                沒有符合條件的花費
-              </strong>
-
-              <p>
-                請調整搜尋或篩選條件
-              </p>
-
-              <button
-                type="button"
-                onClick={clearFilters}
+              <span
+                className={
+                  trip
+                    ? "scopeLabel trip"
+                    : "scopeLabel daily"
+                }
               >
-                清除篩選
-              </button>
+                {trip ? "旅程" : "日常"}
+              </span>
+
+              {trip && (
+                <span className="tripName">
+                  {getTripName(expense)}
+                </span>
+              )}
 
             </div>
 
-          )}
+          </div>
 
-        {/* 單筆花費 */}
-        {!loading &&
-          !errorMessage &&
-          pagedExpenses.map((expense) => {
+          {/* 第三欄：金額 */}
+          <div className="amountColumn">
 
-            const trip = isTripExpense(expense);
+            <span className="currency">
+              {expense.currency || "USD"}
+            </span>
 
-            return (
+            <strong className="amount">
+              {formatAmount(expense.amount)}
+            </strong>
 
-              <Link
-                key={String(expense.id)}
-                href={`/expenses/${encodeURIComponent(
-                  String(expense.id)
-                )}`}
-                className="expenseRow"
-              >
+            <span className="rowArrow">
+              ›
+            </span>
 
-                {/* 第一欄：日期與品項 */}
-                <div className="itemColumn">
+          </div>
 
-                  <span className="itemDate">
-                    {formatDate(expense.date)}
-                  </span>
+        </Link>
+      );
+    })}
 
-                  <strong className="itemName">
-                    {expense.item || "未命名花費"}
-                  </strong>
+</section>
 
-                </div>
-
-                {/* 第二欄：分類及來源 */}
-                <div className="detailColumn">
-
-                  <div className="categoryName">
-                    {formatCategory(expense)}
-                  </div>
-
-                  <div className="paymentName">
-
-                    {expense.payment_method ||
-                      "未設定付款方式"}
-
-                    {expense.card_name && (
-                      <span>
-                        {" · "}
-                        {expense.card_name}
-                      </span>
-                    )}
-
-                  </div>
-
-                  <div className="scopeLine">
-
-                    <span
-                      className={
-                        trip
-                          ? "scopeLabel trip"
-                          : "scopeLabel daily"
-                      }
-                      >
-                      {trip ? "旅程" : "日常"}
-                    </span>
-
-                    {trip && (
-
-                      <span className="tripName">
-                        {getTripName(expense)}
-                      </span>
-
-                    )}
-
-                  </div>
-
-                </div>
-
-                {/* 第三欄：幣別及金額 */}
-                <div className="amountColumn">
-
-                  <span className="currency">
-                    {expense.currency || "USD"}
-                  </span>
-
-                  <strong className="amount">
-                    {formatAmount(expense.amount)}
-                  </strong>
-
-                  <span className="rowArrow">
-                    ›
-                  </span>
-                  </div>
-
-              </Link>
-
-            );
-
-          })}
-
-      </section>
 
       {/* ============================================================
     11. 分頁控制
@@ -1624,6 +1610,261 @@ return (
             text-align: center;
           }
         }
+
+/* =========================================
+   花費紀錄｜奶油米色清單排版
+   ========================================= */
+
+.listPanel {
+  background: #ffffff;
+  border: 1px solid #e6dcd0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 14px rgba(103, 75, 57, 0.04);
+}
+
+/* 表頭 */
+.listHeader {
+  display: grid;
+  grid-template-columns: 1.4fr 1.8fr 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 20px;
+
+  background: #f2ebe2;
+  border-bottom: 1px solid #e6dcd0;
+
+  color: #826c5a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.amountHeader {
+  text-align: right;
+}
+
+/* 單筆交易 */
+.expenseRow {
+  display: grid;
+  grid-template-columns: 1.4fr 1.8fr 1fr;
+  gap: 16px;
+  align-items: center;
+
+  min-height: 72px;
+  padding: 13px 20px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #f0e9e1;
+
+  color: #49392f;
+  text-decoration: none !important;
+
+  transition: background 0.15s ease;
+}
+
+.expenseRow:last-child {
+  border-bottom: none;
+}
+
+.expenseRow:hover {
+  background: #faf7f2;
+}
+
+/* 取消連結底線 */
+.expenseRow,
+.expenseRow * {
+  text-decoration: none !important;
+}
+
+/* 日期、品項 */
+.itemColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.itemDate {
+  font-size: 12px;
+  color: #927f70;
+}
+
+.itemName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #49392f;
+
+  overflow-wrap: anywhere;
+}
+
+/* 分類與付款 */
+.detailColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.categoryName {
+  font-size: 13px;
+  color: #674b39;
+  font-weight: 600;
+}
+
+.paymentName {
+  font-size: 12px;
+  color: #927f70;
+}
+
+.cardName {
+  color: #826349;
+  font-weight: 600;
+}
+
+/* 日常 / 旅程 */
+.scopeLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.scopeLabel {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 6px;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.scopeLabel.daily {
+  background: #e9eee5;
+  color: #667d5c;
+}
+
+.scopeLabel.trip {
+  background: #f4e5d6;
+  color: #a66d42;
+}
+
+.tripName {
+  font-size: 11px;
+  color: #927f70;
+}
+
+/* 幣別及金額 */
+.amountColumn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+.currency {
+  font-size: 11px;
+  color: #927f70;
+}
+
+.amount {
+  font-size: 17px;
+  font-weight: 800;
+  color: #674b39;
+  white-space: nowrap;
+}
+
+.rowArrow {
+  font-size: 20px;
+  color: #b6a594;
+  margin-left: 6px;
+}
+
+/* 空白及錯誤訊息 */
+.statusMessage,
+.emptyState {
+  padding: 38px 20px;
+  text-align: center;
+  color: #927f70;
+}
+
+.statusMessage.error {
+  color: #b45342;
+}
+
+.emptyIcon {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.emptyState strong {
+  display: block;
+  color: #49392f;
+}
+
+.emptyState p {
+  font-size: 13px;
+}
+
+.emptyState button {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: #e9ddd0;
+  color: #674b39;
+  border: 1px solid #d8c6b4;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+/* =========================================
+   手機版
+   ========================================= */
+
+@media (max-width: 650px) {
+
+  .listHeader {
+    display: none;
+  }
+
+  .expenseRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px 12px;
+
+    padding: 14px;
+    min-height: 0;
+  }
+
+  .itemColumn {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .detailColumn {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .amountColumn {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .itemName {
+    font-size: 14px;
+  }
+
+  .amount {
+    font-size: 15px;
+  }
+
+  .rowArrow {
+    margin-left: 2px;
+  }
+
+}
+
 
       `}</style>
 
