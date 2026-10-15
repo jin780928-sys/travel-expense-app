@@ -467,17 +467,7 @@ function formatFlightDuration(
   }
 
 
-/* =========================================
-   計算飛行 / 轉機 / 總旅行時間
-   ========================================= */
 
-function formatFlightTimeDifference(
-  startAt: string | null,
-  endAt: string | null
-): string {
-  if (!startAt || !endAt) {
-    return "時間未設定";
-  }
 
   const start = new Date(startAt).getTime();
   const end = new Date(endAt).getTime();
