@@ -103,6 +103,29 @@ type TripFlight = {
 
 
 /* =========================================
+   機票航段資料型別
+   ========================================= */
+
+type TripFlightSegment = {
+  id: number;
+  flight_id: number;
+  segment_order: number;
+  airline: string | null;
+  flight_number: string | null;
+  departure_airport: string | null;
+  arrival_airport: string | null;
+  departure_at: string | null;
+  arrival_at: string | null;
+  departure_timezone: string | null;
+  arrival_timezone: string | null;
+  cabin_class: string | null;
+  baggage_allowance: string | null;
+  notes: string | null;
+};
+
+
+
+/* =========================================
    旅程分頁類型
    ========================================= */
 
@@ -656,6 +679,17 @@ const [loadingHotels, setLoadingHotels] =
 // 已儲存的機票列表
 const [flights, setFlights] =
   useState<TripFlight[]>([]);
+
+/* =========================================
+   各張機票對應的航段
+   ========================================= */
+
+const [flightSegmentsByFlight, setFlightSegmentsByFlight] =
+  useState<Record<number, TripFlightSegment[]>>({});
+
+const [loadingFlightSegments, setLoadingFlightSegments] =
+  useState(false);
+
 
 // 是否正在讀取機票
 const [loadingFlights, setLoadingFlights] =
@@ -1745,6 +1779,70 @@ async function loadFlights() {
     setLoadingFlights(false);
   }
 }
+
+
+/* =========================================
+   自動載入各張機票的轉機航段
+   ========================================= */
+
+useEffect(() => {
+  let cancelled = false;
+
+  const fetchFlightSegments = async () => {
+    if (flights.length === 0) {
+      setFlightSegmentsByFlight({});
+      setLoadingFlightSegments(false);
+      return;
+    }
+
+    setLoadingFlightSegments(true);
+
+    try {
+      const flightIds = flights.map((flight) => flight.id);
+
+      const { data, error } = await supabase
+        .from("TripFlightSegments")
+        .select(
+          "id, flight_id, segment_order, airline, flight_number, departure_airport, arrival_airport, departure_at, arrival_at, departure_timezone, arrival_timezone, cabin_class, baggage_allowance, notes"
+        )
+        .in("flight_id", flightIds)
+        .order("segment_order", { ascending: true });
+
+      if (error) throw error;
+
+      const grouped: Record<number, TripFlightSegment[]> = {};
+
+      for (const segment of (data ?? []) as TripFlightSegment[]) {
+        if (!grouped[segment.flight_id]) {
+          grouped[segment.flight_id] = [];
+        }
+
+        grouped[segment.flight_id].push(segment);
+      }
+
+      if (!cancelled) {
+        setFlightSegmentsByFlight(grouped);
+      }
+    } catch (error) {
+      console.error("載入轉機航段失敗：", error);
+
+      if (!cancelled) {
+        setFlightSegmentsByFlight({});
+      }
+    } finally {
+      if (!cancelled) {
+        setLoadingFlightSegments(false);
+      }
+    }
+  };
+
+  void fetchFlightSegments();
+
+  return () => {
+    cancelled = true;
+  };
+}, [flights]);
+
 
 
 
