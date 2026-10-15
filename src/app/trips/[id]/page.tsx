@@ -74,6 +74,32 @@ type TripHotel = {
   notes: string | null;
 };
 
+
+/* =========================================
+   Type：旅程機票
+   ========================================= */
+
+type TripFlight = {
+  id: number;
+  trip_id: number;
+  airline: string | null;
+  flight_number: string | null;
+  departure_airport: string | null;
+  arrival_airport: string | null;
+  departure_at: string | null;
+  arrival_at: string | null;
+  confirmation_number: string | null;
+  cabin_class: string | null;
+  baggage_allowance: string | null;
+  amount: number | null;
+  currency: string;
+  payment_status: string;
+  booking_platform: string | null;
+  booking_url: string | null;
+  notes: string | null;
+};
+
+
 /* =========================================
    旅程分頁類型
    ========================================= */
