@@ -602,54 +602,83 @@ async function handleSave(
         error: expenseError,
       } = await supabase
         .from("Expenses")
-        .update({
-          // =========================================
-// 付款工具 ID
-// 金融卡 / Apple Pay / Google Pay
-// =========================================
-payment_method_id:
-  paymentMethodId
-    ? Number(paymentMethodId)
-    : null,
-          
-          item: item.trim(),
-          amount:
-            numericAmount,
-          date,
-          major_category:
-            majorCategory.trim() ||
-            null,
-          category:
-            category.trim() ||
-            null,
-          payment_method:
-            paymentMethod ||
-            null,
-          card_name:
-            paymentMethod ===
-              "credit_card"
-              ? cardName || null
-              : null,
-          currency:
-            currency || "USD",
-          expense_scope:
-            expenseScope,
-          trip_id:
-            expenseScope ===
-              "travel" &&
-            tripId
-              ? Number(tripId)
-              : null,
-          notes:
-            notes.trim() ||
-            null,
-          paid_by:
-            paidBy
-          ? Number(paidBy)
-              : null,
-          split_type:
-            splitType,
-        })
+        
+.update({
+  // =========================================
+  // 01. 基本花費資料
+  // =========================================
+
+  item: item.trim(),
+
+  amount: numericAmount,
+
+  date,
+
+  major_category:
+    majorCategory.trim() || null,
+
+  category:
+    category.trim() || null,
+
+  currency:
+    currency || "USD",
+
+  notes:
+    notes.trim() || null,
+
+  // =========================================
+  // 02. 付款方式
+  // =========================================
+
+  payment_method:
+    paymentMethod || null,
+
+  // 信用卡：保留實際卡片名稱
+  // Apple Pay / Google Pay：
+  // 若綁定信用卡，也保留卡片名稱
+  // 金融卡：不填入信用卡名稱
+
+  card_name:
+    (
+      paymentMethod === "信用卡" ||
+      paymentMethod === "Apple Pay" ||
+      paymentMethod === "Google Pay"
+    ) && cardName.trim()
+      ? cardName.trim()
+      : null,
+
+  // 金融卡 / Apple Pay / Google Pay
+  // 對應 PaymentMethods.id
+
+  payment_method_id:
+    paymentMethodId
+      ? Number(paymentMethodId)
+      : null,
+
+  // =========================================
+  // 03. 日常 / 旅程
+  // =========================================
+
+  expense_scope:
+    expenseScope,
+
+  trip_id:
+    expenseScope === "trip" && tripId
+      ? Number(tripId)
+      : null,
+
+  // =========================================
+  // 04. 付款人及分攤
+  // =========================================
+
+  paid_by:
+    paidBy
+      ? Number(paidBy)
+      : null,
+
+  split_type:
+    splitType,
+})
         .eq("id", id);
 
       if (expenseError) {
