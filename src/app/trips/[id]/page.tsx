@@ -592,31 +592,53 @@ const saveHotel = async () => {
       throw new Error("請先登入後再儲存飯店");
     }
 
-    // 6. 寫入 TripHotels
-    const { error } = await supabase
-      .from("TripHotels")
-      .insert({
-        trip_id: Number(id),
-        user_id: user.id,
-        hotel_name: hotelForm.hotel_name.trim(),
-        check_in: hotelForm.check_in || null,
-        check_out: hotelForm.check_out || null,
-        address: hotelForm.address.trim() || null,
-        room_type: hotelForm.room_type.trim() || null,
-        confirmation_number:
-          hotelForm.confirmation_number.trim() || null,
-        booking_platform:
-          hotelForm.booking_platform.trim() || null,
-        amount,
-        currency: hotelForm.currency.trim() || "USD",
-        payment_status: hotelForm.payment_status,
-        booking_url: hotelForm.booking_url.trim() || null,
-        notes: hotelForm.notes.trim() || null,
-      });
+    
+    // 6. 整理飯店資料
+    const hotelData = {
+      hotel_name: hotelForm.hotel_name.trim(),
+      check_in: hotelForm.check_in || null,
+      check_out: hotelForm.check_out || null,
+      address: hotelForm.address.trim() || null,
+      room_type: hotelForm.room_type.trim() || null,
+      confirmation_number:
+        hotelForm.confirmation_number.trim() || null,
+      booking_platform:
+        hotelForm.booking_platform.trim() || null,
+      amount,
+      currency: hotelForm.currency.trim() || "USD",
+      payment_status: hotelForm.payment_status,
+      booking_url: hotelForm.booking_url.trim() || null,
+      notes: hotelForm.notes.trim() || null,
+    };
 
-    if (error) {
-      throw error;
+    if (editingHotelId !== null) {
+      // 編輯：更新原本飯店
+      const { data, error } = await supabase
+        .from("TripHotels")
+        .update(hotelData)
+        .eq("id", editingHotelId)
+        .eq("trip_id", Number(id))
+        .eq("user_id", user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("沒有更新到飯店資料，請確認權限");
+      }
+    } else {
+      // 新增：建立新飯店
+      const { error } = await supabase
+        .from("TripHotels")
+        .insert({
+          ...hotelData,
+          trip_id: Number(id),
+          user_id: user.id,
+        });
+
+      if (error) throw error;
     }
+
 
     
     // 7. 儲存成功後重新讀取飯店列表
