@@ -512,6 +512,8 @@ const [flightForm, setFlightForm] = useState({
   arrival_airport: "",
   departure_at: "",
   arrival_at: "",
+  departure_timezone: "",
+  arrival_timezone: "",
   confirmation_number: "",
   cabin_class: "",
   baggage_allowance: "",
@@ -3554,6 +3556,104 @@ onClick={() => {
       ))}
     </div>
 
+    
+{/* =========================================
+    航班時區設定
+   ========================================= */}
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
+    gap: 16,
+    marginTop: 16,
+  }}
+>
+  {(
+    [
+      ["出發時區", "departure_timezone"],
+      ["抵達時區", "arrival_timezone"],
+    ] as const
+  ).map(([label, field]) => (
+    <label
+      key={field}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      {label}
+
+      <select
+        value={flightForm[field]}
+        onChange={(e) =>
+          updateFlightField(field, e.target.value)
+        }
+        style={{
+          height: 42,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          width: "100%",
+        }}
+      >
+        <option value="">請選擇時區</option>
+
+        <option value="America/Phoenix">
+          Phoenix（鳳凰城）
+        </option>
+        <option value="America/Los_Angeles">
+          Los Angeles（洛杉磯）
+        </option>
+        <option value="America/Denver">
+          Denver（丹佛）
+        </option>
+        <option value="America/Chicago">
+          Chicago（芝加哥）
+        </option>
+        <option value="America/New_York">
+          New York / Miami（美東）
+        </option>
+        <option value="Pacific/Honolulu">
+          Honolulu（夏威夷）
+        </option>
+        <option value="America/Lima">
+          Lima（祕魯）
+        </option>
+        <option value="America/Puerto_Rico">
+          San Juan（波多黎各）
+        </option>
+        <option value="Europe/London">
+          London（倫敦）
+        </option>
+        <option value="Europe/Paris">
+          Paris（巴黎）
+        </option>
+        <option value="Europe/Zurich">
+          Zurich（蘇黎世）
+        </option>
+        <option value="Asia/Taipei">
+          Taipei（台灣）
+        </option>
+        <option value="Asia/Tokyo">
+          Tokyo（日本）
+        </option>
+        <option value="Asia/Seoul">
+          Seoul（韓國）
+        </option>
+      </select>
+    </label>
+  ))}
+</div>
+
+    
     {/* 付款狀態 */}
     <label
       style={{
