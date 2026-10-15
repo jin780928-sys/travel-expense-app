@@ -429,6 +429,48 @@ function formatFlightDateTime(
   }
 }
 
+
+/* =========================================
+   計算飛行時間
+   使用 UTC 時間差，避免時區影響
+   ========================================= */
+
+function formatFlightDuration(
+  departureAt: string | null,
+  arrivalAt: string | null
+): string {
+  if (!departureAt || !arrivalAt) {
+    return "時間未設定";
+  }
+
+  const start = new Date(departureAt).getTime();
+  const end = new Date(arrivalAt).getTime();
+
+  if (!Number.isFinite(start) || !Number.isFinite(end)) {
+    return "時間格式錯誤";
+  }
+
+  const totalMinutes = Math.round(
+    (end - start) / 60000
+  );
+
+  if (totalMinutes <= 0) {
+    return "時間設定錯誤";
+  }
+
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+
+  const parts = [];
+
+  if (days > 0) parts.push(`${days} 天`);
+  if (hours > 0) parts.push(`${hours} 小時`);
+  if (minutes > 0) parts.push(`${minutes} 分鐘`);
+
+  return parts.join(" ") || "0 分鐘";
+}
+
 /* =========================================================
    Trip 詳細頁
    ========================================================= */
@@ -4347,15 +4389,53 @@ onClick={() => {
             </div>
           </div>
 
-          <div
-            style={{
-              fontSize: 22,
-              color: "#826349",
-              textAlign: "center",
-            }}
-          >
-            →
-          </div>
+          
+{/* 飛行方向與飛行時間 */}
+<div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    textAlign: "center",
+    minWidth: 90,
+  }}
+>
+  <span
+    style={{
+      fontSize: 24,
+      color: "#826349",
+      lineHeight: 1,
+    }}
+  >
+    →
+  </span>
+
+  <span
+    style={{
+      fontSize: 12,
+      fontWeight: 700,
+      color: "#674b39",
+      whiteSpace: "nowrap",
+    }}
+  >
+    {formatFlightDuration(
+      flight.departure_at,
+      flight.arrival_at
+    )}
+  </span>
+
+  <span
+    style={{
+      fontSize: 11,
+      color: "#927f70",
+    }}
+  >
+    飛行時間
+  </span>
+</div>
+
 
           <div
             style={{
