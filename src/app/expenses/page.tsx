@@ -631,9 +631,9 @@ return (
 
       </header>
 
-      {/* ============================================================
+{/* ============================================================
     08. 搜尋與篩選區
-============================================================ */}
+    ============================================================ */}
 
 
       <section className="filterPanel">
@@ -795,8 +795,8 @@ return (
 
 
 {/* ============================================================
-    09. 統計區
-============================================================ */}
+      09. 統計區
+    ============================================================ */}
 
       {!loading && !errorMessage && (
 
@@ -842,16 +842,14 @@ return (
 
      
 {/* ============================================================
-    10. 花費清單｜奶油米色版
-    電腦三欄 / 手機雙區塊
-    每筆花費一列，避免畫面過長
+    10. 花費清單｜
 ============================================================ */}
 
 <section className="listPanel">
 
-  {/* =========================================
+{/* =========================================
       清單表頭
-     ========================================= */}
+    ========================================= */}
 
   <div className="listHeader">
   <div>花費資訊</div>
@@ -895,9 +893,9 @@ return (
       </div>
     )}
 
-  {/* =========================================
+{/* =========================================
       單筆花費
-     ========================================= */}
+    ========================================= */}
 
   {!loading &&
     !errorMessage &&
@@ -986,11 +984,9 @@ return (
 
 </section>
 
-
-      {/* ============================================================
-    11. 分頁控制
-    每頁最多顯示 20 筆
-============================================================ */}
+{/* ============================================================
+    11. 分頁控制 - 每頁最多顯示 20 筆
+    ============================================================ */}
 
       {!loading &&
         !errorMessage &&
@@ -1280,32 +1276,54 @@ return (
         }
 
         .listHeader {
-          display: grid;
-          grid-template-columns: 1.2fr 1.8fr 1fr;
-          gap: 15px;
-          padding: 12px 17px;
-          background: #f8fafc;
-          color: #64748b;
-          font-size: 12px;
-          font-weight: 700;
-          border-bottom: 1px solid #e2e8f0;
-        }
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+
+        background: #f2ebe2;
+        border: 1px solid #e6dcd0;
+        border-radius: 12px;
+
+        color: #826c5a;
+        font-size: 12px;
+        font-weight: 700;
+      }
 
         .amountHeader {
           text-align: right;
         }
 
         .expenseRow {
-          display: grid;
-          grid-template-columns: 1.2fr 1.8fr 1fr;
-          gap: 15px;
-          align-items: center;
-          padding: 12px 17px;
-          border-bottom: 1px solid #edf0f4;
-          text-decoration: none;
-          color: inherit;
-          transition: background 0.15s;
-        }
+        display: block;
+        padding: 18px 18px 16px;
+        margin: 0 0 12px 0;
+
+        background: #ffffff;
+        border: 1px solid #eee3d7;
+        border-radius: 16px;
+
+        color: #49392f;
+        text-decoration: none !important;
+
+        transition: background 0.15s ease, transform 0.15s ease;
+      }
+
+      .expenseRow:last-child {
+        margin-bottom: 0;
+      }
+
+      .expenseRow:hover {
+        background: #faf7f2;
+        transform: translateY(-1px);
+      }
+
+      .expenseRow,
+      .expenseRow * {
+        text-decoration: none !important;
+      }
 
         .expenseRow:last-child {
           border-bottom: 0;
@@ -1579,7 +1597,11 @@ return (
           }
 
           .itemName {
-            font-size: 14px;
+          font-size: 18px;
+          font-weight: 800;
+          line-height: 1.35;
+          color: #49392f;
+          overflow-wrap: anywhere;
           }
 
           .amount {
@@ -1662,10 +1684,10 @@ return (
   text-decoration: none !important;
 }
 
-.mainColumn {
+  .mainColumn {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .itemDate {
@@ -1678,7 +1700,7 @@ return (
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 18px;
 }
 
 .itemName {
@@ -1692,7 +1714,7 @@ return (
 .detailColumn {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -1774,20 +1796,31 @@ return (
    ========================================= */
 
 @media (max-width: 650px) {
+  .expensesPage {
+    padding: 22px 16px 56px;
+  }
+
   .listHeader {
     display: none;
   }
 
+  .listPanel {
+    padding: 10px;
+    border-radius: 16px;
+  }
+
   .expenseRow {
-    padding: 16px 18px 15px;
+    padding: 16px 14px 15px;
+    margin-bottom: 10px;
+    border-radius: 14px;
   }
 
   .mainColumn {
-    gap: 7px;
+    gap: 8px;
   }
 
   .itemDate {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .titleLine {
@@ -1799,8 +1832,8 @@ return (
     font-size: 17px;
   }
 
-  .amountColumn {
-    margin-left: auto;
+  .detailColumn {
+    gap: 7px;
   }
 
   .amount {
