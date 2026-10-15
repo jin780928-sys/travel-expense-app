@@ -1063,6 +1063,13 @@ return (
       <style jsx>{`
 
         .expensesPage {
+        font-family:
+  "Inter",
+  "Noto Sans TC",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
   max-width: 1100px;
   margin: 0 auto;
   padding: 28px 20px 70px;
