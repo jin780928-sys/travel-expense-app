@@ -636,6 +636,60 @@ const [
   expensePaymentFilter,
   setExpensePaymentFilter,
 ] = useState("all");
+
+  
+/* =========================================
+   載入目前旅程的飯店資料
+   ========================================= */
+
+async function loadHotels() {
+  if (!id) return;
+
+  setLoadingHotels(true);
+
+  try {
+    const { data, error } = await supabase
+      .from("TripHotels")
+      .select(`
+        id,
+        trip_id,
+        hotel_name,
+        check_in,
+        check_out,
+        address,
+        room_type,
+        confirmation_number,
+        booking_platform,
+        amount,
+        currency,
+        payment_status,
+        booking_url,
+        notes
+      `)
+      .eq("trip_id", id)
+      .order("check_in", {
+        ascending: true,
+        nullsFirst: false,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    setHotels((data ?? []) as TripHotel[]);
+  } catch (error) {
+    console.error("載入飯店失敗：", error);
+
+    setMessage(
+      error instanceof Error
+        ? `載入飯店失敗：${error.message}`
+        : "無法載入飯店資料"
+    );
+  } finally {
+    setLoadingHotels(false);
+  }
+}
+
   
 /* =========================================================
      載入 Trip 詳細資料
@@ -771,10 +825,11 @@ useEffect(() => {
       setMessage("");
 
       await Promise.all([
-        loadTrip(),
-        loadItinerary(),
-        loadExpenses(),
-      ]);
+  loadTrip(),
+  loadItinerary(),
+  loadExpenses(),
+  loadHotels(),
+]);
 
       setLoading(false);
     }
