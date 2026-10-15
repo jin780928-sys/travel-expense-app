@@ -1297,9 +1297,10 @@ return (
         }
 
         .expenseRow {
-        display: block;
-        padding: 18px 18px 16px;
-        margin: 0 0 12px 0;
+          display: block;
+          /* 上、右、下、左 */
+          padding: 20px 40px 20px 40px;
+          margin: 0 0 14px 0;
 
         background: #ffffff;
         border: 1px solid #eee3d7;
@@ -1535,7 +1536,7 @@ return (
           }
 
 
- .pageHeader p {
+         .pageHeader p {
             font-size: 12px;
           }
 
@@ -1577,7 +1578,7 @@ return (
           .expenseRow {
             grid-template-columns: minmax(0, 1fr) auto;
             gap: 5px 8px;
-            padding: 11px 12px;
+            padding: 18px 20px;
           }
 
           .itemColumn {
