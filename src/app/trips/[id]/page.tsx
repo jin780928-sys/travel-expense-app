@@ -353,15 +353,7 @@ export default function TripDetailPage() {
     ? rawId[0]
     : rawId;
 
-  const {
-  data: { user },
-  error: authError,
-} = await supabase.auth.getUser();
-
-if (authError || !user) {
-  alert("請先登入，才能儲存飯店資料");
-  return;
-}
+  
 /* =========================================================
      State：旅程
      ========================================================= */
