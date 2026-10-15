@@ -275,35 +275,86 @@ export default function ExpenseDetailPage() {
       </div>
     )}
 
-    {expense.payment_method && (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 16,
-          flexWrap: "wrap",
-        }}
-      >
-        <span style={{ color: "#6b7280", fontSize: 14 }}>付款方式</span>
-        <span style={{ color: "#111827", fontSize: 14, fontWeight: 600 }}>
-          {expense.payment_method === "cash"
+    
+{/* =========================================
+    付款方式顯示
+    信用卡 / 金融卡 / Apple Pay / Google Pay
+   ========================================= */}
+
+{expense.payment_method && (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      gap: 16,
+      flexWrap: "wrap",
+    }}
+  >
+    <span
+      style={{
+        color: "#6b7280",
+        fontSize: 14,
+      }}
+    >
+      付款方式
+    </span>
+
+    <span
+      style={{
+        color: "#111827",
+        fontSize: 14,
+        fontWeight: 600,
+        textAlign: "right",
+      }}
+    >
+      {(() => {
+        const method = expense.payment_method;
+
+        const methodLabel =
+          method === "cash" || method === "現金"
             ? "現金"
-            : expense.payment_method === "credit_card"
+            : method === "credit_card" ||
+              method === "信用卡"
             ? "信用卡"
-            : expense.payment_method === "debit_card"
-            ? "簽帳金融卡"
-            : expense.payment_method === "bank_transfer"
+            : method === "debit_card" ||
+              method === "Debit Card" ||
+              method === "金融卡"
+            ? "金融卡"
+            : method === "bank_transfer" ||
+              method === "轉帳"
             ? "銀行轉帳"
-            : expense.payment_method === "apple_pay"
+            : method === "apple_pay" ||
+              method === "Apple Pay"
             ? "Apple Pay"
-            : expense.payment_method === "google_pay"
+            : method === "google_pay" ||
+              method === "Google Pay"
             ? "Google Pay"
-            : expense.payment_method === "other"
+            : method === "other" ||
+              method === "其他"
             ? "其他"
-            : expense.payment_method}
-        </span>
-      </div>
-    )}
+            : method;
+
+        return (
+          <>
+            {methodLabel}
+
+            {expense.card_name && (
+              <span
+                style={{
+                  marginLeft: 6,
+                  color: "#4f46e5",
+                }}
+              >
+                · {expense.card_name}
+              </span>
+            )}
+          </>
+        );
+      })()}
+    </span>
+  </div>
+)}
+
 
     {expense.payment_method === "credit_card" && (
       <div
