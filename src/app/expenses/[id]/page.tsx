@@ -393,16 +393,21 @@ useEffect(() => {
           <>
             {methodLabel}
 
-            {expense.card_name && (
-              <span
-                style={{
-                  marginLeft: 6,
-                  color: "#4f46e5",
-                }}
-              >
-                · {expense.card_name}
-              </span>
-            )}
+{/* =========================================
+    顯示實際付款卡片名稱
+    信用卡 / 金融卡 / Apple Pay / Google Pay
+   ========================================= */}
+
+{(expense.card_name || paymentToolName) && (
+  <span
+    style={{
+      marginLeft: 6,
+      color: "#4f46e5",
+    }}
+  >
+    · {expense.card_name || paymentToolName}
+  </span>
+)}
           </>
         );
       })()}
