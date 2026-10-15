@@ -675,11 +675,18 @@ async function loadHotels() {
         nullsFirst: false,
       });
 
-    if (error) {
-      throw error;
-    }
+    
+if (error) {
+  throw error;
+}
 
-    setHotels((data ?? []) as TripHotel[]);
+// 診斷：確認 Supabase 實際讀取結果
+console.log("TripHotels 目前旅程 ID：", id);
+console.log("TripHotels 查詢資料：", data);
+console.log("TripHotels 資料筆數：", data?.length ?? 0);
+
+setHotels((data ?? []) as TripHotel[]);
+
   } catch (error) {
     console.error("載入飯店失敗：", error);
 
