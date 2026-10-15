@@ -412,6 +412,13 @@ const [
   }
 }, []);
 
+  /* =========================================
+   飯店表單開關
+   ========================================= */
+
+const [showHotelForm, setShowHotelForm] =
+  useState(false);
+
   /* =========================================================
    統計分頁內部切換
    - category = 大分類統計
@@ -2383,8 +2390,42 @@ return (
                     集中管理這趟旅程的住宿資訊
                   </p>
                 </div>
+                
+<button
+  type="button"
+  onClick={() =>
+    setShowHotelForm((prev) => !prev)
+  }
+  style={{
+    padding: "11px 18px",
+    borderRadius: 12,
+    border: "1px solid #826349",
+    background: "#826349",
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: 700,
+    cursor: "pointer",
+  }}
+>
+  {showHotelForm ? "取消新增" : "＋ 新增飯店"}
+</button>
+
               </div>
 
+              {showHotelForm && (
+  <div
+    style={{
+      padding: 20,
+      marginBottom: 20,
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 14,
+      color: "#674b39",
+    }}
+  >
+    飯店資料表單（下一步加入輸入欄位）
+  </div>
+)}
               {/* 尚未建立飯店資料 */}
               <div
                 style={{
