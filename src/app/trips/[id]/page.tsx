@@ -478,6 +478,63 @@ const [hotels, setHotels] =
 const [loadingHotels, setLoadingHotels] =
   useState(false);
 
+
+/* =========================================
+   State：機票管理
+   ========================================= */
+
+// 已儲存的機票列表
+const [flights, setFlights] =
+  useState<TripFlight[]>([]);
+
+// 是否正在讀取機票
+const [loadingFlights, setLoadingFlights] =
+  useState(false);
+
+// 新增 / 編輯機票表單開關
+const [showFlightForm, setShowFlightForm] =
+  useState(false);
+
+// 目前編輯中的機票 ID
+// null 代表新增
+const [editingFlightId, setEditingFlightId] =
+  useState<number | null>(null);
+
+// 是否正在儲存
+const [savingFlight, setSavingFlight] =
+  useState(false);
+
+// 機票表單資料
+const [flightForm, setFlightForm] = useState({
+  airline: "",
+  flight_number: "",
+  departure_airport: "",
+  arrival_airport: "",
+  departure_at: "",
+  arrival_at: "",
+  confirmation_number: "",
+  cabin_class: "",
+  baggage_allowance: "",
+  amount: "",
+  currency: "USD",
+  payment_status: "unpaid",
+  booking_platform: "",
+  booking_url: "",
+  notes: "",
+});
+
+// 更新機票表單欄位
+const updateFlightField = (
+  field: keyof typeof flightForm,
+  value: string
+) => {
+  setFlightForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
+
   
 /* =========================================
    飯店表單資料 State
