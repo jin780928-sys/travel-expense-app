@@ -854,9 +854,9 @@ return (
      ========================================= */}
 
   <div className="listHeader">
-    <div>日期 / 品項</div>
-    <div>分類 / 付款 / 來源</div>
-    <div className="amountHeader">金額</div>
+  <div>花費資訊</div>
+  <div className="amountHeader">金額</div>
+</div>
   </div>
 
   {/* 載入中 */}
@@ -907,87 +907,80 @@ return (
 
       return (
         <Link
-          key={String(expense.id)}
-          href={`/expenses/${encodeURIComponent(
-            String(expense.id)
-          )}`}
-          className="expenseRow"
+  key={String(expense.id)}
+  href={`/expenses/${encodeURIComponent(
+    String(expense.id)
+  )}`}
+  className="expenseRow"
+>
+  <div className="mainColumn">
+
+    {/* 日期 */}
+    <span className="itemDate">
+      {formatDate(expense.date)}
+    </span>
+
+    {/* 品項 + 金額同一排 */}
+    <div className="titleLine">
+      <strong className="itemName">
+        {expense.item || "未命名花費"}
+      </strong>
+
+      <div className="amountColumn">
+        <span className="currency">
+          {expense.currency || "USD"}
+        </span>
+
+        <strong className="amount">
+          {formatAmount(expense.amount)}
+        </strong>
+
+        <span className="rowArrow">›</span>
+      </div>
+    </div>
+
+    {/* 分類 / 付款 / 來源 */}
+    <div className="detailColumn">
+
+      <div className="categoryName">
+        {formatCategory(expense)}
+      </div>
+
+      <div className="paymentName">
+        {expense.payment_method === "Debit Card" ||
+         expense.payment_method === "debit_card"
+          ? "金融卡"
+          : expense.payment_method || "未設定付款方式"}
+
+        {expense.card_name && (
+          <span className="cardName">
+            {" · "}
+            {expense.card_name}
+          </span>
+        )}
+      </div>
+
+      <div className="scopeLine">
+        <span
+          className={
+            trip
+              ? "scopeLabel trip"
+              : "scopeLabel daily"
+          }
         >
+          {trip ? "旅程" : "日常"}
+        </span>
 
-          {/* 第一欄：日期 / 品項 */}
-          <div className="itemColumn">
+        {trip && (
+          <span className="tripName">
+            {getTripName(expense)}
+          </span>
+        )}
+      </div>
 
-            <span className="itemDate">
-              {formatDate(expense.date)}
-            </span>
-
-            <strong className="itemName">
-              {expense.item || "未命名花費"}
-            </strong>
-
-          </div>
-
-          {/* 第二欄：分類 / 付款方式 */}
-          <div className="detailColumn">
-
-            <div className="categoryName">
-              {formatCategory(expense)}
-            </div>
-
-            <div className="paymentName">
-              {expense.payment_method === "Debit Card" ||
-               expense.payment_method === "debit_card"
-                ? "金融卡"
-                : expense.payment_method || "未設定付款方式"}
-
-              {expense.card_name && (
-                <span className="cardName">
-                  {" · "}
-                  {expense.card_name}
-                </span>
-              )}
-            </div>
-
-            <div className="scopeLine">
-
-              <span
-                className={
-                  trip
-                    ? "scopeLabel trip"
-                    : "scopeLabel daily"
-                }
-              >
-                {trip ? "旅程" : "日常"}
-              </span>
-
-              {trip && (
-                <span className="tripName">
-                  {getTripName(expense)}
-                </span>
-              )}
-
-            </div>
-
-          </div>
-
-          {/* 第三欄：金額 */}
-          <div className="amountColumn">
-
-            <span className="currency">
-              {expense.currency || "USD"}
-            </span>
-
-            <strong className="amount">
-              {formatAmount(expense.amount)}
-            </strong>
-
-            <span className="rowArrow">
-              ›
-            </span>
-
-          </div>
-
-        </Link>
+    </div>
+  </div>
+</Link>
       );
     })}
 
@@ -1626,10 +1619,10 @@ return (
 /* 表頭 */
 .listHeader {
   display: grid;
-  grid-template-columns: 1.4fr 1.8fr 1fr;
+  grid-template-columns: 1fr auto;
   gap: 16px;
   align-items: center;
-  padding: 14px 20px;
+  padding: 14px 24px;
 
   background: #f2ebe2;
   border-bottom: 1px solid #e6dcd0;
@@ -1643,15 +1636,9 @@ return (
   text-align: right;
 }
 
-/* 單筆交易 */
 .expenseRow {
-  display: grid;
-  grid-template-columns: 1.4fr 1.8fr 1fr;
-  gap: 16px;
-  align-items: center;
-
-  min-height: 72px;
-  padding: 13px 20px;
+  display: block;
+  padding: 18px 24px 16px;
 
   background: #ffffff;
   border-bottom: 1px solid #f0e9e1;
@@ -1670,34 +1657,38 @@ return (
   background: #faf7f2;
 }
 
-/* 取消連結底線 */
 .expenseRow,
 .expenseRow * {
   text-decoration: none !important;
 }
 
-/* 日期、品項 */
-.itemColumn {
+.mainColumn {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-width: 0;
+  gap: 8px;
 }
 
 .itemDate {
-  font-size: 12px;
-  color: #927f70;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #8c7a6b;
+}
+
+.titleLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .itemName {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.35;
   color: #49392f;
-
   overflow-wrap: anywhere;
 }
 
-/* 分類與付款 */
 .detailColumn {
   display: flex;
   flex-direction: column;
@@ -1721,7 +1712,6 @@ return (
   font-weight: 600;
 }
 
-/* 日常 / 旅程 */
 .scopeLine {
   display: flex;
   align-items: center;
@@ -1734,7 +1724,6 @@ return (
   align-items: center;
   padding: 3px 9px;
   border-radius: 6px;
-
   font-size: 11px;
   font-weight: 700;
 }
@@ -1754,67 +1743,30 @@ return (
   color: #927f70;
 }
 
-/* 幣別及金額 */
 .amountColumn {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  align-items: baseline;
   gap: 6px;
-  min-width: 0;
+  flex-shrink: 0;
+  margin-left: 12px;
 }
 
 .currency {
-  font-size: 11px;
+  font-size: 12px;
   color: #927f70;
 }
 
 .amount {
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 800;
   color: #674b39;
   white-space: nowrap;
 }
 
 .rowArrow {
-  font-size: 20px;
+  font-size: 22px;
   color: #b6a594;
-  margin-left: 6px;
-}
-
-/* 空白及錯誤訊息 */
-.statusMessage,
-.emptyState {
-  padding: 38px 20px;
-  text-align: center;
-  color: #927f70;
-}
-
-.statusMessage.error {
-  color: #b45342;
-}
-
-.emptyIcon {
-  font-size: 30px;
-  margin-bottom: 12px;
-}
-
-.emptyState strong {
-  display: block;
-  color: #49392f;
-}
-
-.emptyState p {
-  font-size: 13px;
-}
-
-.emptyState button {
-  margin-top: 12px;
-  padding: 10px 16px;
-  background: #e9ddd0;
-  color: #674b39;
-  border: 1px solid #d8c6b4;
-  border-radius: 9px;
-  cursor: pointer;
+  margin-left: 2px;
 }
 
 /* =========================================
@@ -1822,47 +1774,42 @@ return (
    ========================================= */
 
 @media (max-width: 650px) {
-
   .listHeader {
     display: none;
   }
 
   .expenseRow {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 7px 12px;
-
-    padding: 14px;
-    min-height: 0;
+    padding: 16px 18px 15px;
   }
 
-  .itemColumn {
-    grid-column: 1;
-    grid-row: 1;
+  .mainColumn {
+    gap: 7px;
   }
 
-  .detailColumn {
-    grid-column: 1;
-    grid-row: 2;
+  .itemDate {
+    font-size: 13px;
   }
 
-  .amountColumn {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
+  .titleLine {
+    gap: 10px;
+    align-items: flex-start;
   }
 
   .itemName {
-    font-size: 14px;
+    font-size: 17px;
+  }
+
+  .amountColumn {
+    margin-left: auto;
   }
 
   .amount {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   .rowArrow {
-    margin-left: 2px;
+    font-size: 20px;
   }
-
 }
 
 
