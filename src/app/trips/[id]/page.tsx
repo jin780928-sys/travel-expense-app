@@ -4467,6 +4467,242 @@ onClick={() => {
 )}
 
 
+{/* =========================================
+    多段航班 / 轉機設定
+   ========================================= */}
+
+<div
+  style={{
+    marginTop: 24,
+    padding: 18,
+    borderRadius: 14,
+    border: "1px solid #e6dcd0",
+    background: "#faf7f2",
+  }}
+>
+  <div style={{ marginBottom: 16 }}>
+    <h3
+      style={{
+        margin: 0,
+        fontSize: 17,
+        color: "#49392f",
+      }}
+    >
+      ✈️ 航班路線 / 轉機
+    </h3>
+    <p
+      style={{
+        margin: "6px 0 0",
+        fontSize: 12,
+        color: "#927f70",
+      }}
+    >
+      每段航班可以設定不同的航空公司、時間與時區。
+    </p>
+  </div>
+
+  {flightSegments.map((segment, index) => (
+    <div
+      key={segment.localId}
+      style={{
+        background: "#ffffff",
+        border: "1px solid #e6dcd0",
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 14,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 14,
+        }}
+      >
+        <strong style={{ color: "#49392f" }}>
+          第 {index + 1} 段航班
+        </strong>
+
+        {flightSegments.length > 1 && (
+          <button
+            type="button"
+            onClick={() =>
+              removeFlightSegment(segment.localId)
+            }
+            style={{
+              border: "none",
+              background: "transparent",
+              color: "#b4534b",
+              cursor: "pointer",
+            }}
+          >
+            🗑️ 移除
+          </button>
+        )}
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
+          gap: 12,
+        }}
+      >
+        {([
+          ["airline", "航空公司"],
+          ["flight_number", "航班編號"],
+          ["departure_airport", "出發機場"],
+          ["arrival_airport", "抵達機場"],
+          ["cabin_class", "艙等"],
+          ["baggage_allowance", "行李額度"],
+        ] as const).map(([field, label]) => (
+          <label key={field}>
+            <div style={{ marginBottom: 5, fontSize: 13 }}>
+              {label}
+            </div>
+            <input
+              type="text"
+              value={segment[field]}
+              onChange={(e) =>
+                updateFlightSegment(
+                  segment.localId,
+                  field,
+                  e.target.value
+                )
+              }
+              style={{
+                width: "100%",
+                padding: 10,
+                border: "1px solid #d8c6b4",
+                borderRadius: 9,
+                boxSizing: "border-box",
+              }}
+            />
+          </label>
+        ))}
+
+        {([
+          ["departure_at", "出發日期時間"],
+          ["arrival_at", "抵達日期時間"],
+        ] as const).map(([field, label]) => (
+          <label key={field}>
+            <div style={{ marginBottom: 5, fontSize: 13 }}>
+              {label}
+            </div>
+            <input
+              type="datetime-local"
+              value={segment[field]}
+              onChange={(e) =>
+                updateFlightSegment(
+                  segment.localId,
+                  field,
+                  e.target.value
+                )
+              }
+              style={{
+                width: "100%",
+                padding: 10,
+                border: "1px solid #d8c6b4",
+                borderRadius: 9,
+                boxSizing: "border-box",
+              }}
+            />
+          </label>
+        ))}
+
+        {([
+          ["departure_timezone", "出發時區"],
+          ["arrival_timezone", "抵達時區"],
+        ] as const).map(([field, label]) => (
+          <label key={field}>
+            <div style={{ marginBottom: 5, fontSize: 13 }}>
+              {label}
+            </div>
+
+            <select
+              value={segment[field]}
+              onChange={(e) =>
+                updateFlightSegment(
+                  segment.localId,
+                  field,
+                  e.target.value
+                )
+              }
+              style={{
+                width: "100%",
+                padding: 10,
+                border: "1px solid #d8c6b4",
+                borderRadius: 9,
+              }}
+            >
+              <option value="">選擇時區</option>
+              <option value="America/Phoenix">Phoenix</option>
+              <option value="America/Los_Angeles">Los Angeles</option>
+              <option value="America/Chicago">Chicago</option>
+              <option value="America/New_York">New York / Miami</option>
+              <option value="America/Lima">Lima</option>
+              <option value="Asia/Taipei">Taipei</option>
+              <option value="Asia/Tokyo">Tokyo</option>
+              <option value="Asia/Seoul">Seoul</option>
+              <option value="Europe/London">London</option>
+              <option value="Europe/Paris">Paris</option>
+            </select>
+          </label>
+        ))}
+      </div>
+
+      <label
+        style={{
+          display: "block",
+          marginTop: 12,
+          fontSize: 13,
+        }}
+      >
+        航段備註
+        <textarea
+          value={segment.notes}
+          onChange={(e) =>
+            updateFlightSegment(
+              segment.localId,
+              "notes",
+              e.target.value
+            )
+          }
+          rows={2}
+          style={{
+            display: "block",
+            width: "100%",
+            boxSizing: "border-box",
+            marginTop: 5,
+            padding: 10,
+            border: "1px solid #d8c6b4",
+            borderRadius: 9,
+          }}
+        />
+      </label>
+    </div>
+  ))}
+
+  <button
+    type="button"
+    onClick={addFlightSegment}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      background: "#ffffff",
+      border: "1px dashed #b89b80",
+      borderRadius: 10,
+      color: "#826349",
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    ＋ 新增轉機航段
+  </button>
+</div>
+
     
 {/* =========================================
     機票列表
