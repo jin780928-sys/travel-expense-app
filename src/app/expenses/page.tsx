@@ -910,6 +910,18 @@ return (
     String(expense.id)
   )}`}
   className="expenseRow"
+  style={{
+    display: "block",
+    boxSizing: "border-box",
+    width: "100%",
+    padding: "24px 40px",
+    marginBottom: 14,
+    backgroundColor: "#ffffff",
+    border: "1px solid #eee3d7",
+    borderRadius: 14,
+    color: "#49392f",
+    textDecoration: "none",
+  }}
 >
   <div className="mainColumn">
 
