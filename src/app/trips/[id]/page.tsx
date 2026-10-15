@@ -420,6 +420,47 @@ const [
 const [showHotelForm, setShowHotelForm] =
   useState(false);
 
+  
+/* =========================================
+   飯店表單資料 State
+   ========================================= */
+
+const [hotelForm, setHotelForm] = useState({
+  hotel_name: "",
+  check_in: "",
+  check_out: "",
+  address: "",
+  room_type: "",
+  confirmation_number: "",
+  booking_platform: "",
+  amount: "",
+  currency: "USD",
+  payment_status: "unpaid",
+  booking_url: "",
+  notes: "",
+});
+
+/* =========================================
+   飯店儲存狀態
+   ========================================= */
+
+const [savingHotel, setSavingHotel] =
+  useState(false);
+
+/* =========================================
+   更新飯店表單欄位
+   ========================================= */
+
+const updateHotelField = (
+  field: keyof typeof hotelForm,
+  value: string
+) => {
+  setHotelForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
   /* =========================================================
    統計分頁內部切換
    - category = 大分類統計
