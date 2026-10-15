@@ -2555,8 +2555,14 @@ return (
       付款狀態
 
       <select
-        defaultValue="unpaid"
-        style={{
+  value={hotelForm.payment_status}
+  onChange={(e) =>
+    updateHotelField(
+      "payment_status",
+      e.target.value
+    )
+  }
+  style={{
           height: 42,
           padding: "0 12px",
           border: "1px solid #d8c6b4",
@@ -2585,9 +2591,16 @@ return (
       備註
 
       <textarea
-        rows={4}
-        placeholder="例如：含早餐、免費停車、機場接駁、入住注意事項……"
-        style={{
+  rows={4}
+  placeholder="例如：含早餐、免費停車、機場接駁、入住注意事項……"
+  value={hotelForm.notes}
+  onChange={(e) =>
+    updateHotelField(
+      "notes",
+      e.target.value
+    )
+  }
+  style={{
           width: "100%",
           boxSizing: "border-box",
           padding: 12,
