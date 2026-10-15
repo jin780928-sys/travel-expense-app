@@ -390,6 +390,45 @@ function getTripStatusStyle(
     border: "1px solid #e5e7eb",
   };
 }
+
+/* =========================================
+   機票：顯示機場當地日期時間
+   UTC → 指定機場時區
+   ========================================= */
+
+function formatFlightDateTime(
+  utcDateTime: string | null,
+  timeZone: string | null
+): string {
+  if (!utcDateTime) {
+    return "未設定";
+  }
+
+  if (!timeZone) {
+    return "時區未設定";
+  }
+
+  const date = new Date(utcDateTime);
+
+  if (Number.isNaN(date.getTime())) {
+    return "日期格式錯誤";
+  }
+
+  try {
+    return new Intl.DateTimeFormat("zh-TW", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).format(date);
+  } catch {
+    return "時區設定錯誤";
+  }
+}
+
 /* =========================================================
    Trip 詳細頁
    ========================================================= */
