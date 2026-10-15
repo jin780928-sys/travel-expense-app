@@ -4180,47 +4180,305 @@ onClick={() => {
 )}
 
 
-    {/* 尚未建立機票資料 */}
+    
+{/* =========================================
+    機票列表
+   ========================================= */}
+
+{loadingFlights ? (
+  <div
+    style={{
+      padding: 28,
+      textAlign: "center",
+      color: "#927f70",
+    }}
+  >
+    載入機票資料中...
+  </div>
+) : flights.length === 0 ? (
+  <div
+    style={{
+      border: "1px dashed #d8c6b4",
+      background: "#faf7f2",
+      borderRadius: 14,
+      padding: "35px 18px",
+      textAlign: "center",
+    }}
+  >
+    <div style={{ fontSize: 32, marginBottom: 12 }}>
+      ✈️
+    </div>
+
     <div
       style={{
-        border: "1px dashed #d8c6b4",
-        background: "#faf7f2",
-        borderRadius: 14,
-        padding: "35px 18px",
-        textAlign: "center",
+        fontSize: 16,
+        fontWeight: 700,
+        color: "#674b39",
       }}
     >
-      <div
-        style={{
-          fontSize: 32,
-          marginBottom: 12,
-        }}
-      >
-        ✈️
-      </div>
-
-      <div
-        style={{
-          fontSize: 16,
-          fontWeight: 700,
-          color: "#674b39",
-        }}
-      >
-        尚未新增機票
-      </div>
-
-      <p
-        style={{
-          fontSize: 13,
-          lineHeight: 1.8,
-          color: "#927f70",
-          margin: "10px 0 0",
-        }}
-      >
-        這裡將顯示航空公司、航班編號、
-        起降機場與時間，以及訂位資訊。
-      </p>
+      尚未新增機票
     </div>
+
+    <p
+      style={{
+        margin: "10px 0 0",
+        fontSize: 13,
+        color: "#927f70",
+      }}
+    >
+      點擊「＋新增機票」開始記錄航班資訊。
+    </p>
+  </div>
+) : (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 14,
+    }}
+  >
+    {flights.map((flight) => (
+      <div
+        key={flight.id}
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+          padding: "20px 22px",
+          boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
+        }}
+      >
+        {/* 航空公司、航班編號、付款狀態 */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 12,
+            marginBottom: 18,
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: 13,
+                color: "#927f70",
+                marginBottom: 5,
+              }}
+            >
+              {flight.airline || "航空公司未設定"}
+            </div>
+
+            <h3
+              style={{
+                margin: 0,
+                fontSize: 20,
+                fontWeight: 800,
+                color: "#49392f",
+              }}
+            >
+              ✈️ {flight.flight_number || "未設定航班"}
+            </h3>
+          </div>
+
+          <span
+            style={{
+              padding: "5px 11px",
+              borderRadius: 999,
+              fontSize: 12,
+              fontWeight: 700,
+              background:
+                flight.payment_status === "paid"
+                  ? "#e8f0e5"
+                  : flight.payment_status === "partial"
+                    ? "#fff0d9"
+                    : "#f2ebe2",
+              color:
+                flight.payment_status === "paid"
+                  ? "#55704e"
+                  : "#826349",
+            }}
+          >
+            {flight.payment_status === "paid"
+              ? "已付款"
+              : flight.payment_status === "partial"
+                ? "部分付款"
+                : "未付款"}
+          </span>
+        </div>
+
+        {/* 出發與抵達機場 */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "minmax(0, 1fr) auto minmax(0, 1fr)",
+            alignItems: "center",
+            gap: 12,
+            padding: 16,
+            borderRadius: 12,
+            background: "#faf7f2",
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 20,
+                fontWeight: 800,
+                color: "#49392f",
+              }}
+            >
+              {flight.departure_airport || "—"}
+            </div>
+
+            <div
+              style={{
+                marginTop: 7,
+                fontSize: 12,
+                color: "#674b39",
+                overflowWrap: "anywhere",
+              }}
+            >
+              {formatFlightDateTime(
+                flight.departure_at,
+                flight.departure_timezone
+              )}
+            </div>
+          </div>
+
+          <div
+            style={{
+              fontSize: 22,
+              color: "#826349",
+              textAlign: "center",
+            }}
+          >
+            →
+          </div>
+
+          <div
+            style={{
+              minWidth: 0,
+              textAlign: "right",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 20,
+                fontWeight: 800,
+                color: "#49392f",
+              }}
+            >
+              {flight.arrival_airport || "—"}
+            </div>
+
+            <div
+              style={{
+                marginTop: 7,
+                fontSize: 12,
+                color: "#674b39",
+                overflowWrap: "anywhere",
+              }}
+            >
+              {formatFlightDateTime(
+                flight.arrival_at,
+                flight.arrival_timezone
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* 航班其他資訊 */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+            gap: 12,
+            marginTop: 16,
+            fontSize: 13,
+            lineHeight: 1.7,
+            color: "#674b39",
+          }}
+        >
+          {flight.confirmation_number && (
+            <div>
+              <strong>訂位代碼：</strong>
+              {flight.confirmation_number}
+            </div>
+          )}
+
+          {flight.cabin_class && (
+            <div>
+              <strong>艙等：</strong>
+              {flight.cabin_class}
+            </div>
+          )}
+
+          {flight.baggage_allowance && (
+            <div>
+              <strong>行李額度：</strong>
+              {flight.baggage_allowance}
+            </div>
+          )}
+
+          {flight.booking_platform && (
+            <div>
+              <strong>訂票平台：</strong>
+              {flight.booking_platform}
+            </div>
+          )}
+
+          {flight.amount !== null && (
+            <div>
+              <strong>機票金額：</strong>
+              {flight.currency || "USD"}{" "}
+              {formatAmount(flight.amount)}
+            </div>
+          )}
+        </div>
+
+        {/* 備註 */}
+        {flight.notes && (
+          <div
+            style={{
+              marginTop: 14,
+              padding: 12,
+              background: "#faf7f2",
+              borderRadius: 10,
+              fontSize: 13,
+              color: "#927f70",
+              lineHeight: 1.7,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {flight.notes}
+          </div>
+        )}
+
+        {/* 訂票網址 */}
+        {flight.booking_url && (
+          <a
+            href={flight.booking_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              marginTop: 14,
+              color: "#826349",
+              fontSize: 13,
+              fontWeight: 700,
+            }}
+          >
+            查看訂票網址 ↗
+          </a>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+
   </section>
 )}
 
