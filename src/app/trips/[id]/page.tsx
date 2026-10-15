@@ -461,6 +461,122 @@ const updateHotelField = (
   }));
 };
 
+  
+/* =========================================
+   儲存飯店資料到 Supabase
+   ========================================= */
+
+const saveHotel = async () => {
+  if (savingHotel) return;
+
+  // 1. 確認旅程 ID
+  if (!id || !Number.isSafeInteger(Number(id))) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  // 2. 必填欄位
+  if (!hotelForm.hotel_name.trim()) {
+    alert("請輸入飯店名稱");
+    return;
+  }
+
+  // 3. 日期檢查
+  if (
+    hotelForm.check_in &&
+    hotelForm.check_out &&
+    hotelForm.check_out <= hotelForm.check_in
+  ) {
+    alert("退房日期必須晚於入住日期");
+    return;
+  }
+
+  // 4. 金額檢查
+  const amountText = hotelForm.amount.trim();
+
+  const amount =
+    amountText === "" ? null : Number(amountText);
+
+  if (
+    amount !== null &&
+    (!Number.isFinite(amount) || amount < 0)
+  ) {
+    alert("請輸入有效的住宿金額");
+    return;
+  }
+
+  setSavingHotel(true);
+
+  try {
+    // 5. 取得目前登入的使用者
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入後再儲存飯店");
+    }
+
+    // 6. 寫入 TripHotels
+    const { error } = await supabase
+      .from("TripHotels")
+      .insert({
+        trip_id: Number(id),
+        user_id: user.id,
+        hotel_name: hotelForm.hotel_name.trim(),
+        check_in: hotelForm.check_in || null,
+        check_out: hotelForm.check_out || null,
+        address: hotelForm.address.trim() || null,
+        room_type: hotelForm.room_type.trim() || null,
+        confirmation_number:
+          hotelForm.confirmation_number.trim() || null,
+        booking_platform:
+          hotelForm.booking_platform.trim() || null,
+        amount,
+        currency: hotelForm.currency.trim() || "USD",
+        payment_status: hotelForm.payment_status,
+        booking_url: hotelForm.booking_url.trim() || null,
+        notes: hotelForm.notes.trim() || null,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    // 7. 儲存成功
+    alert("飯店資料儲存成功！");
+
+    // 8. 清空表單
+    setHotelForm({
+      hotel_name: "",
+      check_in: "",
+      check_out: "",
+      address: "",
+      room_type: "",
+      confirmation_number: "",
+      booking_platform: "",
+      amount: "",
+      currency: "USD",
+      payment_status: "unpaid",
+      booking_url: "",
+      notes: "",
+    });
+
+    setShowHotelForm(false);
+  } catch (error) {
+    console.error("儲存飯店失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `儲存失敗：${error.message}`
+        : "儲存失敗，請稍後再試"
+    );
+  } finally {
+    setSavingHotel(false);
+  }
+};
+
   /* =========================================================
    統計分頁內部切換
    - category = 大分類統計
