@@ -88,6 +88,8 @@ type TripFlight = {
   arrival_airport: string | null;
   departure_at: string | null;
   arrival_at: string | null;
+  departure_timezone: string | null;
+  arrival_timezone: string | null;
   confirmation_number: string | null;
   cabin_class: string | null;
   baggage_allowance: string | null;
@@ -1144,6 +1146,65 @@ setHotels((data ?? []) as TripHotel[]);
 
 
 /* =========================================
+   載入目前旅程的機票資料
+   ========================================= */
+
+async function loadFlights() {
+  if (!id) return;
+
+  setLoadingFlights(true);
+
+  try {
+    const { data, error } = await supabase
+      .from("TripFlights")
+      .select(`
+        id,
+        trip_id,
+        airline,
+        flight_number,
+        departure_airport,
+        arrival_airport,
+        departure_at,
+        arrival_at,
+        departure_timezone,
+        arrival_timezone,
+        confirmation_number,
+        cabin_class,
+        baggage_allowance,
+        amount,
+        currency,
+        payment_status,
+        booking_platform,
+        booking_url,
+        notes
+      `)
+      .eq("trip_id", id)
+      .order("departure_at", {
+        ascending: true,
+        nullsFirst: false,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    setFlights((data ?? []) as TripFlight[]);
+  } catch (error) {
+    console.error("載入機票失敗：", error);
+
+    setMessage(
+      error instanceof Error
+        ? `載入機票失敗：${error.message}`
+        : "無法載入機票資料"
+    );
+  } finally {
+    setLoadingFlights(false);
+  }
+}
+
+
+
+/* =========================================
    刪除飯店
    ========================================= */
 
@@ -1337,6 +1398,7 @@ useEffect(() => {
   loadItinerary(),
   loadExpenses(),
   loadHotels(),
+  loadFlights(),
 ]);
 
       setLoading(false);
