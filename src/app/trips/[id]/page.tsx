@@ -3392,6 +3392,137 @@ onClick={() => {
             </section>
           )}
 
+{/* =========================================
+    機票管理分頁
+    ========================================= */}
+
+{activeTab === "flights" && (
+  <section
+    style={{
+      background: "#fffdf9",
+      border: "1px solid #e6dcd0",
+      borderRadius: 16,
+      padding: 22,
+      marginBottom: 20,
+    }}
+  >
+    {/* 機票標題與新增按鈕 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 12,
+        marginBottom: 20,
+      }}
+    >
+      <div>
+        <h2
+          style={{
+            margin: 0,
+            fontSize: 22,
+            fontWeight: 800,
+            color: "#49392f",
+          }}
+        >
+          ✈️ 機票管理
+        </h2>
+
+        <p
+          style={{
+            margin: "7px 0 0",
+            fontSize: 13,
+            color: "#927f70",
+          }}
+        >
+          集中管理這趟旅程的航班與訂票資訊
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() =>
+          setShowFlightForm((prev) => !prev)
+        }
+        style={{
+          padding: "11px 18px",
+          borderRadius: 12,
+          border: "1px solid #826349",
+          background: "#826349",
+          color: "#ffffff",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        {showFlightForm
+          ? "取消新增"
+          : "＋ 新增機票"}
+      </button>
+    </div>
+
+    {/* 機票表單暫存區 */}
+    {showFlightForm && (
+      <div
+        style={{
+          background: "#faf7f2",
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+          padding: 20,
+          marginBottom: 18,
+          color: "#674b39",
+          fontSize: 14,
+        }}
+      >
+        機票資料表單（下一步加入輸入欄位）
+      </div>
+    )}
+
+    {/* 尚未建立機票資料 */}
+    <div
+      style={{
+        border: "1px dashed #d8c6b4",
+        background: "#faf7f2",
+        borderRadius: 14,
+        padding: "35px 18px",
+        textAlign: "center",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 32,
+          marginBottom: 12,
+        }}
+      >
+        ✈️
+      </div>
+
+      <div
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "#674b39",
+        }}
+      >
+        尚未新增機票
+      </div>
+
+      <p
+        style={{
+          fontSize: 13,
+          lineHeight: 1.8,
+          color: "#927f70",
+          margin: "10px 0 0",
+        }}
+      >
+        這裡將顯示航空公司、航班編號、
+        起降機場與時間，以及訂位資訊。
+      </p>
+    </div>
+  </section>
+)}
+
         </>
       )}
     </main>
