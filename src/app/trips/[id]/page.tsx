@@ -453,6 +453,7 @@ function formatFlightDateTime(
 }
 
 
+
 /* =========================================
    計算飛行時間
    使用 UTC 時間差，避免時區影響
@@ -466,8 +467,46 @@ function formatFlightDuration(
     return "時間未設定";
   }
 
+  const start = new Date(departureAt).getTime();
+  const end = new Date(arrivalAt).getTime();
 
+  if (!Number.isFinite(start) || !Number.isFinite(end)) {
+    return "時間格式錯誤";
+  }
 
+  const totalMinutes = Math.round(
+    (end - start) / 60000
+  );
+
+  if (totalMinutes <= 0) {
+    return "時間設定錯誤";
+  }
+
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+
+  const parts: string[] = [];
+
+  if (days > 0) parts.push(`${days} 天`);
+  if (hours > 0) parts.push(`${hours} 小時`);
+  if (minutes > 0) parts.push(`${minutes} 分鐘`);
+
+  return parts.join(" ") || "0 分鐘";
+}
+
+/* =========================================
+   計算兩個 UTC 時間之間的時長
+   可用於飛行、轉機及總旅行時間
+   ========================================= */
+
+function formatFlightTimeDifference(
+  startAt: string | null,
+  endAt: string | null
+): string {
+  if (!startAt || !endAt) {
+    return "時間未設定";
+  }
 
   const start = new Date(startAt).getTime();
   const end = new Date(endAt).getTime();
@@ -489,90 +528,19 @@ function formatFlightDuration(
   }
 
   const days = Math.floor(totalMinutes / 1440);
-  const hours = Math.floor(
-    (totalMinutes % 1440) / 60
-  );
-  const minutes = totalMinutes % 60;
-
-  const result: string[] = [];
-
-  if (days > 0) result.push(`${days} 天`);
-  if (hours > 0) result.push(`${hours} 小時`);
-  if (minutes > 0) {
-    result.push(`${minutes} 分鐘`);
-  }
-
-  return result.join(" ");
-}
-
-
-  
-/* =========================================
-   計算兩個 UTC 時間之間的時長
-   可用於飛行、轉機及總旅行時間
-   ========================================= */
-
-function formatFlightTimeDifference(
-  startAt: string | null,
-  endAt: string | null
-): string {
-  if (!startAt || !endAt) return "時間未設定";
-
-  const start = new Date(startAt).getTime();
-  const end = new Date(endAt).getTime();
-
-  if (!Number.isFinite(start) || !Number.isFinite(end)) {
-    return "時間格式錯誤";
-  }
-
-  const minutes = Math.round((end - start) / 60000);
-
-  if (minutes < 0) return "時間設定錯誤";
-  if (minutes === 0) return "0 分鐘";
-
-  const days = Math.floor(minutes / 1440);
-  const hours = Math.floor((minutes % 1440) / 60);
-  const remainingMinutes = minutes % 60;
-
-  const result: string[] = [];
-
-  if (days > 0) result.push(`${days} 天`);
-  if (hours > 0) result.push(`${hours} 小時`);
-  if (remainingMinutes > 0) {
-    result.push(`${remainingMinutes} 分鐘`);
-  }
-
-  return result.join(" ");
-}
-
-
-  const start = new Date(departureAt).getTime();
-  const end = new Date(arrivalAt).getTime();
-
-  if (!Number.isFinite(start) || !Number.isFinite(end)) {
-    return "時間格式錯誤";
-  }
-
-  const totalMinutes = Math.round(
-    (end - start) / 60000
-  );
-
-  if (totalMinutes <= 0) {
-    return "時間設定錯誤";
-  }
-
-  const days = Math.floor(totalMinutes / 1440);
   const hours = Math.floor((totalMinutes % 1440) / 60);
   const minutes = totalMinutes % 60;
 
-  const parts = [];
+  const parts: string[] = [];
 
   if (days > 0) parts.push(`${days} 天`);
   if (hours > 0) parts.push(`${hours} 小時`);
   if (minutes > 0) parts.push(`${minutes} 分鐘`);
 
-  return parts.join(" ") || "0 分鐘";
+  return parts.join(" ");
 }
+
+
 
 /* =========================================================
    Trip 詳細頁
