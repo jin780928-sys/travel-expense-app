@@ -3166,6 +3166,29 @@ onClick={() => {
             ✏️ 編輯
           </button>
 
+          
+{/* =========================================
+    刪除飯店按鈕
+   ========================================= */}
+
+<button
+  type="button"
+  onClick={() => deleteHotel(hotel)}
+  style={{
+    padding: "7px 14px",
+    border: "1px solid #e7c9c3",
+    borderRadius: 10,
+    background: "#fff7f5",
+    color: "#b4534b",
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: "pointer",
+  }}
+>
+  🗑️ 刪除
+</button>
+
+
         </div>
 
         <div
