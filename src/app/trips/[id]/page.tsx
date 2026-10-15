@@ -624,6 +624,206 @@ const updateFlightField = (
 };
 
 
+/* =========================================
+   新增／編輯機票資料
+   儲存至 Supabase TripFlights
+   ========================================= */
+
+const saveFlight = async () => {
+  if (savingFlight) return;
+
+  // 1. 檢查旅程 ID
+  if (!id || !Number.isSafeInteger(Number(id))) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  // 2. 檢查航班資料
+  if (!flightForm.airline.trim()) {
+    alert("請輸入航空公司");
+    return;
+  }
+
+  if (!flightForm.flight_number.trim()) {
+    alert("請輸入航班編號");
+    return;
+  }
+
+  if (
+    flightForm.departure_at &&
+    !flightForm.departure_timezone
+  ) {
+    alert("請選擇出發時區");
+    return;
+  }
+
+  if (
+    flightForm.arrival_at &&
+    !flightForm.arrival_timezone
+  ) {
+    alert("請選擇抵達時區");
+    return;
+  }
+
+  // 3. 檢查金額
+  const amountText = flightForm.amount.trim();
+
+  const amount =
+    amountText === "" ? null : Number(amountText);
+
+  if (
+    amount !== null &&
+    (!Number.isFinite(amount) || amount < 0)
+  ) {
+    alert("請輸入有效的機票金額");
+    return;
+  }
+
+  setSavingFlight(true);
+
+  try {
+    // 4. 取得登入使用者
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入後再儲存機票");
+    }
+
+    // 5. 機場當地時間轉 UTC
+    const departureUTC = flightLocalTimeToUTC(
+      flightForm.departure_at,
+      flightForm.departure_timezone
+    );
+
+    const arrivalUTC = flightLocalTimeToUTC(
+      flightForm.arrival_at,
+      flightForm.arrival_timezone
+    );
+
+    // 6. 檢查航班時間順序
+    if (
+      departureUTC &&
+      arrivalUTC &&
+      new Date(arrivalUTC).getTime() <=
+        new Date(departureUTC).getTime()
+    ) {
+      throw new Error(
+        "抵達時間必須晚於出發時間，請檢查日期與時區"
+      );
+    }
+
+    // 7. 整理資料
+    const flightData = {
+      airline: flightForm.airline.trim(),
+      flight_number: flightForm.flight_number.trim(),
+      departure_airport:
+        flightForm.departure_airport.trim() || null,
+      arrival_airport:
+        flightForm.arrival_airport.trim() || null,
+      departure_at: departureUTC,
+      arrival_at: arrivalUTC,
+      departure_timezone:
+        flightForm.departure_timezone || null,
+      arrival_timezone:
+        flightForm.arrival_timezone || null,
+      confirmation_number:
+        flightForm.confirmation_number.trim() || null,
+      cabin_class:
+        flightForm.cabin_class.trim() || null,
+      baggage_allowance:
+        flightForm.baggage_allowance.trim() || null,
+      amount,
+      currency: flightForm.currency.trim() || "USD",
+      payment_status: flightForm.payment_status,
+      booking_platform:
+        flightForm.booking_platform.trim() || null,
+      booking_url:
+        flightForm.booking_url.trim() || null,
+      notes: flightForm.notes.trim() || null,
+    };
+
+    // 8. 新增或編輯
+    if (editingFlightId !== null) {
+      const { data, error } = await supabase
+        .from("TripFlights")
+        .update(flightData)
+        .eq("id", editingFlightId)
+        .eq("trip_id", Number(id))
+        .eq("user_id", user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error(
+          "沒有更新到機票資料，請確認權限"
+        );
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("TripFlights")
+        .insert({
+          ...flightData,
+          trip_id: Number(id),
+          user_id: user.id,
+        })
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error(
+          "沒有新增到機票資料，請確認權限"
+        );
+      }
+    }
+
+    alert(
+      editingFlightId !== null
+        ? "機票資料更新成功！"
+        : "機票資料儲存成功！"
+    );
+
+    // 9. 重設表單
+    setFlightForm({
+      airline: "",
+      flight_number: "",
+      departure_airport: "",
+      arrival_airport: "",
+      departure_at: "",
+      arrival_at: "",
+      departure_timezone: "",
+      arrival_timezone: "",
+      confirmation_number: "",
+      cabin_class: "",
+      baggage_allowance: "",
+      amount: "",
+      currency: "USD",
+      payment_status: "unpaid",
+      booking_platform: "",
+      booking_url: "",
+      notes: "",
+    });
+
+    setEditingFlightId(null);
+    setShowFlightForm(false);
+  } catch (error) {
+    console.error("儲存機票失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `儲存失敗：${error.message}`
+        : "儲存機票失敗，請稍後再試"
+    );
+  } finally {
+    setSavingFlight(false);
+  }
+};
+
+
   
 /* =========================================
    飯店表單資料 State
