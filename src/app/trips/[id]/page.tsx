@@ -392,6 +392,93 @@ function getTripStatusStyle(
    Trip 詳細頁
    ========================================================= */
 export default function TripDetailPage() {
+  
+/* =========================================
+   機票：機場當地時間轉換為 UTC
+   支援 IANA 時區與夏令時間
+   ========================================= */
+
+function flightLocalTimeToUTC(
+  localDateTime: string,
+  timeZone: string
+): string | null {
+  if (!localDateTime) return null;
+
+  if (!timeZone) {
+    throw new Error("請選擇航班時區");
+  }
+
+  const parts = localDateTime.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/
+  );
+
+  if (!parts) {
+    throw new Error("航班日期時間格式不正確");
+  }
+
+  const [, y, mo, d, h, mi] = parts;
+
+  const target = Date.UTC(
+    Number(y),
+    Number(mo) - 1,
+    Number(d),
+    Number(h),
+    Number(mi)
+  );
+
+  const formatter = new Intl.DateTimeFormat(
+    "en-US",
+    {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }
+  );
+
+  const getLocalParts = (timestamp: number) => {
+    const values = Object.fromEntries(
+      formatter
+        .formatToParts(new Date(timestamp))
+        .map((part) => [part.type, part.value])
+    );
+
+    return Date.UTC(
+      Number(values.year),
+      Number(values.month) - 1,
+      Number(values.day),
+      Number(values.hour),
+      Number(values.minute)
+    );
+  };
+
+  // 搜尋可能的 UTC 偏移，
+  // 正確處理夏令時間轉換
+  const matches: number[] = [];
+
+  for (let offset = -14 * 60; offset <= 14 * 60; offset += 15) {
+    const candidate =
+      target - offset * 60 * 1000;
+
+    if (getLocalParts(candidate) === target) {
+      matches.push(candidate);
+    }
+  }
+
+  if (matches.length === 0) {
+    throw new Error(
+      "此當地時間不存在，請檢查夏令時間切換日期"
+    );
+  }
+
+  // 夏令時間結束造成同一時間出現兩次時，
+  // 選擇較早的時間點
+  return new Date(Math.min(...matches)).toISOString();
+}
+
   const params = useParams();
 
   const rawId = params?.id;
