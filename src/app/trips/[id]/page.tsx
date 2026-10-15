@@ -4013,19 +4013,68 @@ onClick={() => {
       />
     </label>
 
-    <div
-      style={{
-        marginTop: 20,
-        padding: 12,
-        background: "#f2ebe2",
-        borderRadius: 10,
-        fontSize: 13,
-        color: "#826349",
-      }}
-    >
-      表單欄位已建立。下一步將加入 Supabase
-      儲存功能及儲存按鈕。
-    </div>
+    
+{/* =========================================
+    機票表單：取消／儲存按鈕
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    flexWrap: "wrap",
+    gap: 12,
+    marginTop: 24,
+    paddingTop: 18,
+    borderTop: "1px solid #e6dcd0",
+  }}
+>
+  {/* 取消 */}
+  <button
+    type="button"
+    onClick={() => {
+      setShowFlightForm(false);
+      setEditingFlightId(null);
+    }}
+    disabled={savingFlight}
+    style={{
+      padding: "12px 20px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#674b39",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: savingFlight ? "not-allowed" : "pointer",
+    }}
+  >
+    取消
+  </button>
+
+  {/* 儲存 */}
+  <button
+    type="button"
+    onClick={saveFlight}
+    disabled={savingFlight}
+    style={{
+      padding: "12px 24px",
+      border: "1px solid #826349",
+      borderRadius: 10,
+      background: savingFlight ? "#b6a08e" : "#826349",
+      color: "#ffffff",
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: savingFlight ? "not-allowed" : "pointer",
+    }}
+  >
+    {savingFlight
+      ? "儲存中..."
+      : editingFlightId !== null
+        ? "更新機票"
+        : "儲存機票"}
+  </button>
+</div>
+
   </div>
 )}
 
