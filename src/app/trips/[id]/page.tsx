@@ -695,6 +695,79 @@ const [flightForm, setFlightForm] = useState({
   notes: "",
 });
 
+
+/* =========================================
+   機票多航段資料
+   ========================================= */
+
+type FlightSegmentForm = {
+  localId: number;
+  airline: string;
+  flight_number: string;
+  departure_airport: string;
+  arrival_airport: string;
+  departure_at: string;
+  arrival_at: string;
+  departure_timezone: string;
+  arrival_timezone: string;
+  cabin_class: string;
+  baggage_allowance: string;
+  notes: string;
+};
+
+const createFlightSegment = (
+  localId: number
+): FlightSegmentForm => ({
+  localId,
+  airline: "",
+  flight_number: "",
+  departure_airport: "",
+  arrival_airport: "",
+  departure_at: "",
+  arrival_at: "",
+  departure_timezone: "",
+  arrival_timezone: "",
+  cabin_class: "",
+  baggage_allowance: "",
+  notes: "",
+});
+
+const [flightSegments, setFlightSegments] = useState<
+  FlightSegmentForm[]
+>([createFlightSegment(1)]);
+
+const addFlightSegment = () => {
+  setFlightSegments((prev) => [
+    ...prev,
+    createFlightSegment(
+      Math.max(0, ...prev.map((s) => s.localId)) + 1
+    ),
+  ]);
+};
+
+const removeFlightSegment = (localId: number) => {
+  setFlightSegments((prev) =>
+    prev.length > 1
+      ? prev.filter((s) => s.localId !== localId)
+      : prev
+  );
+};
+
+const updateFlightSegment = (
+  localId: number,
+  field: keyof Omit<FlightSegmentForm, "localId">,
+  value: string
+) => {
+  setFlightSegments((prev) =>
+    prev.map((segment) =>
+      segment.localId === localId
+        ? { ...segment, [field]: value }
+        : segment
+    )
+  );
+};
+
+
 // 更新機票表單欄位
 const updateFlightField = (
   field: keyof typeof flightForm,
