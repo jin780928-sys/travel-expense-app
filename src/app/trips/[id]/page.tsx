@@ -2873,34 +2873,225 @@ return (
   </div>
 )}
 
-              {/* 尚未建立飯店資料 */}
-              <div
-                style={{
-                  border: "1px dashed #d8c6b4",
-                  background: "#faf7f2",
-                  borderRadius: 14,
-                  padding: "35px 18px",
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 32,
-                    marginBottom: 12,
-                  }}
-                >
-                  🏨
-                </div>
+              
+{/* =========================================
+    飯店列表
+   ========================================= */}
 
-                <div
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 700,
-                    color: "#674b39",
-                  }}
-                >
-                  尚未新增飯店
-                </div>
+{loadingHotels ? (
+  <div
+    style={{
+      padding: 28,
+      textAlign: "center",
+      color: "#927f70",
+    }}
+  >
+    載入飯店資料中...
+  </div>
+) : hotels.length === 0 ? (
+  <div
+    style={{
+      border: "1px dashed #d8c6b4",
+      background: "#faf7f2",
+      borderRadius: 14,
+      padding: "35px 18px",
+      textAlign: "center",
+    }}
+  >
+    <div style={{ fontSize: 32, marginBottom: 12 }}>
+      🏨
+    </div>
+
+    <div
+      style={{
+        fontSize: 16,
+        fontWeight: 700,
+        color: "#674b39",
+      }}
+    >
+      尚未新增飯店
+    </div>
+
+    <p
+      style={{
+        fontSize: 13,
+        color: "#927f70",
+        marginTop: 10,
+      }}
+    >
+      點擊「＋新增飯店」開始記錄住宿資訊。
+    </p>
+  </div>
+) : (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 14,
+    }}
+  >
+    {hotels.map((hotel) => (
+      <div
+        key={hotel.id}
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+          padding: "20px 22px",
+          boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
+        }}
+      >
+        {/* 飯店名稱與付款狀態 */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
+            gap: 12,
+            marginBottom: 14,
+          }}
+        >
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 18,
+              fontWeight: 800,
+              color: "#49392f",
+            }}
+          >
+            🏨 {hotel.hotel_name}
+          </h3>
+
+          <span
+            style={{
+              background:
+                hotel.payment_status === "paid"
+                  ? "#e8f0e5"
+                  : hotel.payment_status === "partial"
+                    ? "#fff0d9"
+                    : "#f2ebe2",
+              color:
+                hotel.payment_status === "paid"
+                  ? "#55704e"
+                  : "#826349",
+              padding: "5px 11px",
+              borderRadius: 999,
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            {hotel.payment_status === "paid"
+              ? "已付款"
+              : hotel.payment_status === "partial"
+                ? "部分付款"
+                : "未付款"}
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 210px), 1fr))",
+            gap: 14,
+            fontSize: 14,
+            color: "#674b39",
+            lineHeight: 1.6,
+          }}
+        >
+          <div>
+            <strong>入住日期：</strong>
+            {hotel.check_in || "未設定"}
+          </div>
+
+          <div>
+            <strong>退房日期：</strong>
+            {hotel.check_out || "未設定"}
+          </div>
+
+          {hotel.room_type && (
+            <div>
+              <strong>房型：</strong>
+              {hotel.room_type}
+            </div>
+          )}
+
+          {hotel.booking_platform && (
+            <div>
+              <strong>訂房平台：</strong>
+              {hotel.booking_platform}
+            </div>
+          )}
+
+          {hotel.confirmation_number && (
+            <div>
+              <strong>訂房編號：</strong>
+              {hotel.confirmation_number}
+            </div>
+          )}
+
+          {hotel.amount !== null && (
+            <div>
+              <strong>住宿金額：</strong>
+              {hotel.currency || "USD"}{" "}
+              {formatAmount(hotel.amount)}
+            </div>
+          )}
+        </div>
+
+        {hotel.address && (
+          <div
+            style={{
+              marginTop: 14,
+              color: "#674b39",
+              fontSize: 14,
+              overflowWrap: "anywhere",
+            }}
+          >
+            <strong>地址：</strong>
+            {hotel.address}
+          </div>
+        )}
+
+        {hotel.notes && (
+          <div
+            style={{
+              marginTop: 12,
+              padding: 12,
+              background: "#faf7f2",
+              borderRadius: 10,
+              color: "#927f70",
+              fontSize: 13,
+              lineHeight: 1.7,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {hotel.notes}
+          </div>
+        )}
+
+        {hotel.booking_url && (
+          <a
+            href={hotel.booking_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              marginTop: 14,
+              color: "#826349",
+              fontSize: 13,
+              fontWeight: 700,
+            }}
+          >
+            查看訂房網址 ↗
+          </a>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+
 
                 <p
                   style={{
