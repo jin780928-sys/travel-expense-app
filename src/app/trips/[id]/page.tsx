@@ -479,6 +479,14 @@ const [hotelForm, setHotelForm] = useState({
 const [savingHotel, setSavingHotel] =
   useState(false);
 
+  /* =========================================
+   目前正在編輯的飯店 ID
+   null = 新增飯店
+   數字 = 編輯現有飯店
+   ========================================= */
+
+const [editingHotelId, setEditingHotelId] =
+  useState<number | null>(null);
 /* =========================================
    更新飯店表單欄位
    ========================================= */
