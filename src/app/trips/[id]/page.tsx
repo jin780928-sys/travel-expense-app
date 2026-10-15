@@ -3148,10 +3148,20 @@ onClick={() => {
                 : "未付款"}
           </span>
           
-          {/* 編輯飯店按鈕 */}
-          <button
-            type="button"
-            onClick={() => startEditHotel(hotel)}
+          {/* 編輯 / 刪除按鈕群組 */}
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginLeft: "auto",
+  }}
+>
+  {/* 編輯飯店按鈕 */}
+  <button
+    type="button"
+    onClick={() => startEditHotel(hotel)}
             style={{
               padding: "7px 14px",
               border: "1px solid #d8c6b4",
@@ -3185,8 +3195,9 @@ onClick={() => {
     cursor: "pointer",
   }}
 >
-  🗑️ 刪除
+    🗑️ 刪除
 </button>
+</div>
 
 
         </div>
