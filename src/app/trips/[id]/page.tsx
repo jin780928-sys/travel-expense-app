@@ -3462,22 +3462,186 @@ onClick={() => {
       </button>
     </div>
 
-    {/* 機票表單暫存區 */}
-    {showFlightForm && (
-      <div
+    
+{/* =========================================
+    機票新增／編輯表單
+   ========================================= */}
+
+{showFlightForm && (
+  <div
+    style={{
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 14,
+      padding: 20,
+      marginBottom: 18,
+      color: "#49392f",
+    }}
+  >
+    <h3
+      style={{
+        margin: "0 0 20px",
+        fontSize: 18,
+        fontWeight: 700,
+      }}
+    >
+      {editingFlightId !== null
+        ? "編輯機票資料"
+        : "新增機票資料"}
+    </h3>
+
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
+        gap: 16,
+      }}
+    >
+      {(
+        [
+          ["航空公司", "airline", "text", "例如：American Airlines"],
+          ["航班編號", "flight_number", "text", "例如：AA1968"],
+          ["出發機場", "departure_airport", "text", "例如：PHX"],
+          ["抵達機場", "arrival_airport", "text", "例如：MIA"],
+          ["出發日期時間", "departure_at", "datetime-local", ""],
+          ["抵達日期時間", "arrival_at", "datetime-local", ""],
+          ["訂位代碼", "confirmation_number", "text", "Booking Reference"],
+          ["艙等", "cabin_class", "text", "例如：Economy / Business"],
+          ["行李額度", "baggage_allowance", "text", "例如：23kg × 2"],
+          ["機票總金額", "amount", "number", "0.00"],
+          ["幣別", "currency", "text", "USD / TWD / EUR"],
+          ["訂票平台", "booking_platform", "text", "例如：航空公司官網"],
+          ["訂票網址", "booking_url", "url", "https://"],
+        ] as const
+      ).map(([label, field, type, placeholder]) => (
+        <label
+          key={field}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 7,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#674b39",
+          }}
+        >
+          {label}
+
+          <input
+            type={type}
+            placeholder={placeholder}
+            value={flightForm[field]}
+            onChange={(e) =>
+              updateFlightField(field, e.target.value)
+            }
+            min={type === "number" ? "0" : undefined}
+            step={type === "number" ? "0.01" : undefined}
+            style={{
+              width: "100%",
+              minWidth: 0,
+              boxSizing: "border-box",
+              height: 42,
+              padding: "0 12px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#49392f",
+              fontSize: 14,
+            }}
+          />
+        </label>
+      ))}
+    </div>
+
+    {/* 付款狀態 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      付款狀態
+
+      <select
+        value={flightForm.payment_status}
+        onChange={(e) =>
+          updateFlightField(
+            "payment_status",
+            e.target.value
+          )
+        }
         style={{
-          background: "#faf7f2",
-          border: "1px solid #e6dcd0",
-          borderRadius: 14,
-          padding: 20,
-          marginBottom: 18,
-          color: "#674b39",
-          fontSize: 14,
+          height: 42,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
         }}
       >
-        機票資料表單（下一步加入輸入欄位）
-      </div>
-    )}
+        <option value="unpaid">未付款</option>
+        <option value="paid">已付款</option>
+        <option value="partial">部分付款</option>
+      </select>
+    </label>
+
+    {/* 備註 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      備註
+
+      <textarea
+        rows={4}
+        placeholder="例如：轉機資訊、航廈、選位、特殊餐點、登機注意事項……"
+        value={flightForm.notes}
+        onChange={(e) =>
+          updateFlightField("notes", e.target.value)
+        }
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: 12,
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          resize: "vertical",
+        }}
+      />
+    </label>
+
+    <div
+      style={{
+        marginTop: 20,
+        padding: 12,
+        background: "#f2ebe2",
+        borderRadius: 10,
+        fontSize: 13,
+        color: "#826349",
+      }}
+    >
+      表單欄位已建立。下一步將加入 Supabase
+      儲存功能及儲存按鈕。
+    </div>
+  </div>
+)}
+
 
     {/* 尚未建立機票資料 */}
     <div
