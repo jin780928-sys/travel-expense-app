@@ -14,6 +14,8 @@ type Expense = {
   category: string | null;
   payment_method: string | null;
   card_name: string | null;
+  payment_method_id: number | null;
+  user_id: string;
   currency: string | null;
   expense_scope: string | null;
   trip_id: number | null;
@@ -69,6 +71,8 @@ const [
     category,
     payment_method,
     card_name,
+    payment_method_id,
+    user_id,
     currency,
     expense_scope,
     trip_id,
