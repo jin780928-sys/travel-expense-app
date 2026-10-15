@@ -2484,18 +2484,22 @@ return (
         gap: 16,
       }}
     >
-      {[
-        ["飯店名稱", "text", "例如：Marriott Orlando"],
-        ["入住日期", "date", ""],
-        ["退房日期", "date", ""],
-        ["地址", "text", "飯店完整地址"],
-        ["房型", "text", "例如：KING / TWIN"],
-        ["訂房編號", "text", "Confirmation Number"],
-        ["訂房平台", "text", "例如：Marriott / Booking"],
-        ["住宿總金額", "number", "0.00"],
-        ["幣別", "text", "USD / TWD / EUR"],
-        ["訂房網址", "url", "https://"],
-      ].map(([label, type, placeholder]) => (
+      
+{(
+  [
+    ["飯店名稱", "hotel_name", "text", "例如：Marriott Orlando"],
+    ["入住日期", "check_in", "date", ""],
+    ["退房日期", "check_out", "date", ""],
+    ["地址", "address", "text", "飯店完整地址"],
+    ["房型", "room_type", "text", "例如：KING / TWIN"],
+    ["訂房編號", "confirmation_number", "text", "Confirmation Number"],
+    ["訂房平台", "booking_platform", "text", "例如：Marriott / Booking"],
+    ["住宿總金額", "amount", "number", "0.00"],
+    ["幣別", "currency", "text", "USD / TWD / EUR"],
+    ["訂房網址", "booking_url", "url", "https://"],
+  ] as const
+).map(([label, field, type, placeholder]) => (
+
         <label
           key={label}
           style={{
@@ -2509,10 +2513,17 @@ return (
         >
           {label}
 
-          <input
-            type={type}
-            placeholder={placeholder}
-            step={type === "number" ? "0.01" : undefined}
+          
+<input
+  type={type}
+  placeholder={placeholder}
+  value={hotelForm[field]}
+  onChange={(e) =>
+    updateHotelField(field, e.target.value)
+  }
+  min={type === "number" ? "0" : undefined}
+  step={type === "number" ? "0.01" : undefined}
+
             style={{
               width: "100%",
               minWidth: 0,
