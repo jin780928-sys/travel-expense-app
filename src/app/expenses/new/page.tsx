@@ -506,11 +506,37 @@ if (
 
           category,
 
-          payment_method:
-            paymentMethod,
+          // =========================================
+// 付款方式
+// =========================================
 
-          card_name:
-            cardName || null,
+payment_method:
+  paymentMethod === "Debit Card"
+    ? "金融卡"
+    : paymentMethod,
+
+// =========================================
+// 實際扣款信用卡
+// =========================================
+
+card_name:
+  (
+    paymentMethod === "信用卡" ||
+    paymentMethod === "Apple Pay" ||
+    paymentMethod === "Google Pay"
+  ) && cardName.trim()
+    ? cardName.trim()
+    : null,
+
+// =========================================
+// 付款工具 ID
+// 金融卡 / Apple Pay / Google Pay
+// =========================================
+
+payment_method_id:
+  paymentMethodId
+    ? Number(paymentMethodId)
+    : null,
 
           currency,
 
