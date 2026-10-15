@@ -2412,7 +2412,8 @@ return (
 
               </div>
 
-              {showHotelForm && (
+              
+{showHotelForm && (
   <div
     style={{
       padding: 20,
@@ -2420,12 +2421,149 @@ return (
       background: "#faf7f2",
       border: "1px solid #e6dcd0",
       borderRadius: 14,
-      color: "#674b39",
+      color: "#49392f",
     }}
   >
-    飯店資料表單（下一步加入輸入欄位）
+    <h3
+      style={{
+        margin: "0 0 20px",
+        fontSize: 18,
+        fontWeight: 700,
+      }}
+    >
+      新增住宿資料
+    </h3>
+
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
+        gap: 16,
+      }}
+    >
+      {[
+        ["飯店名稱", "text", "例如：Marriott Orlando"],
+        ["入住日期", "date", ""],
+        ["退房日期", "date", ""],
+        ["地址", "text", "飯店完整地址"],
+        ["房型", "text", "例如：KING / TWIN"],
+        ["訂房編號", "text", "Confirmation Number"],
+        ["訂房平台", "text", "例如：Marriott / Booking"],
+        ["住宿總金額", "number", "0.00"],
+        ["幣別", "text", "USD / TWD / EUR"],
+        ["訂房網址", "url", "https://"],
+      ].map(([label, type, placeholder]) => (
+        <label
+          key={label}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 7,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#674b39",
+          }}
+        >
+          {label}
+
+          <input
+            type={type}
+            placeholder={placeholder}
+            step={type === "number" ? "0.01" : undefined}
+            style={{
+              width: "100%",
+              minWidth: 0,
+              boxSizing: "border-box",
+              height: 42,
+              padding: "0 12px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#49392f",
+              fontSize: 14,
+            }}
+          />
+        </label>
+      ))}
+    </div>
+
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      付款狀態
+
+      <select
+        defaultValue="unpaid"
+        style={{
+          height: 42,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+        }}
+      >
+        <option value="unpaid">未付款</option>
+        <option value="paid">已付款</option>
+        <option value="partial">部分付款</option>
+      </select>
+    </label>
+
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      備註
+
+      <textarea
+        rows={4}
+        placeholder="例如：含早餐、免費停車、機場接駁、入住注意事項……"
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: 12,
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          resize: "vertical",
+        }}
+      />
+    </label>
+
+    <div
+      style={{
+        marginTop: 20,
+        padding: 12,
+        background: "#f2ebe2",
+        borderRadius: 10,
+        fontSize: 13,
+        color: "#826349",
+      }}
+    >
+      表單欄位已建立。下一步連接 Supabase 後，
+      才會加入正式的儲存功能。
+    </div>
   </div>
 )}
+
               {/* 尚未建立飯店資料 */}
               <div
                 style={{
