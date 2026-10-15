@@ -466,6 +466,46 @@ function formatFlightDuration(
     return "時間未設定";
   }
 
+  
+/* =========================================
+   計算兩個 UTC 時間之間的時長
+   可用於飛行、轉機及總旅行時間
+   ========================================= */
+
+function formatFlightTimeDifference(
+  startAt: string | null,
+  endAt: string | null
+): string {
+  if (!startAt || !endAt) return "時間未設定";
+
+  const start = new Date(startAt).getTime();
+  const end = new Date(endAt).getTime();
+
+  if (!Number.isFinite(start) || !Number.isFinite(end)) {
+    return "時間格式錯誤";
+  }
+
+  const minutes = Math.round((end - start) / 60000);
+
+  if (minutes < 0) return "時間設定錯誤";
+  if (minutes === 0) return "0 分鐘";
+
+  const days = Math.floor(minutes / 1440);
+  const hours = Math.floor((minutes % 1440) / 60);
+  const remainingMinutes = minutes % 60;
+
+  const result: string[] = [];
+
+  if (days > 0) result.push(`${days} 天`);
+  if (hours > 0) result.push(`${hours} 小時`);
+  if (remainingMinutes > 0) {
+    result.push(`${remainingMinutes} 分鐘`);
+  }
+
+  return result.join(" ");
+}
+
+
   const start = new Date(departureAt).getTime();
   const end = new Date(arrivalAt).getTime();
 
@@ -5175,124 +5215,274 @@ onClick={() => {
           </span>
         </div>
 
-        {/* 出發與抵達機場 */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "minmax(0, 1fr) auto minmax(0, 1fr)",
-            alignItems: "center",
-            gap: 12,
-            padding: 16,
-            borderRadius: 12,
-            background: "#faf7f2",
-          }}
-        >
-          <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: 20,
-                fontWeight: 800,
-                color: "#49392f",
-              }}
-            >
-              {flight.departure_airport || "—"}
-            </div>
+        
+{/* =========================================
+    多段航班 / 轉機路線
+   ========================================= */}
 
-            <div
-              style={{
-                marginTop: 7,
-                fontSize: 12,
-                color: "#674b39",
-                overflowWrap: "anywhere",
-              }}
-            >
-              {formatFlightDateTime(
-                flight.departure_at,
-                flight.departure_timezone
-              )}
-            </div>
-          </div>
-
-          
-{/* 飛行方向與飛行時間 */}
-<div
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-    textAlign: "center",
-    minWidth: 90,
-  }}
->
-  <span
+{loadingFlightSegments ? (
+  <div
     style={{
-      fontSize: 24,
-      color: "#826349",
-      lineHeight: 1,
-    }}
-  >
-    →
-  </span>
-
-  <span
-    style={{
-      fontSize: 12,
-      fontWeight: 700,
-      color: "#674b39",
-      whiteSpace: "nowrap",
-    }}
-  >
-    {formatFlightDuration(
-      flight.departure_at,
-      flight.arrival_at
-    )}
-  </span>
-
-  <span
-    style={{
-      fontSize: 11,
+      padding: 20,
+      textAlign: "center",
       color: "#927f70",
     }}
   >
-    飛行時間
-  </span>
-</div>
+    載入航段資料中...
+  </div>
+) : (
+  <>
+    {(() => {
+      const savedSegments =
+        flightSegmentsByFlight[flight.id] || [];
 
+      // 舊版單段機票相容
+      const segments =
+        savedSegments.length > 0
+          ? savedSegments
+          : [
+              {
+                id: flight.id,
+                flight_id: flight.id,
+                segment_order: 1,
+                airline: flight.airline,
+                flight_number: flight.flight_number,
+                departure_airport:
+                  flight.departure_airport,
+                arrival_airport:
+                  flight.arrival_airport,
+                departure_at: flight.departure_at,
+                arrival_at: flight.arrival_at,
+                departure_timezone:
+                  flight.departure_timezone,
+                arrival_timezone:
+                  flight.arrival_timezone,
+                cabin_class: flight.cabin_class,
+                baggage_allowance:
+                  flight.baggage_allowance,
+                notes: null,
+              },
+            ];
 
-          <div
-            style={{
-              minWidth: 0,
-              textAlign: "right",
-            }}
-          >
-            <div
-              style={{
-                fontSize: 20,
-                fontWeight: 800,
-                color: "#49392f",
-              }}
-            >
-              {flight.arrival_airport || "—"}
-            </div>
+      const firstSegment = segments[0];
+      const lastSegment =
+        segments[segments.length - 1];
 
-            <div
-              style={{
-                marginTop: 7,
-                fontSize: 12,
-                color: "#674b39",
-                overflowWrap: "anywhere",
-              }}
-            >
-              {formatFlightDateTime(
-                flight.arrival_at,
-                flight.arrival_timezone
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
+          {segments.map((segment, index) => (
+            <div key={`${flight.id}-${index}`}>
+              {/* 轉機等候時間 */}
+              {index > 0 && (
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "10px 0 14px",
+                    color: "#826349",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  🕒{" "}
+                  {segments[index - 1]
+                    .arrival_airport || "轉機機場"}
+                  {" 轉機 · 等候 "}
+                  {formatFlightTimeDifference(
+                    segments[index - 1].arrival_at,
+                    segment.departure_at
+                  )}
+                </div>
               )}
+
+              {/* 每段航班 */}
+              <div
+                style={{
+                  background: "#faf7f2",
+                  borderRadius: 12,
+                  padding: 16,
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: 14,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: "#674b39",
+                  }}
+                >
+                  ✈️ 第 {index + 1} 段 ·{" "}
+                  {segment.airline || "航空公司"}{" "}
+                  {segment.flight_number || ""}
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "minmax(0, 1fr) auto minmax(0, 1fr)",
+                    gap: 12,
+                    alignItems: "center",
+                  }}
+                >
+                  {/* 出發 */}
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 800,
+                        color: "#49392f",
+                      }}
+                    >
+                      {segment.departure_airport ||
+                        "—"}
+                    </div>
+
+                    <div
+                      style={{
+                        marginTop: 7,
+                        fontSize: 12,
+                        color: "#674b39",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {formatFlightDateTime(
+                        segment.departure_at,
+                        segment.departure_timezone
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 飛行時間 */}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 5,
+                      minWidth: 90,
+                      textAlign: "center",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 24,
+                        color: "#826349",
+                      }}
+                    >
+                      →
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: "#674b39",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {formatFlightTimeDifference(
+                        segment.departure_at,
+                        segment.arrival_at
+                      )}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: 11,
+                        color: "#927f70",
+                      }}
+                    >
+                      飛行時間
+                    </span>
+                  </div>
+
+                  {/* 抵達 */}
+                  <div
+                    style={{
+                      minWidth: 0,
+                      textAlign: "right",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: 20,
+                        fontWeight: 800,
+                        color: "#49392f",
+                      }}
+                    >
+                      {segment.arrival_airport ||
+                        "—"}
+                    </div>
+
+                    <div
+                      style={{
+                        marginTop: 7,
+                        fontSize: 12,
+                        color: "#674b39",
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {formatFlightDateTime(
+                        segment.arrival_at,
+                        segment.arrival_timezone
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
+
+          {/* 整趟旅行時間 */}
+          {segments.length > 1 && (
+            <div
+              style={{
+                background: "#f2ebe2",
+                border: "1px solid #e6dcd0",
+                borderRadius: 10,
+                padding: "12px 16px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 8,
+              }}
+            >
+              <span
+                style={{
+                  color: "#674b39",
+                  fontWeight: 700,
+                  fontSize: 13,
+                }}
+              >
+                🕒 整趟旅行時間（含轉機）
+              </span>
+
+              <strong
+                style={{
+                  color: "#49392f",
+                  fontSize: 14,
+                }}
+              >
+                {formatFlightTimeDifference(
+                  firstSegment.departure_at,
+                  lastSegment.arrival_at
+                )}
+              </strong>
+            </div>
+          )}
         </div>
+      );
+    })()}
+  </>
+)}
+
 
         {/* 航班其他資訊 */}
         <div
