@@ -39,7 +39,14 @@ export default function ExpenseDetailPage() {
   const [payerName, setPayerName] = useState("");
   const [splits, setSplits] = useState<Split[]>([]);
   const [message, setMessage] = useState("讀取中...");
+// =========================================
+// 金融卡 / 電子支付工具名稱
+// =========================================
 
+const [
+  paymentToolName,
+  setPaymentToolName,
+] = useState("");
   useEffect(() => {
     async function loadExpense() {
       const {
@@ -166,6 +173,50 @@ export default function ExpenseDetailPage() {
   router.push("/expenses");
 }
 
+  // =========================================
+// 讀取實際付款工具名稱
+// =========================================
+
+useEffect(() => {
+  let active = true;
+
+  async function loadPaymentTool() {
+    setPaymentToolName("");
+
+    if (!expense?.payment_method_id) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("PaymentMethods")
+      .select("name")
+      .eq("id", expense.payment_method_id)
+      .eq("user_id", expense.user_id)
+      .maybeSingle();
+
+    if (error) {
+      console.error(
+        "讀取付款工具名稱失敗:",
+        error
+      );
+      return;
+    }
+
+    if (active) {
+      setPaymentToolName(data?.name || "");
+    }
+  }
+
+  void loadPaymentTool();
+
+  return () => {
+    active = false;
+  };
+}, [
+  expense?.payment_method_id,
+  expense?.user_id,
+]);
+  
   return (
     <main
       style={{
