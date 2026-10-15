@@ -54,6 +54,27 @@ type Expense = {
 
 
 /* =========================================
+   Type：旅程飯店
+   ========================================= */
+
+type TripHotel = {
+  id: number;
+  trip_id: number;
+  hotel_name: string;
+  check_in: string | null;
+  check_out: string | null;
+  address: string | null;
+  room_type: string | null;
+  confirmation_number: string | null;
+  booking_platform: string | null;
+  amount: number | null;
+  currency: string | null;
+  payment_status: string | null;
+  booking_url: string | null;
+  notes: string | null;
+};
+
+/* =========================================
    旅程分頁類型
    ========================================= */
 
@@ -418,6 +439,17 @@ const [
    ========================================= */
 
 const [showHotelForm, setShowHotelForm] =
+  useState(false);
+
+  
+/* =========================================
+   已儲存的飯店列表
+   ========================================= */
+
+const [hotels, setHotels] =
+  useState<TripHotel[]>([]);
+
+const [loadingHotels, setLoadingHotels] =
   useState(false);
 
   
