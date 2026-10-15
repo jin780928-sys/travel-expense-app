@@ -501,6 +501,40 @@ const updateHotelField = (
   }));
 };
 
+
+
+/* =========================================
+   開始編輯飯店
+   自動帶入現有住宿資料
+   ========================================= */
+
+const startEditHotel = (hotel: TripHotel) => {
+  setEditingHotelId(hotel.id);
+
+  setHotelForm({
+    hotel_name: hotel.hotel_name || "",
+    check_in: hotel.check_in || "",
+    check_out: hotel.check_out || "",
+    address: hotel.address || "",
+    room_type: hotel.room_type || "",
+    confirmation_number:
+      hotel.confirmation_number || "",
+    booking_platform:
+      hotel.booking_platform || "",
+    amount:
+      hotel.amount === null
+        ? ""
+        : String(hotel.amount),
+    currency: hotel.currency || "USD",
+    payment_status:
+      hotel.payment_status || "unpaid",
+    booking_url: hotel.booking_url || "",
+    notes: hotel.notes || "",
+  });
+
+  setShowHotelForm(true);
+};
+
   
 /* =========================================
    儲存飯店資料到 Supabase
@@ -3005,6 +3039,25 @@ return (
                 ? "部分付款"
                 : "未付款"}
           </span>
+          
+          {/* 編輯飯店按鈕 */}
+          <button
+            type="button"
+            onClick={() => startEditHotel(hotel)}
+            style={{
+              padding: "7px 14px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#674b39",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            ✏️ 編輯
+          </button>
+
         </div>
 
         <div
