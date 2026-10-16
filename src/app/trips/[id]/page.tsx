@@ -11063,23 +11063,56 @@ alignItems: "center",
         取消
       </button>
 
-      <button
-        type="button"
-        disabled
-        title="下一步連接 Supabase 後啟用"
-        style={{
-          padding: "11px 18px",
-          border: "none",
-          borderRadius: 10,
-          background: "#826349",
-          color: "#ffffff",
-          fontWeight: 700,
-          opacity: 0.5,
-          cursor: "not-allowed",
-        }}
-      >
-        📋 確認匯入
-      </button>
+      
+{/* =========================================
+    確認匯入預設打包清單
+   ========================================= */}
+
+<button
+  type="button"
+  onClick={() => void importPackingTemplates()}
+  disabled={
+    importingPackingTemplates ||
+    loadingPackingTemplates ||
+    !!packingTemplateLoadError ||
+    packingTemplateCategories.length === 0 ||
+    packingTemplateItems.length === 0 ||
+    (
+      packingImportScope === "personal" &&
+      !packingImportPersonId
+    )
+  }
+  style={{
+    padding: "11px 18px",
+    border: "none",
+    borderRadius: 10,
+    background: "#826349",
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: 700,
+    opacity:
+      importingPackingTemplates ||
+      loadingPackingTemplates ||
+      !!packingTemplateLoadError ||
+      packingTemplateCategories.length === 0 ||
+      packingTemplateItems.length === 0 ||
+      (
+        packingImportScope === "personal" &&
+        !packingImportPersonId
+      )
+        ? 0.5
+        : 1,
+    cursor:
+      importingPackingTemplates
+        ? "wait"
+        : "pointer",
+  }}
+>
+  {importingPackingTemplates
+    ? "匯入中..."
+    : "📋 確認匯入"}
+</button>
+
     </div>
   </div>
 )}
