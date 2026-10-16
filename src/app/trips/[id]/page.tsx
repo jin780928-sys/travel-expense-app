@@ -4772,10 +4772,15 @@ const bookingUnifiedItems: UnifiedItineraryItem[] =
       return items;
     }
 
-    const startDateTime = String(booking.start_at);
-    const endDateTime = booking.end_at
-      ? String(booking.end_at)
-      : "";
+    const startLocal = getLocalItineraryDateTime(
+  booking.start_at,
+  booking.timezone
+);
+
+const endLocal = getLocalItineraryDateTime(
+  booking.end_at,
+  booking.timezone
+);
 
     const bookingTypeIcons: Record<string, string> = {
       attraction: "🎫",
@@ -4791,19 +4796,18 @@ const bookingUnifiedItems: UnifiedItineraryItem[] =
 
     // 有相同日期才將結束時間放在同一筆行程
     const endTime =
-      endDateTime &&
-      endDateTime.slice(0, 10) ===
-        startDateTime.slice(0, 10)
-        ? endDateTime.slice(11, 16)
-        : null;
+        endLocal.date &&
+        endLocal.date === startLocal.date
+    ? endLocal.time
+    : null;
 
     items.push({
       key: `booking-${booking.id}`,
       source: "booking",
       sourceId: booking.id,
 
-      date: startDateTime.slice(0, 10),
-      start_time: startDateTime.slice(11, 16) || null,
+      date: startLocal.date,
+      start_time: startLocal.time,
       end_time: endTime,
 
       title: `${icon} ${booking.name || "未命名預約"}`,
