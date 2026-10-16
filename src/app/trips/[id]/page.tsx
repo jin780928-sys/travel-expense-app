@@ -11376,9 +11376,21 @@ alignItems: "center",
             分類
             <select
               value={packingForm.category}
-              onChange={(e) =>
-                updatePackingField("category", e.target.value)
-              }
+              
+onChange={(e) => {
+  const nextCategory = e.target.value;
+
+  setPackingForm((prev) => ({
+    ...prev,
+    category: nextCategory,
+
+    // 共用分類：自動清除所屬人員
+    person_id: nextCategory.startsWith("template:shared:")
+      ? ""
+      : prev.person_id,
+  }));
+}}
+
               style={{
                 height: 44,
                 padding: "0 12px",
