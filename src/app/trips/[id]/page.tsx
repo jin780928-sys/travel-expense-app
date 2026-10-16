@@ -5787,6 +5787,53 @@ return (
   >
     當地時間
   </div>
+
+  
+{/* 行程類型標籤：放在時間下方 */}
+<span
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "4px 8px",
+    marginTop: 6,
+    borderRadius: 6,
+    fontSize: 11,
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    background:
+      item.source === "flight"
+        ? "#edf3ff"
+        : item.source === "hotel"
+          ? "#eaf5ef"
+          : item.source === "carRental"
+            ? "#fff1e5"
+            : item.source === "booking"
+              ? "#f3eefe"
+              : "#f4eee8",
+    color:
+      item.source === "flight"
+        ? "#285ea8"
+        : item.source === "hotel"
+          ? "#287a52"
+          : item.source === "carRental"
+            ? "#a35a21"
+            : item.source === "booking"
+              ? "#7253a5"
+              : "#826349",
+  }}
+>
+  {item.source === "flight"
+    ? "✈️ 機票"
+    : item.source === "hotel"
+      ? "🏨 飯店"
+      : item.source === "carRental"
+        ? "🚗 租車"
+        : item.source === "booking"
+          ? "🎟️ 預約"
+          : "📝 手動"}
+</span>
+
 </div>
 
 
@@ -5814,47 +5861,7 @@ return (
     marginBottom: 6,
   }}
 >
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      padding: "4px 9px",
-      borderRadius: 6,
-      fontSize: 11,
-      fontWeight: 700,
-      whiteSpace: "nowrap",
-      background:
-        item.source === "flight"
-          ? "#edf3ff"
-          : item.source === "hotel"
-            ? "#eaf5ef"
-            : item.source === "carRental"
-              ? "#fff1e5"
-              : item.source === "booking"
-                ? "#f3eefe"
-                : "#f4eee8",
-      color:
-        item.source === "flight"
-          ? "#285ea8"
-          : item.source === "hotel"
-            ? "#287a52"
-            : item.source === "carRental"
-              ? "#a35a21"
-              : item.source === "booking"
-                ? "#7253a5"
-                : "#826349",
-    }}
-  >
-    {item.source === "flight"
-      ? "✈️ 機票"
-      : item.source === "hotel"
-        ? "🏨 飯店"
-        : item.source === "carRental"
-          ? "🚗 租車"
-          : item.source === "booking"
-            ? "🎟️ 預約"
-            : "📝 手動行程"}
-  </span>
+  
 
   <div
     style={{
