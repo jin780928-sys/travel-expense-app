@@ -885,6 +885,325 @@ const updateTripBookingField = (
 };
 
 
+/* =========================================
+   重設預約行程表單
+   ========================================= */
+
+const resetTripBookingForm = () => {
+  setTripBookingForm({
+    booking_type: "other",
+    name: "",
+    confirmation_number: "",
+    booking_platform: "",
+    start_at: "",
+    end_at: "",
+    timezone: "",
+    location: "",
+    meeting_point: "",
+    participants: "",
+    amount: "",
+    currency: "USD",
+    payment_status: "unpaid",
+    booking_url: "",
+    notes: "",
+  });
+
+  setEditingTripBookingId(null);
+};
+
+/* =========================================
+   編輯預約行程：帶入原本資料
+   ========================================= */
+
+const startEditTripBooking = (booking: TripBooking) => {
+  if (savingTripBooking) return;
+
+  setEditingTripBookingId(booking.id);
+
+  setTripBookingForm({
+    booking_type: booking.booking_type,
+    name: booking.name || "",
+    confirmation_number:
+      booking.confirmation_number || "",
+    booking_platform: booking.booking_platform || "",
+
+    start_at: flightUTCToLocalInput(
+      booking.start_at,
+      booking.timezone
+    ),
+
+    end_at: flightUTCToLocalInput(
+      booking.end_at,
+      booking.timezone
+    ),
+
+    timezone: booking.timezone || "",
+    location: booking.location || "",
+    meeting_point: booking.meeting_point || "",
+    participants:
+      booking.participants === null
+        ? ""
+        : String(booking.participants),
+
+    amount:
+      booking.amount === null
+        ? ""
+        : String(booking.amount),
+
+    currency: booking.currency || "USD",
+    payment_status: booking.payment_status || "unpaid",
+    booking_url: booking.booking_url || "",
+    notes: booking.notes || "",
+  });
+
+  setShowTripBookingForm(true);
+};
+
+
+/* =========================================
+   新增／編輯預約行程
+   ========================================= */
+
+const saveTripBooking = async () => {
+  if (savingTripBooking) return;
+
+  if (!id || !Number.isSafeInteger(Number(id))) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  if (!tripBookingForm.name.trim()) {
+    alert("請輸入預約名稱");
+    return;
+  }
+
+  if (
+    (tripBookingForm.start_at || tripBookingForm.end_at) &&
+    !tripBookingForm.timezone
+  ) {
+    alert("請選擇預約當地時區");
+    return;
+  }
+
+  const participantsText =
+    tripBookingForm.participants.trim();
+
+  const participants =
+    participantsText === ""
+      ? null
+      : Number(participantsText);
+
+  if (
+    participants !== null &&
+    (!Number.isSafeInteger(participants) || participants < 1)
+  ) {
+    alert("預約人數必須是大於 0 的整數");
+    return;
+  }
+
+  const amountText = tripBookingForm.amount.trim();
+
+  const amount =
+    amountText === ""
+      ? null
+      : Number(amountText);
+
+  if (
+    amount !== null &&
+    (!Number.isFinite(amount) || amount < 0)
+  ) {
+    alert("請輸入有效的預約金額");
+    return;
+  }
+
+  const startUTC = tripBookingForm.start_at
+    ? flightLocalTimeToUTC(
+        tripBookingForm.start_at,
+        tripBookingForm.timezone
+      )
+    : null;
+
+  const endUTC = tripBookingForm.end_at
+    ? flightLocalTimeToUTC(
+        tripBookingForm.end_at,
+        tripBookingForm.timezone
+      )
+    : null;
+
+  if (tripBookingForm.start_at && !startUTC) {
+    alert("開始日期或時區無法轉換");
+    return;
+  }
+
+  if (tripBookingForm.end_at && !endUTC) {
+    alert("結束日期或時區無法轉換");
+    return;
+  }
+
+  if (
+    startUTC &&
+    endUTC &&
+    new Date(endUTC).getTime() <
+      new Date(startUTC).getTime()
+  ) {
+    alert("結束時間不能早於開始時間");
+    return;
+  }
+
+  setSavingTripBooking(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const bookingData = {
+      booking_type: tripBookingForm.booking_type,
+      name: tripBookingForm.name.trim(),
+      confirmation_number:
+        tripBookingForm.confirmation_number.trim() || null,
+      booking_platform:
+        tripBookingForm.booking_platform.trim() || null,
+
+      start_at: startUTC,
+      end_at: endUTC,
+      timezone: tripBookingForm.timezone || null,
+
+      location: tripBookingForm.location.trim() || null,
+      meeting_point:
+        tripBookingForm.meeting_point.trim() || null,
+
+      participants,
+      amount,
+      currency: tripBookingForm.currency.trim() || "USD",
+      payment_status: tripBookingForm.payment_status,
+
+      booking_url: tripBookingForm.booking_url.trim() || null,
+      notes: tripBookingForm.notes.trim() || null,
+    };
+
+    if (editingTripBookingId !== null) {
+      const { data, error } = await supabase
+        .from("TripBookings")
+        .update(bookingData)
+        .eq("id", editingTripBookingId)
+        .eq("trip_id", Number(id))
+        .eq("user_id", user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("找不到可更新的預約資料");
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("TripBookings")
+        .insert({
+          ...bookingData,
+          trip_id: Number(id),
+          user_id: user.id,
+        })
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("新增預約資料失敗");
+      }
+    }
+
+    await loadTripBookings();
+
+    alert(
+      editingTripBookingId !== null
+        ? "預約行程更新成功！"
+        : "預約行程新增成功！"
+    );
+
+    resetTripBookingForm();
+    setShowTripBookingForm(false);
+  } catch (error) {
+    console.error("儲存預約行程失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `儲存失敗：${error.message}`
+        : "儲存預約行程失敗"
+    );
+  } finally {
+    setSavingTripBooking(false);
+  }
+};
+
+
+/* =========================================
+   刪除預約行程
+   ========================================= */
+
+const deleteTripBooking = async (booking: TripBooking) => {
+  if (savingTripBooking) return;
+
+  const confirmed = window.confirm(
+    `確定要刪除「${booking.name}」嗎？\n\n刪除後無法復原。`
+  );
+
+  if (!confirmed) return;
+
+  if (!id) {
+    alert("找不到旅程 ID");
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripBookings")
+      .delete()
+      .eq("id", booking.id)
+      .eq("trip_id", Number(id))
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可刪除的預約資料");
+    }
+
+    if (editingTripBookingId === booking.id) {
+      resetTripBookingForm();
+      setShowTripBookingForm(false);
+    }
+
+    await loadTripBookings();
+
+    alert("預約行程已刪除！");
+  } catch (error) {
+    console.error("刪除預約行程失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `刪除失敗：${error.message}`
+        : "刪除預約行程失敗"
+    );
+  }
+};
+
+
 // 載入狀態
 const [loadingCarRentals, setLoadingCarRentals] =
   useState(false);
