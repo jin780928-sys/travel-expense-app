@@ -959,7 +959,36 @@ const [
 const [showHotelForm, setShowHotelForm] =
   useState(false);
 
-  
+
+/* =========================================
+   每日行程：跳轉至資料來源分頁
+   ========================================= */
+
+const goToItinerarySource = (
+  source: UnifiedItineraryItem["source"]
+) => {
+  const tabMap: Record<
+    "flight" | "hotel" | "carRental" | "booking",
+    ActiveTab
+  > = {
+    flight: "flights",
+    hotel: "hotels",
+    carRental: "carRentals",
+    booking: "bookings",
+  };
+
+  if (source === "manual") {
+    return;
+  }
+
+  setActiveTab(tabMap[source]);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
 /* =========================================
    已儲存的飯店列表
    ========================================= */
