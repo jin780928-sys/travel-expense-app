@@ -1951,6 +1951,36 @@ const startEditTripBooking = (booking: TripBooking) => {
 
 
 /* =========================================
+   每日行程：直接編輯指定預約
+   ========================================= */
+
+const editTripBookingFromItinerary = (
+  sourceId: string | number
+) => {
+  const booking = tripBookings.find(
+    (item) => String(item.id) === String(sourceId)
+  );
+
+  if (!booking) {
+    alert("找不到對應的預約資料，請重新整理頁面");
+    return;
+  }
+
+  // 切換至預約管理分頁
+  setActiveTab("bookings");
+
+  // 帶入指定預約紀錄
+  startEditTripBooking(booking);
+
+  // 捲動至頁面上方
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
+
+/* =========================================
    新增／編輯預約行程
    ========================================= */
 
@@ -5874,6 +5904,7 @@ return (
     type="button"
     
 
+
 onClick={() => {
   if (item.source === "flight") {
     void editFlightFromItinerary(item.sourceId);
@@ -5881,10 +5912,13 @@ onClick={() => {
     editHotelFromItinerary(item.sourceId);
   } else if (item.source === "carRental") {
     editCarRentalFromItinerary(item.sourceId);
+  } else if (item.source === "booking") {
+    editTripBookingFromItinerary(item.sourceId);
   } else {
     goToItinerarySource(item.source);
   }
 }}
+
 
 
     style={{
@@ -5909,7 +5943,7 @@ onClick={() => {
   ? "🏨 編輯飯店"
     : item.source === "carRental"
   ? "🚗 編輯租車"
-      : "🎟️ 前往預約管理"}
+      : "🎟️ 編輯預約"}
     <span aria-hidden="true">→</span>
   </button>
 )}
