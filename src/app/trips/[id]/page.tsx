@@ -1541,6 +1541,12 @@ const [loadingPackingTemplates, setLoadingPackingTemplates] =
 const [packingTemplateLoadError, setPackingTemplateLoadError] =
   useState("");
 
+/* =========================================
+   打包清單：匯入狀態
+   ========================================= */
+
+const [importingPackingTemplates, setImportingPackingTemplates] =
+  useState(false);
 
 /* =========================================
    打包清單：讀取系統共用預設範本
@@ -1597,6 +1603,185 @@ const loadPackingTemplates = async () => {
     );
   } finally {
     setLoadingPackingTemplates(false);
+  }
+};
+
+
+/* =========================================
+   打包清單：匯入系統預設物品
+   ========================================= */
+
+const importPackingTemplates = async () => {
+  if (importingPackingTemplates) return;
+
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  if (loadingPackingTemplates || packingTemplateLoadError) {
+    alert("預設清單尚未成功載入，請重新開啟匯入面板");
+    return;
+  }
+
+  let personId: number | null = null;
+
+  if (packingImportScope === "personal") {
+    if (!packingImportPersonId) {
+      alert("請先選擇要匯入的旅行成員");
+      return;
+    }
+
+    personId = Number(packingImportPersonId);
+
+    if (
+      !Number.isSafeInteger(personId) ||
+      !packingPeople.some((person) => person.id === personId)
+    ) {
+      alert("請選擇有效的旅行成員");
+      return;
+    }
+  }
+
+  setImportingPackingTemplates(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    // 只取得目前選取範圍的啟用分類
+    const selectedCategories =
+      packingTemplateCategories.filter(
+        (category) =>
+          category.scope === packingImportScope &&
+          category.is_active
+      );
+
+    const categoryMap = new Map(
+      selectedCategories.map((category) => [
+        category.id,
+        category,
+      ])
+    );
+
+    const selectedItems = packingTemplateItems.filter(
+      (item) =>
+        item.is_active && categoryMap.has(item.category_id)
+    );
+
+    if (selectedCategories.length === 0 || selectedItems.length === 0) {
+      throw new Error("找不到可匯入的預設物品");
+    }
+
+    // 讀取資料庫最新清單，避免使用過期的畫面資料
+    const { data: existingItems, error: existingError } =
+      await supabase
+        .from("TripPackingItems")
+        .select("name,category,person_id")
+        .eq("trip_id", tripId)
+        .eq("user_id", user.id);
+
+    if (existingError) throw existingError;
+
+    // 使用「範圍＋分類代碼」避免個人與共用分類混淆
+    const getCategoryKey = (scope: string, code: string) =>
+      `template:${scope}:${code}`;
+
+    const normalizeName = (name: string) =>
+      name.trim().toLocaleLowerCase();
+
+    const existingKeys = new Set(
+      (existingItems ?? []).map((item) =>
+        JSON.stringify([
+          item.person_id === null ? null : Number(item.person_id),
+          item.category,
+          normalizeName(item.name || ""),
+        ])
+      )
+    );
+
+    let nextSortOrder = packingItems.length;
+
+    const rowsToInsert = selectedItems.flatMap((item) => {
+      const category = categoryMap.get(item.category_id);
+
+      if (!category) return [];
+
+      const categoryKey = getCategoryKey(
+        category.scope,
+        category.code
+      );
+
+      const duplicateKey = JSON.stringify([
+        personId,
+        categoryKey,
+        normalizeName(item.name),
+      ]);
+
+      if (existingKeys.has(duplicateKey)) {
+        return [];
+      }
+
+      existingKeys.add(duplicateKey);
+
+      return [
+        {
+          trip_id: tripId,
+          user_id: user.id,
+          name: item.name,
+          category: categoryKey,
+          quantity: item.quantity,
+          person_id: personId,
+          notes: item.notes,
+          is_packed: false,
+          sort_order: nextSortOrder++,
+        },
+      ];
+    });
+
+    if (rowsToInsert.length === 0) {
+      alert("這份預設清單已經匯入，沒有需要新增的物品");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `確定要匯入 ${rowsToInsert.length} 項物品嗎？\n\n` +
+      (packingImportScope === "personal"
+        ? "物品將指定給所選旅行成員。"
+        : "物品將建立為共用用品。")
+    );
+
+    if (!confirmed) return;
+
+    const { error: insertError } = await supabase
+      .from("TripPackingItems")
+      .insert(rowsToInsert);
+
+    if (insertError) throw insertError;
+
+    await loadPackingItems();
+
+    setShowPackingImport(false);
+
+    alert(`成功匯入 ${rowsToInsert.length} 項打包物品！`);
+  } catch (error) {
+    console.error("匯入預設清單失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `匯入失敗：${error.message}`
+        : "匯入預設清單失敗"
+    );
+  } finally {
+    setImportingPackingTemplates(false);
   }
 };
 
