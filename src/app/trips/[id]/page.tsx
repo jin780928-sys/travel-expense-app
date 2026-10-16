@@ -818,14 +818,30 @@ const [flightSegments, setFlightSegments] = useState<
   FlightSegmentForm[]
 >([createFlightSegment(1)]);
 
+
 const addFlightSegment = () => {
-  setFlightSegments((prev) => [
-    ...prev,
-    createFlightSegment(
-      Math.max(0, ...prev.map((s) => s.localId)) + 1
-    ),
-  ]);
+  setFlightSegments((prev) => {
+    const lastSegment = prev[prev.length - 1];
+
+    const nextId =
+      Math.max(0, ...prev.map((s) => s.localId)) + 1;
+
+    return [
+      ...prev,
+      {
+        ...createFlightSegment(nextId),
+
+        // 自動帶入上一段的抵達機場
+        departure_airport:
+          lastSegment?.arrival_airport || "",
+
+        // 同一家航空公司時減少重複輸入
+        airline: lastSegment?.airline || "",
+      },
+    ];
+  });
 };
+
 
 const removeFlightSegment = (localId: number) => {
   setFlightSegments((prev) =>
