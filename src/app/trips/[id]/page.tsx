@@ -869,9 +869,19 @@ function flightLocalTimeToUTC(
     );
   }
 
-  // 夏令時間結束造成同一時間出現兩次時，
-  // 選擇較早的時間點
-  return new Date(Math.min(...matches)).toISOString();
+  
+/* =========================================
+   夏令時間結束：重複的當地時間
+   ========================================= */
+
+if (matches.length > 1) {
+  throw new Error(
+    `當地時間 ${localDateTime} 在 ${timeZone} 因夏令時間結束而出現兩次，無法唯一判定 UTC 時刻。請確認正確的 UTC 偏移後再儲存。`
+  );
+}
+
+return new Date(matches[0]).toISOString();
+
 }
 
   const params = useParams();
