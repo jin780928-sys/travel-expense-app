@@ -5369,7 +5369,7 @@ onClick={() => {
           background: "#ffffff",
           border: "1px solid #e6dcd0",
           borderRadius: 14,
-          padding: "18px 16px",
+          padding: "clamp(12px, 3vw, 22px)",
           boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
         }}
       >
@@ -5653,9 +5653,9 @@ onClick={() => {
                   style={{
                     display: "grid",
                     gridTemplateColumns:
-                      "minmax(0, 1fr) auto minmax(0, 1fr)",
-                    gap: 12,
-                    alignItems: "center",
+  "minmax(0, 1fr) minmax(64px, auto) minmax(0, 1fr)",
+gap: "clamp(4px, 2vw, 12px)",
+alignItems: "center",
                   }}
                 >
                   {/* 出發 */}
@@ -5694,7 +5694,8 @@ onClick={() => {
                       flexDirection: "column",
                       alignItems: "center",
                       gap: 5,
-                      minWidth: 90,
+                      minWidth: 64,
+                      maxWidth: 130,
                       textAlign: "center",
                     }}
                   >
@@ -5712,7 +5713,8 @@ onClick={() => {
                         fontSize: 12,
                         fontWeight: 700,
                         color: "#674b39",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
+                        overflowWrap: "anywhere",
                       }}
                     >
                       {formatFlightTimeDifference(
@@ -5780,7 +5782,7 @@ onClick={() => {
                     style={{
                       display: "grid",
                       gridTemplateColumns:
-                        "repeat(auto-fit, minmax(min(100%, 145px), 1fr))",
+                        "repeat(auto-fit, minmax(min(100%, 120px), 1fr))",
                       gap: 10,
                       marginTop: 14,
                       paddingTop: 12,
