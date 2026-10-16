@@ -1418,18 +1418,69 @@ const filteredPackingItems = packingItems.filter((item) => {
   );
 });
 
+
 /* =========================================
    行李清單：分類名稱
+   支援舊版分類與系統預設範本
    ========================================= */
 
 const packingCategoryNames: Record<string, string> = {
+  // =====================================
+  // 舊版分類：保留既有資料
+  // =====================================
   documents: "🪪 證件",
   clothing: "👕 衣物",
   toiletries: "🧴 盥洗用品",
   electronics: "🔌 電子產品",
   medicine: "💊 藥品",
   other: "📦 其他",
+
+  // =====================================
+  // 個人用品：9 個分類
+  // =====================================
+  "template:personal:personal_bag_documents":
+    "💳 隨身背包－證件與財物",
+
+  "template:personal:personal_bag_daily":
+    "🪪 隨身背包－日常用品",
+
+  "template:personal:clothing":
+    "👕 衣物",
+
+  "template:personal:shoes_accessories":
+    "👟 鞋子與配件",
+
+  "template:personal:toiletries":
+    "🧴 盥洗與保養",
+
+  "template:personal:special_items":
+    "💄 特殊用品",
+
+  "template:personal:electronics":
+    "🔌 3C 電子用品",
+
+  "template:personal:travel_items":
+    "🧳 旅行用品",
+
+  "template:personal:other":
+    "📦 其他",
+
+  // =====================================
+  // 共用用品：4 個分類
+  // =====================================
+  "template:shared:toiletries":
+    "🧴 盥洗與保養",
+
+  "template:shared:special_items":
+    "💄 特殊用品",
+
+  "template:shared:medicine":
+    "💊 藥品與保健品",
+
+  "template:shared:other":
+    "📦 其他",
 };
+
 
 /* =========================================
    行李清單：排序結果
