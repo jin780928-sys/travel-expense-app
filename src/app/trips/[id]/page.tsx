@@ -1353,6 +1353,14 @@ const toggleTripNoteImportant = async (note: TripNote) => {
 const [packingPersonFilter, setPackingPersonFilter] =
   useState("all");
 
+
+/* =========================================
+   打包清單：個人／共用快速篩選
+   ========================================= */
+const [packingScopeFilter, setPackingScopeFilter] =
+  useState<"all" | "personal" | "shared">("all");
+
+
 const [packingCategoryFilter, setPackingCategoryFilter] =
   useState("all");
 
@@ -1410,12 +1418,21 @@ const filteredPackingItems = packingItems.filter((item) => {
     item.name.toLowerCase().includes(keyword) ||
     (item.notes || "").toLowerCase().includes(keyword);
 
-  return (
-    matchPerson &&
-    matchCategory &&
-    matchStatus &&
-    matchSearch
-  );
+  
+const matchScope =
+  packingScopeFilter === "all" ||
+  (packingScopeFilter === "personal"
+    ? item.person_id !== null
+    : item.person_id === null);
+
+return (
+  matchScope &&
+  matchPerson &&
+  matchCategory &&
+  matchStatus &&
+  matchSearch
+);
+
 });
 
 
@@ -11507,6 +11524,61 @@ alignItems: "center",
     borderRadius: 14,
   }}
 >
+
+{/* =========================================
+    打包清單：個人／共用快速切換
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    gridColumn: "1 / -1",
+  }}
+>
+  {(
+    [
+      { value: "all", label: "📦 全部行李" },
+      { value: "personal", label: "👤 個人用品" },
+      { value: "shared", label: "👥 共用用品" },
+    ] as const
+  ).map((option) => (
+    <button
+      key={option.value}
+      type="button"
+      onClick={() => {
+        setPackingScopeFilter(option.value);
+        setPackingPersonFilter("all");
+        setPackingCategoryFilter("all");
+      }}
+      aria-pressed={packingScopeFilter === option.value}
+      style={{
+        padding: "9px 14px",
+        borderRadius: 9,
+        border:
+          packingScopeFilter === option.value
+            ? "1px solid #826349"
+            : "1px solid #d8c6b4",
+        background:
+          packingScopeFilter === option.value
+            ? "#826349"
+            : "#ffffff",
+        color:
+          packingScopeFilter === option.value
+            ? "#ffffff"
+            : "#674b39",
+        fontSize: 13,
+        fontWeight: 700,
+        cursor: "pointer",
+      }}
+    >
+      {option.label}
+    </button>
+  ))}
+</div>
+
+  
   <label style={{ display: "grid", gap: 7, fontSize: 13, color: "#674b39" }}>
     所屬人員
     <select
