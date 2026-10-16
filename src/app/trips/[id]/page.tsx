@@ -4624,10 +4624,10 @@ onClick={() => {
     setShowFlightForm(false);
     setEditingFlightId(null);
   } else {
-    setEditingFlightId(null);
-    setFlightForm({
-      airline: "",
-      flight_number: "",
+  setEditingFlightId(null);
+  setFlightForm({
+    airline: "",
+    flight_number: "",
       departure_airport: "",
       arrival_airport: "",
       departure_at: "",
@@ -4640,6 +4640,7 @@ onClick={() => {
       amount: "",
       currency: "USD",
       payment_status: "unpaid",
+      flight_direction: "other",
       booking_platform: "",
       booking_url: "",
       notes: "",
