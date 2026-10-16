@@ -8187,216 +8187,326 @@ alignItems: "center",
           gap: 14,
         }}
       >
-        {tripBookings.map((booking) => {
-          const bookingTypeLabels: Record<string, string> = {
-            attraction: "🎫 景點門票",
-            restaurant: "🍽️ 餐廳",
-            tour: "🧭 導覽",
-            activity: "🎭 活動",
-            experience: "✨ 體驗",
-            other: "📋 其他",
-          };
+        
+{tripBookings.map((booking) => {
+  const typeInfo: Record<
+    string,
+    { icon: string; label: string }
+  > = {
+    attraction: { icon: "🎫", label: "景點門票" },
+    restaurant: { icon: "🍽️", label: "餐廳預約" },
+    tour: { icon: "🧭", label: "導覽行程" },
+    activity: { icon: "🎭", label: "活動預約" },
+    experience: { icon: "✨", label: "體驗行程" },
+    other: { icon: "📋", label: "其他預約" },
+  };
 
-          return (
+  const type = typeInfo[booking.booking_type] || typeInfo.other;
+
+  const status =
+    booking.payment_status === "paid"
+      ? "已付款"
+      : booking.payment_status === "partial"
+        ? "部分付款"
+        : "未付款";
+
+  return (
+    <div
+      key={booking.id}
+      style={{
+        padding: "clamp(14px, 3vw, 20px)",
+        border: "1px solid #e6dcd0",
+        borderRadius: 14,
+        background: "#ffffff",
+        boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
+        minWidth: 0,
+      }}
+    >
+      {/* 標題與付款狀態 */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: 12,
+        }}
+      >
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: "#826349",
+              marginBottom: 8,
+            }}
+          >
+            {type.icon} {type.label}
+          </div>
+
+          <h3
+            style={{
+              margin: 0,
+              fontSize: 19,
+              fontWeight: 800,
+              color: "#49392f",
+              overflowWrap: "anywhere",
+            }}
+          >
+            {booking.name}
+          </h3>
+        </div>
+
+        <span
+          style={{
+            padding: "6px 12px",
+            borderRadius: 999,
+            fontSize: 12,
+            fontWeight: 700,
+            background:
+              booking.payment_status === "paid"
+                ? "#e8f0e5"
+                : booking.payment_status === "partial"
+                  ? "#fff0d9"
+                  : "#f2ebe2",
+            color:
+              booking.payment_status === "paid"
+                ? "#55704e"
+                : "#826349",
+          }}
+        >
+          {status}
+        </span>
+      </div>
+
+      {/* 預約日期與時間 */}
+      {(booking.start_at || booking.end_at) && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
+            gap: 12,
+            marginTop: 16,
+          }}
+        >
+          {booking.start_at && (
             <div
-              key={booking.id}
               style={{
-                padding: 18,
-                border: "1px solid #e6dcd0",
-                borderRadius: 14,
-                background: "#ffffff",
+                padding: 14,
+                background: "#faf7f2",
+                borderRadius: 12,
               }}
             >
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  flexWrap: "wrap",
-                  gap: 12,
+                  fontSize: 12,
+                  color: "#826349",
+                  fontWeight: 700,
+                  marginBottom: 8,
                 }}
               >
-                <div style={{ minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: "#826349",
-                      fontWeight: 700,
-                      marginBottom: 6,
-                    }}
-                  >
-                    {bookingTypeLabels[booking.booking_type] ||
-                      "📋 其他"}
-                  </div>
-
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: 18,
-                      color: "#49392f",
-                      overflowWrap: "anywhere",
-                    }}
-                  >
-                    {booking.name}
-                  </h3>
-                </div>
-
-                <span
-                  style={{
-                    padding: "6px 12px",
-                    borderRadius: 999,
-                    background:
-                      booking.payment_status === "paid"
-                        ? "#e8f0e5"
-                        : booking.payment_status === "partial"
-                          ? "#fff0d9"
-                          : "#f2ebe2",
-                    color:
-                      booking.payment_status === "paid"
-                        ? "#55704e"
-                        : "#826349",
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  {booking.payment_status === "paid"
-                    ? "已付款"
-                    : booking.payment_status === "partial"
-                      ? "部分付款"
-                      : "未付款"}
-                </span>
+                🗓️ 開始時間
               </div>
 
               <div
                 style={{
-                  marginTop: 14,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 7,
-                  fontSize: 13,
-                  color: "#674b39",
-                  overflowWrap: "anywhere",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "#49392f",
                 }}
               >
-                {booking.start_at && (
-                  <div>
-                    🗓️ 開始：
-                    {formatFlightDateTime(
-                      booking.start_at,
-                      booking.timezone
-                    )}
-                  </div>
+                {formatFlightDateTime(
+                  booking.start_at,
+                  booking.timezone
                 )}
-
-                {booking.end_at && (
-                  <div>
-                    🕒 結束：
-                    {formatFlightDateTime(
-                      booking.end_at,
-                      booking.timezone
-                    )}
-                  </div>
-                )}
-
-                {booking.location && (
-                  <div>📍 地點：{booking.location}</div>
-                )}
-
-                {booking.meeting_point && (
-                  <div>🚩 集合地點：{booking.meeting_point}</div>
-                )}
-
-                {booking.participants !== null && (
-                  <div>👥 人數：{booking.participants} 人</div>
-                )}
-
-                {booking.confirmation_number && (
-                  <div>
-                    📋 預約編號：{booking.confirmation_number}
-                  </div>
-                )}
-
-                {booking.booking_platform && (
-                  <div>
-                    🌐 預約平台：{booking.booking_platform}
-                  </div>
-                )}
-
-                {booking.amount !== null && (
-                  <div>
-                    💵 費用：{booking.currency}{" "}
-                    {Number(booking.amount).toFixed(2)}
-                  </div>
-                )}
-
-                {booking.notes && (
-                  <div style={{ whiteSpace: "pre-wrap" }}>
-                    📝 備註：{booking.notes}
-                  </div>
-                )}
-
-                {booking.booking_url && (
-                  <a
-                    href={booking.booking_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: "#826349",
-                      fontWeight: 700,
-                    }}
-                  >
-                    查看預約資料 ↗
-                  </a>
-                )}
-              </div>
-
-              {/* 編輯及刪除 */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  flexWrap: "wrap",
-                  gap: 10,
-                  marginTop: 16,
-                  paddingTop: 14,
-                  borderTop: "1px solid #e6dcd0",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => startEditTripBooking(booking)}
-                  style={{
-                    padding: "9px 14px",
-                    border: "1px solid #d8c6b4",
-                    borderRadius: 10,
-                    background: "#ffffff",
-                    color: "#674b39",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  ✏️ 編輯
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => deleteTripBooking(booking)}
-                  style={{
-                    padding: "9px 14px",
-                    border: "1px solid #e7c9c3",
-                    borderRadius: 10,
-                    background: "#fff7f5",
-                    color: "#b4534b",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  🗑️ 刪除
-                </button>
               </div>
             </div>
-          );
-        })}
+          )}
+
+          {booking.end_at && (
+            <div
+              style={{
+                padding: 14,
+                background: "#faf7f2",
+                borderRadius: 12,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "#826349",
+                  fontWeight: 700,
+                  marginBottom: 8,
+                }}
+              >
+                🕒 結束時間
+              </div>
+
+              <div
+                style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "#49392f",
+                }}
+              >
+                {formatFlightDateTime(
+                  booking.end_at,
+                  booking.timezone
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 地點與訂單資料 */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
+          gap: 12,
+          marginTop: 16,
+          fontSize: 13,
+          color: "#674b39",
+          lineHeight: 1.7,
+          overflowWrap: "anywhere",
+        }}
+      >
+        {booking.location && (
+          <div>
+            <strong>📍 地點</strong>
+            <div>{booking.location}</div>
+          </div>
+        )}
+
+        {booking.meeting_point && (
+          <div>
+            <strong>🚩 集合地點</strong>
+            <div>{booking.meeting_point}</div>
+          </div>
+        )}
+
+        {booking.participants !== null && (
+          <div>
+            <strong>👥 預約人數</strong>
+            <div>{booking.participants} 人</div>
+          </div>
+        )}
+
+        {booking.confirmation_number && (
+          <div>
+            <strong>📋 預約編號</strong>
+            <div>{booking.confirmation_number}</div>
+          </div>
+        )}
+
+        {booking.booking_platform && (
+          <div>
+            <strong>🌐 預約平台</strong>
+            <div>{booking.booking_platform}</div>
+          </div>
+        )}
+
+        {booking.amount !== null && (
+          <div>
+            <strong>💵 預約總金額</strong>
+            <div>
+              {booking.currency}{" "}
+              {Number(booking.amount).toFixed(2)}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 備註 */}
+      {booking.notes && (
+        <div
+          style={{
+            padding: 14,
+            marginTop: 16,
+            background: "#faf7f2",
+            borderRadius: 10,
+            color: "#674b39",
+            fontSize: 13,
+            whiteSpace: "pre-wrap",
+            overflowWrap: "anywhere",
+          }}
+        >
+          📝 {booking.notes}
+        </div>
+      )}
+
+      {/* 預約連結 */}
+      {booking.booking_url && (
+        <a
+          href={booking.booking_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "inline-block",
+            marginTop: 14,
+            color: "#826349",
+            fontSize: 13,
+            fontWeight: 700,
+            overflowWrap: "anywhere",
+          }}
+        >
+          🔗 查看預約資料 ↗
+        </a>
+      )}
+
+      {/* 編輯與刪除 */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          flexWrap: "wrap",
+          gap: 10,
+          marginTop: 18,
+          paddingTop: 16,
+          borderTop: "1px solid #e6dcd0",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => startEditTripBooking(booking)}
+          style={{
+            padding: "10px 14px",
+            border: "1px solid #d8c6b4",
+            borderRadius: 10,
+            background: "#ffffff",
+            color: "#674b39",
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          ✏️ 編輯
+        </button>
+
+        <button
+          type="button"
+          onClick={() => deleteTripBooking(booking)}
+          style={{
+            padding: "10px 14px",
+            border: "1px solid #e7c9c3",
+            borderRadius: 10,
+            background: "#fff7f5",
+            color: "#b4534b",
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          🗑️ 刪除
+        </button>
+      </div>
+    </div>
+  );
+})}
+
       </div>
     )}
   </section>
