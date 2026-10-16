@@ -1558,6 +1558,26 @@ const packingGroups = sortedPackingItems.reduce<
 }, {});
 
 
+/* =========================================
+   行李清單：分組顯示順序
+   個人用品在前，共用用品在後
+   ========================================= */
+
+const sortedPackingGroups = Object.entries(
+  packingGroups
+).sort(([groupA], [groupB]) => {
+  if (packingGroupBy !== "person") {
+    return 0;
+  }
+
+  const sharedName = "👥 共用行李";
+
+  if (groupA === sharedName) return 1;
+  if (groupB === sharedName) return -1;
+
+  return groupA.localeCompare(groupB, "zh-Hant");
+});
+
 
 
 
@@ -11870,7 +11890,7 @@ alignItems: "center",
     gap: 16,
   }}
 >
-  {Object.entries(packingGroups).map(([groupName, groupItems]) => {
+  {sortedPackingGroups.map(([groupName, groupItems]) => {
     const groupPacked = groupItems.filter(
       (item) => item.is_packed
     ).length;
