@@ -901,6 +901,10 @@ const [packingGroupBy, setPackingGroupBy] =
   useState<"none" | "category" | "person">("none");
 
 
+/* 行李關鍵字搜尋 */
+const [packingSearch, setPackingSearch] = useState("");
+
+
 const filteredPackingItems = packingItems.filter((item) => {
   const matchPerson =
     packingPersonFilter === "all" ||
@@ -962,7 +966,21 @@ const packingGroups = filteredPackingItems.reduce<
       ? item.is_packed
       : !item.is_packed);
 
-  return matchPerson && matchCategory && matchStatus;
+  
+  const keyword = packingSearch.trim().toLowerCase();
+
+  const matchSearch =
+    keyword === "" ||
+    item.name.toLowerCase().includes(keyword) ||
+    (item.notes || "").toLowerCase().includes(keyword);
+
+  return (
+    matchPerson &&
+    matchCategory &&
+    matchStatus &&
+    matchSearch
+  );
+
 });
 
 
@@ -9434,6 +9452,36 @@ alignItems: "center",
         </div>
       </div>
     )}
+
+  
+{/* 行李關鍵字搜尋 */}
+<div
+  style={{
+    padding: 16,
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 14,
+  }}
+>
+  <input
+    type="search"
+    value={packingSearch}
+    onChange={(e) => setPackingSearch(e.target.value)}
+    placeholder="🔍 搜尋行李名稱或備註..."
+    aria-label="搜尋行李"
+    style={{
+      width: "100%",
+      boxSizing: "border-box",
+      height: 44,
+      padding: "0 14px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#49392f",
+      fontSize: 14,
+    }}
+  />
+</div>
 
     
 {/* =========================================
