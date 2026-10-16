@@ -4679,16 +4679,19 @@ const carRentalUnifiedItems: UnifiedItineraryItem[] =
 
     // 取車事件
     if (rental.pickup_at) {
-      const pickupDateTime = String(rental.pickup_at);
+  const pickupLocal = getLocalItineraryDateTime(
+    rental.pickup_at,
+    rental.pickup_timezone
+  );
 
       items.push({
         key: `car-pickup-${rental.id}`,
         source: "carRental",
         sourceId: rental.id,
 
-        date: pickupDateTime.slice(0, 10),
-        start_time: pickupDateTime.slice(11, 16) || null,
-        end_time: null,
+        date: pickupLocal.date,
+start_time: pickupLocal.time,
+end_time: null,
 
         title: `🚗 取車：${company}`,
         location: rental.pickup_location || null,
@@ -4714,16 +4717,19 @@ const carRentalUnifiedItems: UnifiedItineraryItem[] =
 
     // 還車事件
     if (rental.dropoff_at) {
-      const dropoffDateTime = String(rental.dropoff_at);
+  const dropoffLocal = getLocalItineraryDateTime(
+    rental.dropoff_at,
+    rental.dropoff_timezone
+  );
 
       items.push({
         key: `car-dropoff-${rental.id}`,
         source: "carRental",
         sourceId: rental.id,
 
-        date: dropoffDateTime.slice(0, 10),
-        start_time: dropoffDateTime.slice(11, 16) || null,
-        end_time: null,
+        date: dropoffLocal.date,
+start_time: dropoffLocal.time,
+end_time: null,
 
         title: `🚙 還車：${company}`,
         location: rental.dropoff_location || null,
