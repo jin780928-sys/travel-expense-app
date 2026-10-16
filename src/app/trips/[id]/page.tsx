@@ -1499,8 +1499,10 @@ const packingCategoryNames: Record<string, string> = {
 };
 
 
+
 /* =========================================
-   行李清單：排序結果
+   行李清單：排序
+   預設依 sort_order 排列
    ========================================= */
 
 const sortedPackingItems = [...filteredPackingItems].sort(
@@ -1510,11 +1512,19 @@ const sortedPackingItems = [...filteredPackingItems].sort(
     }
 
     if (packingSort === "unpacked") {
-      return Number(a.is_packed) - Number(b.is_packed);
+      return (
+        Number(a.is_packed) - Number(b.is_packed) ||
+        a.sort_order - b.sort_order ||
+        a.id - b.id
+      );
     }
 
     if (packingSort === "packed") {
-      return Number(b.is_packed) - Number(a.is_packed);
+      return (
+        Number(b.is_packed) - Number(a.is_packed) ||
+        a.sort_order - b.sort_order ||
+        a.id - b.id
+      );
     }
 
     return (
@@ -1523,6 +1533,7 @@ const sortedPackingItems = [...filteredPackingItems].sort(
     );
   }
 );
+
 
 /* =========================================
    行李清單：分組結果
