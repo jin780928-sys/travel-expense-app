@@ -1651,15 +1651,21 @@ const [showPackingForm, setShowPackingForm] =
 /* =========================================
    打包清單：預設範本匯入面板
    ========================================= */
-
 const [showPackingImport, setShowPackingImport] =
   useState(false);
 
 
 /* =========================================
+   打包清單：常用物品管理面板
+   ========================================= */
+const [showPackingTemplateManager, setShowPackingTemplateManager] =
+  useState(false);
+
+
+
+/* =========================================
    打包清單：匯入範圍與指定人員
    ========================================= */
-
 const [packingImportScope, setPackingImportScope] =
   useState<"personal" | "shared">("personal");
 
@@ -11027,6 +11033,34 @@ alignItems: "center",
         📋 匯入預設打包清單
       </h3>
 
+      
+{/* =========================================
+    常用物品管理入口
+   ========================================= */}
+
+<button
+  type="button"
+  onClick={() =>
+    setShowPackingTemplateManager((prev) => !prev)
+  }
+  style={{
+    marginTop: 12,
+    padding: "9px 14px",
+    border: "1px solid #d8c6b4",
+    borderRadius: 9,
+    background: "#ffffff",
+    color: "#826349",
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: "pointer",
+  }}
+>
+  {showPackingTemplateManager
+    ? "關閉常用物品管理"
+    : "⚙️ 管理常用物品"}
+</button>
+
+
       <p
         style={{
           margin: "6px 0 0",
@@ -11039,6 +11073,46 @@ alignItems: "center",
         匯入後可以自由修改物品及數量。
       </p>
     </div>
+
+    
+{/* =========================================
+    常用物品管理面板
+   ========================================= */}
+
+{showPackingTemplateManager && (
+  <div
+    style={{
+      padding: 16,
+      background: "#ffffff",
+      border: "1px solid #e6dcd0",
+      borderRadius: 12,
+      display: "grid",
+      gap: 8,
+    }}
+  >
+    <h4
+      style={{
+        margin: 0,
+        fontSize: 16,
+        fontWeight: 800,
+        color: "#49392f",
+      }}
+    >
+      ⚙️ 常用物品管理
+    </h4>
+
+    <div
+      style={{
+        fontSize: 13,
+        color: "#927f70",
+        lineHeight: 1.7,
+      }}
+    >
+      這裡將可以新增、修改及停用自己的常用打包物品。
+      系統原本的預設清單不會被修改。
+    </div>
+  </div>
+)}
 
     {/* 個人／共用選擇 */}
     <div
