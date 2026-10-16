@@ -7744,6 +7744,345 @@ alignItems: "center",
   </section>
 )}
 
+          
+{/* =========================================
+    預約行程管理畫面
+   ========================================= */}
+
+{activeTab === "bookings" && (
+  <section
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 18,
+      marginTop: 20,
+      minWidth: 0,
+    }}
+  >
+    {/* 標題與新增按鈕 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 12,
+      }}
+    >
+      <div>
+        <h2
+          style={{
+            margin: 0,
+            fontSize: 22,
+            fontWeight: 800,
+            color: "#49392f",
+          }}
+        >
+          🎟️ 預約行程管理
+        </h2>
+
+        <p
+          style={{
+            margin: "6px 0 0",
+            fontSize: 13,
+            color: "#927f70",
+          }}
+        >
+          管理景點門票、餐廳、導覽、活動與體驗預約
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          if (showTripBookingForm) {
+            resetTripBookingForm();
+            setShowTripBookingForm(false);
+          } else {
+            resetTripBookingForm();
+            setShowTripBookingForm(true);
+          }
+        }}
+        style={{
+          padding: "11px 18px",
+          border: "none",
+          borderRadius: 10,
+          background: "#826349",
+          color: "#ffffff",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        {showTripBookingForm ? "取消新增" : "＋ 新增預約"}
+      </button>
+    </div>
+
+    {/* 新增／編輯表單：下一步加入 */}
+    {showTripBookingForm && (
+      <div
+        style={{
+          padding: 20,
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+          background: "#faf7f2",
+          color: "#674b39",
+        }}
+      >
+        <strong>
+          {editingTripBookingId !== null
+            ? "✏️ 編輯預約行程"
+            : "🎟️ 新增預約行程"}
+        </strong>
+
+        <p style={{ fontSize: 13 }}>
+          預約表單將在下一步加入。
+        </p>
+      </div>
+    )}
+
+    {/* 預約行程列表 */}
+    {loadingTripBookings ? (
+      <p style={{ color: "#927f70", fontSize: 14 }}>
+        正在載入預約資料...
+      </p>
+    ) : tripBookings.length === 0 ? (
+      <div
+        style={{
+          padding: 28,
+          textAlign: "center",
+          background: "#faf7f2",
+          border: "1px dashed #d8c6b4",
+          borderRadius: 14,
+          color: "#927f70",
+          fontSize: 14,
+        }}
+      >
+        目前還沒有預約行程，點擊「＋ 新增預約」開始建立。
+      </div>
+    ) : (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+        }}
+      >
+        {tripBookings.map((booking) => {
+          const bookingTypeLabels: Record<string, string> = {
+            attraction: "🎫 景點門票",
+            restaurant: "🍽️ 餐廳",
+            tour: "🧭 導覽",
+            activity: "🎭 活動",
+            experience: "✨ 體驗",
+            other: "📋 其他",
+          };
+
+          return (
+            <div
+              key={booking.id}
+              style={{
+                padding: 18,
+                border: "1px solid #e6dcd0",
+                borderRadius: 14,
+                background: "#ffffff",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: "#826349",
+                      fontWeight: 700,
+                      marginBottom: 6,
+                    }}
+                  >
+                    {bookingTypeLabels[booking.booking_type] ||
+                      "📋 其他"}
+                  </div>
+
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 18,
+                      color: "#49392f",
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {booking.name}
+                  </h3>
+                </div>
+
+                <span
+                  style={{
+                    padding: "6px 12px",
+                    borderRadius: 999,
+                    background:
+                      booking.payment_status === "paid"
+                        ? "#e8f0e5"
+                        : booking.payment_status === "partial"
+                          ? "#fff0d9"
+                          : "#f2ebe2",
+                    color:
+                      booking.payment_status === "paid"
+                        ? "#55704e"
+                        : "#826349",
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  {booking.payment_status === "paid"
+                    ? "已付款"
+                    : booking.payment_status === "partial"
+                      ? "部分付款"
+                      : "未付款"}
+                </span>
+              </div>
+
+              <div
+                style={{
+                  marginTop: 14,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 7,
+                  fontSize: 13,
+                  color: "#674b39",
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {booking.start_at && (
+                  <div>
+                    🗓️ 開始：
+                    {formatFlightDateTime(
+                      booking.start_at,
+                      booking.timezone
+                    )}
+                  </div>
+                )}
+
+                {booking.end_at && (
+                  <div>
+                    🕒 結束：
+                    {formatFlightDateTime(
+                      booking.end_at,
+                      booking.timezone
+                    )}
+                  </div>
+                )}
+
+                {booking.location && (
+                  <div>📍 地點：{booking.location}</div>
+                )}
+
+                {booking.meeting_point && (
+                  <div>🚩 集合地點：{booking.meeting_point}</div>
+                )}
+
+                {booking.participants !== null && (
+                  <div>👥 人數：{booking.participants} 人</div>
+                )}
+
+                {booking.confirmation_number && (
+                  <div>
+                    📋 預約編號：{booking.confirmation_number}
+                  </div>
+                )}
+
+                {booking.booking_platform && (
+                  <div>
+                    🌐 預約平台：{booking.booking_platform}
+                  </div>
+                )}
+
+                {booking.amount !== null && (
+                  <div>
+                    💵 費用：{booking.currency}{" "}
+                    {Number(booking.amount).toFixed(2)}
+                  </div>
+                )}
+
+                {booking.notes && (
+                  <div style={{ whiteSpace: "pre-wrap" }}>
+                    📝 備註：{booking.notes}
+                  </div>
+                )}
+
+                {booking.booking_url && (
+                  <a
+                    href={booking.booking_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "#826349",
+                      fontWeight: 700,
+                    }}
+                  >
+                    查看預約資料 ↗
+                  </a>
+                )}
+              </div>
+
+              {/* 編輯及刪除 */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  flexWrap: "wrap",
+                  gap: 10,
+                  marginTop: 16,
+                  paddingTop: 14,
+                  borderTop: "1px solid #e6dcd0",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => startEditTripBooking(booking)}
+                  style={{
+                    padding: "9px 14px",
+                    border: "1px solid #d8c6b4",
+                    borderRadius: 10,
+                    background: "#ffffff",
+                    color: "#674b39",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  ✏️ 編輯
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => deleteTripBooking(booking)}
+                  style={{
+                    padding: "9px 14px",
+                    border: "1px solid #e7c9c3",
+                    borderRadius: 10,
+                    background: "#fff7f5",
+                    color: "#b4534b",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  🗑️ 刪除
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </section>
+)}
+
         </>
       )}
     </main>
