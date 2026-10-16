@@ -5714,16 +5714,20 @@ return (
   })
   .map(
     (item) => (
-      <div
-        key={item.key}
-        
-                              style={{
-                                padding:
-                                  "14px 0",
-                                borderBottom:
-                                  "1px solid #f3f4f6",
-                              }}
-                            >
+      
+<div
+  key={item.key}
+  style={{
+    padding: "16px",
+    marginBottom: 12,
+    background: "#ffffff",
+    border: "1px solid #e6dcd0",
+    borderLeft: "4px solid #826349",
+    borderRadius: 12,
+    boxShadow: "0 2px 6px rgba(73,57,47,0.05)",
+  }}
+>
+
                               <div
   style={{
     display: "flex",
