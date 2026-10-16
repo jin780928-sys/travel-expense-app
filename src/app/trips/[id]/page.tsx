@@ -10301,6 +10301,459 @@ alignItems: "center",
 )}
 
 
+{/* =========================================
+    旅程備註管理畫面
+   ========================================= */}
+
+{activeTab === "notes" && (
+  <section
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 18,
+      marginTop: 20,
+      minWidth: 0,
+    }}
+  >
+    {/* 標題與新增按鈕 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 12,
+      }}
+    >
+      <div>
+        <h2
+          style={{
+            margin: 0,
+            fontSize: 22,
+            fontWeight: 800,
+            color: "#49392f",
+          }}
+        >
+          📝 旅程備註管理
+        </h2>
+        <p
+          style={{
+            margin: "6px 0 0",
+            fontSize: 13,
+            color: "#927f70",
+          }}
+        >
+          集中管理旅程重要資訊、注意事項與備忘錄
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          resetTripNoteForm();
+          setShowTripNoteForm(!showTripNoteForm);
+        }}
+        style={{
+          padding: "11px 18px",
+          border: "none",
+          borderRadius: 10,
+          background: "#826349",
+          color: "#ffffff",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        {showTripNoteForm ? "取消新增" : "＋ 新增備註"}
+      </button>
+    </div>
+
+    {/* 新增／編輯表單 */}
+    {showTripNoteForm && (
+      <div
+        style={{
+          padding: "20px 16px",
+          background: "#faf7f2",
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+          color: "#49392f",
+        }}
+      >
+        <h3
+          style={{
+            margin: "0 0 18px",
+            fontSize: 19,
+            fontWeight: 800,
+          }}
+        >
+          {editingTripNoteId !== null
+            ? "✏️ 編輯備註"
+            : "📝 新增備註"}
+        </h3>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+            gap: 16,
+          }}
+        >
+          <label
+            style={{
+              display: "grid",
+              gap: 7,
+              fontSize: 13,
+              fontWeight: 700,
+              color: "#674b39",
+            }}
+          >
+            備註標題 *
+            <input
+              type="text"
+              value={tripNoteForm.title}
+              onChange={(e) =>
+                updateTripNoteField("title", e.target.value)
+              }
+              placeholder="例如：機場交通、入境注意事項"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                height: 44,
+                padding: "0 12px",
+                border: "1px solid #d8c6b4",
+                borderRadius: 10,
+                background: "#ffffff",
+              }}
+            />
+          </label>
+
+          <label
+            style={{
+              display: "grid",
+              gap: 7,
+              fontSize: 13,
+              fontWeight: 700,
+              color: "#674b39",
+            }}
+          >
+            備註分類
+            <select
+              value={tripNoteForm.category}
+              onChange={(e) =>
+                updateTripNoteField("category", e.target.value)
+              }
+              style={{
+                height: 44,
+                padding: "0 12px",
+                border: "1px solid #d8c6b4",
+                borderRadius: 10,
+                background: "#ffffff",
+              }}
+            >
+              <option value="general">📋 一般</option>
+              <option value="transport">🚗 交通</option>
+              <option value="food">🍽️ 餐飲</option>
+              <option value="shopping">🛍️ 購物</option>
+              <option value="important">⚠️ 重要資訊</option>
+              <option value="other">📌 其他</option>
+            </select>
+          </label>
+        </div>
+
+        <label
+          style={{
+            display: "grid",
+            gap: 7,
+            marginTop: 16,
+            fontSize: 13,
+            fontWeight: 700,
+            color: "#674b39",
+          }}
+        >
+          備註內容
+          <textarea
+            rows={6}
+            value={tripNoteForm.content}
+            onChange={(e) =>
+              updateTripNoteField("content", e.target.value)
+            }
+            placeholder="輸入旅程備註、注意事項、聯絡方式等..."
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              padding: 12,
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#49392f",
+              fontSize: 14,
+              lineHeight: 1.7,
+              resize: "vertical",
+            }}
+          />
+        </label>
+
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 9,
+            marginTop: 16,
+            color: "#674b39",
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={tripNoteForm.is_important}
+            onChange={(e) =>
+              setTripNoteForm((prev) => ({
+                ...prev,
+                is_important: e.target.checked,
+              }))
+            }
+            style={{
+              width: 18,
+              height: 18,
+              accentColor: "#826349",
+            }}
+          />
+          ⭐ 標記為重要備註
+        </label>
+
+        {/* 儲存按鈕 */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            flexWrap: "wrap",
+            gap: 10,
+            marginTop: 24,
+            paddingTop: 18,
+            borderTop: "1px solid #e6dcd0",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              resetTripNoteForm();
+              setShowTripNoteForm(false);
+            }}
+            disabled={savingTripNote}
+            style={{
+              padding: "11px 18px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#674b39",
+              fontWeight: 700,
+            }}
+          >
+            取消
+          </button>
+
+          <button
+            type="button"
+            onClick={saveTripNote}
+            disabled={savingTripNote}
+            style={{
+              padding: "11px 22px",
+              border: "none",
+              borderRadius: 10,
+              background: "#826349",
+              color: "#ffffff",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            {savingTripNote
+              ? "儲存中..."
+              : editingTripNoteId !== null
+                ? "更新備註"
+                : "儲存備註"}
+          </button>
+        </div>
+      </div>
+    )}
+
+    {/* 備註資料列表 */}
+    {loadingTripNotes ? (
+      <p style={{ color: "#927f70", fontSize: 14 }}>
+        正在載入旅程備註...
+      </p>
+    ) : tripNotes.length === 0 ? (
+      <div
+        style={{
+          padding: 28,
+          textAlign: "center",
+          border: "1px dashed #d8c6b4",
+          borderRadius: 14,
+          background: "#faf7f2",
+          color: "#927f70",
+          fontSize: 14,
+        }}
+      >
+        目前還沒有備註，點擊「＋ 新增備註」開始建立。
+      </div>
+    ) : (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        {tripNotes.map((note) => {
+          const categoryLabels: Record<string, string> = {
+            general: "📋 一般",
+            transport: "🚗 交通",
+            food: "🍽️ 餐飲",
+            shopping: "🛍️ 購物",
+            important: "⚠️ 重要資訊",
+            other: "📌 其他",
+          };
+
+          return (
+            <div
+              key={note.id}
+              style={{
+                padding: 18,
+                border: note.is_important
+                  ? "1px solid #d4aa69"
+                  : "1px solid #e6dcd0",
+                borderRadius: 14,
+                background: note.is_important
+                  ? "#fffaf0"
+                  : "#ffffff",
+              }}
+            >
+              {/* 備註標題 */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap",
+                  gap: 12,
+                }}
+              >
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: "#826349",
+                      marginBottom: 7,
+                    }}
+                  >
+                    {categoryLabels[note.category] || "📌 其他"}
+                  </div>
+
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 18,
+                      fontWeight: 800,
+                      color: "#49392f",
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {note.title}
+                  </h3>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => toggleTripNoteImportant(note)}
+                  disabled={savingTripNote}
+                  title={
+                    note.is_important
+                      ? "取消重要標記"
+                      : "標記為重要"
+                  }
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    fontSize: 22,
+                    cursor: "pointer",
+                  }}
+                >
+                  {note.is_important ? "⭐" : "☆"}
+                </button>
+              </div>
+
+              {/* 備註內容 */}
+              {note.content && (
+                <div
+                  style={{
+                    marginTop: 14,
+                    fontSize: 14,
+                    lineHeight: 1.8,
+                    color: "#674b39",
+                    whiteSpace: "pre-wrap",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {note.content}
+                </div>
+              )}
+
+              {/* 編輯與刪除 */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  flexWrap: "wrap",
+                  gap: 10,
+                  marginTop: 18,
+                  paddingTop: 14,
+                  borderTop: "1px solid #e6dcd0",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => startEditTripNote(note)}
+                  style={{
+                    padding: "9px 14px",
+                    border: "1px solid #d8c6b4",
+                    borderRadius: 10,
+                    background: "#ffffff",
+                    color: "#674b39",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  ✏️ 編輯
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => deleteTripNote(note)}
+                  style={{
+                    padding: "9px 14px",
+                    border: "1px solid #e7c9c3",
+                    borderRadius: 10,
+                    background: "#fff7f5",
+                    color: "#b4534b",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  🗑️ 刪除
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </section>
+)}
+
+          
 
         </>
       )}
