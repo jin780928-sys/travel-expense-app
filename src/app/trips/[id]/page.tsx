@@ -1514,6 +1514,18 @@ const [showPackingImport, setShowPackingImport] =
   useState(false);
 
 
+/* =========================================
+   打包清單：匯入範圍與指定人員
+   ========================================= */
+
+const [packingImportScope, setPackingImportScope] =
+  useState<"personal" | "shared">("personal");
+
+const [packingImportPersonId, setPackingImportPersonId] =
+  useState("");
+
+
+
 const [editingPackingItemId, setEditingPackingItemId] =
   useState<number | null>(null);
 
@@ -10503,6 +10515,209 @@ alignItems: "center",
 </div>
 
     </div>
+
+    
+{/* =========================================
+    匯入預設打包清單面板
+   ========================================= */}
+
+{showPackingImport && (
+  <div
+    style={{
+      padding: "20px 16px",
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 14,
+      display: "grid",
+      gap: 16,
+    }}
+  >
+    <div>
+      <h3
+        style={{
+          margin: 0,
+          fontSize: 18,
+          fontWeight: 800,
+          color: "#49392f",
+        }}
+      >
+        📋 匯入預設打包清單
+      </h3>
+
+      <p
+        style={{
+          margin: "6px 0 0",
+          fontSize: 13,
+          color: "#927f70",
+          lineHeight: 1.6,
+        }}
+      >
+        從系統預設範本建立這趟旅行的打包清單。
+        匯入後可以自由修改物品及數量。
+      </p>
+    </div>
+
+    {/* 個人／共用選擇 */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(2, minmax(0, 1fr))",
+        gap: 10,
+      }}
+    >
+      {(
+        [
+          { value: "personal", label: "👤 個人用品" },
+          { value: "shared", label: "👥 共用用品" },
+        ] as const
+      ).map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() =>
+            setPackingImportScope(option.value)
+          }
+          aria-pressed={
+            packingImportScope === option.value
+          }
+          style={{
+            padding: "12px 8px",
+            borderRadius: 10,
+            border:
+              packingImportScope === option.value
+                ? "2px solid #826349"
+                : "1px solid #d8c6b4",
+            background:
+              packingImportScope === option.value
+                ? "#eee5db"
+                : "#ffffff",
+            color: "#49392f",
+            fontWeight: 700,
+            fontSize: 14,
+            cursor: "pointer",
+          }}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+
+    {/* 個人用品：必須選擇所屬人員 */}
+    {packingImportScope === "personal" ? (
+      <label
+        style={{
+          display: "grid",
+          gap: 8,
+          color: "#674b39",
+          fontSize: 13,
+          fontWeight: 700,
+        }}
+      >
+        選擇要匯入的旅行成員 *
+        <select
+          value={packingImportPersonId}
+          onChange={(e) =>
+            setPackingImportPersonId(e.target.value)
+          }
+          disabled={loadingPackingPeople}
+          style={{
+            height: 44,
+            padding: "0 12px",
+            border: "1px solid #d8c6b4",
+            borderRadius: 10,
+            background: "#ffffff",
+            color: "#49392f",
+          }}
+        >
+          <option value="">請選擇人員</option>
+          {packingPeople.map((person) => (
+            <option
+              key={person.id}
+              value={String(person.id)}
+            >
+              {person.name}
+            </option>
+          ))}
+        </select>
+      </label>
+    ) : (
+      <div
+        style={{
+          padding: 12,
+          background: "#ffffff",
+          border: "1px solid #e6dcd0",
+          borderRadius: 10,
+          color: "#674b39",
+          fontSize: 13,
+          lineHeight: 1.6,
+        }}
+      >
+        👥 共用用品只需匯入一份，不指定個人。
+      </div>
+    )}
+
+    <div
+      style={{
+        padding: 12,
+        background: "#ffffff",
+        borderRadius: 10,
+        border: "1px solid #e6dcd0",
+        color: "#674b39",
+        fontSize: 13,
+        lineHeight: 1.7,
+      }}
+    >
+      {packingImportScope === "personal"
+        ? "📦 個人用品：9 個分類、44 項預設物品"
+        : "📦 共用用品：4 個分類、19 項預設物品"}
+    </div>
+
+    {/* 下一步才連接實際匯入函式 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: 10,
+        flexWrap: "wrap",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setShowPackingImport(false)}
+        style={{
+          padding: "11px 16px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#674b39",
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        取消
+      </button>
+
+      <button
+        type="button"
+        disabled
+        title="下一步連接 Supabase 後啟用"
+        style={{
+          padding: "11px 18px",
+          border: "none",
+          borderRadius: 10,
+          background: "#826349",
+          color: "#ffffff",
+          fontWeight: 700,
+          opacity: 0.5,
+          cursor: "not-allowed",
+        }}
+      >
+        📋 確認匯入
+      </button>
+    </div>
+  </div>
+)}
 
     {/* 打包進度 */}
     {(() => {
