@@ -5320,7 +5320,49 @@ onClick={() => {
       gap: 14,
     }}
   >
-    {flights.map((flight) => (
+    
+{([
+  ["outbound", "🛫 去程"],
+  ["return", "🛬 回程"],
+  ["other", "✈️ 其他"],
+] as const).map(([direction, title]) => {
+  const group = groupedFlights[direction];
+
+  if (group.length === 0) return null;
+
+  return (
+    <div
+      key={direction}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+        marginBottom: 22,
+      }}
+    >
+      <h3
+        style={{
+          margin: "6px 0 2px",
+          fontSize: 22,
+          fontWeight: 800,
+          color: "#49392f",
+        }}
+      >
+        {title}
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            color: "#927f70",
+            marginLeft: 10,
+          }}
+        >
+          {group.length} 筆
+        </span>
+      </h3>
+
+      {group.map((flight) => (
+
       <div
         key={flight.id}
         style={{
@@ -5982,8 +6024,11 @@ onClick={() => {
   </button>
 </div>
 
-      </div>
-    ))}
+          </div>
+      ))}
+    </div>
+  );
+})}
 
   </div>
 )}
