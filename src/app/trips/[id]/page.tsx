@@ -5864,7 +5864,8 @@ alignItems: "center",
                 justifyContent: "space-between",
                 alignItems: "center",
                 flexWrap: "wrap",
-                gap: 8,
+                columnGap: 16,
+                rowGap: 8,
               }}
             >
               <span
@@ -5902,7 +5903,7 @@ alignItems: "center",
           style={{
             display: "grid",
             gridTemplateColumns:
-              "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
+              "repeat(auto-fit, minmax(min(100%, 145px), 1fr))",
             gap: 12,
             marginTop: 16,
             padding: 14,
@@ -5985,7 +5986,7 @@ alignItems: "center",
     justifyContent: "flex-end",
     alignItems: "center",
     flexWrap: "wrap",
-    gap: 10,
+    gap: 8,
     marginTop: 18,
     paddingTop: 16,
     borderTop: "1px solid #e6dcd0",
@@ -5995,7 +5996,7 @@ alignItems: "center",
     type="button"
     onClick={() => startEditFlight(flight)}
     style={{
-      padding: "9px 16px",
+      padding: "10px 14px",
       border: "1px solid #d8c6b4",
       borderRadius: 10,
       background: "#ffffff",
@@ -6012,7 +6013,7 @@ alignItems: "center",
     type="button"
     onClick={() => deleteFlight(flight)}
     style={{
-      padding: "9px 16px",
+      padding: "10px 14px",
       border: "1px solid #e7c9c3",
       borderRadius: 10,
       background: "#fff7f5",
