@@ -1505,6 +1505,15 @@ const [loadingPackingPeople, setLoadingPackingPeople] =
 const [showPackingForm, setShowPackingForm] =
   useState(false);
 
+
+/* =========================================
+   打包清單：預設範本匯入面板
+   ========================================= */
+
+const [showPackingImport, setShowPackingImport] =
+  useState(false);
+
+
 const [editingPackingItemId, setEditingPackingItemId] =
   useState<number | null>(null);
 
@@ -10433,6 +10442,14 @@ alignItems: "center",
         </p>
       </div>
 
+      <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+  }}
+>
       <button
         type="button"
         onClick={() => {
@@ -10457,6 +10474,34 @@ alignItems: "center",
       >
         {showPackingForm ? "取消新增" : "＋ 新增行李"}
       </button>
+
+        
+{/* =========================================
+    匯入預設打包清單按鈕
+   ========================================= */}
+
+<button
+  type="button"
+  onClick={() =>
+    setShowPackingImport((prev) => !prev)
+  }
+  style={{
+    padding: "11px 18px",
+    border: "1px solid #d8c6b4",
+    borderRadius: 10,
+    background: "#ffffff",
+    color: "#826349",
+    fontSize: 14,
+    fontWeight: 700,
+    cursor: "pointer",
+  }}
+>
+  {showPackingImport
+    ? "取消匯入"
+    : "📋 匯入預設清單"}
+</button>
+</div>
+
     </div>
 
     {/* 打包進度 */}
