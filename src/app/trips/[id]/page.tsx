@@ -892,12 +892,65 @@ const [packingCategoryFilter, setPackingCategoryFilter] =
 const [packingStatusFilter, setPackingStatusFilter] =
   useState("all");
 
+
+/* =========================================
+   行李清單顯示方式
+   ========================================= */
+
+const [packingGroupBy, setPackingGroupBy] =
+  useState<"none" | "category" | "person">("none");
+
+
 const filteredPackingItems = packingItems.filter((item) => {
   const matchPerson =
     packingPersonFilter === "all" ||
     (packingPersonFilter === "shared"
       ? item.person_id === null
       : item.person_id === Number(packingPersonFilter));
+
+  
+/* =========================================
+   行李清單分組資料
+   ========================================= */
+
+const packingCategoryNames: Record<string, string> = {
+  documents: "🪪 證件",
+  clothing: "👕 衣物",
+  toiletries: "🧴 盥洗用品",
+  electronics: "🔌 電子產品",
+  medicine: "💊 藥品",
+  other: "📦 其他",
+};
+
+const packingGroups = filteredPackingItems.reduce<
+  Record<string, TripPackingItem[]>
+>((groups, item) => {
+  let groupName = "全部行李";
+
+  if (packingGroupBy === "category") {
+    groupName =
+      packingCategoryNames[item.category] || "📦 其他";
+  }
+
+  if (packingGroupBy === "person") {
+    groupName =
+      item.person_id === null
+        ? "👥 共用行李"
+        : "👤 " +
+          (packingPeople.find(
+            (person) => person.id === item.person_id
+          )?.name || "未找到人員");
+  }
+
+  if (!groups[groupName]) {
+    groups[groupName] = [];
+  }
+
+  groups[groupName].push(item);
+
+  return groups;
+}, {});
+
 
   const matchCategory =
     packingCategoryFilter === "all" ||
@@ -9423,6 +9476,55 @@ alignItems: "center",
 
 <div style={{ fontSize: 13, color: "#927f70" }}>
   顯示 {filteredPackingItems.length} / {packingItems.length} 項行李
+</div>
+
+    
+{/* 行李清單顯示方式 */}
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 12,
+    padding: "12px 16px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 12,
+  }}
+>
+  <span
+    style={{
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    📂 清單顯示方式
+  </span>
+
+  <select
+    value={packingGroupBy}
+    onChange={(e) =>
+      setPackingGroupBy(
+        e.target.value as "none" | "category" | "person"
+      )
+    }
+    style={{
+      height: 42,
+      minWidth: 150,
+      padding: "0 12px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#49392f",
+      fontSize: 13,
+    }}
+  >
+    <option value="none">一般清單</option>
+    <option value="category">依分類分組</option>
+    <option value="person">依人員分組</option>
+  </select>
 </div>
 
     {/* 行李資料列表 */}
