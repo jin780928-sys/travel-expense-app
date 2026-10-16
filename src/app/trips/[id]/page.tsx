@@ -4379,6 +4379,31 @@ const categoryTotals =
       return result;
       }, {});
 
+  
+/* =========================================
+   每日行程整合：轉換手動行程
+   ========================================= */
+
+const manualUnifiedItems: UnifiedItineraryItem[] =
+  itineraryItems.map((item) => ({
+    key: `manual-${item.id}`,
+    source: "manual",
+    sourceId: item.id,
+
+    date: item.date || "",
+    start_time: item.start_time || null,
+    end_time: item.end_time || null,
+
+    title: item.title || "未命名行程",
+    location: item.location || null,
+    transportation: item.transportation || null,
+    notes: item.notes || null,
+
+    eventType: "manual",
+    timezone: null,
+  }));
+
+
    /* =========================================================
      旅程支出：依日期分組
      - 相同日期的支出放在同一組
