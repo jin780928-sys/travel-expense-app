@@ -1977,39 +1977,57 @@ const saveTripBooking = async () => {
     return;
   }
 
-  const startUTC = tripBookingForm.start_at
+  
+/* =========================================
+   預約行程：安全轉換當地時間為 UTC
+   ========================================= */
+
+let startUTC: string | null = null;
+let endUTC: string | null = null;
+
+try {
+  startUTC = tripBookingForm.start_at
     ? flightLocalTimeToUTC(
         tripBookingForm.start_at,
         tripBookingForm.timezone
       )
     : null;
 
-  const endUTC = tripBookingForm.end_at
+  endUTC = tripBookingForm.end_at
     ? flightLocalTimeToUTC(
         tripBookingForm.end_at,
         tripBookingForm.timezone
       )
     : null;
+} catch (error) {
+  alert(
+    error instanceof Error
+      ? `預約時間錯誤：${error.message}`
+      : "預約日期或時區轉換失敗"
+  );
+  return;
+}
 
-  if (tripBookingForm.start_at && !startUTC) {
-    alert("開始日期或時區無法轉換");
-    return;
-  }
+if (tripBookingForm.start_at && !startUTC) {
+  alert("開始日期或時區無法轉換");
+  return;
+}
 
-  if (tripBookingForm.end_at && !endUTC) {
-    alert("結束日期或時區無法轉換");
-    return;
-  }
+if (tripBookingForm.end_at && !endUTC) {
+  alert("結束日期或時區無法轉換");
+  return;
+}
 
-  if (
-    startUTC &&
-    endUTC &&
-    new Date(endUTC).getTime() <
-      new Date(startUTC).getTime()
-  ) {
-    alert("結束時間不能早於開始時間");
-    return;
-  }
+if (
+  startUTC &&
+  endUTC &&
+  new Date(endUTC).getTime() <
+    new Date(startUTC).getTime()
+) {
+  alert("結束時間不能早於開始時間");
+  return;
+}
+
 
   setSavingTripBooking(true);
 
