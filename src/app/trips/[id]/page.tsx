@@ -4569,15 +4569,7 @@ onClick={() => {
     >
       {(
         [
-          ["航空公司", "airline", "text", "例如：American Airlines"],
-          ["航班編號", "flight_number", "text", "例如：AA1968"],
-          ["出發機場", "departure_airport", "text", "例如：PHX"],
-          ["抵達機場", "arrival_airport", "text", "例如：MIA"],
-          ["出發日期時間", "departure_at", "datetime-local", ""],
-          ["抵達日期時間", "arrival_at", "datetime-local", ""],
           ["訂位代碼", "confirmation_number", "text", "Booking Reference"],
-          ["艙等", "cabin_class", "text", "例如：Economy / Business"],
-          ["行李額度", "baggage_allowance", "text", "例如：23kg × 2"],
           ["機票總金額", "amount", "number", "0.00"],
           ["幣別", "currency", "text", "USD / TWD / EUR"],
           ["訂票平台", "booking_platform", "text", "例如：航空公司官網"],
@@ -4622,103 +4614,6 @@ onClick={() => {
         </label>
       ))}
     </div>
-
-    
-{/* =========================================
-    航班時區設定
-   ========================================= */}
-
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns:
-      "repeat(auto-fit, minmax(min(100%, 230px), 1fr))",
-    gap: 16,
-    marginTop: 16,
-  }}
->
-  {(
-    [
-      ["出發時區", "departure_timezone"],
-      ["抵達時區", "arrival_timezone"],
-    ] as const
-  ).map(([label, field]) => (
-    <label
-      key={field}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 7,
-        fontSize: 13,
-        fontWeight: 600,
-        color: "#674b39",
-      }}
-    >
-      {label}
-
-      <select
-        value={flightForm[field]}
-        onChange={(e) =>
-          updateFlightField(field, e.target.value)
-        }
-        style={{
-          height: 42,
-          padding: "0 12px",
-          border: "1px solid #d8c6b4",
-          borderRadius: 10,
-          background: "#ffffff",
-          color: "#49392f",
-          width: "100%",
-        }}
-      >
-        <option value="">請選擇時區</option>
-
-        <option value="America/Phoenix">
-          Phoenix（鳳凰城）
-        </option>
-        <option value="America/Los_Angeles">
-          Los Angeles（洛杉磯）
-        </option>
-        <option value="America/Denver">
-          Denver（丹佛）
-        </option>
-        <option value="America/Chicago">
-          Chicago（芝加哥）
-        </option>
-        <option value="America/New_York">
-          New York / Miami（美東）
-        </option>
-        <option value="Pacific/Honolulu">
-          Honolulu（夏威夷）
-        </option>
-        <option value="America/Lima">
-          Lima（祕魯）
-        </option>
-        <option value="America/Puerto_Rico">
-          San Juan（波多黎各）
-        </option>
-        <option value="Europe/London">
-          London（倫敦）
-        </option>
-        <option value="Europe/Paris">
-          Paris（巴黎）
-        </option>
-        <option value="Europe/Zurich">
-          Zurich（蘇黎世）
-        </option>
-        <option value="Asia/Taipei">
-          Taipei（台灣）
-        </option>
-        <option value="Asia/Tokyo">
-          Tokyo（日本）
-        </option>
-        <option value="Asia/Seoul">
-          Seoul（韓國）
-        </option>
-      </select>
-    </label>
-  ))}
-</div>
 
     
     {/* 付款狀態 */}
@@ -4795,71 +4690,6 @@ onClick={() => {
 
     
 {/* =========================================
-    機票表單：取消／儲存按鈕
-   ========================================= */}
-
-<div
-  style={{
-    display: "flex",
-    justifyContent: "flex-end",
-    flexWrap: "wrap",
-    gap: 12,
-    marginTop: 24,
-    paddingTop: 18,
-    borderTop: "1px solid #e6dcd0",
-  }}
->
-  {/* 取消 */}
-  <button
-    type="button"
-    onClick={() => {
-      setShowFlightForm(false);
-      setEditingFlightId(null);
-    }}
-    disabled={savingFlight}
-    style={{
-      padding: "12px 20px",
-      border: "1px solid #d8c6b4",
-      borderRadius: 10,
-      background: "#ffffff",
-      color: "#674b39",
-      fontSize: 14,
-      fontWeight: 600,
-      cursor: savingFlight ? "not-allowed" : "pointer",
-    }}
-  >
-    取消
-  </button>
-
-  {/* 儲存 */}
-  <button
-    type="button"
-    onClick={saveFlight}
-    disabled={savingFlight}
-    style={{
-      padding: "12px 24px",
-      border: "1px solid #826349",
-      borderRadius: 10,
-      background: savingFlight ? "#b6a08e" : "#826349",
-      color: "#ffffff",
-      fontSize: 14,
-      fontWeight: 700,
-      cursor: savingFlight ? "not-allowed" : "pointer",
-    }}
-  >
-    {savingFlight
-      ? "儲存中..."
-      : editingFlightId !== null
-        ? "更新機票"
-        : "儲存機票"}
-  </button>
-</div>
-
-  </div>
-)}
-
-
-{/* =========================================
     多段航班 / 轉機設定
    ========================================= */}
 
@@ -4892,6 +4722,46 @@ onClick={() => {
       每段航班可以設定不同的航空公司、時間與時區。
     </p>
   </div>
+
+  {/* 是否轉機：一段航班為否，兩段以上為是 */}
+  <label
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      marginBottom: 16,
+      fontSize: 14,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    是否新增轉機航段？
+    <select
+      value={flightSegments.length > 1 ? "yes" : "no"}
+      disabled={savingFlight}
+      onChange={(e) => {
+        if (e.target.value === "yes") {
+          if (flightSegments.length === 1) addFlightSegment();
+        } else if (
+          flightSegments.length === 2 ||
+          window.confirm("將移除所有轉機航段，確定要改成直飛嗎？")
+        ) {
+          setFlightSegments((prev) => prev.slice(0, 1));
+        }
+      }}
+      style={{
+        width: "100%",
+        padding: 11,
+        border: "1px solid #d8c6b4",
+        borderRadius: 9,
+        background: "#ffffff",
+        color: "#49392f",
+      }}
+    >
+      <option value="no">否，只有一段航班</option>
+      <option value="yes">是，需要轉機</option>
+    </select>
+  </label>
 
   {flightSegments.map((segment, index) => (
     <div
@@ -5077,6 +4947,7 @@ onClick={() => {
     </div>
   ))}
 
+  {flightSegments.length > 1 && (
   <button
     type="button"
     onClick={addFlightSegment}
@@ -5093,7 +4964,73 @@ onClick={() => {
   >
     ＋ 新增轉機航段
   </button>
+  )}
 </div>
+
+{/* =========================================
+    機票表單：取消／儲存按鈕
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    flexWrap: "wrap",
+    gap: 12,
+    marginTop: 24,
+    paddingTop: 18,
+    borderTop: "1px solid #e6dcd0",
+  }}
+>
+  {/* 取消 */}
+  <button
+    type="button"
+    onClick={() => {
+      setShowFlightForm(false);
+      setEditingFlightId(null);
+    }}
+    disabled={savingFlight}
+    style={{
+      padding: "12px 20px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#674b39",
+      fontSize: 14,
+      fontWeight: 600,
+      cursor: savingFlight ? "not-allowed" : "pointer",
+    }}
+  >
+    取消
+  </button>
+
+  {/* 儲存 */}
+  <button
+    type="button"
+    onClick={saveFlight}
+    disabled={savingFlight}
+    style={{
+      padding: "12px 24px",
+      border: "1px solid #826349",
+      borderRadius: 10,
+      background: savingFlight ? "#b6a08e" : "#826349",
+      color: "#ffffff",
+      fontSize: 14,
+      fontWeight: 700,
+      cursor: savingFlight ? "not-allowed" : "pointer",
+    }}
+  >
+    {savingFlight
+      ? "儲存中..."
+      : editingFlightId !== null
+        ? "更新機票"
+        : "儲存機票"}
+  </button>
+</div>
+
+  </div>
+)}
+
 
     
 {/* =========================================
