@@ -5112,7 +5112,7 @@ onClick={() => {
           background: "#ffffff",
           border: "1px solid #e6dcd0",
           borderRadius: 14,
-          padding: "20px 22px",
+          padding: "18px 16px",
           boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
         }}
       >
@@ -5136,6 +5136,9 @@ onClick={() => {
               }}
             >
               {flight.airline || "航空公司未設定"}
+              {flightSegmentsByFlight[flight.id]?.length > 1
+                ? ` · ${flightSegmentsByFlight[flight.id].length} 段航班`
+                : " · 單段航班"}
             </div>
 
             <h3
@@ -5146,8 +5149,18 @@ onClick={() => {
                 color: "#49392f",
               }}
             >
-              ✈️ {flight.flight_number || "未設定航班"}
+              ✈️ {(() => {
+                const route = flightSegmentsByFlight[flight.id] || [];
+                const departure = route[0]?.departure_airport || flight.departure_airport || "—";
+                const arrival = route.length > 0
+                  ? route[route.length - 1]?.arrival_airport || flight.arrival_airport || "—"
+                  : flight.arrival_airport || "—";
+                return `${departure} → ${arrival}`;
+              })()}
             </h3>
+            <div style={{ marginTop: 6, fontSize: 12, color: "#927f70" }}>
+              首段航班：{flight.flight_number || "未設定"}
+            </div>
           </div>
 
           <span
@@ -5464,6 +5477,33 @@ onClick={() => {
                     </div>
                   </div>
                 </div>
+
+                {(segment.cabin_class || segment.baggage_allowance || segment.notes) && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "6px 18px",
+                      marginTop: 14,
+                      paddingTop: 12,
+                      borderTop: "1px solid #e6dcd0",
+                      color: "#674b39",
+                      fontSize: 12,
+                    }}
+                  >
+                    {segment.cabin_class && (
+                      <span>艙等：{segment.cabin_class}</span>
+                    )}
+                    {segment.baggage_allowance && (
+                      <span>行李額度：{segment.baggage_allowance}</span>
+                    )}
+                    {segment.notes && (
+                      <span style={{ whiteSpace: "pre-wrap", width: "100%" }}>
+                        航段備註：{segment.notes}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -5513,7 +5553,7 @@ onClick={() => {
 )}
 
 
-        {/* 航班其他資訊 */}
+        {/* 訂票資訊：共用於整筆機票，不重複計算各段票價 */}
         <div
           style={{
             display: "grid",
@@ -5521,6 +5561,10 @@ onClick={() => {
               "repeat(auto-fit, minmax(min(100%, 190px), 1fr))",
             gap: 12,
             marginTop: 16,
+            padding: 14,
+            border: "1px solid #e6dcd0",
+            borderRadius: 12,
+            background: "#fffdf9",
             fontSize: 13,
             lineHeight: 1.7,
             color: "#674b39",
@@ -5530,20 +5574,6 @@ onClick={() => {
             <div>
               <strong>訂位代碼：</strong>
               {flight.confirmation_number}
-            </div>
-          )}
-
-          {flight.cabin_class && (
-            <div>
-              <strong>艙等：</strong>
-              {flight.cabin_class}
-            </div>
-          )}
-
-          {flight.baggage_allowance && (
-            <div>
-              <strong>行李額度：</strong>
-              {flight.baggage_allowance}
             </div>
           )}
 
