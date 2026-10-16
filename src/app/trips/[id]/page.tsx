@@ -137,6 +137,45 @@ type TripCarRental = {
   created_at: string;
 };
 
+
+/* =========================================
+   Type：旅程預約行程
+   ========================================= */
+
+type TripBooking = {
+  id: number;
+  trip_id: number;
+  user_id: string;
+
+  booking_type:
+    | "attraction"
+    | "restaurant"
+    | "tour"
+    | "activity"
+    | "experience"
+    | "other";
+
+  name: string;
+  confirmation_number: string | null;
+  booking_platform: string | null;
+
+  start_at: string | null;
+  end_at: string | null;
+  timezone: string | null;
+
+  location: string | null;
+  meeting_point: string | null;
+  participants: number | null;
+
+  amount: number | null;
+  currency: string;
+  payment_status: "unpaid" | "paid" | "partial";
+
+  booking_url: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
 /* =========================================
    機票航段資料型別
    ========================================= */
@@ -790,6 +829,61 @@ const [loadingFlights, setLoadingFlights] =
 // 已建立的租車資料
 const [carRentals, setCarRentals] =
   useState<TripCarRental[]>([]);
+
+
+/* =========================================
+   預約行程 State
+   ========================================= */
+
+const [tripBookings, setTripBookings] =
+  useState<TripBooking[]>([]);
+
+const [loadingTripBookings, setLoadingTripBookings] =
+  useState(false);
+
+const [showTripBookingForm, setShowTripBookingForm] =
+  useState(false);
+
+const [editingTripBookingId, setEditingTripBookingId] =
+  useState<number | null>(null);
+
+const [savingTripBooking, setSavingTripBooking] =
+  useState(false);
+
+// 預約行程表單
+const [tripBookingForm, setTripBookingForm] = useState({
+  booking_type: "other",
+  name: "",
+  confirmation_number: "",
+  booking_platform: "",
+
+  start_at: "",
+  end_at: "",
+  timezone: "",
+
+  location: "",
+  meeting_point: "",
+  participants: "",
+
+  amount: "",
+  currency: "USD",
+  payment_status: "unpaid",
+
+  booking_url: "",
+  notes: "",
+});
+
+// 更新單一欄位
+const updateTripBookingField = (
+  field: keyof typeof tripBookingForm,
+  value: string
+) => {
+  setTripBookingForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
 
 // 載入狀態
 const [loadingCarRentals, setLoadingCarRentals] =
@@ -2414,6 +2508,73 @@ async function loadCarRentals() {
 }
 
 
+/* =========================================
+   載入目前旅程的預約行程
+   ========================================= */
+
+async function loadTripBookings() {
+  if (!id) return;
+
+  setLoadingTripBookings(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripBookings")
+      .select(`
+        id,
+        trip_id,
+        user_id,
+        booking_type,
+        name,
+        confirmation_number,
+        booking_platform,
+        start_at,
+        end_at,
+        timezone,
+        location,
+        meeting_point,
+        participants,
+        amount,
+        currency,
+        payment_status,
+        booking_url,
+        notes,
+        created_at
+      `)
+      .eq("trip_id", Number(id))
+      .eq("user_id", user.id)
+      .order("start_at", {
+        ascending: true,
+        nullsFirst: false,
+      });
+
+    if (error) throw error;
+
+    setTripBookings((data ?? []) as TripBooking[]);
+  } catch (error) {
+    console.error("載入預約行程失敗：", error);
+
+    setMessage(
+      error instanceof Error
+        ? `載入預約行程失敗：${error.message}`
+        : "無法載入預約行程"
+    );
+  } finally {
+    setLoadingTripBookings(false);
+  }
+}
+
+
+
   
 /* =========================================
    機票分類與日期排序
@@ -2740,7 +2901,8 @@ useEffect(() => {
         loadHotels(),
         loadFlights(),
         loadCarRentals(),
-]);
+        loadTripBookings(),
+        ]);
 
       setLoading(false);
     }
