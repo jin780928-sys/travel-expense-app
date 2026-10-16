@@ -2953,6 +2953,37 @@ const startEditFlight = async (flight: TripFlight) => {
 };
 
 
+/* =========================================
+   每日行程：直接編輯指定機票
+   ========================================= */
+
+const editFlightFromItinerary = async (
+  sourceId: string | number
+) => {
+  const flight = flights.find(
+    (item) => String(item.id) === String(sourceId)
+  );
+
+  if (!flight) {
+    alert("找不到對應的機票資料，請重新整理頁面");
+    return;
+  }
+
+  // 切換到機票分頁
+  setActiveTab("flights");
+
+  // 開啟指定機票，並載入所有航段
+  await startEditFlight(flight);
+
+  // 捲動到頁面上方
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
+
+
 
 
 /* =========================================
