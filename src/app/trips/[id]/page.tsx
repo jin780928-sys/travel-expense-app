@@ -11487,27 +11487,46 @@ onChange={(e) => {
 
           <label style={{ display: "grid", gap: 7, color: "#674b39", fontSize: 13, fontWeight: 700 }}>
             所屬人員
-            <select
-              value={packingForm.person_id}
-              onChange={(e) =>
-                updatePackingField("person_id", e.target.value)
-              }
-              disabled={loadingPackingPeople}
-              style={{
-                height: 44,
-                padding: "0 12px",
-                border: "1px solid #d8c6b4",
-                borderRadius: 10,
-                background: "#ffffff",
-              }}
-            >
-              <option value="">👥 共用行李</option>
-              {packingPeople.map((person) => (
-                <option key={person.id} value={String(person.id)}>
-                  {person.name}
-                </option>
-              ))}
-            </select>
+            
+<select
+  value={packingForm.person_id}
+  onChange={(e) =>
+    updatePackingField("person_id", e.target.value)
+  }
+  disabled={
+    loadingPackingPeople ||
+    packingForm.category.startsWith("template:shared:")
+  }
+  style={{
+    height: 44,
+    padding: "0 12px",
+    border: "1px solid #d8c6b4",
+    borderRadius: 10,
+    background:
+      packingForm.category.startsWith("template:shared:")
+        ? "#f2ebe2"
+        : "#ffffff",
+    color: "#49392f",
+    opacity: 1,
+  }}
+>
+  {packingForm.category.startsWith("template:personal:") ? (
+    <option value="">請選擇旅行成員</option>
+  ) : (
+    <option value="">👥 共用行李</option>
+  )}
+
+  {!packingForm.category.startsWith("template:shared:") &&
+    packingPeople.map((person) => (
+      <option
+        key={person.id}
+        value={String(person.id)}
+      >
+        {person.name}
+      </option>
+    ))}
+</select>
+
           </label>
         </div>
 
