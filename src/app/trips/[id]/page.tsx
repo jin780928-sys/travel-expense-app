@@ -35,6 +35,37 @@ type ItineraryItem = {
   notes: string | null;
 };
 
+
+/* =========================================
+   每日行程整合：統一資料格式
+   ========================================= */
+
+type UnifiedItineraryItem = {
+  key: string;
+
+  source:
+    | "manual"
+    | "flight"
+    | "hotel"
+    | "carRental"
+    | "booking";
+
+  sourceId: number;
+
+  date: string;
+  start_time: string | null;
+  end_time: string | null;
+
+  title: string;
+  location: string | null;
+  transportation: string | null;
+  notes: string | null;
+
+  eventType?: string;
+  timezone?: string | null;
+};
+
+
   /* =========================================================
    Type：Expense
    ========================================================= */
