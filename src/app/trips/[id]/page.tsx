@@ -66,6 +66,84 @@ type UnifiedItineraryItem = {
 };
 
 
+/* =========================================
+   每日行程整合：UTC → 指定當地時區
+   適用 Supabase timestamptz
+   ========================================= */
+
+function getLocalItineraryDateTime(
+  value: string | null | undefined,
+  timezone: string | null | undefined
+): {
+  date: string;
+  time: string | null;
+} {
+  if (!value) {
+    return {
+      date: "",
+      time: null,
+    };
+  }
+
+  // 沒有指定時區時，不擅自使用瀏覽器時區
+  if (!timezone) {
+    return {
+      date: "",
+      time: null,
+    };
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return {
+      date: "",
+      time: null,
+    };
+  }
+
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(date);
+
+    const getPart = (type: string) =>
+      parts.find((part) => part.type === type)?.value || "";
+
+    const year = getPart("year");
+    const month = getPart("month");
+    const day = getPart("day");
+    const hour = getPart("hour");
+    const minute = getPart("minute");
+
+    if (!year || !month || !day || !hour || !minute) {
+      return {
+        date: "",
+        time: null,
+      };
+    }
+
+    return {
+      date: `${year}-${month}-${day}`,
+      time: `${hour}:${minute}`,
+    };
+  } catch (error) {
+    console.error("行程時區轉換失敗：", error);
+
+    return {
+      date: "",
+      time: null,
+    };
+  }
+}
+
+
   /* =========================================================
    Type：Expense
    ========================================================= */
