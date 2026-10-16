@@ -3518,6 +3518,36 @@ const startEditHotel = (hotel: TripHotel) => {
   setShowHotelForm(true);
 };
 
+
+/* =========================================
+   每日行程：直接編輯指定飯店
+   ========================================= */
+
+const editHotelFromItinerary = (
+  sourceId: string | number
+) => {
+  const hotel = hotels.find(
+    (item) => String(item.id) === String(sourceId)
+  );
+
+  if (!hotel) {
+    alert("找不到對應的飯店資料，請重新整理頁面");
+    return;
+  }
+
+  // 切換至飯店分頁
+  setActiveTab("hotels");
+
+  // 帶入指定飯店的編輯資料
+  startEditHotel(hotel);
+
+  // 捲動至頁面上方
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
   
 /* =========================================
    儲存飯店資料到 Supabase
@@ -5811,13 +5841,17 @@ return (
 ) : (
   <button
     type="button"
-    onClick={() => {
+    
+onClick={() => {
   if (item.source === "flight") {
     void editFlightFromItinerary(item.sourceId);
+  } else if (item.source === "hotel") {
+    editHotelFromItinerary(item.sourceId);
   } else {
     goToItinerarySource(item.source);
   }
 }}
+
     style={{
       minHeight: 36,
       padding: "8px 12px",
@@ -5837,7 +5871,7 @@ return (
     {item.source === "flight"
   ? "✈️ 編輯機票"
   : item.source === "hotel"
-    ? "🏨 前往飯店管理"
+  ? "🏨 編輯飯店"
     : item.source === "carRental"
       ? "🚗 前往租車管理"
       : "🎟️ 前往預約管理"}
