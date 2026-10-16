@@ -4403,6 +4403,65 @@ const manualUnifiedItems: UnifiedItineraryItem[] =
     timezone: null,
   }));
 
+  
+/* =========================================
+   每日行程整合：飯店入住與退房
+   ========================================= */
+
+const hotelUnifiedItems: UnifiedItineraryItem[] =
+  hotels.flatMap((hotel) => {
+    const items: UnifiedItineraryItem[] = [];
+
+    // 飯店入住（原本只有日期，沒有時間）
+    if (hotel.check_in) {
+      const checkInDate = String(hotel.check_in).slice(0, 10);
+
+      items.push({
+        key: `hotel-checkin-${hotel.id}`,
+        source: "hotel",
+        sourceId: hotel.id,
+
+        date: checkInDate,
+        start_time: null,
+        end_time: null,
+
+        title: `🏨 入住：${hotel.hotel_name || "飯店"}`,
+        location: hotel.address || null,
+        transportation: null,
+        notes: hotel.notes || null,
+
+        eventType: "checkin",
+        timezone: null,
+      });
+    }
+
+    // 飯店退房
+    if (hotel.check_out) {
+      const checkOutDate = String(hotel.check_out).slice(0, 10);
+
+      items.push({
+        key: `hotel-checkout-${hotel.id}`,
+        source: "hotel",
+        sourceId: hotel.id,
+
+        date: checkOutDate,
+        start_time: null,
+        end_time: null,
+
+        title: `🏨 退房：${hotel.hotel_name || "飯店"}`,
+        location: hotel.address || null,
+        transportation: null,
+        notes: hotel.notes || null,
+
+        eventType: "checkout",
+        timezone: null,
+      });
+    }
+
+    return items;
+  });
+
+
 
    /* =========================================================
      旅程支出：依日期分組
