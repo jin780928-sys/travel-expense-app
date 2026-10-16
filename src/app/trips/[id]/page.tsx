@@ -4461,6 +4461,125 @@ const hotelUnifiedItems: UnifiedItineraryItem[] =
     return items;
   });
 
+  
+/* =========================================
+   每日行程整合：航班起飛與抵達
+   - 支援多段航班
+   - 使用各航段原本儲存的當地日期時間
+   ========================================= */
+
+const flightUnifiedItems: UnifiedItineraryItem[] =
+  flights.flatMap((flight) => {
+    const items: UnifiedItineraryItem[] = [];
+
+    const savedSegments =
+      flightSegmentsByFlight[flight.id] || [];
+
+    // 如果沒有航段資料，使用原本機票欄位
+    const segments = savedSegments.length > 0
+      ? savedSegments
+      : [
+          {
+            id: flight.id,
+            flight_id: flight.id,
+            segment_order: 1,
+            airline: flight.airline,
+            flight_number: flight.flight_number,
+            departure_airport: flight.departure_airport,
+            arrival_airport: flight.arrival_airport,
+            departure_at: flight.departure_at,
+            arrival_at: flight.arrival_at,
+            departure_timezone: flight.departure_timezone,
+            arrival_timezone: flight.arrival_timezone,
+            departure_terminal: null,
+            arrival_terminal: null,
+            departure_gate: null,
+            seat_number: null,
+            cabin_class: flight.cabin_class,
+            baggage_allowance: flight.baggage_allowance,
+            notes: flight.notes,
+          },
+        ];
+
+    segments.forEach((segment, index) => {
+      const airline = segment.airline || "航空公司";
+      const flightNumber = segment.flight_number || "";
+      const flightName =
+        `${airline} ${flightNumber}`.trim();
+
+      // 起飛紀錄
+      if (segment.departure_at) {
+        const departureDateTime =
+          String(segment.departure_at);
+
+        items.push({
+          key: `flight-departure-${flight.id}-${index}`,
+          source: "flight",
+          sourceId: flight.id,
+
+          date: departureDateTime.slice(0, 10),
+          start_time: departureDateTime.slice(11, 16) || null,
+          end_time: null,
+
+          title: `🛫 起飛：${flightName}`,
+          location: segment.departure_airport || null,
+          transportation: null,
+          notes: [
+            segment.arrival_airport
+              ? `目的地：${segment.arrival_airport}`
+              : "",
+            segment.departure_terminal
+              ? `出發航廈：${segment.departure_terminal}`
+              : "",
+            segment.departure_gate
+              ? `登機門：${segment.departure_gate}`
+              : "",
+            segment.seat_number
+              ? `座位：${segment.seat_number}`
+              : "",
+          ].filter(Boolean).join("\n") || null,
+
+          eventType: "departure",
+          timezone: segment.departure_timezone,
+        });
+      }
+
+      // 抵達紀錄
+      if (segment.arrival_at) {
+        const arrivalDateTime =
+          String(segment.arrival_at);
+
+        items.push({
+          key: `flight-arrival-${flight.id}-${index}`,
+          source: "flight",
+          sourceId: flight.id,
+
+          date: arrivalDateTime.slice(0, 10),
+          start_time: arrivalDateTime.slice(11, 16) || null,
+          end_time: null,
+
+          title: `🛬 抵達：${flightName}`,
+          location: segment.arrival_airport || null,
+          transportation: null,
+          notes: [
+            segment.departure_airport
+              ? `出發地：${segment.departure_airport}`
+              : "",
+            segment.arrival_terminal
+              ? `抵達航廈：${segment.arrival_terminal}`
+              : "",
+          ].filter(Boolean).join("\n") || null,
+
+          eventType: "arrival",
+          timezone: segment.arrival_timezone,
+        });
+      }
+    });
+
+    return items;
+  });
+
+
 
 
    /* =========================================================
