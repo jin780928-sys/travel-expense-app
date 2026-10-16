@@ -1590,25 +1590,25 @@ if (packingGroupBy === "category") {
    依分類：個人 → 共用 → 原有分類
    ========================================= */
 
+
+/* =========================================
+   行李清單：安全分組排序
+   ========================================= */
+
 const sortedPackingGroups = Object.entries(
   packingGroups
 ).sort(([groupA], [groupB]) => {
-  // 依人員分組
+  // 依人員分組：共用行李最後
   if (packingGroupBy === "person") {
     const sharedName = "👥 共用行李";
 
-    if (groupA === sharedName && groupB !== sharedName) {
-      return 1;
-    }
-
-    if (groupB === sharedName && groupA !== sharedName) {
-      return -1;
-    }
+    if (groupA === sharedName) return 1;
+    if (groupB === sharedName) return -1;
 
     return groupA.localeCompare(groupB, "zh-Hant");
   }
 
-  // 依分類分組
+  // 依分類分組：個人 → 共用 → 原有分類
   if (packingGroupBy === "category") {
     const getScopeOrder = (name: string) => {
       if (name.startsWith("👤 個人用品｜")) return 0;
@@ -1623,29 +1623,12 @@ const sortedPackingGroups = Object.entries(
       return scopeDifference;
     }
 
-    // 依預設分類順序排序
-    const getCategoryOrder = (name: string) => {
-      const category = packingTemplateCategories.find(
-        (item) =>
-          name ===
-          `${item.scope === "personal" ? "👤 個人用品" : "👥 共用用品"}｜${packingCategoryNames[`template:${item.scope}:${item.code}`]}`
-      );
-
-      return category?.sort_order ?? 999;
-    };
-
-    const orderDifference =
-      getCategoryOrder(groupA) - getCategoryOrder(groupB);
-
-    if (orderDifference !== 0) {
-      return orderDifference;
-    }
-
     return groupA.localeCompare(groupB, "zh-Hant");
   }
 
   return 0;
 });
+
 
 
 
