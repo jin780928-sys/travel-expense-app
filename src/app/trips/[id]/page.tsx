@@ -7818,28 +7818,347 @@ alignItems: "center",
       </button>
     </div>
 
-    {/* 新增／編輯表單：下一步加入 */}
-    {showTripBookingForm && (
-      <div
+    
+{/* =========================================
+    新增／編輯預約行程表單
+   ========================================= */}
+
+{showTripBookingForm && (
+  <div
+    style={{
+      padding: "20px 16px",
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 14,
+      color: "#49392f",
+      minWidth: 0,
+    }}
+  >
+    <h3
+      style={{
+        margin: "0 0 18px",
+        fontSize: 19,
+        fontWeight: 800,
+      }}
+    >
+      {editingTripBookingId !== null
+        ? "✏️ 編輯預約行程"
+        : "🎟️ 新增預約行程"}
+    </h3>
+
+    {/* 預約類型 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        fontSize: 13,
+        fontWeight: 700,
+        marginBottom: 16,
+      }}
+    >
+      預約類型
+      <select
+        value={tripBookingForm.booking_type}
+        onChange={(e) =>
+          updateTripBookingField(
+            "booking_type",
+            e.target.value
+          )
+        }
         style={{
-          padding: 20,
-          border: "1px solid #e6dcd0",
-          borderRadius: 14,
-          background: "#faf7f2",
-          color: "#674b39",
+          width: "100%",
+          height: 44,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
         }}
       >
-        <strong>
-          {editingTripBookingId !== null
-            ? "✏️ 編輯預約行程"
-            : "🎟️ 新增預約行程"}
-        </strong>
+        <option value="attraction">🎫 景點門票</option>
+        <option value="restaurant">🍽️ 餐廳</option>
+        <option value="tour">🧭 導覽</option>
+        <option value="activity">🎭 活動</option>
+        <option value="experience">✨ 體驗</option>
+        <option value="other">📋 其他</option>
+      </select>
+    </label>
 
-        <p style={{ fontSize: 13 }}>
-          預約表單將在下一步加入。
-        </p>
-      </div>
-    )}
+    {/* 基本資料 */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+        gap: 16,
+      }}
+    >
+      {([
+        ["預約名稱", "name", "text", "例如：環球影城門票"],
+        [
+          "預約編號",
+          "confirmation_number",
+          "text",
+          "預約確認碼",
+        ],
+        [
+          "預約平台",
+          "booking_platform",
+          "text",
+          "例如：Klook / KKday / 官網",
+        ],
+        ["開始日期時間", "start_at", "datetime-local", ""],
+        ["結束日期時間", "end_at", "datetime-local", ""],
+        ["活動地點", "location", "text", "地址或景點名稱"],
+        [
+          "集合地點",
+          "meeting_point",
+          "text",
+          "例如：飯店大廳／售票處",
+        ],
+        ["預約人數", "participants", "number", "例如：2"],
+        ["總金額", "amount", "number", "0.00"],
+        ["幣別", "currency", "text", "USD / TWD / EUR"],
+        [
+          "預約網址",
+          "booking_url",
+          "url",
+          "https://",
+        ],
+      ] as const).map(([label, field, type, placeholder]) => (
+        <label
+          key={field}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 7,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#674b39",
+            minWidth: 0,
+          }}
+        >
+          {label}
+          <input
+            type={type}
+            placeholder={placeholder}
+            value={tripBookingForm[field]}
+            onChange={(e) =>
+              updateTripBookingField(field, e.target.value)
+            }
+            min={
+              field === "participants"
+                ? "1"
+                : field === "amount"
+                  ? "0"
+                  : undefined
+            }
+            step={
+              field === "participants"
+                ? "1"
+                : field === "amount"
+                  ? "0.01"
+                  : undefined
+            }
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              height: 44,
+              minWidth: 0,
+              padding: "0 12px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#49392f",
+              fontSize: 14,
+            }}
+          />
+        </label>
+      ))}
+    </div>
+
+    {/* 當地時區 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      預約當地時區
+      <select
+        value={tripBookingForm.timezone}
+        onChange={(e) =>
+          updateTripBookingField("timezone", e.target.value)
+        }
+        style={{
+          width: "100%",
+          height: 44,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+        }}
+      >
+        <option value="">請選擇時區</option>
+        <option value="America/Phoenix">Phoenix</option>
+        <option value="America/Los_Angeles">
+          Los Angeles / San Francisco
+        </option>
+        <option value="America/Denver">Denver</option>
+        <option value="America/Chicago">Chicago</option>
+        <option value="America/New_York">
+          New York / Orlando / Miami
+        </option>
+        <option value="Pacific/Honolulu">Honolulu</option>
+        <option value="America/Lima">Lima</option>
+        <option value="Europe/London">London</option>
+        <option value="Europe/Paris">Paris</option>
+        <option value="Europe/Zurich">Zurich</option>
+        <option value="Asia/Taipei">Taipei</option>
+        <option value="Asia/Tokyo">Tokyo</option>
+        <option value="Asia/Seoul">Seoul</option>
+      </select>
+    </label>
+
+    {/* 付款狀態 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      付款狀態
+      <select
+        value={tripBookingForm.payment_status}
+        onChange={(e) =>
+          updateTripBookingField(
+            "payment_status",
+            e.target.value
+          )
+        }
+        style={{
+          height: 44,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+        }}
+      >
+        <option value="unpaid">未付款</option>
+        <option value="paid">已付款</option>
+        <option value="partial">部分付款</option>
+      </select>
+    </label>
+
+    {/* 備註 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      備註
+      <textarea
+        rows={4}
+        placeholder="報到時間、入場方式、取消政策、攜帶物品等"
+        value={tripBookingForm.notes}
+        onChange={(e) =>
+          updateTripBookingField("notes", e.target.value)
+        }
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: 12,
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          resize: "vertical",
+        }}
+      />
+    </label>
+
+    {/* 操作按鈕 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        flexWrap: "wrap",
+        gap: 10,
+        marginTop: 24,
+        paddingTop: 18,
+        borderTop: "1px solid #e6dcd0",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => {
+          resetTripBookingForm();
+          setShowTripBookingForm(false);
+        }}
+        disabled={savingTripBooking}
+        style={{
+          padding: "11px 18px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#674b39",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        取消
+      </button>
+
+      <button
+        type="button"
+        onClick={saveTripBooking}
+        disabled={savingTripBooking}
+        style={{
+          padding: "11px 22px",
+          border: "none",
+          borderRadius: 10,
+          background: savingTripBooking
+            ? "#b6a08e"
+            : "#826349",
+          color: "#ffffff",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: savingTripBooking
+            ? "not-allowed"
+            : "pointer",
+        }}
+      >
+        {savingTripBooking
+          ? "儲存中..."
+          : editingTripBookingId !== null
+            ? "更新預約"
+            : "儲存預約"}
+      </button>
+    </div>
+  </div>
+)}
+
 
     {/* 預約行程列表 */}
     {loadingTripBookings ? (
