@@ -2342,28 +2342,46 @@ const saveCarRental = async () => {
     return;
   }
 
-  const pickupUTC = flightLocalTimeToUTC(
+  
+/* =========================================
+   租車：安全轉換當地時間為 UTC
+   ========================================= */
+
+let pickupUTC: string | null = null;
+let dropoffUTC: string | null = null;
+
+try {
+  pickupUTC = flightLocalTimeToUTC(
     carRentalForm.pickup_at,
     carRentalForm.pickup_timezone
   );
 
-  const dropoffUTC = flightLocalTimeToUTC(
+  dropoffUTC = flightLocalTimeToUTC(
     carRentalForm.dropoff_at,
     carRentalForm.dropoff_timezone
   );
+} catch (error) {
+  alert(
+    error instanceof Error
+      ? `租車時間錯誤：${error.message}`
+      : "租車日期或時區轉換失敗"
+  );
+  return;
+}
 
-  if (!pickupUTC || !dropoffUTC) {
-    alert("取還車日期或時區有誤，請重新確認");
-    return;
-  }
+if (!pickupUTC || !dropoffUTC) {
+  alert("取還車日期或時區有誤，請重新確認");
+  return;
+}
 
-  if (
-    new Date(dropoffUTC).getTime() <=
-    new Date(pickupUTC).getTime()
-  ) {
-    alert("還車時間必須晚於取車時間");
-    return;
-  }
+if (
+  new Date(dropoffUTC).getTime() <=
+  new Date(pickupUTC).getTime()
+) {
+  alert("還車時間必須晚於取車時間");
+  return;
+}
+
 
   setSavingCarRental(true);
 
