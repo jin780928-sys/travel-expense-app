@@ -878,6 +878,41 @@ const [tripBookings, setTripBookings] =
 const [packingItems, setPackingItems] =
   useState<TripPackingItem[]>([]);
 
+
+/* =========================================
+   行李清單篩選條件
+   ========================================= */
+
+const [packingPersonFilter, setPackingPersonFilter] =
+  useState("all");
+
+const [packingCategoryFilter, setPackingCategoryFilter] =
+  useState("all");
+
+const [packingStatusFilter, setPackingStatusFilter] =
+  useState("all");
+
+const filteredPackingItems = packingItems.filter((item) => {
+  const matchPerson =
+    packingPersonFilter === "all" ||
+    (packingPersonFilter === "shared"
+      ? item.person_id === null
+      : item.person_id === Number(packingPersonFilter));
+
+  const matchCategory =
+    packingCategoryFilter === "all" ||
+    item.category === packingCategoryFilter;
+
+  const matchStatus =
+    packingStatusFilter === "all" ||
+    (packingStatusFilter === "packed"
+      ? item.is_packed
+      : !item.is_packed);
+
+  return matchPerson && matchCategory && matchStatus;
+});
+
+
 const [loadingPackingItems, setLoadingPackingItems] =
   useState(false);
 
@@ -9303,6 +9338,93 @@ alignItems: "center",
       </div>
     )}
 
+    
+{/* =========================================
+    行李清單篩選
+   ========================================= */}
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
+    gap: 12,
+    padding: 16,
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 14,
+  }}
+>
+  <label style={{ display: "grid", gap: 7, fontSize: 13, color: "#674b39" }}>
+    所屬人員
+    <select
+      value={packingPersonFilter}
+      onChange={(e) => setPackingPersonFilter(e.target.value)}
+      style={{
+        height: 42,
+        border: "1px solid #d8c6b4",
+        borderRadius: 9,
+        padding: "0 10px",
+        background: "#ffffff",
+      }}
+    >
+      <option value="all">全部人員</option>
+      <option value="shared">👥 共用行李</option>
+      {packingPeople.map((person) => (
+        <option key={person.id} value={String(person.id)}>
+          {person.name}
+        </option>
+      ))}
+    </select>
+  </label>
+
+  <label style={{ display: "grid", gap: 7, fontSize: 13, color: "#674b39" }}>
+    行李分類
+    <select
+      value={packingCategoryFilter}
+      onChange={(e) => setPackingCategoryFilter(e.target.value)}
+      style={{
+        height: 42,
+        border: "1px solid #d8c6b4",
+        borderRadius: 9,
+        padding: "0 10px",
+        background: "#ffffff",
+      }}
+    >
+      <option value="all">全部分類</option>
+      <option value="documents">🪪 證件</option>
+      <option value="clothing">👕 衣物</option>
+      <option value="toiletries">🧴 盥洗用品</option>
+      <option value="electronics">🔌 電子產品</option>
+      <option value="medicine">💊 藥品</option>
+      <option value="other">📦 其他</option>
+    </select>
+  </label>
+
+  <label style={{ display: "grid", gap: 7, fontSize: 13, color: "#674b39" }}>
+    打包狀態
+    <select
+      value={packingStatusFilter}
+      onChange={(e) => setPackingStatusFilter(e.target.value)}
+      style={{
+        height: 42,
+        border: "1px solid #d8c6b4",
+        borderRadius: 9,
+        padding: "0 10px",
+        background: "#ffffff",
+      }}
+    >
+      <option value="all">全部狀態</option>
+      <option value="unpacked">⬜ 未打包</option>
+      <option value="packed">✅ 已打包</option>
+    </select>
+  </label>
+</div>
+
+<div style={{ fontSize: 13, color: "#927f70" }}>
+  顯示 {filteredPackingItems.length} / {packingItems.length} 項行李
+</div>
+
     {/* 行李資料列表 */}
     {loadingPackingItems ? (
       <p style={{ color: "#927f70" }}>正在載入行李清單...</p>
@@ -9320,7 +9442,7 @@ alignItems: "center",
       </div>
     ) : (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {packingItems.map((item) => {
+        {filteredPackingItems.map((item) => {
           const categoryNames: Record<string, string> = {
             documents: "🪪 證件",
             clothing: "👕 衣物",
