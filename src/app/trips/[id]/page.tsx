@@ -11931,12 +11931,53 @@ alignItems: "center",
               }}
             >
               ✅ {groupPacked} / {groupItems.length} 項已打包
+            
             </span>
+          </div>
+        )}
+
+        {/* =========================================
+            各分組打包進度條
+           ========================================= */}
+        {packingGroupBy !== "none" && (
+          <div
+            role="progressbar"
+            aria-label={`${groupName} 打包進度`}
+            aria-valuenow={
+              groupItems.length > 0
+                ? Math.round(
+                    (groupPacked / groupItems.length) * 100
+                  )
+                : 0
+            }
+            aria-valuemin={0}
+            aria-valuemax={100}
+            style={{
+              height: 8,
+              background: "#e6dcd0",
+              borderRadius: 999,
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                height: "100%",
+                width: `${
+                  groupItems.length > 0
+                    ? (groupPacked / groupItems.length) * 100
+                    : 0
+                }%`,
+                background: "#826349",
+                borderRadius: 999,
+                transition: "width 0.2s ease",
+              }}
+            />
           </div>
         )}
 
         {/* 此群組的行李卡片 */}
         {groupItems.map((item) => {
+
 
           const categoryNames: Record<string, string> = {
             documents: "🪪 證件",
