@@ -1920,11 +1920,15 @@ async function loadFlights() {
         booking_url,
         notes
       `)
-      .eq("trip_id", id)
-      .order("departure_at", {
-        ascending: true,
-        nullsFirst: false,
-      });
+        .eq("trip_id", id)
+        .order("departure_at", {
+          ascending: true,
+          nullsFirst: false,
+        })
+        .order("id", {
+          ascending: true,
+        });
+
 
     if (error) {
       throw error;
@@ -5329,6 +5333,35 @@ onClick={() => {
             </div>
           </div>
 
+          
+<span
+  style={{
+    display: "inline-block",
+    padding: "5px 11px",
+    borderRadius: 999,
+    background:
+      flight.flight_direction === "outbound"
+        ? "#e8f0e5"
+        : flight.flight_direction === "return"
+          ? "#e9edf5"
+          : "#f2ebe2",
+    color:
+      flight.flight_direction === "outbound"
+        ? "#55704e"
+        : flight.flight_direction === "return"
+          ? "#526684"
+          : "#826349",
+    fontSize: 12,
+    fontWeight: 700,
+  }}
+>
+  {flight.flight_direction === "outbound"
+    ? "去程"
+    : flight.flight_direction === "return"
+      ? "回程"
+      : "其他"}
+</span>
+
           <span
             style={{
               padding: "5px 11px",
@@ -5564,6 +5597,7 @@ onClick={() => {
                         segment.departure_timezone
                       )}
                     </div>
+                    
                   </div>
 
                   {/* 飛行時間 */}
@@ -5636,6 +5670,7 @@ onClick={() => {
                         overflowWrap: "anywhere",
                       }}
                     >
+                      
                       {formatFlightDateTime(
                         segment.arrival_at,
                         segment.arrival_timezone
@@ -5643,6 +5678,60 @@ onClick={() => {
                     </div>
                   </div>
                 </div>
+
+                {/* =========================================
+                    航廈 / 登機門 / 座位資訊
+                   ========================================= */}
+
+                {(
+                  segment.departure_terminal ||
+                  segment.arrival_terminal ||
+                  segment.departure_gate ||
+                  segment.seat_number
+                ) && (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(min(100%, 145px), 1fr))",
+                      gap: 10,
+                      marginTop: 14,
+                      paddingTop: 12,
+                      borderTop: "1px solid #e6dcd0",
+                      fontSize: 12,
+                      color: "#674b39",
+                    }}
+                  >
+                    {segment.departure_terminal && (
+                      <div>
+                        <strong>出發航廈：</strong>
+                        {segment.departure_terminal}
+                      </div>
+                    )}
+
+                    {segment.arrival_terminal && (
+                      <div>
+                        <strong>抵達航廈：</strong>
+                        {segment.arrival_terminal}
+                      </div>
+                    )}
+
+                    {segment.departure_gate && (
+                      <div>
+                        <strong>登機門：</strong>
+                        {segment.departure_gate}
+                      </div>
+                    )}
+
+                    {segment.seat_number && (
+                      <div>
+                        <strong>座位：</strong>
+                        {segment.seat_number}
+                      </div>
+                    )}
+                  </div>
+                )}
+
 
                 {(segment.cabin_class || segment.baggage_allowance || segment.notes) && (
                   <div
