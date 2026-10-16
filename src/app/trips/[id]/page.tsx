@@ -5306,8 +5306,7 @@ return (
               {/* =============================================
                   沒有每日行程
                  ============================================= */}
-              {itineraryItems.length ===
-              0 ? (
+              {allUnifiedItineraryItems.length === 0 ? (
                 <div
                   style={{
                     padding:
@@ -5326,8 +5325,8 @@ return (
                    每日行程列表：依日期分組
                    =========================================== */
                 <div>
-                  {Object.entries(
-  groupedItineraryItems
+                 {Object.entries(
+  groupedUnifiedItineraryItems
 )
   .sort(([dateA], [dateB]) => {
   if (dateA === "日期未設定") {
@@ -5423,7 +5422,7 @@ return (
   .map(
     (item) => (
       <div
-        key={item.id}
+        key={item.key}
         
                               style={{
                                 padding:
@@ -5552,57 +5551,83 @@ return (
                                 {/* ===========================
                                     編輯 / 刪除
                                     =========================== */}
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    gap: 8,
-                                    flexWrap: "wrap",
-                                  }}
-                                >
-                                  <Link
-                                    href={`/trips/${trip.id}/itinerary/${item.id}/edit`}
-                                    style={{
-                                      height: 36,
-                                      padding: "0 12px",
-                                      display: "inline-flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      border:
-                                        "1px solid #d1d5db",
-                                      borderRadius: 8,
-                                      background: "#ffffff",
-                                      color: "#374151",
-                                      textDecoration: "none",
-                                      fontSize: 13,
-                                      fontWeight: 600,
-                                    }}
-                                  >
-                                    編輯
-                                  </Link>
+                                
+{/* =========================================
+    每日行程操作：依資料來源顯示
+   ========================================= */}
 
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      handleDeleteItinerary(
-                                        item.id
-                                      )
-                                    }
-                                    style={{
-                                      height: 36,
-                                      padding: "0 12px",
-                                      border:
-                                        "1px solid #fecaca",
-                                      borderRadius: 8,
-                                      background: "#ffffff",
-                                      color: "#dc2626",
-                                      fontSize: 13,
-                                      fontWeight: 600,
-                                      cursor: "pointer",
-                                    }}
-                                  >
-                                    刪除
-                                  </button>
-                                </div>
+<div
+  style={{
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+  }}
+>
+  {item.source === "manual" ? (
+    <>
+      <Link
+        href={`/trips/${trip.id}/itinerary/${item.sourceId}/edit`}
+        style={{
+          height: 36,
+          padding: "0 12px",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "1px solid #d8c6b4",
+          borderRadius: 8,
+          background: "#ffffff",
+          color: "#674b39",
+          textDecoration: "none",
+          fontSize: 13,
+          fontWeight: 700,
+        }}
+      >
+        ✏️ 編輯
+      </Link>
+
+      <button
+        type="button"
+        onClick={() =>
+          handleDeleteItinerary(item.sourceId)
+        }
+        style={{
+          height: 36,
+          padding: "0 12px",
+          border: "1px solid #e7c9c3",
+          borderRadius: 8,
+          background: "#fff7f5",
+          color: "#b4534b",
+          fontSize: 13,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        🗑️ 刪除
+      </button>
+    </>
+  ) : (
+    <span
+      style={{
+        padding: "8px 12px",
+        background: "#faf7f2",
+        border: "1px solid #e6dcd0",
+        borderRadius: 8,
+        color: "#826349",
+        fontSize: 12,
+        fontWeight: 700,
+      }}
+    >
+      {item.source === "flight"
+        ? "✈️ 機票自動帶入"
+        : item.source === "hotel"
+          ? "🏨 飯店自動帶入"
+          : item.source === "carRental"
+            ? "🚗 租車自動帶入"
+            : "🎟️ 預約自動帶入"}
+    </span>
+  )}
+</div>
+
                               </div>
                             </div>
       )
