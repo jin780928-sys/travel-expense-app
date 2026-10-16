@@ -1678,6 +1678,19 @@ const [packingCustomForm, setPackingCustomForm] = useState({
 
 
 /* =========================================
+   個人自訂打包範本資料
+   ========================================= */
+const [packingCustomItems, setPackingCustomItems] =
+  useState<PackingCustomItem[]>([]);
+
+const [loadingPackingCustomItems, setLoadingPackingCustomItems] =
+  useState(false);
+
+const [packingCustomLoadError, setPackingCustomLoadError] =
+  useState("");
+
+
+/* =========================================
    打包清單：匯入範圍與指定人員
    ========================================= */
 const [packingImportScope, setPackingImportScope] =
@@ -1765,6 +1778,54 @@ const loadPackingTemplates = async () => {
     );
   } finally {
     setLoadingPackingTemplates(false);
+  }
+};
+
+
+/* =========================================
+   讀取目前帳號的個人自訂打包範本
+   ========================================= */
+
+const loadPackingCustomItems = async () => {
+  setLoadingPackingCustomItems(true);
+  setPackingCustomLoadError("");
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請重新登入後再試");
+    }
+
+    const { data, error } = await supabase
+      .from("PackingCustomItems")
+      .select(
+        "id,user_id,scope,category_code,name,quantity,notes,sort_order,is_active"
+      )
+      .eq("user_id", user.id)
+      .order("sort_order", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    setPackingCustomItems(
+      (data ?? []) as PackingCustomItem[]
+    );
+  } catch (error) {
+    console.error("讀取自訂打包範本失敗：", error);
+
+    setPackingCustomLoadError(
+      error instanceof Error
+        ? error.message
+        : "讀取失敗"
+    );
+
+    setPackingCustomItems([]);
+  } finally {
+    setLoadingPackingCustomItems(false);
   }
 };
 
@@ -1876,7 +1937,7 @@ const savePackingCustomItem = async () => {
       quantity: "1",
       notes: "",
     });
-
+await loadPackingCustomItems();
     alert("✅ 常用物品新增成功！");
   } catch (error) {
     console.error("新增自訂常用物品失敗：", error);
@@ -3353,6 +3414,22 @@ type PackingTemplateItem = {
   is_active: boolean;
 };
 
+
+/* =========================================
+   個人自訂打包範本 Type
+   ========================================= */
+
+type PackingCustomItem = {
+  id: number;
+  user_id: string;
+  scope: "personal" | "shared";
+  category_code: string;
+  name: string;
+  quantity: number;
+  notes: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
 
 
 const createFlightSegment = (
@@ -11176,9 +11253,13 @@ alignItems: "center",
 
 <button
   type="button"
-  onClick={() =>
-    setShowPackingTemplateManager((prev) => !prev)
+  onClick={() => {
+  if (!showPackingTemplateManager) {
+    void loadPackingCustomItems();
   }
+
+  setShowPackingTemplateManager((prev) => !prev);
+}}
   style={{
     marginTop: 12,
     padding: "9px 14px",
@@ -11248,7 +11329,103 @@ alignItems: "center",
       系統原本的預設清單不會被修改。
     </div>
 
-    
+
+{/* =========================================
+    已建立的自訂常用物品
+   ========================================= */}
+
+<div
+  style={{
+    borderTop: "1px solid #e6dcd0",
+    paddingTop: 14,
+    marginTop: 8,
+    display: "grid",
+    gap: 10,
+  }}
+>
+  <div
+    style={{
+      fontSize: 15,
+      fontWeight: 800,
+      color: "#49392f",
+    }}
+  >
+    📋 我的常用物品（{packingCustomItems.length} 項）
+  </div>
+
+  {loadingPackingCustomItems ? (
+    <div style={{ fontSize: 13, color: "#927f70" }}>
+      讀取中...
+    </div>
+  ) : packingCustomLoadError ? (
+    <div style={{ fontSize: 13, color: "#b91c1c" }}>
+      讀取失敗：{packingCustomLoadError}
+    </div>
+  ) : packingCustomItems.length === 0 ? (
+    <div style={{ fontSize: 13, color: "#927f70" }}>
+      尚未建立自訂常用物品
+    </div>
+  ) : (
+    packingCustomItems.map((item) => {
+      const category = packingTemplateCategories.find(
+        (entry) =>
+          entry.scope === item.scope &&
+          entry.code === item.category_code
+      );
+
+      return (
+        <div
+          key={item.id}
+          style={{
+            padding: 12,
+            border: "1px solid #e6dcd0",
+            borderRadius: 10,
+            background: "#faf7f2",
+            display: "grid",
+            gap: 5,
+          }}
+        >
+          <div
+            style={{
+              fontWeight: 700,
+              color: "#49392f",
+            }}
+          >
+            {item.name} × {item.quantity}
+          </div>
+
+          <div
+            style={{
+              fontSize: 12,
+              color: "#826349",
+            }}
+          >
+            {item.scope === "personal"
+              ? "👤 個人用品"
+              : "👥 共用用品"}
+            {" · "}
+            {category
+              ? `${category.icon} ${category.name}`
+              : item.category_code}
+            {!item.is_active && " · 已停用"}
+          </div>
+
+          {item.notes && (
+            <div
+              style={{
+                fontSize: 12,
+                color: "#927f70",
+              }}
+            >
+              備註：{item.notes}
+            </div>
+          )}
+        </div>
+      );
+    })
+  )}
+</div>
+  
 {/* =========================================
     自訂常用物品：新增表單
    ========================================= */}
