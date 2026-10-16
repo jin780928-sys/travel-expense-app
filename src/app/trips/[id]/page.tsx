@@ -4661,6 +4661,90 @@ const carRentalUnifiedItems: UnifiedItineraryItem[] =
     return items;
   });
 
+  
+/* =========================================
+   每日行程整合：預約行程
+   - 景點門票
+   - 餐廳
+   - 導覽
+   - 活動
+   - 體驗
+   ========================================= */
+
+const bookingUnifiedItems: UnifiedItineraryItem[] =
+  tripBookings.flatMap((booking) => {
+    const items: UnifiedItineraryItem[] = [];
+
+    // 沒有設定開始日期的預約，暫時不加入每日行程
+    if (!booking.start_at) {
+      return items;
+    }
+
+    const startDateTime = String(booking.start_at);
+    const endDateTime = booking.end_at
+      ? String(booking.end_at)
+      : "";
+
+    const bookingTypeIcons: Record<string, string> = {
+      attraction: "🎫",
+      restaurant: "🍽️",
+      tour: "🧭",
+      activity: "🎭",
+      experience: "✨",
+      other: "📋",
+    };
+
+    const icon =
+      bookingTypeIcons[booking.booking_type] || "📋";
+
+    // 有相同日期才將結束時間放在同一筆行程
+    const endTime =
+      endDateTime &&
+      endDateTime.slice(0, 10) ===
+        startDateTime.slice(0, 10)
+        ? endDateTime.slice(11, 16)
+        : null;
+
+    items.push({
+      key: `booking-${booking.id}`,
+      source: "booking",
+      sourceId: booking.id,
+
+      date: startDateTime.slice(0, 10),
+      start_time: startDateTime.slice(11, 16) || null,
+      end_time: endTime,
+
+      title: `${icon} ${booking.name || "未命名預約"}`,
+      location:
+        booking.location ||
+        booking.meeting_point ||
+        null,
+
+      transportation: null,
+
+      notes:
+        [
+          booking.meeting_point
+            ? `集合地點：${booking.meeting_point}`
+            : "",
+          booking.confirmation_number
+            ? `預約編號：${booking.confirmation_number}`
+            : "",
+          booking.participants != null
+            ? `預約人數：${booking.participants} 人`
+            : "",
+          booking.notes || "",
+        ]
+          .filter(Boolean)
+          .join("\n") || null,
+
+      eventType: booking.booking_type || "other",
+      timezone: booking.timezone || null,
+    });
+
+    return items;
+  });
+
 
 
 
