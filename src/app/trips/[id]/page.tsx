@@ -1662,6 +1662,17 @@ const [showPackingTemplateManager, setShowPackingTemplateManager] =
   useState(false);
 
 
+/* =========================================
+   打包清單：自訂常用物品表單
+   ========================================= */
+const [packingCustomForm, setPackingCustomForm] = useState({
+  scope: "personal" as "personal" | "shared",
+  category_code: "",
+  name: "",
+  quantity: "1",
+  notes: "",
+});
+
 
 /* =========================================
    打包清單：匯入範圍與指定人員
@@ -11111,6 +11122,206 @@ alignItems: "center",
       這裡將可以新增、修改及停用自己的常用打包物品。
       系統原本的預設清單不會被修改。
     </div>
+
+    
+{/* =========================================
+    自訂常用物品：新增表單
+   ========================================= */}
+
+<div
+  style={{
+    display: "grid",
+    gap: 14,
+    marginTop: 12,
+  }}
+>
+  <label
+    style={{
+      display: "grid",
+      gap: 7,
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    用品類型
+    <select
+      value={packingCustomForm.scope}
+      onChange={(e) =>
+        setPackingCustomForm((prev) => ({
+          ...prev,
+          scope: e.target.value as "personal" | "shared",
+          category_code: "",
+        }))
+      }
+      style={{
+        height: 44,
+        padding: "0 12px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+        background: "#ffffff",
+      }}
+    >
+      <option value="personal">👤 個人用品</option>
+      <option value="shared">👥 共用用品</option>
+    </select>
+  </label>
+
+  <label
+    style={{
+      display: "grid",
+      gap: 7,
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    所屬分類 *
+    <select
+      value={packingCustomForm.category_code}
+      onChange={(e) =>
+        setPackingCustomForm((prev) => ({
+          ...prev,
+          category_code: e.target.value,
+        }))
+      }
+      style={{
+        height: 44,
+        padding: "0 12px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+        background: "#ffffff",
+      }}
+    >
+      <option value="">請選擇分類</option>
+      {packingTemplateCategories
+        .filter(
+          (category) =>
+            category.scope === packingCustomForm.scope &&
+            category.is_active
+        )
+        .map((category) => (
+          <option key={category.id} value={category.code}>
+            {category.icon} {category.name}
+          </option>
+        ))}
+    </select>
+  </label>
+
+  <label
+    style={{
+      display: "grid",
+      gap: 7,
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    物品名稱 *
+    <input
+      type="text"
+      value={packingCustomForm.name}
+      onChange={(e) =>
+        setPackingCustomForm((prev) => ({
+          ...prev,
+          name: e.target.value,
+        }))
+      }
+      placeholder="例如：電動牙刷、郵輪房卡套"
+      style={{
+        height: 44,
+        padding: "0 12px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+      }}
+    />
+  </label>
+
+  <label
+    style={{
+      display: "grid",
+      gap: 7,
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    預設數量
+    <input
+      type="number"
+      min="1"
+      step="1"
+      value={packingCustomForm.quantity}
+      onChange={(e) =>
+        setPackingCustomForm((prev) => ({
+          ...prev,
+          quantity: e.target.value,
+        }))
+      }
+      style={{
+        height: 44,
+        padding: "0 12px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+      }}
+    />
+  </label>
+
+  <label
+    style={{
+      display: "grid",
+      gap: 7,
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    備註
+    <textarea
+      rows={3}
+      value={packingCustomForm.notes}
+      onChange={(e) =>
+        setPackingCustomForm((prev) => ({
+          ...prev,
+          notes: e.target.value,
+        }))
+      }
+      placeholder="例如：放隨身背包、準備備用份"
+      style={{
+        padding: 12,
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+        resize: "vertical",
+      }}
+    />
+  </label>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "flex-end",
+    }}
+  >
+    <button
+      type="button"
+      disabled
+      title="下一步連接 Supabase 後啟用"
+      style={{
+        padding: "11px 18px",
+        background: "#826349",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: 10,
+        fontWeight: 700,
+        opacity: 0.5,
+        cursor: "not-allowed",
+      }}
+    >
+      ＋ 新增常用物品
+    </button>
+  </div>
+</div>
+
   </div>
 )}
 
