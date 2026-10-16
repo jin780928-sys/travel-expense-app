@@ -50,7 +50,7 @@ type UnifiedItineraryItem = {
     | "carRental"
     | "booking";
 
-  sourceId: number;
+  sourceId: string | number;
 
   date: string;
   start_time: string | null;
