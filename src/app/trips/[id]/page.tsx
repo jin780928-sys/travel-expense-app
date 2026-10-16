@@ -4746,6 +4746,58 @@ const bookingUnifiedItems: UnifiedItineraryItem[] =
   });
 
 
+/* =========================================
+   每日行程整合：合併所有來源
+   ========================================= */
+
+const allUnifiedItineraryItems: UnifiedItineraryItem[] = [
+  ...manualUnifiedItems,
+  ...hotelUnifiedItems,
+  ...flightUnifiedItems,
+  ...carRentalUnifiedItems,
+  ...bookingUnifiedItems,
+];
+
+/* =========================================
+   每日行程整合：依日期分組
+   ========================================= */
+
+const groupedUnifiedItineraryItems =
+  allUnifiedItineraryItems.reduce<
+    Record<string, UnifiedItineraryItem[]>
+  >((result, item) => {
+    const dateKey = item.date || "日期未設定";
+
+    if (!result[dateKey]) {
+      result[dateKey] = [];
+    }
+
+    result[dateKey].push(item);
+
+    return result;
+  }, {});
+
+/* =========================================
+   每日行程整合：各日期內依時間排序
+   ========================================= */
+
+Object.values(groupedUnifiedItineraryItems).forEach(
+  (items) => {
+    items.sort((a, b) => {
+      const timeA = a.start_time || "99:99:99";
+      const timeB = b.start_time || "99:99:99";
+
+      const timeComparison = timeA.localeCompare(timeB);
+
+      if (timeComparison !== 0) {
+        return timeComparison;
+      }
+
+      return a.key.localeCompare(b.key);
+    });
+  }
+);
+
 
 
    /* =========================================================
