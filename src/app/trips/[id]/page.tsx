@@ -8966,6 +8966,497 @@ alignItems: "center",
   </section>
 )}
 
+        
+{/* =========================================
+    行李清單管理畫面
+   ========================================= */}
+
+{activeTab === "packing" && (
+  <section
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 18,
+      marginTop: 20,
+      minWidth: 0,
+    }}
+  >
+    {/* 標題與新增按鈕 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 12,
+      }}
+    >
+      <div>
+        <h2
+          style={{
+            margin: 0,
+            fontSize: 22,
+            fontWeight: 800,
+            color: "#49392f",
+          }}
+        >
+          🎒 行李清單管理
+        </h2>
+
+        <p
+          style={{
+            margin: "6px 0 0",
+            fontSize: 13,
+            color: "#927f70",
+          }}
+        >
+          分類整理行李，追蹤每位旅伴的打包進度
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          if (showPackingForm) {
+            resetPackingForm();
+            setShowPackingForm(false);
+          } else {
+            resetPackingForm();
+            setShowPackingForm(true);
+          }
+        }}
+        style={{
+          padding: "11px 18px",
+          border: "none",
+          borderRadius: 10,
+          background: "#826349",
+          color: "#ffffff",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        {showPackingForm ? "取消新增" : "＋ 新增行李"}
+      </button>
+    </div>
+
+    {/* 打包進度 */}
+    {(() => {
+      const total = packingItems.length;
+      const packed = packingItems.filter(
+        (item) => item.is_packed
+      ).length;
+      const percentage =
+        total > 0 ? Math.round((packed / total) * 100) : 0;
+
+      return (
+        <div
+          style={{
+            padding: 18,
+            background: "#faf7f2",
+            border: "1px solid #e6dcd0",
+            borderRadius: 14,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 8,
+              color: "#49392f",
+              fontSize: 14,
+              fontWeight: 700,
+            }}
+          >
+            <span>📦 打包進度</span>
+            <span>
+              {packed} / {total} 項（{percentage}%）
+            </span>
+          </div>
+
+          <div
+            role="progressbar"
+            aria-valuenow={percentage}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            style={{
+              height: 12,
+              marginTop: 12,
+              borderRadius: 999,
+              background: "#e6dcd0",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                width: `${percentage}%`,
+                height: "100%",
+                borderRadius: 999,
+                background: "#826349",
+                transition: "width 0.2s ease",
+              }}
+            />
+          </div>
+        </div>
+      );
+    })()}
+
+    {/* 新增／編輯行李表單 */}
+    {showPackingForm && (
+      <div
+        style={{
+          padding: "20px 16px",
+          background: "#faf7f2",
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+        }}
+      >
+        <h3
+          style={{
+            margin: "0 0 18px",
+            fontSize: 19,
+            fontWeight: 800,
+            color: "#49392f",
+          }}
+        >
+          {editingPackingItemId !== null
+            ? "✏️ 編輯行李"
+            : "🎒 新增行李"}
+        </h3>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+            gap: 16,
+          }}
+        >
+          <label style={{ display: "grid", gap: 7, color: "#674b39", fontSize: 13, fontWeight: 700 }}>
+            行李名稱 *
+            <input
+              type="text"
+              value={packingForm.name}
+              onChange={(e) =>
+                updatePackingField("name", e.target.value)
+              }
+              placeholder="例如：護照、充電線、外套"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                height: 44,
+                padding: "0 12px",
+                border: "1px solid #d8c6b4",
+                borderRadius: 10,
+              }}
+            />
+          </label>
+
+          <label style={{ display: "grid", gap: 7, color: "#674b39", fontSize: 13, fontWeight: 700 }}>
+            分類
+            <select
+              value={packingForm.category}
+              onChange={(e) =>
+                updatePackingField("category", e.target.value)
+              }
+              style={{
+                height: 44,
+                padding: "0 12px",
+                border: "1px solid #d8c6b4",
+                borderRadius: 10,
+                background: "#ffffff",
+              }}
+            >
+              <option value="documents">🪪 證件</option>
+              <option value="clothing">👕 衣物</option>
+              <option value="toiletries">🧴 盥洗用品</option>
+              <option value="electronics">🔌 電子產品</option>
+              <option value="medicine">💊 藥品</option>
+              <option value="other">📦 其他</option>
+            </select>
+          </label>
+
+          <label style={{ display: "grid", gap: 7, color: "#674b39", fontSize: 13, fontWeight: 700 }}>
+            數量
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={packingForm.quantity}
+              onChange={(e) =>
+                updatePackingField("quantity", e.target.value)
+              }
+              style={{
+                height: 44,
+                padding: "0 12px",
+                border: "1px solid #d8c6b4",
+                borderRadius: 10,
+              }}
+            />
+          </label>
+
+          <label style={{ display: "grid", gap: 7, color: "#674b39", fontSize: 13, fontWeight: 700 }}>
+            所屬人員
+            <select
+              value={packingForm.person_id}
+              onChange={(e) =>
+                updatePackingField("person_id", e.target.value)
+              }
+              disabled={loadingPackingPeople}
+              style={{
+                height: 44,
+                padding: "0 12px",
+                border: "1px solid #d8c6b4",
+                borderRadius: 10,
+                background: "#ffffff",
+              }}
+            >
+              <option value="">👥 共用行李</option>
+              {packingPeople.map((person) => (
+                <option key={person.id} value={String(person.id)}>
+                  {person.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <label
+          style={{
+            display: "grid",
+            gap: 7,
+            marginTop: 16,
+            color: "#674b39",
+            fontSize: 13,
+            fontWeight: 700,
+          }}
+        >
+          備註
+          <textarea
+            rows={3}
+            value={packingForm.notes}
+            onChange={(e) =>
+              updatePackingField("notes", e.target.value)
+            }
+            placeholder="例如：隨身攜帶、放托運行李、準備兩份"
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              padding: 12,
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              resize: "vertical",
+            }}
+          />
+        </label>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            flexWrap: "wrap",
+            gap: 10,
+            marginTop: 22,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => {
+              resetPackingForm();
+              setShowPackingForm(false);
+            }}
+            disabled={savingPackingItem}
+            style={{
+              padding: "11px 18px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#674b39",
+              fontWeight: 700,
+            }}
+          >
+            取消
+          </button>
+
+          <button
+            type="button"
+            onClick={savePackingItem}
+            disabled={savingPackingItem}
+            style={{
+              padding: "11px 20px",
+              border: "none",
+              borderRadius: 10,
+              background: "#826349",
+              color: "#ffffff",
+              fontWeight: 700,
+            }}
+          >
+            {savingPackingItem
+              ? "儲存中..."
+              : editingPackingItemId !== null
+                ? "更新行李"
+                : "儲存行李"}
+          </button>
+        </div>
+      </div>
+    )}
+
+    {/* 行李資料列表 */}
+    {loadingPackingItems ? (
+      <p style={{ color: "#927f70" }}>正在載入行李清單...</p>
+    ) : packingItems.length === 0 ? (
+      <div
+        style={{
+          padding: 28,
+          textAlign: "center",
+          border: "1px dashed #d8c6b4",
+          borderRadius: 14,
+          color: "#927f70",
+        }}
+      >
+        目前還沒有行李，點擊「＋ 新增行李」開始建立。
+      </div>
+    ) : (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {packingItems.map((item) => {
+          const categoryNames: Record<string, string> = {
+            documents: "🪪 證件",
+            clothing: "👕 衣物",
+            toiletries: "🧴 盥洗用品",
+            electronics: "🔌 電子產品",
+            medicine: "💊 藥品",
+            other: "📦 其他",
+          };
+
+          const personName =
+            item.person_id === null
+              ? "共用行李"
+              : packingPeople.find(
+                  (person) => person.id === item.person_id
+                )?.name || "未找到人員";
+
+          return (
+            <div
+              key={item.id}
+              style={{
+                padding: 16,
+                background: item.is_packed ? "#f1f5ed" : "#ffffff",
+                border: "1px solid #e6dcd0",
+                borderRadius: 12,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 12,
+              }}
+            >
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 12,
+                  flex: "1 1 220px",
+                  cursor: "pointer",
+                  minWidth: 0,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={item.is_packed}
+                  onChange={() => togglePackingItem(item)}
+                  style={{
+                    width: 19,
+                    height: 19,
+                    marginTop: 3,
+                    accentColor: "#826349",
+                  }}
+                />
+
+                <span style={{ minWidth: 0 }}>
+                  <span
+                    style={{
+                      display: "block",
+                      color: "#49392f",
+                      fontWeight: 800,
+                      textDecoration: item.is_packed
+                        ? "line-through"
+                        : "none",
+                    }}
+                  >
+                    {item.name} × {item.quantity}
+                  </span>
+
+                  <span
+                    style={{
+                      display: "block",
+                      marginTop: 5,
+                      fontSize: 12,
+                      color: "#927f70",
+                    }}
+                  >
+                    {categoryNames[item.category] || "📦 其他"}
+                    {" · "}
+                    👤 {personName}
+                  </span>
+
+                  {item.notes && (
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: 6,
+                        fontSize: 12,
+                        color: "#674b39",
+                        whiteSpace: "pre-wrap",
+                      }}
+                    >
+                      {item.notes}
+                    </span>
+                  )}
+                </span>
+              </label>
+
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => startEditPackingItem(item)}
+                  style={{
+                    padding: "8px 12px",
+                    border: "1px solid #d8c6b4",
+                    borderRadius: 9,
+                    background: "#ffffff",
+                    color: "#674b39",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✏️ 編輯
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => deletePackingItem(item)}
+                  style={{
+                    padding: "8px 12px",
+                    border: "1px solid #e7c9c3",
+                    borderRadius: 9,
+                    background: "#fff7f5",
+                    color: "#b4534b",
+                    cursor: "pointer",
+                  }}
+                >
+                  🗑️ 刪除
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </section>
+)}
+
+
         </>
       )}
     </main>
