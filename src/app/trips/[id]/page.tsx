@@ -844,6 +844,308 @@ const updateCarRentalField = (
 };
 
 
+/* =========================================
+   重設租車表單
+   ========================================= */
+
+const resetCarRentalForm = () => {
+  setCarRentalForm({
+    rental_company: "",
+    confirmation_number: "",
+    vehicle_type: "",
+    vehicle_class: "",
+    pickup_location: "",
+    pickup_at: "",
+    pickup_timezone: "",
+    dropoff_location: "",
+    dropoff_at: "",
+    dropoff_timezone: "",
+    amount: "",
+    currency: "USD",
+    payment_status: "unpaid",
+    booking_platform: "",
+    booking_url: "",
+    notes: "",
+  });
+
+  setEditingCarRentalId(null);
+};
+
+  
+/* =========================================
+   編輯租車：帶入既有資料
+   ========================================= */
+
+const startEditCarRental = (rental: TripCarRental) => {
+  if (savingCarRental) return;
+
+  setEditingCarRentalId(rental.id);
+
+  setCarRentalForm({
+    rental_company: rental.rental_company || "",
+    confirmation_number:
+      rental.confirmation_number || "",
+    vehicle_type: rental.vehicle_type || "",
+    vehicle_class: rental.vehicle_class || "",
+    pickup_location: rental.pickup_location || "",
+
+    pickup_at: flightUTCToLocalInput(
+      rental.pickup_at,
+      rental.pickup_timezone
+    ),
+
+    pickup_timezone: rental.pickup_timezone || "",
+    dropoff_location: rental.dropoff_location || "",
+
+    dropoff_at: flightUTCToLocalInput(
+      rental.dropoff_at,
+      rental.dropoff_timezone
+    ),
+
+    dropoff_timezone: rental.dropoff_timezone || "",
+    amount:
+      rental.amount === null ? "" : String(rental.amount),
+    currency: rental.currency || "USD",
+    payment_status: rental.payment_status || "unpaid",
+    booking_platform: rental.booking_platform || "",
+    booking_url: rental.booking_url || "",
+    notes: rental.notes || "",
+  });
+
+  setShowCarRentalForm(true);
+};
+
+  
+/* =========================================
+   新增／編輯租車
+   ========================================= */
+
+const saveCarRental = async () => {
+  if (savingCarRental) return;
+
+  if (!id || !Number.isSafeInteger(Number(id))) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  if (!carRentalForm.rental_company.trim()) {
+    alert("請輸入租車公司");
+    return;
+  }
+
+  if (
+    !carRentalForm.pickup_location.trim() ||
+    !carRentalForm.dropoff_location.trim()
+  ) {
+    alert("請輸入取車與還車地點");
+    return;
+  }
+
+  if (
+    !carRentalForm.pickup_at ||
+    !carRentalForm.dropoff_at
+  ) {
+    alert("請填寫取車與還車日期時間");
+    return;
+  }
+
+  if (
+    !carRentalForm.pickup_timezone ||
+    !carRentalForm.dropoff_timezone
+  ) {
+    alert("請選擇取車與還車時區");
+    return;
+  }
+
+  const amountText = carRentalForm.amount.trim();
+  const amount = amountText === "" ? null : Number(amountText);
+
+  if (
+    amount !== null &&
+    (!Number.isFinite(amount) || amount < 0)
+  ) {
+    alert("請輸入有效的租車金額");
+    return;
+  }
+
+  const pickupUTC = flightLocalTimeToUTC(
+    carRentalForm.pickup_at,
+    carRentalForm.pickup_timezone
+  );
+
+  const dropoffUTC = flightLocalTimeToUTC(
+    carRentalForm.dropoff_at,
+    carRentalForm.dropoff_timezone
+  );
+
+  if (!pickupUTC || !dropoffUTC) {
+    alert("取還車日期或時區有誤，請重新確認");
+    return;
+  }
+
+  if (
+    new Date(dropoffUTC).getTime() <=
+    new Date(pickupUTC).getTime()
+  ) {
+    alert("還車時間必須晚於取車時間");
+    return;
+  }
+
+  setSavingCarRental(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const rentalData = {
+      rental_company:
+        carRentalForm.rental_company.trim(),
+      confirmation_number:
+        carRentalForm.confirmation_number.trim() || null,
+      vehicle_type:
+        carRentalForm.vehicle_type.trim() || null,
+      vehicle_class:
+        carRentalForm.vehicle_class.trim() || null,
+      pickup_location:
+        carRentalForm.pickup_location.trim(),
+      pickup_at: pickupUTC,
+      pickup_timezone: carRentalForm.pickup_timezone,
+      dropoff_location:
+        carRentalForm.dropoff_location.trim(),
+      dropoff_at: dropoffUTC,
+      dropoff_timezone: carRentalForm.dropoff_timezone,
+      amount,
+      currency: carRentalForm.currency.trim() || "USD",
+      payment_status: carRentalForm.payment_status,
+      booking_platform:
+        carRentalForm.booking_platform.trim() || null,
+      booking_url:
+        carRentalForm.booking_url.trim() || null,
+      notes: carRentalForm.notes.trim() || null,
+    };
+
+    if (editingCarRentalId !== null) {
+      const { data, error } = await supabase
+        .from("TripCarRentals")
+        .update(rentalData)
+        .eq("id", editingCarRentalId)
+        .eq("trip_id", Number(id))
+        .eq("user_id", user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("找不到可更新的租車資料");
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("TripCarRentals")
+        .insert({
+          ...rentalData,
+          trip_id: Number(id),
+          user_id: user.id,
+        })
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("新增租車資料失敗");
+      }
+    }
+
+    await loadCarRentals();
+
+    alert(
+      editingCarRentalId !== null
+        ? "租車資料更新成功！"
+        : "租車資料新增成功！"
+    );
+
+    resetCarRentalForm();
+    setShowCarRentalForm(false);
+  } catch (error) {
+    console.error("儲存租車失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `儲存失敗：${error.message}`
+        : "儲存租車失敗"
+    );
+  } finally {
+    setSavingCarRental(false);
+  }
+};
+
+  
+/* =========================================
+   刪除租車
+   ========================================= */
+
+const deleteCarRental = async (rental: TripCarRental) => {
+  if (savingCarRental) return;
+
+  const confirmed = window.confirm(
+    `確定要刪除「${rental.rental_company || "租車紀錄"}」嗎？\n\n刪除後無法復原。`
+  );
+
+  if (!confirmed) return;
+
+  if (!id) {
+    alert("找不到旅程 ID");
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripCarRentals")
+      .delete()
+      .eq("id", rental.id)
+      .eq("trip_id", Number(id))
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可刪除的租車資料");
+    }
+
+    if (editingCarRentalId === rental.id) {
+      resetCarRentalForm();
+      setShowCarRentalForm(false);
+    }
+
+    await loadCarRentals();
+
+    alert("租車資料已刪除！");
+  } catch (error) {
+    console.error("刪除租車失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `刪除失敗：${error.message}`
+        : "刪除租車失敗"
+    );
+  }
+};
+
 // 新增 / 編輯機票表單開關
 const [showFlightForm, setShowFlightForm] =
   useState(false);
