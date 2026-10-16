@@ -1393,7 +1393,12 @@ const [packingSort, setPackingSort] = useState<
 /* =========================================
    行李清單：篩選結果
    ========================================= */
+const [packingPeople, setPackingPeople] =
+  useState<PackingPerson[]>([]);
 
+const [loadingPackingPeople, setLoadingPackingPeople] =
+  useState(false);
+  
 const filteredPackingItems = packingItems.filter((item) => {
   const matchPerson =
     packingPersonFilter === "all" ||
@@ -1637,11 +1642,7 @@ const sortedPackingGroups = Object.entries(
 const [loadingPackingItems, setLoadingPackingItems] =
   useState(false);
 
-const [packingPeople, setPackingPeople] =
-  useState<PackingPerson[]>([]);
 
-const [loadingPackingPeople, setLoadingPackingPeople] =
-  useState(false);
 
 const [showPackingForm, setShowPackingForm] =
   useState(false);
