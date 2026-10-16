@@ -1572,25 +1572,70 @@ if (packingGroupBy === "category") {
 }, {});
 
 
+
 /* =========================================
-   行李清單：分組顯示順序
-   個人用品在前，共用用品在後
+   行李清單：分組排序
+   依人員：個人優先，共用最後
+   依分類：個人 → 共用 → 原有分類
    ========================================= */
 
 const sortedPackingGroups = Object.entries(
   packingGroups
 ).sort(([groupA], [groupB]) => {
-  if (packingGroupBy !== "person") {
-    return 0;
+  // 依人員分組
+  if (packingGroupBy === "person") {
+    const sharedName = "👥 共用行李";
+
+    if (groupA === sharedName && groupB !== sharedName) {
+      return 1;
+    }
+
+    if (groupB === sharedName && groupA !== sharedName) {
+      return -1;
+    }
+
+    return groupA.localeCompare(groupB, "zh-Hant");
   }
 
-  const sharedName = "👥 共用行李";
+  // 依分類分組
+  if (packingGroupBy === "category") {
+    const getScopeOrder = (name: string) => {
+      if (name.startsWith("👤 個人用品｜")) return 0;
+      if (name.startsWith("👥 共用用品｜")) return 1;
+      return 2;
+    };
 
-  if (groupA === sharedName) return 1;
-  if (groupB === sharedName) return -1;
+    const scopeDifference =
+      getScopeOrder(groupA) - getScopeOrder(groupB);
 
-  return groupA.localeCompare(groupB, "zh-Hant");
+    if (scopeDifference !== 0) {
+      return scopeDifference;
+    }
+
+    // 依預設分類順序排序
+    const getCategoryOrder = (name: string) => {
+      const category = packingTemplateCategories.find(
+        (item) =>
+          name ===
+          `${item.scope === "personal" ? "👤 個人用品" : "👥 共用用品"}｜${packingCategoryNames[`template:${item.scope}:${item.code}`]}`
+      );
+
+      return category?.sort_order ?? 999;
+    };
+
+    const orderDifference =
+      getCategoryOrder(groupA) - getCategoryOrder(groupB);
+
+    if (orderDifference !== 0) {
+      return orderDifference;
+    }
+
+    return groupA.localeCompare(groupB, "zh-Hant");
+  }
+
+  return 0;
 });
+
 
 
 
