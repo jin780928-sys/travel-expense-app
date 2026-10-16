@@ -5800,21 +5800,79 @@ return (
     }}
   >
 
+     
+{/* =========================================
+    每日行程：來源標籤與標題
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 6,
+  }}
+>
+  <span
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      padding: "4px 9px",
+      borderRadius: 6,
+      fontSize: 11,
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      background:
+        item.source === "flight"
+          ? "#edf3ff"
+          : item.source === "hotel"
+            ? "#eaf5ef"
+            : item.source === "carRental"
+              ? "#fff1e5"
+              : item.source === "booking"
+                ? "#f3eefe"
+                : "#f4eee8",
+      color:
+        item.source === "flight"
+          ? "#285ea8"
+          : item.source === "hotel"
+            ? "#287a52"
+            : item.source === "carRental"
+              ? "#a35a21"
+              : item.source === "booking"
+                ? "#7253a5"
+                : "#826349",
+    }}
+  >
+    {item.source === "flight"
+      ? "✈️ 機票"
+      : item.source === "hotel"
+        ? "🏨 飯店"
+        : item.source === "carRental"
+          ? "🚗 租車"
+          : item.source === "booking"
+            ? "🎟️ 預約"
+            : "📝 手動行程"}
+  </span>
+
+  <div
+    style={{
+      minWidth: 0,
+      flex: "1 1 180px",
+      fontSize: 16,
+      fontWeight: 700,
+      color: "#49392f",
+      overflowWrap: "anywhere",
+    }}
+  >
+    {item.title}
+  </div>
+</div>
+
      {/* =========================
-        行程標題
-     ========================= */}     
-    <div
-                                    style={{
-                                      fontSize: 16,
-                                      fontWeight: 700,
-                                      color: "#111827",
-                                      }}
-                                  >
-                                    {item.title}
-                                  </div>
-     {/* =========================
-                                      地點
-                                     ========================= */}
+     地點
+      ========================= */}
                                   {item.location && (
                                     <div
                                       style={{
