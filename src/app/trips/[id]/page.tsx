@@ -4752,6 +4752,47 @@ onClick={() => {
     </div>
 
     
+{/* =========================================
+    機票方向：去程 / 回程 / 其他
+   ========================================= */}
+
+<label
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: 7,
+    marginTop: 16,
+    fontSize: 13,
+    fontWeight: 600,
+    color: "#674b39",
+  }}
+>
+  機票分類
+
+  <select
+    value={flightForm.flight_direction}
+    onChange={(e) =>
+      updateFlightField(
+        "flight_direction",
+        e.target.value
+      )
+    }
+    style={{
+      height: 42,
+      padding: "0 12px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#49392f",
+      width: "100%",
+    }}
+  >
+    <option value="other">其他</option>
+    <option value="outbound">去程</option>
+    <option value="return">回程</option>
+  </select>
+</label>
+
     {/* 付款狀態 */}
     <label
       style={{
@@ -4955,7 +4996,12 @@ onClick={() => {
           ["arrival_airport", "抵達機場"],
           ["cabin_class", "艙等"],
           ["baggage_allowance", "行李額度"],
-        ] as const).map(([field, label]) => (
+          ["departure_terminal", "出發航廈 Terminal"],
+          ["arrival_terminal", "抵達航廈 Terminal"],
+          ["departure_gate", "出發登機門 Gate"],
+          ["seat_number", "座位號碼 Seat"],
+          ] as const).map(([field, label]) => (
+
           <label key={field}>
             <div style={{ marginBottom: 5, fontSize: 13 }}>
               {label}
