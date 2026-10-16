@@ -4579,6 +4579,88 @@ const flightUnifiedItems: UnifiedItineraryItem[] =
     return items;
   });
 
+  
+/* =========================================
+   每日行程整合：租車取車與還車
+   ========================================= */
+
+const carRentalUnifiedItems: UnifiedItineraryItem[] =
+  carRentals.flatMap((rental) => {
+    const items: UnifiedItineraryItem[] = [];
+
+    const company =
+      rental.rental_company || "租車公司";
+
+    // 取車事件
+    if (rental.pickup_at) {
+      const pickupDateTime = String(rental.pickup_at);
+
+      items.push({
+        key: `car-pickup-${rental.id}`,
+        source: "carRental",
+        sourceId: rental.id,
+
+        date: pickupDateTime.slice(0, 10),
+        start_time: pickupDateTime.slice(11, 16) || null,
+        end_time: null,
+
+        title: `🚗 取車：${company}`,
+        location: rental.pickup_location || null,
+        transportation: null,
+
+        notes:
+          [
+            rental.vehicle_type
+              ? `車型：${rental.vehicle_type}`
+              : "",
+            rental.confirmation_number
+              ? `訂單編號：${rental.confirmation_number}`
+              : "",
+            rental.notes || "",
+          ]
+            .filter(Boolean)
+            .join("\n") || null,
+
+        eventType: "pickup",
+        timezone: rental.pickup_timezone || null,
+      });
+    }
+
+    // 還車事件
+    if (rental.dropoff_at) {
+      const dropoffDateTime = String(rental.dropoff_at);
+
+      items.push({
+        key: `car-dropoff-${rental.id}`,
+        source: "carRental",
+        sourceId: rental.id,
+
+        date: dropoffDateTime.slice(0, 10),
+        start_time: dropoffDateTime.slice(11, 16) || null,
+        end_time: null,
+
+        title: `🚙 還車：${company}`,
+        location: rental.dropoff_location || null,
+        transportation: null,
+
+        notes:
+          [
+            rental.confirmation_number
+              ? `訂單編號：${rental.confirmation_number}`
+              : "",
+            rental.notes || "",
+          ]
+            .filter(Boolean)
+            .join("\n") || null,
+
+        eventType: "dropoff",
+        timezone: rental.dropoff_timezone || null,
+      });
+    }
+
+    return items;
+  });
+
 
 
 
