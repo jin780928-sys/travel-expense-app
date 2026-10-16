@@ -2021,7 +2021,6 @@ const importPackingTemplates = async () => {
 /* =========================================
    預設打包物品：依分類及範本順序排列
    ========================================= */
-
 const selectedItems = packingTemplateItems
   .filter(
     (item) =>
@@ -2049,8 +2048,46 @@ const selectedItems = packingTemplateItems
     return a.id - b.id;
   });
 
+  
+/* =========================================
+   匯入時讀取最新的個人自訂範本
+   ========================================= */
 
-    if (selectedCategories.length === 0 || selectedItems.length === 0) {
+const {
+  data: customItemsData,
+  error: customItemsError,
+} = await supabase
+  .from("PackingCustomItems")
+  .select(
+    "id,scope,category_code,name,quantity,notes,sort_order,is_active"
+  )
+  .eq("user_id", user.id)
+  .eq("scope", packingImportScope)
+  .eq("is_active", true)
+  .order("sort_order", { ascending: true })
+  .order("id", { ascending: true });
+
+if (customItemsError) {
+  throw customItemsError;
+}
+
+const selectedCustomItems = (
+  (customItemsData ?? []) as PackingCustomItem[]
+).filter((item) =>
+  selectedCategories.some(
+    (category) =>
+      category.scope === item.scope &&
+      category.code === item.category_code
+  )
+);
+
+
+
+    if (
+  selectedCategories.length === 0 ||
+  (selectedItems.length === 0 &&
+    selectedCustomItems.length === 0)
+) {
       throw new Error("找不到可匯入的預設物品");
     }
 
@@ -2119,6 +2156,41 @@ const selectedItems = packingTemplateItems
         },
       ];
     });
+
+    
+/* =========================================
+   將自訂常用物品加入待匯入清單
+   ========================================= */
+
+for (const item of selectedCustomItems) {
+  const categoryKey =
+    `template:${item.scope}:${item.category_code}`;
+
+  const duplicateKey = JSON.stringify([
+    personId,
+    categoryKey,
+    normalizeName(item.name),
+  ]);
+
+  if (existingKeys.has(duplicateKey)) {
+    continue;
+  }
+
+  existingKeys.add(duplicateKey);
+
+  rowsToInsert.push({
+    trip_id: tripId,
+    user_id: user.id,
+    name: item.name,
+    category: categoryKey,
+    quantity: item.quantity,
+    person_id: personId,
+    notes: item.notes,
+    is_packed: false,
+    sort_order: nextSortOrder++,
+  });
+}
+
 
     if (rowsToInsert.length === 0) {
       alert("這份預設清單已經匯入，沒有需要新增的物品");
