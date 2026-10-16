@@ -1673,6 +1673,9 @@ const [packingCustomForm, setPackingCustomForm] = useState({
   notes: "",
 });
 
+  const [savingPackingCustomItem, setSavingPackingCustomItem] =
+  useState(false);
+
 
 /* =========================================
    打包清單：匯入範圍與指定人員
@@ -1765,6 +1768,128 @@ const loadPackingTemplates = async () => {
   }
 };
 
+
+/* =========================================
+   自訂常用物品：儲存到 Supabase
+   ========================================= */
+
+const savePackingCustomItem = async () => {
+  if (savingPackingCustomItem) return;
+
+  const scope = packingCustomForm.scope;
+  const categoryCode = packingCustomForm.category_code;
+  const name = packingCustomForm.name.trim();
+  const quantity = Number(packingCustomForm.quantity);
+  const notes = packingCustomForm.notes.trim();
+
+  if (!categoryCode) {
+    alert("請選擇所屬分類");
+    return;
+  }
+
+  if (!name) {
+    alert("請輸入物品名稱");
+    return;
+  }
+
+  if (
+    !Number.isSafeInteger(quantity) ||
+    quantity <= 0
+  ) {
+    alert("數量必須是大於 0 的整數");
+    return;
+  }
+
+  const validCategory = packingTemplateCategories.some(
+    (category) =>
+      category.scope === scope &&
+      category.code === categoryCode &&
+      category.is_active
+  );
+
+  if (!validCategory) {
+    alert("所屬分類無效，請重新選擇");
+    return;
+  }
+
+  setSavingPackingCustomItem(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請重新登入後再試");
+    }
+
+    const { data: existingItems, error: checkError } =
+      await supabase
+        .from("PackingCustomItems")
+        .select("id,name")
+        .eq("user_id", user.id)
+        .eq("scope", scope)
+        .eq("category_code", categoryCode);
+
+    if (checkError) throw checkError;
+
+    const duplicate = (existingItems ?? []).some(
+      (item) =>
+        String(item.name ?? "")
+          .trim()
+          .toLocaleLowerCase() ===
+        name.toLocaleLowerCase()
+    );
+
+    if (duplicate) {
+      alert("這個分類已經有相同名稱的自訂物品");
+      return;
+    }
+
+    const { error: insertError } = await supabase
+      .from("PackingCustomItems")
+      .insert({
+        user_id: user.id,
+        scope,
+        category_code: categoryCode,
+        name,
+        quantity,
+        notes: notes || null,
+        sort_order: 0,
+        is_active: true,
+      });
+
+    if (insertError) {
+      if (insertError.code === "23505") {
+        alert("這個分類已經有相同名稱的物品");
+        return;
+      }
+
+      throw insertError;
+    }
+
+    setPackingCustomForm({
+      scope,
+      category_code: categoryCode,
+      name: "",
+      quantity: "1",
+      notes: "",
+    });
+
+    alert("✅ 常用物品新增成功！");
+  } catch (error) {
+    console.error("新增自訂常用物品失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "新增失敗，請稍後再試"
+    );
+  } finally {
+    setSavingPackingCustomItem(false);
+  }
+};
 
 /* =========================================
    打包清單：匯入系統預設物品
@@ -11303,9 +11428,9 @@ alignItems: "center",
     }}
   >
     <button
-      type="button"
-      disabled
-      title="下一步連接 Supabase 後啟用"
+  type="button"
+  onClick={savePackingCustomItem}
+  disabled={savingPackingCustomItem}
       style={{
         padding: "11px 18px",
         background: "#826349",
@@ -11313,11 +11438,13 @@ alignItems: "center",
         border: "none",
         borderRadius: 10,
         fontWeight: 700,
-        opacity: 0.5,
-        cursor: "not-allowed",
+        opacity: savingPackingCustomItem ? 0.5 : 1,
+cursor: savingPackingCustomItem ? "wait" : "pointer",
       }}
     >
-      ＋ 新增常用物品
+      {savingPackingCustomItem
+  ? "儲存中..."
+  : "＋ 新增常用物品"}
     </button>
   </div>
 </div>
