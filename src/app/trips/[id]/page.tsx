@@ -5776,27 +5776,38 @@ return (
         🗑️ 刪除
       </button>
     </>
-  ) : (
-    <span
-      style={{
-        padding: "8px 12px",
-        background: "#faf7f2",
-        border: "1px solid #e6dcd0",
-        borderRadius: 8,
-        color: "#826349",
-        fontSize: 12,
-        fontWeight: 700,
-      }}
-    >
-      {item.source === "flight"
-        ? "✈️ 機票自動帶入"
-        : item.source === "hotel"
-          ? "🏨 飯店自動帶入"
-          : item.source === "carRental"
-            ? "🚗 租車自動帶入"
-            : "🎟️ 預約自動帶入"}
-    </span>
-  )}
+  
+) : (
+  <button
+    type="button"
+    onClick={() => goToItinerarySource(item.source)}
+    style={{
+      minHeight: 36,
+      padding: "8px 12px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      background: "#faf7f2",
+      border: "1px solid #d8c6b4",
+      borderRadius: 8,
+      color: "#826349",
+      fontSize: 12,
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    {item.source === "flight"
+      ? "✈️ 前往機票管理"
+      : item.source === "hotel"
+        ? "🏨 前往飯店管理"
+        : item.source === "carRental"
+          ? "🚗 前往租車管理"
+          : "🎟️ 前往預約管理"}
+    <span aria-hidden="true">→</span>
+  </button>
+)}
+
 </div>
 
                               </div>
