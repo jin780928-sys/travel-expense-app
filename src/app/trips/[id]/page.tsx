@@ -5184,6 +5184,7 @@ onClick={() => {
     </div>
 
     
+    
 {/* =========================================
     機票新增／編輯表單
    ========================================= */}
@@ -6493,6 +6494,223 @@ alignItems: "center",
     🗑️ 刪除
   </button>
 </div>
+
+         {/* =========================================
+    租車管理
+   ========================================= */}
+
+
+{/* =========================================
+    租車管理畫面
+   ========================================= */}
+
+{activeTab === "carRentals" && (
+  <section
+    style={{
+      width: "100%",
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: 18,
+    }}
+  >
+    {/* 標題與新增按鈕 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        flexWrap: "wrap",
+        gap: 12,
+      }}
+    >
+      <div>
+        <h2
+          style={{
+            margin: 0,
+            fontSize: 26,
+            fontWeight: 800,
+            color: "#49392f",
+          }}
+        >
+          🚗 租車管理
+        </h2>
+
+        <p
+          style={{
+            margin: "10px 0 0",
+            fontSize: 14,
+            color: "#927f70",
+          }}
+        >
+          集中管理這趟旅程的租車與取還車資訊
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          if (showCarRentalForm) {
+            setShowCarRentalForm(false);
+            resetCarRentalForm();
+          } else {
+            resetCarRentalForm();
+            setShowCarRentalForm(true);
+          }
+        }}
+        style={{
+          padding: "12px 20px",
+          background: "#826349",
+          border: "1px solid #826349",
+          color: "#ffffff",
+          borderRadius: 12,
+          fontSize: 15,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        {showCarRentalForm ? "取消新增" : "＋ 新增租車"}
+      </button>
+    </div>
+
+    {/* 新增／編輯表單：下一步加入 */}
+    {showCarRentalForm && (
+      <div
+        style={{
+          padding: 20,
+          background: "#faf7f2",
+          border: "1px solid #e6dcd0",
+          borderRadius: 14,
+          color: "#674b39",
+        }}
+      >
+        {editingCarRentalId !== null
+          ? "✏️ 編輯租車資料"
+          : "🚗 新增租車資料"}
+
+        <p style={{ fontSize: 13 }}>
+          租車表單將在下一步加入。
+        </p>
+      </div>
+    )}
+
+    {/* 租車資料列表 */}
+    {loadingCarRentals ? (
+      <div
+        style={{
+          padding: 28,
+          textAlign: "center",
+          color: "#927f70",
+        }}
+      >
+        載入租車資料中...
+      </div>
+    ) : carRentals.length === 0 ? (
+      <div
+        style={{
+          padding: "36px 18px",
+          textAlign: "center",
+          border: "1px dashed #d8c6b4",
+          background: "#faf7f2",
+          borderRadius: 14,
+          color: "#927f70",
+        }}
+      >
+        <div style={{ fontSize: 30, marginBottom: 10 }}>
+          🚙
+        </div>
+        尚未新增租車資料
+        <p style={{ margin: "8px 0 0", fontSize: 13 }}>
+          點擊「＋ 新增租車」開始記錄取還車資訊。
+        </p>
+      </div>
+    ) : (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+        }}
+      >
+        {carRentals.map((rental) => (
+          <div
+            key={rental.id}
+            style={{
+              padding: 18,
+              border: "1px solid #e6dcd0",
+              borderRadius: 14,
+              background: "#ffffff",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 17,
+                fontWeight: 800,
+                color: "#49392f",
+              }}
+            >
+              🚗 {rental.rental_company || "租車公司未設定"}
+            </div>
+
+            <div
+              style={{
+                marginTop: 8,
+                fontSize: 13,
+                color: "#674b39",
+              }}
+            >
+              📍 {rental.pickup_location || "未設定"}
+              {" → "}
+              {rental.dropoff_location || "未設定"}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 10,
+                marginTop: 16,
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => startEditCarRental(rental)}
+                style={{
+                  padding: "9px 14px",
+                  border: "1px solid #d8c6b4",
+                  borderRadius: 10,
+                  background: "#ffffff",
+                  color: "#674b39",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                ✏️ 編輯
+              </button>
+
+              <button
+                type="button"
+                onClick={() => deleteCarRental(rental)}
+                style={{
+                  padding: "9px 14px",
+                  border: "1px solid #e7c9c3",
+                  borderRadius: 10,
+                  background: "#fff7f5",
+                  color: "#b4534b",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                🗑️ 刪除
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+)}
 
           </div>
       ))}
