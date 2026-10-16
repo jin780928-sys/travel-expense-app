@@ -1090,36 +1090,6 @@ const packingGroups = sortedPackingItems.reduce<
 
 
 
-const packingGroups = filteredPackingItems.reduce<
-  Record<string, TripPackingItem[]>
->((groups, item) => {
-  let groupName = "全部行李";
-
-  if (packingGroupBy === "category") {
-    groupName =
-      packingCategoryNames[item.category] || "📦 其他";
-  }
-
-  if (packingGroupBy === "person") {
-    groupName =
-      item.person_id === null
-        ? "👥 共用行李"
-        : "👤 " +
-          (packingPeople.find(
-            (person) => person.id === item.person_id
-          )?.name || "未找到人員");
-  }
-
-  if (!groups[groupName]) {
-    groups[groupName] = [];
-  }
-
-  groups[groupName].push(item);
-
-  return groups;
-}, {});
-
-
 
 const [loadingPackingItems, setLoadingPackingItems] =
   useState(false);
