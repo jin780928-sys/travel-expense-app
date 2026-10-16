@@ -9543,8 +9543,62 @@ alignItems: "center",
         目前還沒有行李，點擊「＋ 新增行李」開始建立。
       </div>
     ) : (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {filteredPackingItems.map((item) => {
+      
+<div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    gap: 16,
+  }}
+>
+  {Object.entries(packingGroups).map(([groupName, groupItems]) => {
+    const groupPacked = groupItems.filter(
+      (item) => item.is_packed
+    ).length;
+
+    return (
+      <div
+        key={groupName}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
+        {/* 分組標題與完成統計 */}
+        {packingGroupBy !== "none" && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 10,
+              padding: "12px 16px",
+              background: "#f2ebe2",
+              borderRadius: 12,
+              color: "#49392f",
+            }}
+          >
+            <strong style={{ fontSize: 15 }}>
+              {groupName}
+            </strong>
+
+            <span
+              style={{
+                fontSize: 12,
+                color: "#826349",
+                fontWeight: 700,
+              }}
+            >
+              ✅ {groupPacked} / {groupItems.length} 項已打包
+            </span>
+          </div>
+        )}
+
+        {/* 此群組的行李卡片 */}
+        {groupItems.map((item) => {
+
           const categoryNames: Record<string, string> = {
             documents: "🪪 證件",
             clothing: "👕 衣物",
@@ -9673,12 +9727,18 @@ alignItems: "center",
                 </button>
               </div>
             </div>
+         
           );
         })}
+
       </div>
+    );
+  })}
+</div>
     )}
   </section>
 )}
+
 
 
         </>
