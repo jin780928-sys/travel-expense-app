@@ -942,6 +942,260 @@ const updateTripNoteField = (
 };
 
 
+/* =========================================
+   1. 重設備註表單
+   ========================================= */
+
+const resetTripNoteForm = () => {
+  setTripNoteForm({
+    title: "",
+    category: "general",
+    content: "",
+    is_important: false,
+  });
+
+  setEditingTripNoteId(null);
+};
+
+/* =========================================
+   2. 編輯備註：帶入原本資料
+   ========================================= */
+
+const startEditTripNote = (note: TripNote) => {
+  if (savingTripNote) return;
+
+  setEditingTripNoteId(note.id);
+
+  setTripNoteForm({
+    title: note.title || "",
+    category: note.category || "general",
+    content: note.content || "",
+    is_important: note.is_important,
+  });
+
+  setShowTripNoteForm(true);
+};
+
+/* =========================================
+   3. 新增或更新備註
+   ========================================= */
+
+const saveTripNote = async () => {
+  if (savingTripNote) return;
+
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  if (!tripNoteForm.title.trim()) {
+    alert("請輸入備註標題");
+    return;
+  }
+
+  setSavingTripNote(true);
+
+  const isEditing = editingTripNoteId !== null;
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const noteData = {
+      title: tripNoteForm.title.trim(),
+      category: tripNoteForm.category || "general",
+      content: tripNoteForm.content.trim(),
+      is_important: tripNoteForm.is_important,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (isEditing) {
+      const { data, error } = await supabase
+        .from("TripNotes")
+        .update(noteData)
+        .eq("id", editingTripNoteId)
+        .eq("trip_id", tripId)
+        .eq("user_id", user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("找不到可更新的備註資料");
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("TripNotes")
+        .insert({
+          ...noteData,
+          trip_id: tripId,
+          user_id: user.id,
+          sort_order: tripNotes.length,
+        })
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("新增備註失敗");
+      }
+    }
+
+    await loadTripNotes();
+
+    resetTripNoteForm();
+    setShowTripNoteForm(false);
+
+    alert(
+      isEditing
+        ? "備註更新成功！"
+        : "備註新增成功！"
+    );
+  } catch (error) {
+    console.error("儲存備註失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `儲存失敗：${error.message}`
+        : "儲存備註失敗"
+    );
+  } finally {
+    setSavingTripNote(false);
+  }
+};
+
+/* =========================================
+   4. 刪除備註
+   ========================================= */
+
+const deleteTripNote = async (note: TripNote) => {
+  if (savingTripNote) return;
+
+  const confirmed = window.confirm(
+    `確定刪除「${note.title}」嗎？\n刪除後無法復原。`
+  );
+
+  if (!confirmed) return;
+
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  setSavingTripNote(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripNotes")
+      .delete()
+      .eq("id", note.id)
+      .eq("trip_id", tripId)
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可刪除的備註資料");
+    }
+
+    if (editingTripNoteId === note.id) {
+      resetTripNoteForm();
+      setShowTripNoteForm(false);
+    }
+
+    await loadTripNotes();
+
+    alert("備註已刪除！");
+  } catch (error) {
+    console.error("刪除備註失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `刪除失敗：${error.message}`
+        : "刪除備註失敗"
+    );
+  } finally {
+    setSavingTripNote(false);
+  }
+};
+
+/* =========================================
+   5. 切換重要備註標記
+   ========================================= */
+
+const toggleTripNoteImportant = async (note: TripNote) => {
+  if (savingTripNote) return;
+
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  setSavingTripNote(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripNotes")
+      .update({
+        is_important: !note.is_important,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", note.id)
+      .eq("trip_id", tripId)
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可更新的備註資料");
+    }
+
+    await loadTripNotes();
+  } catch (error) {
+    console.error("更新重要備註失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `更新失敗：${error.message}`
+        : "更新重要備註失敗"
+    );
+  } finally {
+    setSavingTripNote(false);
+  }
+};
+
 
   
 /* =========================================
