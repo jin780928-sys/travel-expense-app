@@ -1830,10 +1830,38 @@ const importPackingTemplates = async () => {
       ])
     );
 
-    const selectedItems = packingTemplateItems.filter(
-      (item) =>
-        item.is_active && categoryMap.has(item.category_id)
-    );
+    
+/* =========================================
+   預設打包物品：依分類及範本順序排列
+   ========================================= */
+
+const selectedItems = packingTemplateItems
+  .filter(
+    (item) =>
+      item.is_active &&
+      categoryMap.has(item.category_id)
+  )
+  .sort((a, b) => {
+    const categoryA = categoryMap.get(a.category_id);
+    const categoryB = categoryMap.get(b.category_id);
+
+    const categoryOrder =
+      (categoryA?.sort_order ?? 999) -
+      (categoryB?.sort_order ?? 999);
+
+    if (categoryOrder !== 0) {
+      return categoryOrder;
+    }
+
+    const itemOrder = a.sort_order - b.sort_order;
+
+    if (itemOrder !== 0) {
+      return itemOrder;
+    }
+
+    return a.id - b.id;
+  });
+
 
     if (selectedCategories.length === 0 || selectedItems.length === 0) {
       throw new Error("找不到可匯入的預設物品");
