@@ -5382,7 +5382,7 @@ onClick={() => {
 <span
   style={{
     display: "inline-block",
-    padding: "5px 11px",
+    padding: "8px 18px",
     borderRadius: 999,
     background:
       flight.flight_direction === "outbound"
@@ -5396,8 +5396,8 @@ onClick={() => {
         : flight.flight_direction === "return"
           ? "#526684"
           : "#826349",
-    fontSize: 12,
-    fontWeight: 700,
+    fontSize: 20,
+    fontWeight: 800,
   }}
 >
   {flight.flight_direction === "outbound"
