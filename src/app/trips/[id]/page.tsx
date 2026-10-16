@@ -104,6 +104,40 @@ type TripFlight = {
 
 
 /* =========================================
+   Type：旅程租車
+   ========================================= */
+
+type TripCarRental = {
+  id: number;
+  trip_id: number;
+  user_id: string;
+
+  rental_company: string | null;
+  confirmation_number: string | null;
+
+  vehicle_type: string | null;
+  vehicle_class: string | null;
+
+  pickup_location: string | null;
+  pickup_at: string | null;
+  pickup_timezone: string | null;
+
+  dropoff_location: string | null;
+  dropoff_at: string | null;
+  dropoff_timezone: string | null;
+
+  amount: number | null;
+  currency: string;
+  payment_status: "unpaid" | "paid" | "partial";
+
+  booking_platform: string | null;
+  booking_url: string | null;
+  notes: string | null;
+
+  created_at: string;
+};
+
+/* =========================================
    機票航段資料型別
    ========================================= */
 
@@ -747,6 +781,68 @@ const [loadingFlightSegments, setLoadingFlightSegments] =
 // 是否正在讀取機票
 const [loadingFlights, setLoadingFlights] =
   useState(false);
+
+
+/* =========================================
+   租車管理 State
+   ========================================= */
+
+// 已建立的租車資料
+const [carRentals, setCarRentals] =
+  useState<TripCarRental[]>([]);
+
+// 載入狀態
+const [loadingCarRentals, setLoadingCarRentals] =
+  useState(false);
+
+// 是否顯示新增／編輯表單
+const [showCarRentalForm, setShowCarRentalForm] =
+  useState(false);
+
+// 正在編輯的租車 ID
+const [editingCarRentalId, setEditingCarRentalId] =
+  useState<number | null>(null);
+
+// 儲存中
+const [savingCarRental, setSavingCarRental] =
+  useState(false);
+
+// 租車表單
+const [carRentalForm, setCarRentalForm] = useState({
+  rental_company: "",
+  confirmation_number: "",
+
+  vehicle_type: "",
+  vehicle_class: "",
+
+  pickup_location: "",
+  pickup_at: "",
+  pickup_timezone: "",
+
+  dropoff_location: "",
+  dropoff_at: "",
+  dropoff_timezone: "",
+
+  amount: "",
+  currency: "USD",
+  payment_status: "unpaid",
+
+  booking_platform: "",
+  booking_url: "",
+  notes: "",
+});
+
+// 更新單一表單欄位
+const updateCarRentalField = (
+  field: keyof typeof carRentalForm,
+  value: string
+) => {
+  setCarRentalForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
 
 // 新增 / 編輯機票表單開關
 const [showFlightForm, setShowFlightForm] =
