@@ -1533,10 +1533,24 @@ const packingGroups = sortedPackingItems.reduce<
 >((groups, item) => {
   let groupName = "全部行李";
 
-  if (packingGroupBy === "category") {
-    groupName =
-      packingCategoryNames[item.category] || "📦 其他";
+  
+if (packingGroupBy === "category") {
+  const categoryLabel =
+    packingCategoryNames[item.category] ||
+    item.category ||
+    "📦 其他";
+
+  if (item.category.startsWith("template:personal:")) {
+    groupName = `👤 個人用品｜${categoryLabel}`;
+  } else if (
+    item.category.startsWith("template:shared:")
+  ) {
+    groupName = `👥 共用用品｜${categoryLabel}`;
+  } else {
+    groupName = `📂 原有分類｜${categoryLabel}`;
   }
+}
+
 
   if (packingGroupBy === "person") {
     groupName =
