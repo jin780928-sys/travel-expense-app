@@ -2336,6 +2336,37 @@ const startEditCarRental = (rental: TripCarRental) => {
   setShowCarRentalForm(true);
 };
 
+
+/* =========================================
+   每日行程：直接編輯指定租車
+   ========================================= */
+
+const editCarRentalFromItinerary = (
+  sourceId: string | number
+) => {
+  const rental = carRentals.find(
+    (item) => String(item.id) === String(sourceId)
+  );
+
+  if (!rental) {
+    alert("找不到對應的租車資料，請重新整理頁面");
+    return;
+  }
+
+  // 切換至租車管理分頁
+  setActiveTab("carRentals");
+
+  // 帶入指定租車紀錄
+  startEditCarRental(rental);
+
+  // 捲動至頁面上方
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
+
   
 /* =========================================
    新增／編輯租車
@@ -5842,15 +5873,19 @@ return (
   <button
     type="button"
     
+
 onClick={() => {
   if (item.source === "flight") {
     void editFlightFromItinerary(item.sourceId);
   } else if (item.source === "hotel") {
     editHotelFromItinerary(item.sourceId);
+  } else if (item.source === "carRental") {
+    editCarRentalFromItinerary(item.sourceId);
   } else {
     goToItinerarySource(item.source);
   }
 }}
+
 
     style={{
       minHeight: 36,
@@ -5873,7 +5908,7 @@ onClick={() => {
   : item.source === "hotel"
   ? "🏨 編輯飯店"
     : item.source === "carRental"
-      ? "🚗 前往租車管理"
+  ? "🚗 編輯租車"
       : "🎟️ 前往預約管理"}
     <span aria-hidden="true">→</span>
   </button>
