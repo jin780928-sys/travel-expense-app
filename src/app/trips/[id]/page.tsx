@@ -919,6 +919,300 @@ const updatePackingField = (
 };
 
 
+/* =========================================
+   1. 重設行李表單
+   ========================================= */
+
+const resetPackingForm = () => {
+  setPackingForm({
+    name: "",
+    category: "other",
+    quantity: "1",
+    person_id: "",
+    notes: "",
+  });
+
+  setEditingPackingItemId(null);
+};
+
+/* =========================================
+   2. 編輯行李：帶入原本資料
+   ========================================= */
+
+const startEditPackingItem = (item: TripPackingItem) => {
+  if (savingPackingItem) return;
+
+  setEditingPackingItemId(item.id);
+
+  setPackingForm({
+    name: item.name || "",
+    category: item.category || "other",
+    quantity: String(item.quantity),
+    person_id:
+      item.person_id === null
+        ? ""
+        : String(item.person_id),
+    notes: item.notes || "",
+  });
+
+  setShowPackingForm(true);
+};
+
+/* =========================================
+   3. 新增或更新行李
+   ========================================= */
+
+const savePackingItem = async () => {
+  if (savingPackingItem) return;
+
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  if (!packingForm.name.trim()) {
+    alert("請輸入行李名稱");
+    return;
+  }
+
+  const quantity = Number(packingForm.quantity);
+
+  if (
+    !Number.isSafeInteger(quantity) ||
+    quantity < 1
+  ) {
+    alert("數量必須是大於 0 的整數");
+    return;
+  }
+
+  const personId =
+    packingForm.person_id === ""
+      ? null
+      : Number(packingForm.person_id);
+
+  if (
+    personId !== null &&
+    (!Number.isSafeInteger(personId) || personId <= 0)
+  ) {
+    alert("請選擇有效的人員");
+    return;
+  }
+
+  if (
+    personId !== null &&
+    !packingPeople.some((person) => person.id === personId)
+  ) {
+    alert("指定的人員不在目前人員清單中");
+    return;
+  }
+
+  setSavingPackingItem(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const itemData = {
+      name: packingForm.name.trim(),
+      category: packingForm.category || "other",
+      quantity,
+      person_id: personId,
+      notes: packingForm.notes.trim() || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (editingPackingItemId !== null) {
+      const { data, error } = await supabase
+        .from("TripPackingItems")
+        .update(itemData)
+        .eq("id", editingPackingItemId)
+        .eq("trip_id", tripId)
+        .eq("user_id", user.id)
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("找不到可更新的行李資料");
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("TripPackingItems")
+        .insert({
+          ...itemData,
+          trip_id: tripId,
+          user_id: user.id,
+          is_packed: false,
+          sort_order: packingItems.length,
+        })
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error("新增行李資料失敗");
+      }
+    }
+
+    await loadPackingItems();
+
+    resetPackingForm();
+    setShowPackingForm(false);
+
+    alert(
+      editingPackingItemId !== null
+        ? "行李更新成功！"
+        : "行李新增成功！"
+    );
+  } catch (error) {
+    console.error("儲存行李失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `儲存失敗：${error.message}`
+        : "儲存行李失敗"
+    );
+  } finally {
+    setSavingPackingItem(false);
+  }
+};
+
+/* =========================================
+   4. 刪除行李
+   ========================================= */
+
+const deletePackingItem = async (item: TripPackingItem) => {
+  if (savingPackingItem) return;
+
+  const confirmed = window.confirm(
+    `確定刪除「${item.name}」嗎？\n刪除後無法復原。`
+  );
+
+  if (!confirmed) return;
+
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  setSavingPackingItem(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripPackingItems")
+      .delete()
+      .eq("id", item.id)
+      .eq("trip_id", tripId)
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可刪除的行李資料");
+    }
+
+    if (editingPackingItemId === item.id) {
+      resetPackingForm();
+      setShowPackingForm(false);
+    }
+
+    await loadPackingItems();
+
+    alert("行李已刪除！");
+  } catch (error) {
+    console.error("刪除行李失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `刪除失敗：${error.message}`
+        : "刪除行李失敗"
+    );
+  } finally {
+    setSavingPackingItem(false);
+  }
+};
+
+/* =========================================
+   5. 切換已打包／未打包
+   ========================================= */
+
+const togglePackingItem = async (item: TripPackingItem) => {
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    alert("找不到有效的旅程 ID");
+    return;
+  }
+
+  const nextPacked = !item.is_packed;
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripPackingItems")
+      .update({
+        is_packed: nextPacked,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", item.id)
+      .eq("trip_id", tripId)
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      throw new Error("找不到可更新的行李資料");
+    }
+
+    setPackingItems((prev) =>
+      prev.map((existing) =>
+        existing.id === item.id
+          ? { ...existing, is_packed: nextPacked }
+          : existing
+      )
+    );
+  } catch (error) {
+    console.error("更新打包狀態失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `更新失敗：${error.message}`
+        : "更新打包狀態失敗"
+    );
+  }
+};
+
+
+
 const [loadingTripBookings, setLoadingTripBookings] =
   useState(false);
 
