@@ -1955,6 +1955,28 @@ const savePackingItem = async () => {
     return;
   }
 
+  
+/* =========================================
+   驗證個人用品／共用用品所屬人員
+   舊版分類維持原本規則
+   ========================================= */
+
+if (
+  packingForm.category.startsWith("template:personal:") &&
+  personId === null
+) {
+  alert("個人用品必須選擇所屬人員");
+  return;
+}
+
+if (
+  packingForm.category.startsWith("template:shared:") &&
+  personId !== null
+) {
+  alert("共用用品不可指定個別人員，請選擇「👥 共用行李」");
+  return;
+}
+
   setSavingPackingItem(true);
 
   try {
