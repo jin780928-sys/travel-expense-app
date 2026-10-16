@@ -96,6 +96,7 @@ type TripFlight = {
   amount: number | null;
   currency: string;
   payment_status: string;
+  flight_direction: "outbound" | "return" | "other";
   booking_platform: string | null;
   booking_url: string | null;
   notes: string | null;
@@ -118,6 +119,10 @@ type TripFlightSegment = {
   arrival_at: string | null;
   departure_timezone: string | null;
   arrival_timezone: string | null;
+  departure_terminal: string | null;
+  arrival_terminal: string | null;
+  departure_gate: string | null;
+  seat_number: string | null;
   cabin_class: string | null;
   baggage_allowance: string | null;
   notes: string | null;
@@ -772,10 +777,12 @@ const [flightForm, setFlightForm] = useState({
   amount: "",
   currency: "USD",
   payment_status: "unpaid",
+  flight_direction: "other",
   booking_platform: "",
   booking_url: "",
   notes: "",
 });
+
 
 
 /* =========================================
@@ -784,18 +791,30 @@ const [flightForm, setFlightForm] = useState({
 
 type FlightSegmentForm = {
   localId: number;
+
   airline: string;
   flight_number: string;
+
   departure_airport: string;
   arrival_airport: string;
+
   departure_at: string;
   arrival_at: string;
+
   departure_timezone: string;
   arrival_timezone: string;
+
+  // 航廈、登機門、座位
+  departure_terminal: string;
+  arrival_terminal: string;
+  departure_gate: string;
+  seat_number: string;
+
   cabin_class: string;
   baggage_allowance: string;
   notes: string;
 };
+
 
 const createFlightSegment = (
   localId: number
@@ -809,6 +828,12 @@ const createFlightSegment = (
   arrival_at: "",
   departure_timezone: "",
   arrival_timezone: "",
+
+  departure_terminal: "",
+  arrival_terminal: "",
+  departure_gate: "",
+  seat_number: "",
+
   cabin_class: "",
   baggage_allowance: "",
   notes: "",
@@ -917,8 +942,10 @@ function flightUTCToLocalInput(
 }
 
 
+
 /* =========================================
    編輯機票：讀取主機票與所有航段
+   支援去程 / 回程、航廈、登機門、座位
    ========================================= */
 
 const startEditFlight = async (flight: TripFlight) => {
@@ -926,6 +953,7 @@ const startEditFlight = async (flight: TripFlight) => {
 
   setEditingFlightId(flight.id);
 
+  // 1. 帶入機票訂單資料
   setFlightForm({
     airline: flight.airline || "",
     flight_number: flight.flight_number || "",
@@ -944,104 +972,149 @@ const startEditFlight = async (flight: TripFlight) => {
 
     departure_timezone: flight.departure_timezone || "",
     arrival_timezone: flight.arrival_timezone || "",
+
     confirmation_number: flight.confirmation_number || "",
     cabin_class: flight.cabin_class || "",
     baggage_allowance: flight.baggage_allowance || "",
+
     amount:
       flight.amount === null
         ? ""
         : String(flight.amount),
+
     currency: flight.currency || "USD",
     payment_status: flight.payment_status || "unpaid",
+    flight_direction: flight.flight_direction || "other",
+
     booking_platform: flight.booking_platform || "",
     booking_url: flight.booking_url || "",
     notes: flight.notes || "",
   });
 
-  // 舊機票相容：
-  // 如果尚未建立航段，就使用原本的機票資料。
+  // 2. 舊版機票相容
+  // 若沒有航段紀錄，使用原本單段航班資料
   const legacySegment: FlightSegmentForm = {
     localId: 1,
+
     airline: flight.airline || "",
     flight_number: flight.flight_number || "",
     departure_airport: flight.departure_airport || "",
     arrival_airport: flight.arrival_airport || "",
+
     departure_at: flightUTCToLocalInput(
       flight.departure_at,
       flight.departure_timezone
     ),
+
     arrival_at: flightUTCToLocalInput(
       flight.arrival_at,
       flight.arrival_timezone
     ),
+
     departure_timezone: flight.departure_timezone || "",
     arrival_timezone: flight.arrival_timezone || "",
+
+    departure_terminal: "",
+    arrival_terminal: "",
+    departure_gate: "",
+    seat_number: "",
+
     cabin_class: flight.cabin_class || "",
     baggage_allowance: flight.baggage_allowance || "",
     notes: "",
   };
 
   setFlightSegments([legacySegment]);
-  setShowFlightForm(true);
 
   try {
+    // 3. 讀取目前機票所有航段
     const { data, error } = await supabase
       .from("TripFlightSegments")
-      .select(
-        "id, segment_order, airline, flight_number, departure_airport, arrival_airport, departure_at, arrival_at, departure_timezone, arrival_timezone, cabin_class, baggage_allowance, notes"
-      )
+      .select(`
+        id,
+        segment_order,
+        airline,
+        flight_number,
+        departure_airport,
+        arrival_airport,
+        departure_at,
+        arrival_at,
+        departure_timezone,
+        arrival_timezone,
+        departure_terminal,
+        arrival_terminal,
+        departure_gate,
+        seat_number,
+        cabin_class,
+        baggage_allowance,
+        notes
+      `)
       .eq("flight_id", flight.id)
       .order("segment_order", { ascending: true });
 
     if (error) throw error;
 
-    // 沒有航段：保留原本的單段航班資料。
-    if (!data || data.length === 0) {
-      return;
+    if (data && data.length > 0) {
+      const loadedSegments: FlightSegmentForm[] =
+        data.map((segment, index) => ({
+          localId: index + 1,
+
+          airline: segment.airline || "",
+          flight_number: segment.flight_number || "",
+          departure_airport:
+            segment.departure_airport || "",
+          arrival_airport:
+            segment.arrival_airport || "",
+
+          departure_at: flightUTCToLocalInput(
+            segment.departure_at,
+            segment.departure_timezone
+          ),
+
+          arrival_at: flightUTCToLocalInput(
+            segment.arrival_at,
+            segment.arrival_timezone
+          ),
+
+          departure_timezone:
+            segment.departure_timezone || "",
+          arrival_timezone:
+            segment.arrival_timezone || "",
+
+          departure_terminal:
+            segment.departure_terminal || "",
+          arrival_terminal:
+            segment.arrival_terminal || "",
+          departure_gate:
+            segment.departure_gate || "",
+          seat_number:
+            segment.seat_number || "",
+
+          cabin_class: segment.cabin_class || "",
+          baggage_allowance:
+            segment.baggage_allowance || "",
+          notes: segment.notes || "",
+        }));
+
+      setFlightSegments(loadedSegments);
     }
 
-    const loadedSegments: FlightSegmentForm[] =
-      data.map((segment, index) => ({
-        localId: index + 1,
-        airline: segment.airline || "",
-        flight_number: segment.flight_number || "",
-        departure_airport:
-          segment.departure_airport || "",
-        arrival_airport:
-          segment.arrival_airport || "",
-
-        departure_at: flightUTCToLocalInput(
-          segment.departure_at,
-          segment.departure_timezone
-        ),
-
-        arrival_at: flightUTCToLocalInput(
-          segment.arrival_at,
-          segment.arrival_timezone
-        ),
-
-        departure_timezone:
-          segment.departure_timezone || "",
-        arrival_timezone:
-          segment.arrival_timezone || "",
-        cabin_class: segment.cabin_class || "",
-        baggage_allowance:
-          segment.baggage_allowance || "",
-        notes: segment.notes || "",
-      }));
-
-    setFlightSegments(loadedSegments);
+    // 讀取完成後才打開編輯表單
+    setShowFlightForm(true);
   } catch (error) {
     console.error("載入機票航段失敗：", error);
 
     alert(
-      "無法載入轉機航段，請確認資料庫權限後重新編輯。"
+      error instanceof Error
+        ? `無法載入機票航段：${error.message}`
+        : "無法載入機票航段"
     );
 
     setEditingFlightId(null);
     setShowFlightForm(false);
   }
 };
+
 
 
 
@@ -1132,9 +1205,17 @@ const saveFlight = async () => {
     arrival_airport: string | null;
     departure_at: string | null;
     arrival_at: string | null;
+    
     departure_timezone: string | null;
     arrival_timezone: string | null;
+
+    departure_terminal: string | null;
+    arrival_terminal: string | null;
+    departure_gate: string | null;
+    seat_number: string | null;
+
     cabin_class: string | null;
+
     baggage_allowance: string | null;
     notes: string | null;
   }[] = [];
@@ -1253,10 +1334,21 @@ const saveFlight = async () => {
           segment.arrival_airport.trim(),
         departure_at: departureUTC,
         arrival_at: arrivalUTC,
+        
         departure_timezone:
           segment.departure_timezone,
         arrival_timezone:
           segment.arrival_timezone,
+
+        departure_terminal:
+          segment.departure_terminal.trim() || null,
+        arrival_terminal:
+          segment.arrival_terminal.trim() || null,
+        departure_gate:
+          segment.departure_gate.trim() || null,
+        seat_number:
+          segment.seat_number.trim() || null,
+
         cabin_class:
           segment.cabin_class.trim() || null,
         baggage_allowance:
@@ -1333,10 +1425,15 @@ const saveFlight = async () => {
       currency:
         flightForm.currency.trim() || "USD",
 
+      
       payment_status:
         flightForm.payment_status,
 
+      flight_direction:
+        flightForm.flight_direction,
+
       booking_platform:
+
         flightForm.booking_platform.trim() ||
         null,
 
@@ -1442,7 +1539,9 @@ const saveFlight = async () => {
       amount: "",
       currency: "USD",
       payment_status: "unpaid",
+      flight_direction: "other",
       booking_platform: "",
+
       booking_url: "",
       notes: "",
     });
@@ -1816,6 +1915,7 @@ async function loadFlights() {
         amount,
         currency,
         payment_status,
+        flight_direction,
         booking_platform,
         booking_url,
         notes
@@ -1865,10 +1965,29 @@ useEffect(() => {
       const flightIds = flights.map((flight) => flight.id);
 
       const { data, error } = await supabase
-        .from("TripFlightSegments")
-        .select(
-          "id, flight_id, segment_order, airline, flight_number, departure_airport, arrival_airport, departure_at, arrival_at, departure_timezone, arrival_timezone, cabin_class, baggage_allowance, notes"
-        )
+        
+.from("TripFlightSegments")
+.select(`
+  id,
+  flight_id,
+  segment_order,
+  airline,
+  flight_number,
+  departure_airport,
+  arrival_airport,
+  departure_at,
+  arrival_at,
+  departure_timezone,
+  arrival_timezone,
+  departure_terminal,
+  arrival_terminal,
+  departure_gate,
+  seat_number,
+  cabin_class,
+  baggage_allowance,
+  notes
+`)
+
         .in("flight_id", flightIds)
         .order("segment_order", { ascending: true });
 
