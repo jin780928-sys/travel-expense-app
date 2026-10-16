@@ -1088,18 +1088,7 @@ const packingGroups = sortedPackingItems.reduce<
 }, {});
 
 
-/* =========================================
-   行李清單分組資料
-   ========================================= */
 
-const packingCategoryNames: Record<string, string> = {
-  documents: "🪪 證件",
-  clothing: "👕 衣物",
-  toiletries: "🧴 盥洗用品",
-  electronics: "🔌 電子產品",
-  medicine: "💊 藥品",
-  other: "📦 其他",
-};
 
 const packingGroups = filteredPackingItems.reduce<
   Record<string, TripPackingItem[]>
