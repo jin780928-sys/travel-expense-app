@@ -5742,16 +5742,19 @@ return (
     每日行程：開始／結束時間
    ========================================= */}
 
+
 <div
   style={{
     width: 76,
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
+    alignItems: "center",
+    textAlign: "center",
     gap: 4,
   }}
 >
+
   <div
     style={{
       fontSize: 15,
