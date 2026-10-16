@@ -1525,6 +1525,81 @@ const [packingImportPersonId, setPackingImportPersonId] =
   useState("");
 
 
+/* =========================================
+   打包清單：系統預設範本 State
+   ========================================= */
+
+const [packingTemplateCategories, setPackingTemplateCategories] =
+  useState<PackingTemplateCategory[]>([]);
+
+const [packingTemplateItems, setPackingTemplateItems] =
+  useState<PackingTemplateItem[]>([]);
+
+const [loadingPackingTemplates, setLoadingPackingTemplates] =
+  useState(false);
+
+const [packingTemplateLoadError, setPackingTemplateLoadError] =
+  useState("");
+
+
+/* =========================================
+   打包清單：讀取系統共用預設範本
+   ========================================= */
+
+const loadPackingTemplates = async () => {
+  if (loadingPackingTemplates) return;
+
+  setLoadingPackingTemplates(true);
+  setPackingTemplateLoadError("");
+
+  try {
+    const [categoriesResult, itemsResult] =
+      await Promise.all([
+        supabase
+          .from("PackingCategories")
+          .select(
+            "id,scope,code,name,icon,sort_order,is_active"
+          )
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true }),
+
+        supabase
+          .from("PackingTemplates")
+          .select(
+            "id,category_id,name,quantity,notes,sort_order,is_active"
+          )
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true }),
+      ]);
+
+    if (categoriesResult.error) {
+      throw categoriesResult.error;
+    }
+
+    if (itemsResult.error) {
+      throw itemsResult.error;
+    }
+
+    setPackingTemplateCategories(
+      (categoriesResult.data ?? []) as PackingTemplateCategory[]
+    );
+
+    setPackingTemplateItems(
+      (itemsResult.data ?? []) as PackingTemplateItem[]
+    );
+  } catch (error) {
+    console.error("讀取預設打包清單失敗：", error);
+
+    setPackingTemplateLoadError(
+      error instanceof Error
+        ? error.message
+        : "無法讀取預設打包清單"
+    );
+  } finally {
+    setLoadingPackingTemplates(false);
+  }
+};
+
 
 const [editingPackingItemId, setEditingPackingItemId] =
   useState<number | null>(null);
@@ -2733,6 +2808,32 @@ type FlightSegmentForm = {
   baggage_allowance: string;
   notes: string;
 };
+
+
+/* =========================================
+   打包清單：系統預設範本資料型別
+   ========================================= */
+
+type PackingTemplateCategory = {
+  id: number;
+  scope: "personal" | "shared";
+  code: string;
+  name: string;
+  icon: string;
+  sort_order: number;
+  is_active: boolean;
+};
+
+type PackingTemplateItem = {
+  id: number;
+  category_id: number;
+  name: string;
+  quantity: number;
+  notes: string | null;
+  sort_order: number;
+  is_active: boolean;
+};
+
 
 
 const createFlightSegment = (
@@ -10494,9 +10595,14 @@ alignItems: "center",
 
 <button
   type="button"
-  onClick={() =>
-    setShowPackingImport((prev) => !prev)
+  onClick={() => {
+  if (showPackingImport) {
+    setShowPackingImport(false);
+  } else {
+    setShowPackingImport(true);
+    void loadPackingTemplates();
   }
+}}
   style={{
     padding: "11px 18px",
     border: "1px solid #d8c6b4",
@@ -10668,9 +10774,32 @@ alignItems: "center",
         lineHeight: 1.7,
       }}
     >
-      {packingImportScope === "personal"
-        ? "📦 個人用品：9 個分類、44 項預設物品"
-        : "📦 共用用品：4 個分類、19 項預設物品"}
+     
+{loadingPackingTemplates ? (
+  "正在讀取預設清單..."
+) : packingTemplateLoadError ? (
+  `讀取失敗：${packingTemplateLoadError}`
+) : (
+  <>
+    📦 {packingImportScope === "personal"
+      ? "個人用品"
+      : "共用用品"}：
+    {" "}
+    {packingTemplateCategories.filter(
+      (category) => category.scope === packingImportScope
+    ).length}
+    {" 個分類、"}
+    {packingTemplateItems.filter((item) =>
+      packingTemplateCategories.some(
+        (category) =>
+          category.id === item.category_id &&
+          category.scope === packingImportScope
+      )
+    ).length}
+    {" 項預設物品"}
+  </>
+)}
+
     </div>
 
     {/* 下一步才連接實際匯入函式 */}
