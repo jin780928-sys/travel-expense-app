@@ -5811,7 +5811,13 @@ return (
 ) : (
   <button
     type="button"
-    onClick={() => goToItinerarySource(item.source)}
+    onClick={() => {
+  if (item.source === "flight") {
+    void editFlightFromItinerary(item.sourceId);
+  } else {
+    goToItinerarySource(item.source);
+  }
+}}
     style={{
       minHeight: 36,
       padding: "8px 12px",
@@ -5829,12 +5835,12 @@ return (
     }}
   >
     {item.source === "flight"
-      ? "✈️ 前往機票管理"
-      : item.source === "hotel"
-        ? "🏨 前往飯店管理"
-        : item.source === "carRental"
-          ? "🚗 前往租車管理"
-          : "🎟️ 前往預約管理"}
+  ? "✈️ 編輯機票"
+  : item.source === "hotel"
+    ? "🏨 前往飯店管理"
+    : item.source === "carRental"
+      ? "🚗 前往租車管理"
+      : "🎟️ 前往預約管理"}
     <span aria-hidden="true">→</span>
   </button>
 )}
