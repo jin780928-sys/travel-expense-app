@@ -11213,12 +11213,70 @@ alignItems: "center",
                 background: "#ffffff",
               }}
             >
-              <option value="documents">🪪 證件</option>
-              <option value="clothing">👕 衣物</option>
-              <option value="toiletries">🧴 盥洗用品</option>
-              <option value="electronics">🔌 電子產品</option>
-              <option value="medicine">💊 藥品</option>
-              <option value="other">📦 其他</option>
+              
+{/* =========================================
+    舊版分類：保留既有行李資料
+   ========================================= */}
+<optgroup label="原有分類">
+  <option value="documents">🪪 證件</option>
+  <option value="clothing">👕 衣物</option>
+  <option value="toiletries">🧴 盥洗用品</option>
+  <option value="electronics">🔌 電子產品</option>
+  <option value="medicine">💊 藥品</option>
+  <option value="other">📦 其他</option>
+</optgroup>
+
+{/* =========================================
+    個人用品：9 個預設分類
+   ========================================= */}
+<optgroup label="👤 個人用品">
+  <option value="template:personal:personal_bag_documents">
+    💳 隨身背包－證件與財物
+  </option>
+  <option value="template:personal:personal_bag_daily">
+    🪪 隨身背包－日常用品
+  </option>
+  <option value="template:personal:clothing">
+    👕 衣物
+  </option>
+  <option value="template:personal:shoes_accessories">
+    👟 鞋子與配件
+  </option>
+  <option value="template:personal:toiletries">
+    🧴 盥洗與保養
+  </option>
+  <option value="template:personal:special_items">
+    💄 特殊用品
+  </option>
+  <option value="template:personal:electronics">
+    🔌 3C 電子用品
+  </option>
+  <option value="template:personal:travel_items">
+    🧳 旅行用品
+  </option>
+  <option value="template:personal:other">
+    📦 其他
+  </option>
+</optgroup>
+
+{/* =========================================
+    共用用品：4 個預設分類
+   ========================================= */}
+<optgroup label="👥 共用用品">
+  <option value="template:shared:toiletries">
+    🧴 盥洗與保養
+  </option>
+  <option value="template:shared:special_items">
+    💄 特殊用品
+  </option>
+  <option value="template:shared:medicine">
+    💊 藥品與保健品
+  </option>
+  <option value="template:shared:other">
+    📦 其他
+  </option>
+</optgroup>
+
             </select>
           </label>
 
