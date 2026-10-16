@@ -4580,24 +4580,33 @@ const flightUnifiedItems: UnifiedItineraryItem[] =
         ];
 
     segments.forEach((segment, index) => {
-      const airline = segment.airline || "航空公司";
+  const departureLocal = getLocalItineraryDateTime(
+    segment.departure_at,
+    segment.departure_timezone
+  );
+
+  const arrivalLocal = getLocalItineraryDateTime(
+    segment.arrival_at,
+    segment.arrival_timezone
+  );
+
+  const airline = segment.airline || "航空公司";
       const flightNumber = segment.flight_number || "";
       const flightName =
         `${airline} ${flightNumber}`.trim();
 
       // 起飛紀錄
       if (segment.departure_at) {
-        const departureDateTime =
-          String(segment.departure_at);
+        
 
         items.push({
           key: `flight-departure-${flight.id}-${index}`,
           source: "flight",
           sourceId: flight.id,
 
-          date: departureDateTime.slice(0, 10),
-          start_time: departureDateTime.slice(11, 16) || null,
-          end_time: null,
+          date: departureLocal.date,
+start_time: departureLocal.time,
+end_time: null,
 
           title: `🛫 起飛：${flightName}`,
           location: segment.departure_airport || null,
@@ -4624,17 +4633,16 @@ const flightUnifiedItems: UnifiedItineraryItem[] =
 
       // 抵達紀錄
       if (segment.arrival_at) {
-        const arrivalDateTime =
-          String(segment.arrival_at);
+      
 
         items.push({
           key: `flight-arrival-${flight.id}-${index}`,
           source: "flight",
           sourceId: flight.id,
 
-          date: arrivalDateTime.slice(0, 10),
-          start_time: arrivalDateTime.slice(11, 16) || null,
-          end_time: null,
+          date: arrivalLocal.date,
+start_time: arrivalLocal.time,
+end_time: null,
 
           title: `🛬 抵達：${flightName}`,
           location: segment.arrival_airport || null,
