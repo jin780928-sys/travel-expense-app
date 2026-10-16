@@ -2044,6 +2044,74 @@ async function loadFlights() {
   }
 }
 
+
+/* =========================================
+   載入目前旅程的租車資料
+   ========================================= */
+
+async function loadCarRentals() {
+  if (!id) return;
+
+  setLoadingCarRentals(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripCarRentals")
+      .select(`
+        id,
+        trip_id,
+        user_id,
+        rental_company,
+        confirmation_number,
+        vehicle_type,
+        vehicle_class,
+        pickup_location,
+        pickup_at,
+        pickup_timezone,
+        dropoff_location,
+        dropoff_at,
+        dropoff_timezone,
+        amount,
+        currency,
+        payment_status,
+        booking_platform,
+        booking_url,
+        notes,
+        created_at
+      `)
+      .eq("trip_id", Number(id))
+      .eq("user_id", user.id)
+      .order("pickup_at", {
+        ascending: true,
+        nullsFirst: false,
+      });
+
+    if (error) throw error;
+
+    setCarRentals((data ?? []) as TripCarRental[]);
+  } catch (error) {
+    console.error("載入租車資料失敗：", error);
+
+    setMessage(
+      error instanceof Error
+        ? `載入租車資料失敗：${error.message}`
+        : "無法載入租車資料"
+    );
+  } finally {
+    setLoadingCarRentals(false);
+  }
+}
+
+
   
 /* =========================================
    機票分類與日期排序
@@ -2364,11 +2432,12 @@ useEffect(() => {
       setMessage("");
 
       await Promise.all([
-  loadTrip(),
-  loadItinerary(),
-  loadExpenses(),
-  loadHotels(),
-  loadFlights(),
+        loadTrip(),
+        loadItinerary(),
+        loadExpenses(),
+        loadHotels(),
+        loadFlights(),
+        loadCarRentals(),
 ]);
 
       setLoading(false);
