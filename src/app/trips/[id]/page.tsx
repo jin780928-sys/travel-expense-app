@@ -199,6 +199,28 @@ type TripPackingItem = {
   updated_at: string;
 };
 
+
+/* =========================================
+   Type：旅程備註
+   ========================================= */
+
+type TripNote = {
+  id: number;
+  trip_id: number;
+  user_id: string;
+
+  title: string;
+  category: string;
+  content: string;
+
+  is_important: boolean;
+  sort_order: number;
+
+  created_at: string;
+  updated_at: string;
+};
+
+
 /* =========================================
    Type：行李清單使用的人員
    ========================================= */
@@ -879,6 +901,47 @@ const [packingItems, setPackingItems] =
   useState<TripPackingItem[]>([]);
 
 
+/* =========================================
+   旅程備註 State
+   ========================================= */
+
+const [tripNotes, setTripNotes] =
+  useState<TripNote[]>([]);
+
+const [loadingTripNotes, setLoadingTripNotes] =
+  useState(false);
+
+const [showTripNoteForm, setShowTripNoteForm] =
+  useState(false);
+
+const [editingTripNoteId, setEditingTripNoteId] =
+  useState<number | null>(null);
+
+const [savingTripNote, setSavingTripNote] =
+  useState(false);
+
+/* =========================================
+   旅程備註表單
+   ========================================= */
+
+const [tripNoteForm, setTripNoteForm] = useState({
+  title: "",
+  category: "general",
+  content: "",
+  is_important: false,
+});
+
+const updateTripNoteField = (
+  field: "title" | "category" | "content",
+  value: string
+) => {
+  setTripNoteForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
+  
 /* =========================================
    行李清單篩選條件
    ========================================= */
@@ -3497,6 +3560,67 @@ async function loadPackingItems() {
   }
 }
 
+
+/* =========================================
+   載入目前旅程的備註
+   ========================================= */
+
+async function loadTripNotes() {
+  const tripId = Number(id);
+
+  if (!Number.isSafeInteger(tripId) || tripId <= 0) {
+    return;
+  }
+
+  setLoadingTripNotes(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripNotes")
+      .select(`
+        id,
+        trip_id,
+        user_id,
+        title,
+        category,
+        content,
+        is_important,
+        sort_order,
+        created_at,
+        updated_at
+      `)
+      .eq("trip_id", tripId)
+      .eq("user_id", user.id)
+      .order("is_important", { ascending: false })
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    setTripNotes((data ?? []) as TripNote[]);
+  } catch (error) {
+    console.error("載入旅程備註失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `載入備註失敗：${error.message}`
+        : "無法載入旅程備註"
+    );
+  } finally {
+    setLoadingTripNotes(false);
+  }
+}
+
+
 /* =========================================
    載入人員管理資料
    ========================================= */
@@ -3861,6 +3985,8 @@ useEffect(() => {
         loadTripBookings(),
         loadPackingItems(),
         loadPackingPeople(),
+        loadTripNotes(),
+
         ]);
 
       setLoading(false);
