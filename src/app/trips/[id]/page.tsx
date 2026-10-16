@@ -5737,40 +5737,58 @@ return (
   }}
 >
 
-  {/* =========================
-      左側時間
-      ========================= */}
-                                <div
-    style={{
-      width: 90,
-      flexShrink: 0,
-      fontSize: 14,
-      fontWeight: 700,
-      color: "#2563eb",
-      lineHeight: 1.5,
-    }}
-                                  >
-   {formatItineraryTime(
-  item.start_time
-) || "未設定"}
+  
+{/* =========================================
+    每日行程：開始／結束時間
+   ========================================= */}
 
-    {item.end_time && (
-      <>
-        <br />
-        <span
-          style={{
-            color: "#6b7280",
-            fontWeight: 500,
-          }}
-        >
-           ～{" "}
-      {formatItineraryTime(
-        item.end_time
-      )}
-        </span>
-      </>
-    )}
+<div
+  style={{
+    width: 76,
+    flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 4,
+  }}
+>
+  <div
+    style={{
+      fontSize: 15,
+      fontWeight: 800,
+      color: "#826349",
+      fontVariantNumeric: "tabular-nums",
+      whiteSpace: "nowrap",
+    }}
+  >
+    {formatItineraryTime(item.start_time) || "未設定"}
   </div>
+
+  {item.end_time && (
+    <div
+      style={{
+        fontSize: 12,
+        fontWeight: 500,
+        color: "#8b8178",
+        fontVariantNumeric: "tabular-nums",
+        whiteSpace: "nowrap",
+      }}
+    >
+      ～ {formatItineraryTime(item.end_time)}
+    </div>
+  )}
+
+  <div
+    style={{
+      fontSize: 10,
+      color: "#9b8b7e",
+      marginTop: 2,
+    }}
+  >
+    當地時間
+  </div>
+</div>
+
 
      {/* =========================
       右側行程內容
