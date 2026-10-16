@@ -176,6 +176,38 @@ type TripBooking = {
   created_at: string;
 };
 
+
+/* =========================================
+   Type：旅程行李清單
+   ========================================= */
+
+type TripPackingItem = {
+  id: number;
+  trip_id: number;
+  user_id: string;
+
+  name: string;
+  category: string;
+  quantity: number;
+  notes: string | null;
+
+  person_id: number | null;
+  is_packed: boolean;
+  sort_order: number;
+
+  created_at: string;
+  updated_at: string;
+};
+
+/* =========================================
+   Type：行李清單使用的人員
+   ========================================= */
+
+type PackingPerson = {
+  id: number;
+  name: string;
+};
+
 /* =========================================
    機票航段資料型別
    ========================================= */
@@ -837,6 +869,55 @@ const [carRentals, setCarRentals] =
 
 const [tripBookings, setTripBookings] =
   useState<TripBooking[]>([]);
+
+
+/* =========================================
+   行李清單 State
+   ========================================= */
+
+const [packingItems, setPackingItems] =
+  useState<TripPackingItem[]>([]);
+
+const [loadingPackingItems, setLoadingPackingItems] =
+  useState(false);
+
+const [packingPeople, setPackingPeople] =
+  useState<PackingPerson[]>([]);
+
+const [loadingPackingPeople, setLoadingPackingPeople] =
+  useState(false);
+
+const [showPackingForm, setShowPackingForm] =
+  useState(false);
+
+const [editingPackingItemId, setEditingPackingItemId] =
+  useState<number | null>(null);
+
+const [savingPackingItem, setSavingPackingItem] =
+  useState(false);
+
+/* =========================================
+   行李表單
+   ========================================= */
+
+const [packingForm, setPackingForm] = useState({
+  name: "",
+  category: "other",
+  quantity: "1",
+  person_id: "",
+  notes: "",
+});
+
+const updatePackingField = (
+  field: keyof typeof packingForm,
+  value: string
+) => {
+  setPackingForm((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+};
+
 
 const [loadingTripBookings, setLoadingTripBookings] =
   useState(false);
@@ -2893,6 +2974,83 @@ async function loadTripBookings() {
 }
 
 
+/* =========================================
+   載入目前旅程的行李清單
+   ========================================= */
+
+async function loadPackingItems() {
+  if (!id) return;
+
+  setLoadingPackingItems(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("TripPackingItems")
+      .select("*")
+      .eq("trip_id", Number(id))
+      .eq("user_id", user.id)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+
+    setPackingItems((data ?? []) as TripPackingItem[]);
+  } catch (error) {
+    console.error("載入行李清單失敗：", error);
+
+    alert(
+      error instanceof Error
+        ? `載入行李清單失敗：${error.message}`
+        : "無法載入行李清單"
+    );
+  } finally {
+    setLoadingPackingItems(false);
+  }
+}
+
+/* =========================================
+   載入人員管理資料
+   ========================================= */
+
+async function loadPackingPeople() {
+  setLoadingPackingPeople(true);
+
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("請先登入");
+    }
+
+    const { data, error } = await supabase
+      .from("People")
+      .select("id, name")
+      .eq("user_id", user.id)
+      .order("name", { ascending: true });
+
+    if (error) throw error;
+
+    setPackingPeople((data ?? []) as PackingPerson[]);
+  } catch (error) {
+    console.error("載入行李使用人員失敗：", error);
+    setPackingPeople([]);
+  } finally {
+    setLoadingPackingPeople(false);
+  }
+}
+
 
   
 /* =========================================
@@ -3221,6 +3379,8 @@ useEffect(() => {
         loadFlights(),
         loadCarRentals(),
         loadTripBookings(),
+        loadPackingItems(),
+        loadPackingPeople(),
         ]);
 
       setLoading(false);
