@@ -11979,14 +11979,7 @@ alignItems: "center",
         {groupItems.map((item) => {
 
 
-          const categoryNames: Record<string, string> = {
-            documents: "🪪 證件",
-            clothing: "👕 衣物",
-            toiletries: "🧴 盥洗用品",
-            electronics: "🔌 電子產品",
-            medicine: "💊 藥品",
-            other: "📦 其他",
-          };
+          
 
           const personName =
             item.person_id === null
@@ -12054,7 +12047,7 @@ alignItems: "center",
                       color: "#927f70",
                     }}
                   >
-                    {categoryNames[item.category] || "📦 其他"}
+                    {packingCategoryNames[item.category] || item.category || "📦 其他"}
                     {" · "}
                     👤 {personName}
                   </span>
