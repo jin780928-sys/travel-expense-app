@@ -905,6 +905,15 @@ const [packingGroupBy, setPackingGroupBy] =
 const [packingSearch, setPackingSearch] = useState("");
 
 
+/* =========================================
+   行李排序
+   ========================================= */
+
+const [packingSort, setPackingSort] = useState<
+  "default" | "name" | "unpacked" | "packed"
+>("default");
+
+
 const filteredPackingItems = packingItems.filter((item) => {
   const matchPerson =
     packingPersonFilter === "all" ||
@@ -926,7 +935,34 @@ const packingCategoryNames: Record<string, string> = {
   other: "📦 其他",
 };
 
-const packingGroups = filteredPackingItems.reduce<
+  
+/* =========================================
+   行李排序結果
+   ========================================= */
+
+const sortedPackingItems = [...filteredPackingItems].sort(
+  (a, b) => {
+    if (packingSort === "name") {
+      return a.name.localeCompare(b.name, "zh-Hant");
+    }
+
+    if (packingSort === "unpacked") {
+      return Number(a.is_packed) - Number(b.is_packed);
+    }
+
+    if (packingSort === "packed") {
+      return Number(b.is_packed) - Number(a.is_packed);
+    }
+
+    return (
+      a.sort_order - b.sort_order ||
+      a.id - b.id
+    );
+  }
+);
+
+
+const packingGroups = sortedPackingItems.reduce<
   Record<string, TripPackingItem[]>
 >((groups, item) => {
   let groupName = "全部行李";
@@ -9617,6 +9653,95 @@ alignItems: "center",
     <option value="category">依分類分組</option>
     <option value="person">依人員分組</option>
   </select>
+</div>
+
+  
+{/* =========================================
+    行李排序與未打包快速篩選
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 12,
+    padding: 16,
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 14,
+  }}
+>
+  <label
+    style={{
+      display: "flex",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 10,
+      fontSize: 13,
+      fontWeight: 700,
+      color: "#674b39",
+    }}
+  >
+    ↕️ 排序方式
+
+    <select
+      value={packingSort}
+      onChange={(e) =>
+        setPackingSort(
+          e.target.value as
+            | "default"
+            | "name"
+            | "unpacked"
+            | "packed"
+        )
+      }
+      style={{
+        height: 42,
+        padding: "0 12px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+        background: "#ffffff",
+        color: "#49392f",
+        fontSize: 13,
+      }}
+    >
+      <option value="default">預設順序</option>
+      <option value="name">名稱 A → Z</option>
+      <option value="unpacked">未打包優先</option>
+      <option value="packed">已打包優先</option>
+    </select>
+  </label>
+
+  <button
+    type="button"
+    onClick={() =>
+      setPackingStatusFilter((prev) =>
+        prev === "unpacked" ? "all" : "unpacked"
+      )
+    }
+    style={{
+      padding: "11px 16px",
+      border: "1px solid #826349",
+      borderRadius: 10,
+      background:
+        packingStatusFilter === "unpacked"
+          ? "#826349"
+          : "#ffffff",
+      color:
+        packingStatusFilter === "unpacked"
+          ? "#ffffff"
+          : "#826349",
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    {packingStatusFilter === "unpacked"
+      ? "✅ 顯示全部狀態"
+      : "⬜ 只看未打包"}
+  </button>
 </div>
 
     {/* 行李資料列表 */}
