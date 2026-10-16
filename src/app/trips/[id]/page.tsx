@@ -5239,27 +5239,95 @@ onClick={() => {
         >
           {segments.map((segment, index) => (
             <div key={`${flight.id}-${index}`}>
-              {/* 轉機等候時間 */}
-              {index > 0 && (
-                <div
-                  style={{
-                    textAlign: "center",
-                    padding: "10px 0 14px",
-                    color: "#826349",
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  🕒{" "}
-                  {segments[index - 1]
-                    .arrival_airport || "轉機機場"}
-                  {" 轉機 · 等候 "}
-                  {formatFlightTimeDifference(
-                    segments[index - 1].arrival_at,
-                    segment.departure_at
-                  )}
-                </div>
-              )}
+              
+{/* =========================================
+    轉機時間與不足提醒
+   ========================================= */}
+
+{index > 0 &&
+  (() => {
+    const previousArrival =
+      segments[index - 1].arrival_at;
+
+    const nextDeparture =
+      segment.departure_at;
+
+    const connectionMinutes =
+      previousArrival && nextDeparture
+        ? Math.round(
+            (new Date(nextDeparture).getTime() -
+              new Date(previousArrival).getTime()) /
+              60000
+          )
+        : null;
+
+    const isShortConnection =
+      connectionMinutes !== null &&
+      connectionMinutes >= 0 &&
+      connectionMinutes < 60;
+
+    const isInvalidConnection =
+      connectionMinutes !== null &&
+      connectionMinutes < 0;
+
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          padding: "12px 16px",
+          margin: "8px 0 12px",
+          background: isInvalidConnection
+            ? "#fce8e6"
+            : isShortConnection
+              ? "#fff3df"
+              : "#f2ebe2",
+          border: `1px solid ${
+            isInvalidConnection
+              ? "#e7aaa4"
+              : isShortConnection
+                ? "#edc989"
+                : "#e6dcd0"
+          }`,
+          borderRadius: 10,
+          fontSize: 12,
+          color: isInvalidConnection
+            ? "#b4534b"
+            : "#674b39",
+          lineHeight: 1.8,
+        }}
+      >
+        <div style={{ fontWeight: 700 }}>
+          🕒{" "}
+          {segments[index - 1]
+            .arrival_airport || "轉機機場"}
+          {" 轉機 · 等候 "}
+          {formatFlightTimeDifference(
+            previousArrival,
+            nextDeparture
+          )}
+        </div>
+
+        {isInvalidConnection && (
+          <div style={{ fontWeight: 700 }}>
+            ❌ 轉機時間設定錯誤：下一段航班早於上一段抵達
+          </div>
+        )}
+
+        {isShortConnection && (
+          <div
+            style={{
+              marginTop: 4,
+              fontWeight: 700,
+              color: "#a66b20",
+            }}
+          >
+            ⚠️ 轉機時間少於 60 分鐘，請確認是否足夠
+          </div>
+        )}
+      </div>
+    );
+  })()}
+
 
               {/* 每段航班 */}
               <div
