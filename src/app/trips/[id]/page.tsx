@@ -6581,26 +6581,281 @@ alignItems: "center",
       </button>
     </div>
 
-    {/* 新增／編輯表單：下一步加入 */}
-    {showCarRentalForm && (
-      <div
+   
+{/* =========================================
+    租車新增／編輯表單
+   ========================================= */}
+
+{showCarRentalForm && (
+  <div
+    style={{
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 14,
+      padding: "20px 16px",
+      color: "#49392f",
+    }}
+  >
+    <h3
+      style={{
+        margin: "0 0 18px",
+        fontSize: 19,
+        fontWeight: 800,
+      }}
+    >
+      {editingCarRentalId !== null
+        ? "✏️ 編輯租車資料"
+        : "🚗 新增租車資料"}
+    </h3>
+
+    {/* 租車基本資料 */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+        gap: 16,
+      }}
+    >
+      {([
+        ["租車公司", "rental_company", "text", "Hertz / Alamo"],
+        ["訂單編號", "confirmation_number", "text", "預約確認碼"],
+        ["車型", "vehicle_type", "text", "Toyota RAV4"],
+        ["車輛等級", "vehicle_class", "text", "SUV / Economy"],
+        ["取車地點", "pickup_location", "text", "LAX Airport"],
+        ["取車日期時間", "pickup_at", "datetime-local", ""],
+        ["還車地點", "dropoff_location", "text", "SFO Airport"],
+        ["還車日期時間", "dropoff_at", "datetime-local", ""],
+        ["租車總金額", "amount", "number", "0.00"],
+        ["幣別", "currency", "text", "USD / TWD / EUR"],
+        ["訂車平台", "booking_platform", "text", "Rentalcars"],
+        ["訂單網址", "booking_url", "url", "https://"],
+      ] as const).map(([label, field, type, placeholder]) => (
+        <label
+          key={field}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 7,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#674b39",
+          }}
+        >
+          {label}
+          <input
+            type={type}
+            placeholder={placeholder}
+            value={carRentalForm[field]}
+            onChange={(e) =>
+              updateCarRentalField(field, e.target.value)
+            }
+            min={type === "number" ? "0" : undefined}
+            step={type === "number" ? "0.01" : undefined}
+            style={{
+              width: "100%",
+              minWidth: 0,
+              boxSizing: "border-box",
+              height: 44,
+              padding: "0 12px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#49392f",
+              fontSize: 14,
+            }}
+          />
+        </label>
+      ))}
+    </div>
+
+    {/* 取車與還車時區 */}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+        gap: 16,
+        marginTop: 16,
+      }}
+    >
+      {([
+        ["取車時區", "pickup_timezone"],
+        ["還車時區", "dropoff_timezone"],
+      ] as const).map(([label, field]) => (
+        <label
+          key={field}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 7,
+            fontSize: 13,
+            fontWeight: 600,
+            color: "#674b39",
+          }}
+        >
+          {label}
+          <select
+            value={carRentalForm[field]}
+            onChange={(e) =>
+              updateCarRentalField(field, e.target.value)
+            }
+            style={{
+              width: "100%",
+              height: 44,
+              padding: "0 12px",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: "#ffffff",
+              color: "#49392f",
+            }}
+          >
+            <option value="">請選擇時區</option>
+            <option value="America/Phoenix">Phoenix</option>
+            <option value="America/Los_Angeles">Los Angeles / San Francisco</option>
+            <option value="America/Denver">Denver</option>
+            <option value="America/Chicago">Chicago</option>
+            <option value="America/New_York">New York / Orlando / Miami</option>
+            <option value="Pacific/Honolulu">Honolulu</option>
+            <option value="America/Lima">Lima</option>
+            <option value="Europe/London">London</option>
+            <option value="Europe/Paris">Paris</option>
+            <option value="Europe/Zurich">Zurich</option>
+            <option value="Asia/Taipei">Taipei</option>
+            <option value="Asia/Tokyo">Tokyo</option>
+            <option value="Asia/Seoul">Seoul</option>
+          </select>
+        </label>
+      ))}
+    </div>
+
+    {/* 付款狀態 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      付款狀態
+      <select
+        value={carRentalForm.payment_status}
+        onChange={(e) =>
+          updateCarRentalField(
+            "payment_status",
+            e.target.value
+          )
+        }
         style={{
-          padding: 20,
-          background: "#faf7f2",
-          border: "1px solid #e6dcd0",
-          borderRadius: 14,
-          color: "#674b39",
+          height: 44,
+          padding: "0 12px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
         }}
       >
-        {editingCarRentalId !== null
-          ? "✏️ 編輯租車資料"
-          : "🚗 新增租車資料"}
+        <option value="unpaid">未付款</option>
+        <option value="paid">已付款</option>
+        <option value="partial">部分付款</option>
+      </select>
+    </label>
 
-        <p style={{ fontSize: 13 }}>
-          租車表單將在下一步加入。
-        </p>
-      </div>
-    )}
+    {/* 備註 */}
+    <label
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 7,
+        marginTop: 16,
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#674b39",
+      }}
+    >
+      備註
+      <textarea
+        rows={4}
+        placeholder="保險內容、免費里程、額外駕駛、押金、取車注意事項等"
+        value={carRentalForm.notes}
+        onChange={(e) =>
+          updateCarRentalField("notes", e.target.value)
+        }
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: 12,
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          resize: "vertical",
+        }}
+      />
+    </label>
+
+    {/* 取消與儲存 */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        flexWrap: "wrap",
+        gap: 10,
+        marginTop: 24,
+        paddingTop: 18,
+        borderTop: "1px solid #e6dcd0",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => {
+          resetCarRentalForm();
+          setShowCarRentalForm(false);
+        }}
+        disabled={savingCarRental}
+        style={{
+          padding: "11px 18px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#674b39",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: "pointer",
+        }}
+      >
+        取消
+      </button>
+
+      <button
+        type="button"
+        onClick={saveCarRental}
+        disabled={savingCarRental}
+        style={{
+          padding: "11px 22px",
+          border: "1px solid #826349",
+          borderRadius: 10,
+          background: savingCarRental ? "#b6a08e" : "#826349",
+          color: "#ffffff",
+          fontSize: 14,
+          fontWeight: 700,
+          cursor: savingCarRental ? "not-allowed" : "pointer",
+        }}
+      >
+        {savingCarRental
+          ? "儲存中..."
+          : editingCarRentalId !== null
+            ? "更新租車"
+            : "儲存租車"}
+      </button>
+    </div>
+  </div>
+)}
 
     {/* 租車資料列表 */}
     {loadingCarRentals ? (
