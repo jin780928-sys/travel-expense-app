@@ -941,6 +941,8 @@ const updateTripNoteField = (
   }));
 };
 
+
+
   
 /* =========================================
    行李清單篩選條件
@@ -977,6 +979,11 @@ const [packingSort, setPackingSort] = useState<
 >("default");
 
 
+
+/* =========================================
+   行李清單：篩選結果
+   ========================================= */
+
 const filteredPackingItems = packingItems.filter((item) => {
   const matchPerson =
     packingPersonFilter === "all" ||
@@ -984,9 +991,33 @@ const filteredPackingItems = packingItems.filter((item) => {
       ? item.person_id === null
       : item.person_id === Number(packingPersonFilter));
 
-  
+  const matchCategory =
+    packingCategoryFilter === "all" ||
+    item.category === packingCategoryFilter;
+
+  const matchStatus =
+    packingStatusFilter === "all" ||
+    (packingStatusFilter === "packed"
+      ? item.is_packed
+      : !item.is_packed);
+
+  const keyword = packingSearch.trim().toLowerCase();
+
+  const matchSearch =
+    keyword === "" ||
+    item.name.toLowerCase().includes(keyword) ||
+    (item.notes || "").toLowerCase().includes(keyword);
+
+  return (
+    matchPerson &&
+    matchCategory &&
+    matchStatus &&
+    matchSearch
+  );
+});
+
 /* =========================================
-   行李清單分組資料
+   行李清單：分類名稱
    ========================================= */
 
 const packingCategoryNames: Record<string, string> = {
@@ -998,9 +1029,8 @@ const packingCategoryNames: Record<string, string> = {
   other: "📦 其他",
 };
 
-  
 /* =========================================
-   行李排序結果
+   行李清單：排序結果
    ========================================= */
 
 const sortedPackingItems = [...filteredPackingItems].sort(
@@ -1024,6 +1054,9 @@ const sortedPackingItems = [...filteredPackingItems].sort(
   }
 );
 
+/* =========================================
+   行李清單：分組結果
+   ========================================= */
 
 const packingGroups = sortedPackingItems.reduce<
   Record<string, TripPackingItem[]>
@@ -1053,34 +1086,6 @@ const packingGroups = sortedPackingItems.reduce<
 
   return groups;
 }, {});
-
-
-  const matchCategory =
-    packingCategoryFilter === "all" ||
-    item.category === packingCategoryFilter;
-
-  const matchStatus =
-    packingStatusFilter === "all" ||
-    (packingStatusFilter === "packed"
-      ? item.is_packed
-      : !item.is_packed);
-
-  
-  const keyword = packingSearch.trim().toLowerCase();
-
-  const matchSearch =
-    keyword === "" ||
-    item.name.toLowerCase().includes(keyword) ||
-    (item.notes || "").toLowerCase().includes(keyword);
-
-  return (
-    matchPerson &&
-    matchCategory &&
-    matchStatus &&
-    matchSearch
-  );
-
-});
 
 
 /* =========================================
