@@ -1948,6 +1948,51 @@ async function loadFlights() {
   }
 }
 
+  
+/* =========================================
+   機票分類與日期排序
+   ========================================= */
+
+const groupedFlights = {
+  outbound: flights
+    .filter((flight) => flight.flight_direction === "outbound")
+    .sort((a, b) =>
+      (a.departure_at
+        ? new Date(a.departure_at).getTime()
+        : Infinity) -
+      (b.departure_at
+        ? new Date(b.departure_at).getTime()
+        : Infinity)
+    ),
+
+  return: flights
+    .filter((flight) => flight.flight_direction === "return")
+    .sort((a, b) =>
+      (a.departure_at
+        ? new Date(a.departure_at).getTime()
+        : Infinity) -
+      (b.departure_at
+        ? new Date(b.departure_at).getTime()
+        : Infinity)
+    ),
+
+  other: flights
+    .filter(
+      (flight) =>
+        flight.flight_direction !== "outbound" &&
+        flight.flight_direction !== "return"
+    )
+    .sort((a, b) =>
+      (a.departure_at
+        ? new Date(a.departure_at).getTime()
+        : Infinity) -
+      (b.departure_at
+        ? new Date(b.departure_at).getTime()
+        : Infinity)
+    ),
+};
+
+
 
 /* =========================================
    自動載入各張機票的轉機航段
