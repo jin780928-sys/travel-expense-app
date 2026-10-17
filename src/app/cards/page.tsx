@@ -1263,7 +1263,7 @@ return (
   flex-wrap: wrap;
   gap: 12px;
   padding: 16px;
-  background: #f2ebe2;
+  background: #faf7f2;
   border: 1px solid #e6dcd0;
   border-radius: 12px;
   box-sizing: border-box;
