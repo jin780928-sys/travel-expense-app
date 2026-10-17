@@ -6721,9 +6721,7 @@ return (
     )}
                                 </div>
 
-                                {/* ===========================
-                                    編輯 / 刪除
-                                    =========================== */}
+                              
                                 
 {/* =========================================
     每日行程操作：依資料來源顯示
@@ -12848,35 +12846,45 @@ onChange={(e) => {
               </label>
 
               <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  type="button"
-                  onClick={() => startEditPackingItem(item)}
-                  style={{
-                    padding: "8px 12px",
-                    border: "1px solid #d8c6b4",
-                    borderRadius: 9,
-                    background: "#ffffff",
-                    color: "#674b39",
-                    cursor: "pointer",
-                  }}
-                >
-                  ✏️ 編輯
-                </button>
+                    
+<button
+  type="button"
+  onClick={() => startEditPackingItem(item)}
+  style={{
+    padding: "6px 10px",
+    border: "1px solid #d8c6b4",
+    borderRadius: 8,
+    background: "#ffffff",
+    color: "#674b39",
+    fontSize: 12,
+    fontWeight: 600,
+    lineHeight: "18px",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+  }}
+>
+  ✏️ 編輯
+</button>
 
-                <button
-                  type="button"
-                  onClick={() => deletePackingItem(item)}
-                  style={{
-                    padding: "8px 12px",
-                    border: "1px solid #e7c9c3",
-                    borderRadius: 9,
-                    background: "#fff7f5",
-                    color: "#b4534b",
-                    cursor: "pointer",
-                  }}
-                >
-                  🗑️ 刪除
-                </button>
+<button
+  type="button"
+  onClick={() => deletePackingItem(item)}
+  style={{
+    padding: "6px 10px",
+    border: "1px solid #e7c9c3",
+    borderRadius: 8,
+    background: "#fff7f5",
+    color: "#b4534b",
+    fontSize: 12,
+    fontWeight: 600,
+    lineHeight: "18px",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+  }}
+>
+  🗑️ 刪除
+</button>
+
               </div>
             </div>
          
