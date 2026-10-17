@@ -1459,6 +1459,25 @@ const editActionButtonStyle = {
   cursor: "pointer",
 };
 
+/* =========================================
+   每日行程：來源編輯按鈕專用樣式
+   ========================================= */
+
+const itinerarySourceEditButtonStyle = {
+  ...editActionButtonStyle,
+  width: "auto",
+  minWidth: 0,
+  height: 34,
+  padding: "0 12px",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  boxSizing: "border-box" as const,
+  flexShrink: 0,
+  whiteSpace: "nowrap" as const,
+  textDecoration: "none",
+};
+
 const deleteActionButtonStyle = {
   ...editActionButtonStyle,
   border: "1px solid #e7c9c3",
@@ -6808,7 +6827,7 @@ onClick={() => {
     goToItinerarySource(item.source);
   }
 }}
-style={editActionButtonStyle}
+style={itinerarySourceEditButtonStyle}
   >
     {item.source === "flight"
   ? "✈️ 編輯機票"
