@@ -13206,15 +13206,7 @@ onChange={(e) => {
                 <button
                   type="button"
                   onClick={() => startEditTripNote(note)}
-                  style={{
-                    padding: "9px 14px",
-                    border: "1px solid #d8c6b4",
-                    borderRadius: 10,
-                    background: "#ffffff",
-                    color: "#674b39",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
+                  style={editActionButtonStyle}
                 >
                   ✏️ 編輯
                 </button>
@@ -13222,15 +13214,7 @@ onChange={(e) => {
                 <button
                   type="button"
                   onClick={() => deleteTripNote(note)}
-                  style={{
-                    padding: "9px 14px",
-                    border: "1px solid #e7c9c3",
-                    borderRadius: 10,
-                    background: "#fff7f5",
-                    color: "#b4534b",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
+                  style={deleteActionButtonStyle}
                 >
                   🗑️ 刪除
                 </button>
