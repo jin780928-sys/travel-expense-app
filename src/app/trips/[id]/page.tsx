@@ -1442,6 +1442,31 @@ return (
 
 
 /* =========================================
+   統一編輯 / 刪除按鈕樣式
+   ========================================= */
+
+const editActionButtonStyle = {
+  width: 80,
+  height: 34,
+  padding: "0 8px",
+  border: "1px solid #d8c6b4",
+  borderRadius: 8,
+  background: "#ffffff",
+  color: "#674b39",
+  fontSize: 12,
+  fontWeight: 600,
+  whiteSpace: "nowrap" as const,
+  cursor: "pointer",
+};
+
+const deleteActionButtonStyle = {
+  ...editActionButtonStyle,
+  border: "1px solid #e7c9c3",
+  background: "#fff7f5",
+  color: "#b4534b",
+};
+
+/* =========================================
    行李清單：分類名稱
    支援舊版分類與系統預設範本
    ========================================= */
@@ -12850,18 +12875,7 @@ onChange={(e) => {
 <button
   type="button"
   onClick={() => startEditPackingItem(item)}
-  style={{
-    padding: "6px 10px",
-    border: "1px solid #d8c6b4",
-    borderRadius: 8,
-    background: "#ffffff",
-    color: "#674b39",
-    fontSize: 12,
-    fontWeight: 600,
-    lineHeight: "18px",
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-  }}
+  style={editActionButtonStyle}
 >
   ✏️ 編輯
 </button>
@@ -12869,18 +12883,7 @@ onChange={(e) => {
 <button
   type="button"
   onClick={() => deletePackingItem(item)}
-  style={{
-    padding: "6px 10px",
-    border: "1px solid #e7c9c3",
-    borderRadius: 8,
-    background: "#fff7f5",
-    color: "#b4534b",
-    fontSize: 12,
-    fontWeight: 600,
-    lineHeight: "18px",
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-  }}
+  style={deleteActionButtonStyle}
 >
   🗑️ 刪除
 </button>
