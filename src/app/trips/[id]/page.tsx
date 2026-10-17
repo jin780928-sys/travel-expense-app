@@ -7224,16 +7224,7 @@ style={itinerarySourceEditButtonStyle}
                   統計
                 </h2>
 
-                <div
-                  style={{
-                    marginTop: 16,
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: "#927f70",
-                  }}
-                >
-                  總支出
-                </div>
+                
 
                 {Object.keys(
                   totalsByCurrency
