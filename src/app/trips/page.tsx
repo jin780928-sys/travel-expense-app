@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-} from "react";
+import {useEffect,  useState,} from "react";
 import Link from "next/link";
+import AppNavigation from "@/components/AppNavigation";
 import { supabase } from "../../lib/supabase";
 
 type Trip = {
@@ -223,6 +221,11 @@ const sortedTrips = [
       width: "100%",
     }}
     >
+
+    {/* =========================================
+    共用頂部導覽列
+   ========================================= */}
+<AppNavigation />
 
     {/* =========================================
     回首頁按鈕
