@@ -1125,18 +1125,20 @@ return (
     String(expense.id)
   )}`}
   className="expenseRow"
-  style={{
-    display: "block",
-    boxSizing: "border-box",
-    width: "100%",
-    padding: "24px 40px",
-    marginBottom: 14,
-    backgroundColor: "#ffffff",
-    border: "1px solid #eee3d7",
-    borderRadius: 14,
-    color: "#49392f",
-    textDecoration: "none",
-  }}
+  
+style={{
+  display: "block",
+  boxSizing: "border-box",
+  width: "100%",
+  padding: "20px clamp(14px, 3vw, 28px)",
+  marginBottom: 14,
+  backgroundColor: "#faf7f2",
+  border: "1px solid #e6dcd0",
+  borderRadius: 16,
+  color: "#49392f",
+  textDecoration: "none",
+}}
+
 >
   <div className="mainColumn">
 
@@ -1581,68 +1583,75 @@ return (
           gap: 5px;
         }
 
-        .itemDate {
-          font-size: 11px;
-          color: #94a3b8;
-        }
+        
 
-        .itemName {
-          font-size: 14px;
-          font-weight: 750;
-          overflow-wrap: anywhere;
-        }
+.itemDate {
+  font-size: 11px;
+  color: #927f70;
+}
 
-        /* 分類、付款 */
-        .detailColumn {
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-          gap: 4px;
-        }
+.itemName {
+  font-size: 14px;
+  font-weight: 750;
+  color: #49392f;
+  overflow-wrap: anywhere;
+}
 
-        .categoryName {
-          font-size: 12px;
-          color: #475569;
-          overflow-wrap: anywhere;
-        }
+/* 分類、付款資訊 */
+.detailColumn {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
 
-        .paymentName {
-          font-size: 11px;
-          color: #94a3b8;
-          overflow-wrap: anywhere;
-        }
+.categoryName {
+  font-size: 12px;
+  color: #674b39;
+  overflow-wrap: anywhere;
+}
 
-        .scopeLine {
-          display: flex;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
+.paymentName {
+  font-size: 11px;
+  color: #927f70;
+  overflow-wrap: anywhere;
+}
 
-        .scopeLabel {
-          display: inline-block;
-          padding: 2px 7px;
-          border-radius: 5px;
-          font-size: 10px;
-          font-weight: 700;
-        }
+/* 日常／旅程來源 */
+.scopeLine {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 
+.scopeLabel {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
 
+/* 日常：淺米棕 */
 .scopeLabel.daily {
-          color: #0f766e;
-          background: #ccfbf1;
-        }
+  color: #826349;
+  background: #f2ebe2;
+  border: 1px solid #e6dcd0;
+}
 
-        .scopeLabel.trip {
-          color: #6d28d9;
-          background: #ede9fe;
-        }
+/* 旅程：稍深米棕 */
+.scopeLabel.trip {
+  color: #674b39;
+  background: #e9ddd0;
+  border: 1px solid #d8c6b4;
+}
 
-        .tripName {
-          font-size: 11px;
-          color: #64748b;
-          overflow-wrap: anywhere;
-        }
+.tripName {
+  font-size: 11px;
+  color: #927f70;
+  overflow-wrap: anywhere;
+}
 
         /* 金額 */
         .amountColumn {
