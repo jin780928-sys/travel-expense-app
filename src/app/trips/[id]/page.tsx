@@ -6761,12 +6761,22 @@ return (
 >
   {item.source === "manual" ? (
     <>
-      <Link
-        href={`/trips/${trip.id}/itinerary/${item.sourceId}/edit`}
-        style={editActionButtonStyle}
-      >
-        ✏️ 編輯
-      </Link>
+      
+<Link
+  href={`/trips/${trip.id}/itinerary/${item.sourceId}/edit`}
+  style={{
+    ...editActionButtonStyle,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxSizing: "border-box",
+    flexShrink: 0,
+    textDecoration: "none",
+  }}
+>
+  ✏️ 編輯
+</Link>
+
 
       <button
         type="button"
