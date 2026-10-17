@@ -69,8 +69,8 @@ const expenseMenus: MenuItem[] = [
     theme: "orange",
   },
   {
-    title: "日常花費統計",
-    description: "分析分類與信用卡帳單",
+    title: "財務總覽",
+    description: "日常花費統計與信用卡帳單",
     icon: "📊",
     href: ROUTES.dashboard,
     theme: "blue",
@@ -379,483 +379,189 @@ return (
           10. 全部首頁 CSS
          ===================================== */}
       <style jsx global>{`
-        * {
-          box-sizing: border-box;
-        }
-
-        body {
-          margin: 0;
-        }
-
         .home-page {
           min-height: 100vh;
-          background: #f6f8fc;
-          color: #172033;
-          font-family:
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            "Noto Sans TC",
-            sans-serif;
-          padding: 28px 18px 60px;
+          background: #f8f6f3;
+          color: #49392f;
+          padding: 24px clamp(12px, 3vw, 28px) 64px;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
         }
+        .home-page, .home-page * { box-sizing: border-box; }
+        .home-page .home-container { width: 100%; max-width: 1100px; margin: 0 auto; }
 
-        .home-container {
-          width: 100%;
-          max-width: 1040px;
-          margin: 0 auto;
-        }
-
-        /* =================================
-           A. Header
-           ================================= */
-
-           .header {
+        /* A. 品牌與登出 */
+        .home-page .header {
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
           gap: 16px;
-          margin-bottom: 24px;
+          padding: 16px 20px;
+          margin-bottom: 22px;
+          background: #faf7f2;
+          border: 1px solid #e6dcd0;
+          border-radius: 16px;
         }
-
-        .brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
+        .home-page .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .home-page .brand-logo {
+          display: flex; align-items: center; justify-content: center;
+          width: 48px; height: 48px; flex-shrink: 0;
+          border: 1px solid #e6dcd0;
+          border-radius: 14px; background: #f2ebe2; font-size: 24px;
         }
-
-        .brand-logo {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 48px;
-          height: 48px;
-          background: #2563eb;
-          color: white;
-          border-radius: 15px;
-          font-size: 25px;
-          flex-shrink: 0;
+        .home-page .brand-title { font-size: 22px; font-weight: 800; color: #49392f; letter-spacing: -0.4px; }
+        .home-page .brand-subtitle { margin-top: 3px; font-size: 13px; color: #927f70; line-height: 1.5; }
+        .home-page .logout-button {
+          display: inline-flex; align-items: center; justify-content: center;
+          gap: 8px; min-height: 42px; padding: 0 16px;
+          background: #fff; border: 1px solid #d8c6b4;
+          border-radius: 10px; color: #674b39;
+          font-size: 14px; font-weight: 700; cursor: pointer;
         }
+        .home-page .logout-button:hover { background: #f2ebe2; }
+        .home-page .logout-button:disabled { opacity: 0.6; cursor: wait; }
 
-        .brand-title {
-          font-size: 22px;
-          font-weight: 800;
-          letter-spacing: -0.5px;
-        }
-
-        .brand-subtitle {
-          font-size: 13px;
-          margin-top: 3px;
-          color: #64748b;
-        }
-
-        .logout-button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 7px;
-          padding: 10px 16px;
-          border-radius: 12px;
-          background: white;
-          border: 1px solid #e2e8f0;
-          color: #475569;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          flex-shrink: 0;
-        }
-
-        .logout-button:hover {
-          background: #f1f5f9;
-        }
-
-.logout-button:disabled {
-          opacity: 0.6;
-          cursor: wait;
-        }
-
-        /* =================================
-           B. Welcome card
-           ================================= */
-
-           .welcome-card {
-          position: relative;
-          overflow: hidden;
-          border-radius: 24px;
-          padding: 35px 32px;
-          background:
-          linear-gradient(
-              115deg,
-              #1d4ed8 0%,
-              #2563eb 54%,
-              #60a5fa 100%
-            );
-          color: white;
-          margin-bottom: 34px;
-        }
-
-
-.welcome-content {
-          position: relative;
-          z-index: 1;
-        }
-
-        .welcome-eyebrow {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 2px;
-          color: #dbeafe;
-          margin-bottom: 12px;
-        }
-
-        .welcome-card h1 {
-          margin: 0;
-          font-size: clamp(24px, 3vw, 34px);
-          line-height: 1.45;
-          font-weight: 800;
-          letter-spacing: -0.5px;
-        }
-
-        .welcome-card p {
-          margin: 15px 0 20px;
-          max-width: 520px;
-          color: #e0edff;
-          font-size: 14px;
-          line-height: 1.8;
-        }
-
-        .welcome-decoration {
-          position: absolute;
-          right: 45px;
-          top: 4px;
-          font-size: 165px;
-          transform: rotate(-18deg);
-          opacity: 0.13;
-          pointer-events: none;
-        }
-
-        .user-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 9px 13px;
-          border-radius: 12px;
-          background: rgba(255,255,255,0.16);
-          border: 1px solid rgba(255,255,255,0.2);
-          font-size: 13px;
-          max-width: 100%;
-          overflow-wrap: anywhere;
-        }
-
-        /* =================================
-           C. Section
-           ================================= */
-
-           .menu-section {
+        /* B. 歡迎區 */
+        .home-page .welcome-card {
+          position: relative; overflow: hidden;
+          border: 1px solid #e6dcd0; border-radius: 20px;
+          background: #faf7f2; color: #49392f;
+          padding: clamp(24px, 4vw, 40px);
           margin-bottom: 32px;
+          box-shadow: 0 3px 14px rgba(103, 75, 57, 0.04);
         }
-
-        .section-heading {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 16px;
+        .home-page .welcome-content { position: relative; z-index: 1; }
+        .home-page .welcome-eyebrow {
+          color: #927f70; font-size: 11px; font-weight: 800;
+          letter-spacing: 1.8px; margin-bottom: 14px;
         }
-
-        .section-left {
-          display: flex;
-          align-items: center;
-          gap: 9px;
+        .home-page .welcome-card h1 {
+          margin: 0; max-width: 760px;
+          font-size: clamp(25px, 4vw, 36px);
+          line-height: 1.45; font-weight: 800;
+          letter-spacing: -0.5px; color: #49392f;
         }
-
-
-.section-icon {
-          font-size: 22px;
+        .home-page .welcome-card p {
+          margin: 15px 0 20px; max-width: 660px;
+          color: #927f70; font-size: 14px; line-height: 1.8;
         }
-
-        .section-heading h2 {
-          margin: 0;
-          font-size: 20px;
-          font-weight: 800;
+        .home-page .welcome-decoration {
+          position: absolute; right: 36px; top: 12px;
+          font-size: 155px; transform: rotate(-18deg);
+          opacity: 0.075; color: #826349; pointer-events: none;
         }
-
-        .section-subtitle {
-          color: #94a3b8;
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 1.5px;
-        }
-
-        /* =================================
-           D. Menu cards
-           ================================= */
-
-           .menu-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 15px;
-        }
-
-        .menu-card {
-          position: relative;
-          min-width: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 14px;
-          text-decoration: none;
-          background: white;
-          border: 1px solid #e8edf5;
-          border-radius: 18px;
-          padding: 22px;
-          min-height: 166px;
-          transition:
-          transform 0.2s ease,
-            box-shadow 0.2s ease,
-            border-color 0.2s ease;
-        }
-
-        .menu-card:hover {
-        transform: translateY(-3px);
-          box-shadow:
-            0 12px 25px rgba(15,23,42,0.07);
-          border-color: #bfdbfe;
-        }
-
-        .menu-card:focus-visible,
-        .logout-button:focus-visible,
-        .login-link:focus-visible {
-          outline: 3px solid #93c5fd;
-          outline-offset: 3px;
-        }
-
-
-.menu-icon {
-          width: 48px;
-          height: 48px;
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-        }
-
-        .theme-blue {
-          background: #dbeafe;
-        }
-
-        .theme-purple {
-          background: #f3e8ff;
-        }
-
-        .theme-green {
-          background: #dcfce7;
-        }
-
-        .theme-orange {
-          background: #ffedd5;
-        }
-
-        .theme-gray {
-          background: #f1f5f9;
-        }
-
-        .menu-content {
-          width: 100%;
-          min-width: 0;
-          padding-right: 15px;
-        }
-
-        .menu-title {
-          font-size: 17px;
-          font-weight: 750;
-          color: #1e293b;
-          margin-bottom: 7px;
-        }
-
-        .menu-description {
+        .home-page .user-chip {
+          display: inline-flex; align-items: center; gap: 9px;
+          max-width: 100%; overflow-wrap: anywhere;
+          padding: 10px 14px; border: 1px solid #e6dcd0;
+          border-radius: 12px; background: #fff; color: #674b39;
           font-size: 13px;
-          line-height: 1.6;
-          color: #64748b;
         }
 
-        .menu-arrow {
-          position: absolute;
-          right: 20px;
-          bottom: 23px;
-          font-size: 20px;
-          color: #94a3b8;
+        /* C. 功能分類 */
+        .home-page .menu-section { margin-bottom: 30px; }
+        .home-page .section-heading {
+          display: flex; justify-content: space-between; align-items: center;
+          flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+          padding: 0 2px;
+        }
+        .home-page .section-left { display: flex; align-items: center; gap: 9px; }
+        .home-page .section-icon { font-size: 21px; }
+        .home-page .section-heading h2 {
+          margin: 0; color: #49392f;
+          font-size: 20px; font-weight: 800;
+        }
+        .home-page .section-subtitle {
+          color: #927f70; font-size: 11px;
+          font-weight: 700; letter-spacing: 1.5px;
         }
 
-        /* =================================
-           E. Login states
-           ================================= */
-
-           .status-panel {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          min-height: 260px;
-          padding: 32px;
-          border-radius: 20px;
-          background: white;
-          border: 1px solid #e2e8f0;
-          text-align: center;
-          color: #64748b;
+        /* D. 選單卡片 */
+        .home-page .menu-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .home-page .menu-card {
+          position: relative; display: flex; flex-direction: column;
+          align-items: flex-start; gap: 12px; min-width: 0;
+          padding: 22px; min-height: 166px;
+          text-decoration: none; border: 1px solid #e6dcd0;
+          border-radius: 16px; background: #faf7f2;
+          transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+        .home-page .menu-card:hover {
+          transform: translateY(-2px); border-color: #cdb79f;
+          box-shadow: 0 8px 20px rgba(103, 75, 57, .10);
+        }
+        .home-page .menu-card:focus-visible, .home-page .logout-button:focus-visible, .home-page .login-link:focus-visible {
+          outline: 3px solid #b89b80; outline-offset: 3px;
+        }
+        .home-page .menu-icon {
+          width: 48px; height: 48px; border: 1px solid #e6dcd0;
+          border-radius: 13px; display: flex; align-items: center;
+          justify-content: center; font-size: 24px;
+          background: #f2ebe2;
+        }
+        .home-page .theme-blue, .home-page .theme-purple, .home-page .theme-green, .home-page .theme-orange, .home-page .theme-gray {
+          background: #f2ebe2;
+        }
+        .home-page .menu-content { width: 100%; min-width: 0; padding-right: 18px; }
+        .home-page .menu-title { font-size: 17px; font-weight: 750; color: #49392f; margin-bottom: 7px; }
+        .home-page .menu-description { font-size: 13px; line-height: 1.6; color: #927f70; }
+        .home-page .menu-arrow {
+          position: absolute; right: 20px; bottom: 20px;
+          color: #826349; font-size: 19px;
         }
 
-        .status-icon {
-          font-size: 32px;
+        /* E. 登入狀態 */
+        .home-page .status-panel {
+          display: flex; flex-direction: column; align-items: center;
+          justify-content: center; text-align: center;
+          min-height: 260px; padding: 32px 18px;
+          border: 1px solid #e6dcd0; border-radius: 16px;
+          background: #faf7f2; color: #927f70;
+        }
+        .home-page .status-icon { font-size: 32px; }
+        .home-page .status-panel h2 { color: #49392f; }
+        .home-page .login-link {
+          display: inline-flex; align-items: center; justify-content: center;
+          min-height: 44px; margin-top: 12px; padding: 0 20px;
+          border-radius: 10px; background: #826349; color: #fff;
+          text-decoration: none; font-weight: 700;
+        }
+        .home-page .login-link:hover { background: #674b39; }
+
+        /* F. 頁尾 */
+        .home-page .footer { margin-top: 32px; text-align: center; color: #927f70; font-size: 12px; }
+
+        /* G. 平板 */
+        @media (max-width: 800px) {
+          .home-page .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .home-page .welcome-decoration { right: -8px; opacity: .05; }
         }
 
-        .status-panel h2 {
-          color: #1e293b;
+        /* H. 手機 */
+        @media (max-width: 480px) {
+          .home-page { padding: 12px 12px 40px; }
+          .home-page .header { padding: 14px; gap: 10px; }
+          .home-page .brand { gap: 9px; }
+          .home-page .brand-logo { width: 42px; height: 42px; font-size: 21px; }
+          .home-page .brand-title { font-size: 18px; }
+          .home-page .brand-subtitle { font-size: 11px; }
+          .home-page .logout-button { min-height: 38px; padding: 0 12px; font-size: 12px; }
+          .home-page .welcome-card { padding: 23px 18px; margin-bottom: 27px; border-radius: 16px; }
+          .home-page .welcome-card h1 { font-size: 23px; }
+          .home-page .welcome-card p { font-size: 13px; }
+          .home-page .welcome-decoration { font-size: 105px; top: 16px; }
+          .home-page .section-heading h2 { font-size: 18px; }
+          .home-page .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+          .home-page .menu-card { min-height: 150px; padding: 15px 13px; gap: 10px; border-radius: 14px; }
+          .home-page .menu-icon { width: 41px; height: 41px; font-size: 21px; }
+          .home-page .menu-title { font-size: 15px; }
+          .home-page .menu-description { font-size: 12px; }
+          .home-page .menu-arrow { right: 12px; bottom: 12px; font-size: 16px; }
+          .home-page .section-subtitle { font-size: 10px; }
+          .home-page .user-chip { font-size: 12px; }
         }
-
-        .login-link {
-          display: inline-block;
-          margin-top: 12px;
-          padding: 12px 20px;
-          border-radius: 12px;
-          background: #2563eb;
-          color: white;
-          text-decoration: none;
-          font-weight: 700;
-        }
-
-        /* =================================
-           F. Footer
-           ================================= */
-
-           .footer {
-          margin-top: 30px;
-          text-align: center;
-          color: #94a3b8;
-          font-size: 12px;
-        }
-
-        /* =================================
-           G. Tablet
-           ================================= */
-
-           @media (max-width: 800px) {
-          .menu-grid {
-            grid-template-columns:
-              repeat(2, minmax(0, 1fr));
-          }
-
-          .welcome-card {
-            padding: 28px 25px;
-          }
-        }
-
-        /* =================================
-           H. Mobile
-           ================================= */
-
-           @media (max-width: 480px) {
-          .home-page {
-            padding: 20px 14px 40px;
-          }
-
-          .header {
-            gap: 8px;
-            margin-bottom: 18px;
-          }
-
-          .brand {
-            gap: 8px;
-            min-width: 0;
-          }
-
-          .brand-logo {
-            width: 39px;
-            height: 39px;
-            font-size: 20px;
-            border-radius: 12px;
-          }
-
-          .brand-title {
-            font-size: 17px;
-          }
-
-          .brand-subtitle {
-            font-size: 10px;
-          }
-
-          .logout-button {
-            padding: 9px 11px;
-            font-size: 12px;
-          }
-
-          .welcome-card {
-            padding: 26px 20px;
-            border-radius: 20px;
-            margin-bottom: 28px;
-          }
-
-          .welcome-card h1 {
-            font-size: 23px;
-          }
-
-          .welcome-card p {
-            font-size: 12px;
-            margin: 12px 0 17px;
-          }
-
-          .welcome-decoration {
-            right: -8px;
-            top: 15px;
-            font-size: 115px;
-          }
-
-          .section-heading h2 {
-            font-size: 17px;
-          }
-
-
-          .menu-grid {
-            grid-template-columns:
-              repeat(2, minmax(0, 1fr));
-            gap: 10px;
-          }
-
-
-          .menu-card {
-            min-height: 148px;
-            padding: 16px 13px;
-            gap: 12px;
-            border-radius: 15px;
-          }
-
-          .menu-icon {
-            width: 42px;
-            height: 42px;
-            font-size: 21px;
-          }
-
-          .menu-title {
-            font-size: 15px;
-          }
-
-          .menu-description {
-            font-size: 11px;
-          }
-
-          .menu-arrow {
-            right: 12px;
-            bottom: 13px;
-            font-size: 16px;
-          }
-
-          .menu-section {
-            margin-bottom: 27px;
-          }
-
-          .user-chip {
-            font-size: 11px;
-          }
+        @media (max-width: 340px) {
+          .home-page .menu-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </main>
