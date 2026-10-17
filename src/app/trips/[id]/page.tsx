@@ -6763,20 +6763,7 @@ return (
     <>
       <Link
         href={`/trips/${trip.id}/itinerary/${item.sourceId}/edit`}
-        style={{
-          height: 36,
-          padding: "0 12px",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: "1px solid #d8c6b4",
-          borderRadius: 8,
-          background: "#ffffff",
-          color: "#674b39",
-          textDecoration: "none",
-          fontSize: 13,
-          fontWeight: 700,
-        }}
+        style={editActionButtonStyle}
       >
         ✏️ 編輯
       </Link>
@@ -6786,17 +6773,7 @@ return (
         onClick={() =>
           handleDeleteItinerary(item.sourceId)
         }
-        style={{
-          height: 36,
-          padding: "0 12px",
-          border: "1px solid #e7c9c3",
-          borderRadius: 8,
-          background: "#fff7f5",
-          color: "#b4534b",
-          fontSize: 13,
-          fontWeight: 700,
-          cursor: "pointer",
-        }}
+        style={deleteActionButtonStyle}
       >
         🗑️ 刪除
       </button>
@@ -10353,16 +10330,7 @@ alignItems: "center",
         <button
           type="button"
           onClick={() => startEditCarRental(rental)}
-          style={{
-            padding: "10px 14px",
-            border: "1px solid #d8c6b4",
-            borderRadius: 10,
-            background: "#ffffff",
-            color: "#674b39",
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
+          style={editActionButtonStyle}
         >
           ✏️ 編輯
         </button>
@@ -10370,16 +10338,7 @@ alignItems: "center",
         <button
           type="button"
           onClick={() => deleteCarRental(rental)}
-          style={{
-            padding: "10px 14px",
-            border: "1px solid #e7c9c3",
-            borderRadius: 10,
-            background: "#fff7f5",
-            color: "#b4534b",
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
+          style={deleteActionButtonStyle}
         >
           🗑️ 刪除
         </button>
@@ -11122,16 +11081,7 @@ alignItems: "center",
         <button
           type="button"
           onClick={() => startEditTripBooking(booking)}
-          style={{
-            padding: "10px 14px",
-            border: "1px solid #d8c6b4",
-            borderRadius: 10,
-            background: "#ffffff",
-            color: "#674b39",
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
+          style={editActionButtonStyle}
         >
           ✏️ 編輯
         </button>
@@ -11139,16 +11089,7 @@ alignItems: "center",
         <button
           type="button"
           onClick={() => deleteTripBooking(booking)}
-          style={{
-            padding: "10px 14px",
-            border: "1px solid #e7c9c3",
-            borderRadius: 10,
-            background: "#fff7f5",
-            color: "#b4534b",
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
+          style={deleteActionButtonStyle}
         >
           🗑️ 刪除
         </button>
