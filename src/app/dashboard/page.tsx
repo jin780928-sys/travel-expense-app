@@ -43,12 +43,9 @@
 import { useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import { supabase } from "../../lib/supabase";
-import {
-  MAJOR_CATEGORIES,
-} from "../../lib/categories";
-import {
-  PAYMENT_METHODS,
-} from "../../lib/paymentMethods";
+import {MAJOR_CATEGORIES,} from "../../lib/categories";
+import {PAYMENT_METHODS,} from "../../lib/paymentMethods";
+import AppNavigation from "../../components/AppNavigation";
 
 // ============================================================================
 // 02. Type 型別定義
@@ -1807,6 +1804,10 @@ XLSX.writeFile(
 		minWidth: 0,
       }}
     >
+{/* =========================================
+    共用頂部導覽列
+   	========================================= */}
+<AppNavigation />
      {/* =========================================
     返回首頁按鈕
     與花費紀錄頁面統一樣式
