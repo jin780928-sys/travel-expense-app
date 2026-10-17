@@ -1759,25 +1759,25 @@ XLSX.writeFile(
   // ==========================================================================
 
   const sectionStyle: React.CSSProperties = {
-    background: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: 14,
-    padding: 18,
-    marginBottom: 18,
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
     boxSizing: "border-box",
     width: "100%",
 	minWidth: 0,
   };
 
   const summaryCardStyle = {
-    background: "#ffffff",
-    border: "1px solid #e5e7eb",
-    borderRadius: 14,
-    padding: 16,
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    padding: 18,
     minWidth: 170,
     minHeight: 96,
     flex: "1 1 180px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -1793,11 +1793,12 @@ XLSX.writeFile(
   return (
     <main
       id="dashboard-top"
+      className="dashboard-beige-page"
       style={{
         maxWidth: 1100,
         margin: "0 auto",
         padding: 20,
-        background: "#f7f7f8",
+        background: "#f8f6f3",
         minHeight: "100vh",
 		boxSizing: "border-box",
 		width: "100%",
@@ -1883,7 +1884,7 @@ XLSX.writeFile(
   style={{
     	fontSize: 14,
     	fontWeight: 600,
-    	color: "#374151",
+    	color: "#674b39",
 	  lineHeight: 1.4,
   }}
 >
@@ -1899,10 +1900,10 @@ XLSX.writeFile(
           style={{
             height: 40,
             padding: "0 12px",
-            border: "1px solid #d1d5db",
+            border: "1px solid #d8c6b4",
             borderRadius: 10,
             background: "#ffffff",
-            color: "#111827",
+            color: "#49392f",
             fontSize: 14,
             outline: "none",
             boxSizing: "border-box" ,
@@ -1935,10 +1936,10 @@ XLSX.writeFile(
           style={{
             height: 40,
             padding: "0 12px",
-            border: "1px solid #d1d5db",
+            border: "1px solid #d8c6b4",
             borderRadius: 10,
             background: "#ffffff",
-            color: "#111827",
+            color: "#49392f",
             fontSize: 14,
             outline: "none",
             boxSizing: "border-box",
@@ -1981,7 +1982,7 @@ XLSX.writeFile(
         <div style={summaryCardStyle}>
           <div
   style={{
-  	  color: "#6b7280",
+  	  color: "#927f70",
   	  fontSize: 14,
    	  fontWeight: 500,
 	  lineHeight: 1.4,
@@ -1995,7 +1996,7 @@ XLSX.writeFile(
               fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
-              color: "#111827",
+              color: "#49392f",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
 			  overflow: "hidden",
@@ -2010,7 +2011,7 @@ XLSX.writeFile(
         <div style={summaryCardStyle}>
           <div
             style={{
-              	color: "#6b7280",
+              	color: "#927f70",
               	fontSize: 14,
               	fontWeight: 500,
 				lineHeight: 1.4,
@@ -2024,7 +2025,7 @@ XLSX.writeFile(
               fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
-              color: "#111827",
+              color: "#49392f",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
 			  overflow: "hidden",
@@ -2039,7 +2040,7 @@ XLSX.writeFile(
         <div style={summaryCardStyle}>
           <div
             style={{
-              	color: "#6b7280",
+              	color: "#927f70",
               	fontSize: 14,
               	fontWeight: 500,
 				lineHeight: 1.4,
@@ -2053,7 +2054,7 @@ XLSX.writeFile(
               fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
-              color: "#111827",
+              color: "#49392f",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
 			  overflow: "hidden",
@@ -2085,7 +2086,7 @@ XLSX.writeFile(
         <div style={summaryCardStyle}>
           <div
             style={{
-              	color: "#6b7280",
+              	color: "#927f70",
               	fontSize: 14,
               	fontWeight: 500,
 				lineHeight: 1.4,
@@ -2099,7 +2100,7 @@ XLSX.writeFile(
               fontSize: 20,
               fontWeight: 700,
               marginTop: 4,
-              color: "#111827",
+              color: "#49392f",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
 			  overflow: "hidden",
@@ -2141,8 +2142,8 @@ XLSX.writeFile(
             height: 40,
             padding: "0 14px",
             background: "#ffffff",
-            color: "#374151",
-            border: "1px solid #d1d5db",
+            color: "#674b39",
+            border: "1px solid #d8c6b4",
             borderRadius: 10,
             cursor: "pointer",
             fontWeight: 600,
@@ -2170,8 +2171,8 @@ XLSX.writeFile(
             height: 40,
             padding: "0 14px",
             background: "#ffffff",
-            color: "#374151",
-            border: "1px solid #d1d5db",
+            color: "#674b39",
+            border: "1px solid #d8c6b4",
             borderRadius: 10,
             cursor: "pointer",
             fontWeight: 600,
@@ -2193,8 +2194,8 @@ XLSX.writeFile(
             height: 40,
             padding: "0 14px",
             background: "#ffffff",
-            color: "#374151",
-            border: "1px solid #d1d5db",
+            color: "#674b39",
+            border: "1px solid #d8c6b4",
             borderRadius: 10,
             cursor: "pointer",
             fontWeight: 600,
@@ -2218,7 +2219,7 @@ XLSX.writeFile(
             background: "#fff7ed",
             border:"1px solid #fed7aa",
             padding: 16,
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
             marginBottom: 16,
 			minWidth: 0,
           }}
@@ -2227,7 +2228,7 @@ XLSX.writeFile(
   style={{
     fontSize: 22,
     fontWeight: 700,
-    color: "#111827",
+    color: "#49392f",
     marginTop: 0,
     marginBottom: 12,
   }}
@@ -2279,7 +2280,7 @@ XLSX.writeFile(
     style={{
       fontSize: 15,
       fontWeight: 700,
-      color: "#111827",
+      color: "#49392f",
       lineHeight: 1.4,
       whiteSpace: "nowrap",
 	  flexShrink: 0,
@@ -2322,7 +2323,7 @@ XLSX.writeFile(
   style={{
     ...sectionStyle,
     padding: 16,
-    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
     marginBottom: 16,
     minWidth: 0,
   }}
@@ -2341,7 +2342,7 @@ XLSX.writeFile(
       style={{
         fontSize: 22,
         fontWeight: 700,
-        color: "#111827",
+        color: "#49392f",
         marginTop: 0,
         marginBottom: 0,
         whiteSpace: "nowrap",
@@ -2353,7 +2354,7 @@ XLSX.writeFile(
     {Object.entries(totalsByCurrency).length === 0 ? (
       <div
         style={{
-          color: "#6b7280",
+          color: "#927f70",
           fontSize: 14,
           lineHeight: 1.4,
         }}
@@ -2377,7 +2378,7 @@ XLSX.writeFile(
               style={{
                 fontSize: 20,
                 fontWeight: 700,
-                color: "#111827",
+                color: "#49392f",
                 whiteSpace: "nowrap",
                 lineHeight: 1.2,
               }}
@@ -2399,7 +2400,7 @@ XLSX.writeFile(
   style={{
     ...sectionStyle,
     padding: 16,
-    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
     marginBottom: 16,
 	minWidth: 0,
   }}
@@ -2408,7 +2409,7 @@ XLSX.writeFile(
     style={{
       fontSize: 22,
       fontWeight: 700,
-      color: "#111827",
+      color: "#49392f",
       marginTop: 0,
       marginBottom: 10,
     }}
@@ -2419,7 +2420,7 @@ XLSX.writeFile(
   {Object.entries(categoryTotals).length === 0 ? (
     <div
   style={{
-    color: "#6b7280",
+    color: "#927f70",
     fontSize: 14,
     padding: "4px 0",
     lineHeight: 1.4,
@@ -2443,7 +2444,7 @@ XLSX.writeFile(
             borderBottom:
   index === Object.entries(categoryTotals).length - 1
     ? "none"
-    : "1px solid #eee",
+    : "1px solid #e6dcd0",
 			  minWidth: 0,
           }}
         >
@@ -2452,7 +2453,7 @@ XLSX.writeFile(
               display: "block",
 			fontSize: 15,
               fontWeight: 600,
-              color: "#111827",
+              color: "#49392f",
               lineHeight: 1.4,
 			  minWidth: 0,
 			  flex: "1 1 160px",
@@ -2470,7 +2471,7 @@ XLSX.writeFile(
               	flexWrap: "wrap",
               	gap: 12,
               	rowGap: 6,
-              	color: "#374151",
+              	color: "#674b39",
 				minWidth: 0,
             }}
           >
@@ -2481,7 +2482,7 @@ XLSX.writeFile(
                   style={{
                     fontSize: 14,
                     fontWeight: 600,
-                    color: "#111827",
+                    color: "#49392f",
                     whiteSpace: "nowrap",
                     lineHeight: 1.4,
 					flexShrink: 0,
@@ -2508,7 +2509,7 @@ XLSX.writeFile(
   style={{
     ...sectionStyle,
     padding: 16,
-    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
     marginBottom: 16,
 	minWidth: 0,
   }}
@@ -2517,7 +2518,7 @@ XLSX.writeFile(
     style={{
       fontSize: 22,
       fontWeight: 700,
-      color: "#111827",
+      color: "#49392f",
       marginTop: 0,
       marginBottom: 10,
     }}
@@ -2529,7 +2530,7 @@ XLSX.writeFile(
           .length === 0 ? (
           <div
   style={{
-    color: "#6b7280",
+    color: "#927f70",
     fontSize: 14,
     padding: "4px 0",
     lineHeight: 1.4,
@@ -2557,11 +2558,11 @@ XLSX.writeFile(
                   style={{
                     marginBottom: 10,
                     border: isOpen
-                      ? "2px solid #111827"
-                      : "1px solid #e5e7eb",
+                      ? "2px solid #49392f"
+                      : "1px solid #e6dcd0",
                     borderRadius: 12,
                     padding: 14,
-                    background: isOpen ? "#f9fafb" : "#ffffff",
+                    background: isOpen ? "#faf7f2" : "#ffffff",
                     boxShadow: isOpen
                       ? "0 2px 8px rgba(0,0,0,0.10)"
                       : "0 1px 3px rgba(0,0,0,0.06)",
@@ -2606,7 +2607,7 @@ XLSX.writeFile(
   							display: "block",
   							fontSize: 16,
   							fontWeight: 700,
-  							color: "#111827",
+  							color: "#49392f",
   							lineHeight: 1.4,
   							minWidth: 0,
   							maxWidth: "100%",
@@ -2621,7 +2622,7 @@ XLSX.writeFile(
                     <span
   style={{
     marginLeft: 8,
-    color: "#6b7280",
+    color: "#927f70",
     fontSize: 14,
     flexShrink: 0,
     maxWidth: "100%",
@@ -2653,7 +2654,7 @@ XLSX.writeFile(
                             style={{
                               fontSize: 14,
                               fontWeight: 600,
-                              color: "#111827",
+                              color: "#49392f",
                               whiteSpace: "nowrap",
 }}
                           >
@@ -2672,9 +2673,9 @@ XLSX.writeFile(
 					 style={{
  						 marginTop: 12,
  						 padding: 12,
- 						 background: "#f8fafc",
+ 						 background: "#faf7f2",
  						 borderRadius: 10,
- 						 border: "1px solid #e5e7eb",
+ 						 border: "1px solid #e6dcd0",
  						 overflow: "hidden",
  						 lineHeight: 1.4,
  						 width: "100%",
@@ -2703,7 +2704,7 @@ XLSX.writeFile(
   							borderBottom:
    							index === cardExpenses.length - 1
   								 ? "none"
-  								 : "1px solid #e5e7eb",
+  								 : "1px solid #e6dcd0",
   							}}
                           >
                             <span
@@ -2715,7 +2716,7 @@ XLSX.writeFile(
   									overflow: "hidden",
   									textOverflow: "ellipsis",
   									whiteSpace: "nowrap",
-  									color: "#4b5563",
+  									color: "#927f70",
   									fontSize: 14,
   									lineHeight: 1.4,
   									}}
@@ -2728,7 +2729,7 @@ XLSX.writeFile(
   								style={{
   									fontSize: 14,
     								fontWeight: 700,
-    								color: "#111827",
+    								color: "#49392f",
    									whiteSpace: "nowrap",
    									textAlign: "right",
   									minWidth: 80,
@@ -2763,7 +2764,7 @@ XLSX.writeFile(
         style={{
         ...sectionStyle,
         padding: 16,
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+        boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
         marginBottom: 16,
 		minWidth: 0,
         }}
@@ -2782,7 +2783,7 @@ XLSX.writeFile(
             style={{
               fontSize: 22,
               fontWeight: 700,
-              color: "#111827",
+              color: "#49392f",
               marginTop: 0,
               marginBottom: 10,
               }}
@@ -2812,8 +2813,8 @@ XLSX.writeFile(
                 height: 40,
                 padding: "0 12px",
                 background: "#ffffff",
-                color: "#374151",
-                border: "1px solid #d1d5db",
+                color: "#674b39",
+                border: "1px solid #d8c6b4",
                 borderRadius: 8,
                 cursor: "pointer",
                 fontWeight: 600,
@@ -2835,8 +2836,8 @@ XLSX.writeFile(
                 height: 40,
                 padding: "0 12px",
                 background: "#ffffff",
-                color: "#374151",
-                border: "1px solid #d1d5db",
+                color: "#674b39",
+                border: "1px solid #d8c6b4",
                 borderRadius: 8,
                 cursor: "pointer",
                 fontWeight: 600,
@@ -2861,15 +2862,15 @@ XLSX.writeFile(
         >
           <div
             style={{
-              border:"1px solid #eee",
+              border:"1px solid #e6dcd0",
               borderRadius: 12,
               padding: 14,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
             }}
           >
             <div
               style={{
-                color: "#6b7280",
+                color: "#927f70",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: 1.4,
@@ -2882,7 +2883,7 @@ XLSX.writeFile(
               style={{
                 fontSize: 20,
                 fontWeight: 700,
-                color: "#111827",
+                color: "#49392f",
                 lineHeight: 1.25,
                 marginTop: 4,
               }}
@@ -2916,15 +2917,15 @@ XLSX.writeFile(
           <div
             style={{
               border:
-                "1px solid #eee",
+                "1px solid #e6dcd0",
               borderRadius: 12,
               padding: 14,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
             }}
           >
             <div
               style={{
-                color: "#6b7280",
+                color: "#927f70",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: 1.4,
@@ -2937,7 +2938,7 @@ XLSX.writeFile(
               style={{ 
                 fontSize: 20,
                 fontWeight: 700,
-                color: "#111827",
+                color: "#49392f",
                 lineHeight: 1.25,
                 marginTop: 4,
               }}
@@ -2975,12 +2976,12 @@ XLSX.writeFile(
               borderRadius: 12,
               padding: 14,
               background: "#fff7f7",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+              boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
             }}
           >
             <div
               style={{
-                color: "#6b7280",
+                color: "#927f70",
                 fontSize: 14,
                 fontWeight: 500,
                 lineHeight: 1.4,
@@ -2993,7 +2994,7 @@ XLSX.writeFile(
               style={{
                 fontSize: 20,
                 fontWeight: 700,
-                color: "#111827",
+                color: "#49392f",
                 lineHeight: 1.25,
                 marginTop: 4,
               }}
@@ -3069,7 +3070,7 @@ XLSX.writeFile(
                     borderRadius: 12,
                     padding: 14,
                     marginBottom: 12,
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
 					minWidth: 0,
   					width: "100%",
   					boxSizing: "border-box",
@@ -3104,7 +3105,7 @@ XLSX.writeFile(
   						display: "block",
  						fontSize: 16,
   						fontWeight: 700,
-  						color: "#111827",
+  						color: "#49392f",
   						lineHeight: 1.4,
   						minWidth: 0,
   						maxWidth: "100%",
@@ -3138,7 +3139,7 @@ XLSX.writeFile(
  						 marginTop: 8,
  						 fontSize: 20,
   						fontWeight: 700,
-						color: "#111827",
+						color: "#49392f",
  						 lineHeight: 1.25,
  						 minWidth: 0,
 						}}
@@ -3159,7 +3160,7 @@ XLSX.writeFile(
   key={currency}
  style={{
   fontWeight: 700,
-  color: "#111827",
+  color: "#49392f",
   fontSize: 15,
   whiteSpace: "nowrap",
   lineHeight: 1.4,
@@ -3177,7 +3178,7 @@ XLSX.writeFile(
                       style={{
  						marginTop: 8,
 						fontSize: 14,
-  						color: "#4b5563",
+  						color: "#927f70",
   						lineHeight: 1.4,
   						whiteSpace: "nowrap",
 						}}
@@ -3208,14 +3209,14 @@ XLSX.writeFile(
 
                       <div
                         style={{
-                          background:"#f3f4f6",
+                          background:"#f2ebe2",
                           padding: 12,
                           borderRadius: 10,
                           marginBottom: 10,
                           width: "100%",
                           boxSizing: "border-box",
                           lineHeight: 1.4,
-                          color: "#374151",
+                          color: "#674b39",
                           fontSize: 14,
                         }}
                       >
@@ -3267,14 +3268,14 @@ XLSX.writeFile(
 
                       <div
                         style={{
-                          background:"#f3f4f6",
+                          background:"#f2ebe2",
                           padding: 12,
                           borderRadius: 10,
                           marginBottom: 10,
                           width: "100%",
                           boxSizing: "border-box",
                           lineHeight: 1.4,
-                          color: "#374151",
+                          color: "#674b39",
                           fontSize: 14,
                         }}
                       >
@@ -3327,10 +3328,10 @@ XLSX.writeFile(
   style={{
   height: 40,
   padding: "0 10px",
-  border: "1px solid #d1d5db",
+  border: "1px solid #d8c6b4",
   borderRadius: 10,
   background: "#ffffff",
-  color: "#111827",
+  color: "#49392f",
   fontSize: 14,
   outline: "none",
   boxSizing: "border-box",
@@ -3348,9 +3349,9 @@ XLSX.writeFile(
                                     style={{
   									height: 40,
  									 padding: "0 12px",
-  									background: "#2563eb",
+  									background: "#826349",
   									color: "#ffffff",
- 									 border: "1px solid #2563eb",
+ 									 border: "1px solid #826349",
  									 borderRadius: 10,
  									 cursor: "pointer",
  									 fontWeight: 600,
@@ -3376,8 +3377,8 @@ XLSX.writeFile(
   										height: 40,
   										padding: "0 12px",
   										background: "#ffffff",
-  										color: "#374151",
-  										border: "1px solid #d1d5db",
+  										color: "#674b39",
+  										border: "1px solid #d8c6b4",
   										borderRadius: 10,
   										cursor: "pointer",
   										fontWeight: 600,
@@ -3406,8 +3407,8 @@ XLSX.writeFile(
                                         height: 40,
                                         padding: "0 12px",
                                         background: "#ffffff",
-                                        color: "#374151",
-                                        border: "1px solid #d1d5db",
+                                        color: "#674b39",
+                                        border: "1px solid #d8c6b4",
                                         borderRadius: 10,
                                         cursor: "pointer",
                                         fontWeight: 600,
@@ -3429,7 +3430,7 @@ XLSX.writeFile(
     marginBottom: 8,
     fontSize: 15,
     fontWeight: 700,
-    color: "#111827",
+    color: "#49392f",
   }}
 >
   帳單明細
@@ -3440,7 +3441,7 @@ XLSX.writeFile(
                        <div
                           style={{
                             padding: "12px 0",
-                            color: "#6b7280",
+                            color: "#927f70",
                             fontSize: 14,
 							lineHeight: 1.4,
                             }}
@@ -3463,7 +3464,7 @@ XLSX.writeFile(
                                 rowGap: 4,
                                 padding: "7px 0",
 								  minWidth: 0,
-                                borderBottom: "1px solid #eee",
+                                borderBottom: "1px solid #e6dcd0",
                               }}
                             >
   {/* ======================================================================
@@ -3479,7 +3480,7 @@ XLSX.writeFile(
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
                                     whiteSpace: "nowrap",
-                                    color: "#4b5563",
+                                    color: "#927f70",
                                     fontSize: 14,
                                     lineHeight: 1.4,
                                   }}
@@ -3495,7 +3496,7 @@ XLSX.writeFile(
                               style={{
                                     fontSize: 14,
                                     fontWeight: 700,
-                                    color: "#111827",
+                                    color: "#49392f",
                                     whiteSpace: "nowrap",
                                     textAlign: "right",
                                     minWidth: 80,
@@ -3556,7 +3557,7 @@ XLSX.writeFile(
             style={{
               ...sectionStyle,
             padding: 16,
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
             marginBottom: 16,
 			minWidth: 0,
             }}
@@ -3577,7 +3578,7 @@ XLSX.writeFile(
                 margin: 0,
                 fontSize: 22,
                 fontWeight: 700,
-                color: "#111827",
+                color: "#49392f",
                 marginBottom: 10,
                  }}
             >
@@ -3589,9 +3590,9 @@ XLSX.writeFile(
                 style={{
                       height: 40,
                       padding: "0 12px",
-                      background: "#2563eb",
+                      background: "#826349",
                       color: "#ffffff",
-                      border: "1px solid #2563eb",
+                      border: "1px solid #826349",
                       borderRadius: 10,
                       cursor: "pointer",
                       fontWeight: 600,
@@ -3635,10 +3636,10 @@ XLSX.writeFile(
                 height: 40,
                 padding: "0 12px",
                 width: 220,
-                border: "1px solid #d1d5db",
+                border: "1px solid #d8c6b4",
                 borderRadius: 10,
                 background: "#ffffff",
-                color: "#111827",
+                color: "#49392f",
                 fontSize: 14,
                 outline: "none",
                  boxSizing: "border-box",
@@ -3661,10 +3662,10 @@ XLSX.writeFile(
               style={{
                 height: 40,
                   padding: "0 12px",
-                  border: "1px solid #d1d5db",
+                  border: "1px solid #d8c6b4",
                   borderRadius: 10,
                   background: "#ffffff",
-                  color: "#111827",
+                  color: "#49392f",
                   fontSize: 14,
                   outline: "none",
                   boxSizing: "border-box",
@@ -3701,10 +3702,10 @@ XLSX.writeFile(
               style={{
                   height: 40,
                   padding: "0 12px",
-                  border: "1px solid #d1d5db",
+                  border: "1px solid #d8c6b4",
                   borderRadius: 10,
                   background: "#ffffff",
-                  color: "#111827",
+                  color: "#49392f",
                   fontSize: 14,
                   outline: "none",
                   boxSizing: "border-box",
@@ -3756,10 +3757,10 @@ XLSX.writeFile(
               style={{
                   height: 40,
                   padding: "0 12px",
-                  border: "1px solid #d1d5db",
+                  border: "1px solid #d8c6b4",
                   borderRadius: 10,
                   background: "#ffffff",
-                  color: "#111827",
+                  color: "#49392f",
                   fontSize: 14,
                   outline: "none",
                   boxSizing: "border-box",
@@ -3791,10 +3792,10 @@ XLSX.writeFile(
               style={{
                   height: 40,
                   padding: "0 12px",
-                  border: "1px solid #d1d5db",
+                  border: "1px solid #d8c6b4",
                   borderRadius: 10,
                   background: "#ffffff",
-                  color: "#111827",
+                  color: "#49392f",
                   fontSize: 14,
                   outline: "none",
                   boxSizing: "border-box",
@@ -3833,12 +3834,12 @@ XLSX.writeFile(
 
             <div
               style={{
-                border: "1px solid #e5e7eb",
+                border: "1px solid #e6dcd0",
                 borderRadius: 10,
                 padding: 12,
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
                 fontSize: 14,
-                color: "#4b5563",
+                color: "#927f70",
                 lineHeight: 1.4,
                 background: "#ffffff",
               }}
@@ -3852,7 +3853,7 @@ XLSX.writeFile(
                 style={{
                   fontSize: 20,
                   fontWeight: 700,
-                  color: "#111827",
+                  color: "#49392f",
                   lineHeight: 1.2,
                   }}
               >
@@ -3867,12 +3868,12 @@ XLSX.writeFile(
 
             <div
               style={{
-                border: "1px solid #e5e7eb",
+                border: "1px solid #e6dcd0",
                 borderRadius: 10,
                 padding: 12,
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
                 fontSize: 14,
-                color: "#4b5563",
+                color: "#927f70",
                 lineHeight: 1.4,
                 background: "#ffffff",
               }}
@@ -3886,7 +3887,7 @@ XLSX.writeFile(
                 style={{
                   fontSize: 20,
                   fontWeight: 700,
-                  color: "#111827",
+                  color: "#49392f",
                   lineHeight: 1.2,
                   }}
               >
@@ -3901,13 +3902,13 @@ XLSX.writeFile(
 
             <div
               style={{
-                border: "1px solid #e5e7eb",
+                border: "1px solid #e6dcd0",
                 background:"#fff7f7",
                 borderRadius: 10,
                 padding: 12,
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
                 fontSize: 14,
-                color: "#4b5563",
+                color: "#927f70",
                 lineHeight: 1.4,
               }}
             >
@@ -3919,7 +3920,7 @@ XLSX.writeFile(
               <strong
                 style={{
                   fontSize: 20,
-                  color: "#111827",
+                  color: "#49392f",
                   lineHeight: 1.2,
                 }}
               >
@@ -3934,12 +3935,12 @@ XLSX.writeFile(
 
             <div
               style={{
-                border: "1px solid #e5e7eb",
+                border: "1px solid #e6dcd0",
                 borderRadius: 10,
                 padding: 12,
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
                 fontSize: 14,
-                color: "#4b5563",
+                color: "#927f70",
                 lineHeight: 1.4,
                 background: "#ffffff",
               }}
@@ -3951,7 +3952,7 @@ XLSX.writeFile(
                   style={{
                     fontSize: 20,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                     lineHeight: 1.2,
                     }}
                 >
@@ -3970,7 +3971,7 @@ XLSX.writeFile(
                         style={{
                           fontSize: 20,
                           fontWeight: 700,
-                          color: "#111827",
+                          color: "#49392f",
                           whiteSpace: "nowrap",
                           lineHeight: 1.2,
                           }}
@@ -4033,7 +4034,7 @@ XLSX.writeFile(
                     borderRadius: 12,
                     padding: 14,
                     marginBottom: 12,
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+                    boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
 					minWidth: 0,
   					width: "100%",
   					boxSizing: "border-box",
@@ -4078,7 +4079,7 @@ XLSX.writeFile(
                            display: "block",
 						   fontSize: 16,
                            fontWeight: 700,
-                           color: "#111827",
+                           color: "#49392f",
                            minWidth: 0,
 						   maxWidth: "100%",
                            flex: "1 1 220px",
@@ -4125,7 +4126,7 @@ XLSX.writeFile(
                         marginBottom: 2,
                         fontSize: 20,
                         fontWeight: 700,
-                        color: "#111827",
+                        color: "#49392f",
   						lineHeight: 1.25,
   						minWidth: 0,
                       }}
@@ -4146,7 +4147,7 @@ XLSX.writeFile(
   key={currency}
   style={{
     fontWeight: 700,
-    color: "#111827",
+    color: "#49392f",
     fontSize: 15,
     whiteSpace: "nowrap",
 	  lineHeight: 1.4,
@@ -4171,9 +4172,9 @@ XLSX.writeFile(
                       style={{
                          paddingTop: 2,
 						 marginTop: 12,
-                         background: "#f9fafb",
+                         background: "#faf7f2",
                          borderRadius: 10,
-                         border: "1px solid #e5e7eb",
+                         border: "1px solid #e6dcd0",
                          width: "100%",
 						 minWidth: 0,
                          boxSizing: "border-box",
@@ -4183,7 +4184,7 @@ XLSX.writeFile(
                       <div
                         style={{
                             fontSize: 14,
-                            color: "#4b5563",
+                            color: "#927f70",
                             lineHeight: 1.4,
                           }}
                         >
@@ -4197,7 +4198,7 @@ XLSX.writeFile(
                     style={{
                       marginTop: 5,
                       fontSize: 14,
-                      color: "#4b5563",
+                      color: "#927f70",
                      lineHeight: 1.4,
                           }}
                         >
@@ -4212,7 +4213,7 @@ XLSX.writeFile(
                               marginBottom: 8,
                               fontSize: 15,
                               fontWeight: 700,
-                              color: "#111827",
+                              color: "#49392f",
                             }}
                           >
                             支出明細
@@ -4224,7 +4225,7 @@ XLSX.writeFile(
                           style={{
                             marginTop: 6,
                             padding: "10px 0",
-                            color: "#6b7280",
+                            color: "#927f70",
                             fontSize: 14,
                             lineHeight: 1.4,
                           }}
@@ -4246,7 +4247,7 @@ XLSX.writeFile(
                                 gap: 10,
                                 rowGap: 4,
                                 padding:"7px 0",
-                                borderBottom: "1px solid #e5e7eb",
+                                borderBottom: "1px solid #e6dcd0",
                               }}
                             >
 
@@ -4262,7 +4263,7 @@ XLSX.writeFile(
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       whiteSpace: "nowrap",
-                                      color: "#4b5563",
+                                      color: "#927f70",
                                       fontSize: 14,
                                       lineHeight: 1.4,
                                       maxWidth: "100%",
@@ -4279,7 +4280,7 @@ XLSX.writeFile(
                                  style={{
                                          fontSize: 14,
                                          fontWeight: 700,
-                                         color: "#111827",
+                                         color: "#49392f",
                                          whiteSpace: "nowrap",
                                          textAlign: "right",
                                          minWidth: 80,
@@ -4316,9 +4317,9 @@ XLSX.writeFile(
  				 marginTop: 14,
  				 height: 40,
  				 padding: "0 14px",
-			     background: "#f3f4f6",
-				 color: "#374151",
-				 border: "1px solid #d1d5db",
+			     background: "#f2ebe2",
+				 color: "#674b39",
+				 border: "1px solid #d8c6b4",
  				 borderRadius: 10,
 				 cursor: "pointer",
 				 fontWeight: 600,
@@ -4343,7 +4344,7 @@ XLSX.writeFile(
           style={{
             ...sectionStyle,
             padding: 16,
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+            boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
             marginBottom: 16,
 			minWidth: 0,
             }}
@@ -4352,7 +4353,7 @@ XLSX.writeFile(
           style={{
             fontSize: 22,
             fontWeight: 700,
-            color: "#111827",
+            color: "#49392f",
             marginTop: 0,
             marginBottom: 14,
            }}
@@ -4378,10 +4379,10 @@ XLSX.writeFile(
       style={{
         padding: "0px 12px",
         width: 320,
-        border: "1px solid #d1d5db",
+        border: "1px solid #d8c6b4",
         borderRadius: 10,
         background: "#ffffff",
-        color: "#111827",
+        color: "#49392f",
         fontSize: 14,
         outline: "none",
         height: 40,
@@ -4410,7 +4411,7 @@ XLSX.writeFile(
               <div
                 style={{
                   fontSize: 14,
-                  color: "#666",
+                  color: "#927f70",
                   marginBottom: 5,
                 }}
               >
@@ -4432,10 +4433,10 @@ XLSX.writeFile(
         width: "100%",
         height: 40,
         padding: "0 12px",
-        border: "1px solid #d1d5db",
+        border: "1px solid #d8c6b4",
         borderRadius: 10,
         background: "#ffffff",
-        color: "#111827",
+        color: "#49392f",
         fontSize: 14,
         outline: "none",
         boxSizing: "border-box",
@@ -4467,7 +4468,7 @@ XLSX.writeFile(
   <div
     style={{
       fontSize: 14,
-      color: "#666",
+      color: "#927f70",
       marginBottom: 5,
     }}
   >
@@ -4485,10 +4486,10 @@ XLSX.writeFile(
       width: "100%",
       height: 40,
       padding: "0 12px",
-      border: "1px solid #d1d5db",
+      border: "1px solid #d8c6b4",
       borderRadius: 8,
       background: "#ffffff",
-      color: "#111827",
+      color: "#49392f",
       fontSize: 14,
 		  outline: "none",
       boxSizing: "border-box",
@@ -4522,7 +4523,7 @@ XLSX.writeFile(
 	<div
     style={{
       fontSize: 14,
-      color: "#666",
+      color: "#927f70",
       marginBottom: 5,
     }}
   >
@@ -4540,10 +4541,10 @@ XLSX.writeFile(
       width: "100%",
 		height: 40,
       padding: "0 12px",
-      border: "1px solid #d1d5db",
+      border: "1px solid #d8c6b4",
       borderRadius: 8,
       background: "#ffffff",
-      color: "#111827",
+      color: "#49392f",
       fontSize: 14,
       outline: "none",
       boxSizing: "border-box",
@@ -4582,7 +4583,7 @@ XLSX.writeFile(
       <div
         style={{
           fontSize: 14,
-          color: "#666",
+          color: "#927f70",
           marginBottom: 5,
         }}
       >
@@ -4602,10 +4603,10 @@ XLSX.writeFile(
           width: "100%",
           height: 40,
           padding: "0 12px",
-          border: "1px solid #d1d5db",
+          border: "1px solid #d8c6b4",
           borderRadius: 10,
           background: "#ffffff",
-          color: "#111827",
+          color: "#49392f",
           fontSize: 14,
           outline: "none",
           boxSizing: "border-box",
@@ -4623,7 +4624,7 @@ XLSX.writeFile(
       <div
         style={{
           fontSize: 14,
-          color: "#666",
+          color: "#927f70",
           marginBottom: 5,
         }}
       >
@@ -4645,10 +4646,10 @@ XLSX.writeFile(
           width: "100%",
           height: 40,
           padding: "0 12px",
-          border: "1px solid #d1d5db",
+          border: "1px solid #d8c6b4",
           borderRadius: 10,
           background: "#ffffff",
-          color: "#111827",
+          color: "#49392f",
           fontSize: 14,
           outline: "none",
           boxSizing: "border-box",
@@ -4677,10 +4678,10 @@ XLSX.writeFile(
       style={{
           height: 40,
           padding: "0 12px",
-          border: "1px solid #d1d5db",
+          border: "1px solid #d8c6b4",
           borderRadius: 10,
           background: "#ffffff",
-          color: "#111827",
+          color: "#49392f",
           fontSize: 14,
           outline: "none",
           boxSizing: "border-box",
@@ -4718,8 +4719,8 @@ XLSX.writeFile(
          height: 40,
          padding: "8px 12px",
          background: "#ffffff",
-         color: "#374151",
-         border: "1px solid #d1d5db",
+         color: "#674b39",
+         border: "1px solid #d8c6b4",
          borderRadius: 10,
          cursor: "pointer",
          fontWeight: 600,
@@ -4739,9 +4740,9 @@ XLSX.writeFile(
          style={{
              height: 40,
              padding: "8px 12px",
-             background: "#2563eb",
+             background: "#826349",
              color: "#ffffff",
-             border: "1px solid #2563eb",
+             border: "1px solid #826349",
              borderRadius: 10,
              cursor: "pointer",
              fontWeight: 600,
@@ -4759,7 +4760,7 @@ XLSX.writeFile(
           style={{
             marginBottom: 10,
             fontSize: 14,
-            color: "#4b5563",
+            color: "#927f70",
 			lineHeight: 1.4,
             }}
         >
@@ -4775,7 +4776,7 @@ XLSX.writeFile(
             marginBottom: 14,
             fontWeight: 700,
             fontSize: 14,
-            color: "#111827",
+            color: "#49392f",
 		    lineHeight: 1.4,
             }}
         >
@@ -4817,7 +4818,7 @@ XLSX.writeFile(
         {visibleMonthlyExpenses.length === 0 ? (
           <div
             style={{
-                color: "#6b7280",
+                color: "#927f70",
                 fontSize: 14,
                 padding: "8px 0",
 				lineHeight: 1.4,
@@ -4839,7 +4840,7 @@ XLSX.writeFile(
                   gap: 10,
                   alignItems: "center",
                   padding: "9px 0",
-                  borderBottom: "1px solid #e5e7eb",
+                  borderBottom: "1px solid #e6dcd0",
 					cursor: "pointer",
 			  	rowGap: 4,
                 }}
@@ -4847,7 +4848,7 @@ XLSX.writeFile(
           <div
             style={{
               fontSize: 14,
-              color: "#4b5563",
+              color: "#927f70",
               whiteSpace: "nowrap",
 			lineHeight: 1.4,
 			  
@@ -4869,13 +4870,13 @@ XLSX.writeFile(
                   style={{
                     fontSize: 14,
                     fontWeight: 600,
-                    color: "#111827",
+                    color: "#49392f",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
 					  lineHeight: 1.4,
 					  marginTop: 2,
-					  textAlign: "right",
+					  textAlign: "left",
 					  flexShrink: 0,
                     }}
                 >
@@ -4887,7 +4888,7 @@ XLSX.writeFile(
            <div
               style={{
                   fontSize: 13,
-                  color: "#6b7280",
+                  color: "#927f70",
                   marginTop: 3,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -4906,7 +4907,7 @@ XLSX.writeFile(
                       fontSize: 14,
                       fontWeight: 700,
                       textAlign: "right",
-                      color: "#111827",
+                      color: "#49392f",
                       whiteSpace: "nowrap",
                       lineHeight: 1.4,
                       minWidth: 80,
@@ -4940,9 +4941,9 @@ XLSX.writeFile(
                   marginTop: 14,
                   height: 40,
                   padding: "8px 14px",
-                  background: "#f3f4f6",
-                  color: "#374151",
-                  border: "1px solid #d1d5db",
+                  background: "#f2ebe2",
+                  color: "#674b39",
+                  border: "1px solid #d8c6b4",
                   borderRadius: 10,
                   cursor: "pointer",
                   fontWeight: 600,
@@ -4974,9 +4975,9 @@ XLSX.writeFile(
           width: 44,
           height: 44,
           borderRadius: "50%",
-          border: "1px solid #d1d5db",
+          border: "1px solid #d8c6b4",
           background: "#ffffff",
-          color: "#374151",
+          color: "#674b39",
           cursor: "pointer",
           fontSize: 20,
           boxShadow:"0 2px 8px rgba(0,0,0,0.12)",
@@ -4989,6 +4990,15 @@ XLSX.writeFile(
       >
         ↑
       </button>
+      <style jsx global>{`
+        @media (max-width: 640px) {
+          .dashboard-beige-page { overflow-x: clip; }
+          .dashboard-beige-page select,
+          .dashboard-beige-page input { max-width: 100%; }
+          .dashboard-beige-page button { max-width: 100%; }
+          .dashboard-beige-page #monthly-expenses > input { width: 100% !important; max-width: 100% !important; margin-bottom: 12px; }
+        }
+      `}</style>
     </main>
   );
 }
