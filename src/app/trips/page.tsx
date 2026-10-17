@@ -422,8 +422,7 @@ const sortedTrips = [
           trip.end_date
         );
 
-  const statusStyle =
-        getTripStatusStyle(status);
+  
 
       return (
         <div
@@ -507,29 +506,30 @@ const sortedTrips = [
             </div>
 
 
-            {/* 右側狀態 */}
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                height: 30,
-                padding: "0 10px",
-                borderRadius: 999,
-                background:
-                  statusStyle.background,
-                color:
-                  statusStyle.color,
-                border:
-                  statusStyle.border,
-                fontSize: 13,
-                fontWeight: 600,
-                whiteSpace: "nowrap",
-              }}
-            >
-              {getTripStatusLabel(
-              status
-              )}
-            </span>
+           
+{/* =========================================
+    右側旅程狀態：統一棕色主題
+   ========================================= */}
+<span
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 30,
+    padding: "0 12px",
+    borderRadius: 999,
+    background: "#f2ebe2",
+    color: "#826349",
+    border: "1px solid #d8c6b4",
+    fontSize: 13,
+    fontWeight: 700,
+    whiteSpace: "nowrap",
+    boxSizing: "border-box",
+  }}
+>
+  {getTripStatusLabel(status)}
+</span>
+
           </div>
 
           
