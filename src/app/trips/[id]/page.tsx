@@ -12595,28 +12595,17 @@ onChange={(e) => {
   </select>
 </label>
 
-</div>
-
-  
 {/* =========================================
-    行李排序與未打包快速篩選
+    未打包快速篩選：右側按鈕
    ========================================= */}
 
 <div
   style={{
+    marginLeft: "auto",
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
-    gap: 12,
-    padding: 16,
-    background: "#faf7f2",
-    border: "1px solid #e6dcd0",
-    borderRadius: 14,
   }}
 >
-  
-
   <button
     type="button"
     onClick={() =>
@@ -12646,6 +12635,15 @@ onChange={(e) => {
       : "⬜ 只看未打包"}
   </button>
 </div>
+
+</div>
+
+  
+
+  
+
+  
+
 
     {/* 行李資料列表 */}
     {loadingPackingItems ? (
