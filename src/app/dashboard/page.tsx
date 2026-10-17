@@ -2138,19 +2138,22 @@ XLSX.writeFile(
           onClick={() =>
             scrollToSection("card-statements")
           }
-          style={{
-            height: 40,
-            padding: "0 14px",
-            background: "#ffffff",
-            color: "#674b39",
-            border: "1px solid #d8c6b4",
-            borderRadius: 10,
-            cursor: "pointer",
-            fontWeight: 600,
-            fontSize: 14,
-			flexShrink: 0,
-			whiteSpace: "nowrap",
-            }}
+          
+style={{
+  height: 40,
+  padding: "0 16px",
+  background: "#f2ebe2",
+  color: "#674b39",
+  border: "1px solid #d8c6b4",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+}}
+
         >
           💳 本期帳單
         </button>
@@ -2810,16 +2813,22 @@ XLSX.writeFile(
                   (value) =>!value
                 )
               }
-              style={{
-                height: 40,
-                padding: "0 12px",
-                background: "#ffffff",
-                color: "#674b39",
-                border: "1px solid #d8c6b4",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 600,
-                }}
+              
+style={{
+  height: 40,
+  padding: "0 16px",
+  background: "#f2ebe2",
+  color: "#674b39",
+  border: "1px solid #d8c6b4",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  whiteSpace: "nowrap",
+  flexShrink: 0,
+  boxSizing: "border-box",
+}}
+
               >
               {showZeroBalanceCards
                 ? "隱藏 0 元帳單"
@@ -2833,16 +2842,22 @@ XLSX.writeFile(
                     !value
                 )
               }
-              style={{
-                height: 40,
-                padding: "0 12px",
-                background: "#ffffff",
-                color: "#674b39",
-                border: "1px solid #d8c6b4",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
+              
+style={{
+  height: 40,
+  padding: "0 16px",
+  background: "#f2ebe2",
+  color: "#674b39",
+  border: "1px solid #d8c6b4",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  whiteSpace: "nowrap",
+  flexShrink: 0,
+  boxSizing: "border-box",
+}}
+
             >
               {showStatementHistory
                 ? "隱藏歷史帳單"
