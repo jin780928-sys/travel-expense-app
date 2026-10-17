@@ -18,6 +18,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import AppNavigation from "../../components/AppNavigation";
 
 type MethodType =
   | "credit_card"
@@ -487,34 +488,14 @@ const filteredItems = items.filter(item => {
 
 
 return (
-    <main className="page">
+  <main className="page">
 
-      {/* =========================================
-    返回首頁按鈕
-    與花費紀錄相同樣式
-    ========================================= */}
+  {/* =========================================
+    共用頂部導覽列
+   ========================================= */}
+<AppNavigation />
 
-<div style={{ marginBottom: 28 }}>
-  <Link
-    href="/"
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "12px 20px",
-      backgroundColor: "#eff6ff",
-      color: "#2563eb",
-      border: "1px solid #bfdbfe",
-      borderRadius: 12,
-      fontSize: 16,
-      fontWeight: 700,
-      textDecoration: "none",
-      whiteSpace: "nowrap",
-    }}
-  >
-    ← 回首頁
-  </Link>
-</div>
+      
 
       <header className="header">
         <div>
