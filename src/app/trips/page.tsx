@@ -532,30 +532,38 @@ const sortedTrips = [
             </span>
           </div>
 
-          {/* 查看旅程 */}
-          <div
-            style={{
-              marginTop: 16,
-              paddingTop: 14,
-              borderTop:
-                "1px solid #f3f4f6",
-              display: "flex",
-              justifyContent:
-                "flex-end",
-              }}
-          >
-            <Link
-              href={`/trips/${trip.id}`}
-              style={{
-                color: "#2563eb",
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: "none",
-              }}
-            >
-              查看旅程 →
-              </Link>
-          </div>
+          
+{/* =========================================
+    查看旅程：統一棕色主題
+   ========================================= */}
+
+<div
+  style={{
+    marginTop: 16,
+    paddingTop: 14,
+    borderTop: "1px solid #e6dcd0",
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  }}
+>
+  <Link
+    href={`/trips/${trip.id}`}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 6,
+      color: "#826349",
+      fontSize: 14,
+      fontWeight: 700,
+      textDecoration: "none",
+      whiteSpace: "nowrap",
+    }}
+  >
+    查看旅程 →
+  </Link>
+</div>
+
         </div>
       );
     })}
