@@ -398,46 +398,102 @@ const inactivePeople = people.filter(
       <div className="people-container">
 
         
-{/* ==================================
-    13. HEADER / 頁面標題＋回首頁
-================================== */}
 
-<header className="page-header">
+{/* =========================================
+    13. 人員管理：統一頁面標題區
+   ========================================= */}
 
-  <div>
-    <h1 className="page-title">
+<header
+  className="page-header"
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 16,
+    marginBottom: 24,
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {/* 左側：標題與說明 */}
+  <div
+    style={{
+      flex: "1 1 220px",
+      minWidth: 0,
+    }}
+  >
+    <h1
+      className="page-title"
+      style={{
+        margin: 0,
+        fontSize: "clamp(24px, 4vw, 30px)",
+        fontWeight: 800,
+        lineHeight: 1.3,
+        color: "#49392f",
+      }}
+    >
       人員管理
     </h1>
 
-    <p className="page-description">
+    <p
+      className="page-description"
+      style={{
+        margin: "8px 0 0",
+        fontSize: 14,
+        lineHeight: 1.6,
+        color: "#927f70",
+      }}
+    >
       管理日常記帳成員與旅遊同行人員
     </p>
   </div>
 
+  {/* 右側：啟用人員數量 */}
   <div
+    className="people-count"
     style={{
-      display: "flex",
+      display: "inline-flex",
       alignItems: "center",
-      gap: 10,
-      flexWrap: "wrap",
-      justifyContent: "flex-end",
+      justifyContent: "center",
+      gap: 8,
+      padding: "10px 16px",
+      background: "#ffffff",
+      border: "1px solid #e6dcd0",
+      borderRadius: 12,
+      boxSizing: "border-box",
+      whiteSpace: "nowrap",
+      flexShrink: 0,
     }}
   >
+    <span
+      className="count-number"
+      style={{
+        fontSize: 22,
+        fontWeight: 800,
+        color: "#49392f",
+      }}
+    >
+      {activePeople.length}
+    </span>
 
-    {/* 啟用人員數量 */}
-    <div className="people-count">
-      <span className="count-number">
-        {activePeople.length}
-      </span>
-      <span className="count-label">
-        位啟用中
-      </span>
-    </div>
-
-
+    <span
+      className="count-label"
+      style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#927f70",
+      }}
+    >
+      位啟用中
+    </span>
   </div>
-
 </header>
+
 
         {/* ==================================
             14. MESSAGE / 提示訊息
