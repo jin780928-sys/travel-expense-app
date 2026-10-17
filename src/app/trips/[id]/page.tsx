@@ -10106,125 +10106,145 @@ alignItems: "center",
         </span>
       </div>
 
-      {/* 取車與還車資訊 */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(min(100%, 210px), 1fr))",
-          gap: 12,
-        }}
-      >
-        <div
-          style={{
-            padding: 16,
-            background: "#faf7f2",
-            borderRadius: 12,
-            minWidth: 0,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#826349",
-              marginBottom: 10,
-            }}
-          >
-            📍 取車
-          </div>
+      
+{/* 取車、租車時長、還車 */}
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) minmax(110px, 0.8fr) minmax(0, 1fr)",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 16,
+    padding: "12px 0",
+  }}
+>
+  {/* 左側：取車 */}
+  <div style={{ minWidth: 0 }}>
+    <div
+      style={{
+        fontSize: 13,
+        fontWeight: 700,
+        color: "#826349",
+        marginBottom: 10,
+      }}
+    >
+      📍 取車
+    </div>
 
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 800,
-              color: "#49392f",
-              overflowWrap: "anywhere",
-            }}
-          >
-            {rental.pickup_location || "未設定"}
-          </div>
+    <div
+      style={{
+        fontSize: 18,
+        fontWeight: 800,
+        color: "#49392f",
+        overflowWrap: "anywhere",
+      }}
+    >
+      {rental.pickup_location || "未設定"}
+    </div>
 
-          <div
-            style={{
-              marginTop: 8,
-              fontSize: 13,
-              color: "#674b39",
-            }}
-          >
-            {formatFlightDateTime(
-              rental.pickup_at,
-              rental.pickup_timezone
-            )}
-          </div>
-        </div>
+    <div
+      style={{
+        marginTop: 8,
+        fontSize: 13,
+        color: "#674b39",
+        overflowWrap: "anywhere",
+      }}
+    >
+      {formatFlightDateTime(
+        rental.pickup_at,
+        rental.pickup_timezone
+      )}
+    </div>
+  </div>
 
-        <div
-          style={{
-            padding: 16,
-            background: "#faf7f2",
-            borderRadius: 12,
-            minWidth: 0,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#826349",
-              marginBottom: 10,
-            }}
-          >
-            📍 還車
-          </div>
+  {/* 中間：租車總時長 */}
+  <div
+    style={{
+      minWidth: 0,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: "center",
+      gap: 8,
+      color: "#674b39",
+    }}
+  >
+    <span
+      style={{
+        fontSize: 26,
+        lineHeight: 1,
+        color: "#826349",
+      }}
+    >
+      →
+    </span>
 
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 800,
-              color: "#49392f",
-              overflowWrap: "anywhere",
-            }}
-          >
-            {rental.dropoff_location || "未設定"}
-          </div>
+    <span
+      style={{
+        fontSize: 14,
+        fontWeight: 700,
+        overflowWrap: "anywhere",
+      }}
+    >
+      {/** 原本租車總時長的運算結果放這裡 */}
+    </span>
 
-          <div
-            style={{
-              marginTop: 8,
-              fontSize: 13,
-              color: "#674b39",
-            }}
-          >
-            {formatFlightDateTime(
-              rental.dropoff_at,
-              rental.dropoff_timezone
-            )}
-          </div>
-        </div>
-      </div>
+    <span
+      style={{
+        fontSize: 12,
+        color: "#927f70",
+      }}
+    >
+      租車總時長
+    </span>
+  </div>
 
-      {/* 租車總時長 */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 8,
-          marginTop: 12,
-          padding: "12px 16px",
-          borderRadius: 10,
-          background: "#f2ebe2",
-          color: "#674b39",
-          fontSize: 13,
-        }}
-      >
-        <span style={{ fontWeight: 700 }}>
-          🕒 租車總時長
-        </span>
+  {/* 右側：還車 */}
+  <div
+    style={{
+      minWidth: 0,
+      textAlign: "right",
+    }}
+  >
+    <div
+      style={{
+        fontSize: 13,
+        fontWeight: 700,
+        color: "#826349",
+        marginBottom: 10,
+      }}
+    >
+      📍 還車
+    </div>
 
-        <strong>{rentalDuration}</strong>
-      </div>
+    <div
+      style={{
+        fontSize: 18,
+        fontWeight: 800,
+        color: "#49392f",
+        overflowWrap: "anywhere",
+      }}
+    >
+      {rental.dropoff_location || "未設定"}
+    </div>
+
+    <div
+      style={{
+        marginTop: 8,
+        fontSize: 13,
+        color: "#674b39",
+        overflowWrap: "anywhere",
+      }}
+    >
+      {formatFlightDateTime(
+        rental.dropoff_at,
+        rental.dropoff_timezone
+      )}
+    </div>
+  </div>
+</div>
+
 
       {/* 訂單與費用資訊 */}
       <div
