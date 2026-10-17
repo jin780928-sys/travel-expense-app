@@ -490,23 +490,87 @@ const filteredItems = items.filter(item => {
 return (
   <main className="page">
 
-  {/* =========================================
-    共用頂部導覽列
+    <AppNavigation />   
+
+    
+{/* =========================================
+    付款方式管理：統一頁面標題區
    ========================================= */}
-<AppNavigation />
 
-      
+<header
+  className="header"
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 16,
+    marginBottom: 24,
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {/* 左側：標題與說明 */}
+  <div
+    style={{
+      flex: "1 1 220px",
+      minWidth: 0,
+    }}
+  >
+    <h1
+      style={{
+        margin: 0,
+        fontSize: "clamp(24px, 4vw, 30px)",
+        fontWeight: 800,
+        lineHeight: 1.3,
+        color: "#49392f",
+      }}
+    >
+      付款方式管理
+    </h1>
 
-      <header className="header">
-        <div>
-          <h1>付款方式管理</h1>
-          <p>信用卡、金融卡與電子支付集中管理</p>
-        </div>
+    <p
+      style={{
+        margin: "8px 0 0",
+        fontSize: 14,
+        lineHeight: 1.6,
+        color: "#927f70",
+      }}
+    >
+      信用卡、金融卡與電子支付集中管理
+    </p>
+  </div>
 
-        <button onClick={openNew} style={primaryButton}>
-          ＋ 新增
-        </button>
-      </header>
+  {/* 右側：新增付款方式 */}
+  <button
+    type="button"
+    onClick={openNew}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: 44,
+      padding: "0 20px",
+      boxSizing: "border-box",
+      background: "#826349",
+      color: "#ffffff",
+      border: "1px solid #826349",
+      borderRadius: 12,
+      fontSize: 14,
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      flexShrink: 0,
+      cursor: "pointer",
+    }}
+  >
+    ＋ 新增付款方式
+  </button>
+</header>
+
 
       <section className="overview">
         <div>
