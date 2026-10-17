@@ -705,167 +705,232 @@ return (
 
       </header>
 
-{/* ============================================================
-    08. 搜尋與篩選區
-    ============================================================ */}
 
+{/* =========================================
+    08. 搜尋與篩選區：統一棕色主題
+   ========================================= */}
 
-      <section className="filterPanel">
+<section
+  className="filterPanel"
+  style={{
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    marginBottom: 24,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {/* 第一排：搜尋、月份、旅程 */}
+  <div
+    className="filterRow"
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+      gap: 16,
+      marginBottom: 18,
+    }}
+  >
+    {/* 搜尋 */}
+    <label className="field searchField">
+      <span style={{ color: "#674b39", fontWeight: 700 }}>
+        搜尋花費
+      </span>
+      <input
+        type="search"
+        value={search}
+        placeholder="品項、分類、旅程、信用卡、備註"
+        onChange={(event) => {
+          setSearch(event.target.value);
+          resetPage();
+        }}
+        style={{
+          width: "100%",
+          height: 44,
+          padding: "0 14px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          boxSizing: "border-box",
+        }}
+      />
+    </label>
 
-        <div className="filterRow">
+    {/* 月份 */}
+    <label className="field">
+      <span style={{ color: "#674b39", fontWeight: 700 }}>
+        月份
+      </span>
+      <select
+        value={month}
+        onChange={(event) => {
+          setMonth(event.target.value);
+          resetPage();
+        }}
+        style={{
+          width: "100%",
+          height: 44,
+          padding: "0 14px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          boxSizing: "border-box",
+        }}
+      >
+        <option value="all">全部月份</option>
+        {monthOptions.map((value) => (
+          <option key={value} value={value}>
+            {formatMonth(value)}
+          </option>
+        ))}
+      </select>
+    </label>
 
-          {/* 搜尋 */}
-          <label className="field searchField">
+    {/* 旅程 */}
+    <label className="field">
+      <span style={{ color: "#674b39", fontWeight: 700 }}>
+        旅程
+      </span>
+      <select
+        value={selectedTrip}
+        onChange={(event) => {
+          setSelectedTrip(event.target.value);
+          if (event.target.value !== "all") {
+            setScope("trip");
+          }
+          resetPage();
+        }}
+        style={{
+          width: "100%",
+          height: 44,
+          padding: "0 14px",
+          border: "1px solid #d8c6b4",
+          borderRadius: 10,
+          background: "#ffffff",
+          color: "#49392f",
+          fontSize: 14,
+          boxSizing: "border-box",
+        }}
+      >
+        <option value="all">全部旅程</option>
+        {tripOptions.map(([id, name]) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
+      </select>
+    </label>
+  </div>
 
+  {/* 第二排：花費類型與排序 */}
+  <div
+    className="filterBottom"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: 12,
+    }}
+  >
+    <div
+      className="typeTabs"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 10,
+      }}
+    >
+      {([
+        ["all", "全部花費"],
+        ["daily", "日常花費"],
+        ["trip", "旅程花費"],
+      ] as const).map(([value, label]) => {
+        const selected = scope === value;
 
-            <span>搜尋花費</span>
+        return (
+          <button
+            key={value}
+            type="button"
+            className={
+              selected
+                ? "typeButton selected"
+                : "typeButton"
+            }
+            aria-pressed={selected}
+            onClick={() => {
+              setScope(value);
 
-            <input
-              type="search"
-              value={search}
-              placeholder="品項、分類、旅程、信用卡、備註"
-              onChange={(event) => {
-                setSearch(event.target.value);
-                resetPage();
-              }}
-            />
+              if (value === "daily") {
+                setSelectedTrip("all");
+              }
 
-          </label>
-
-          {/* 月份 */}
-          <label className="field">
-
-            <span>月份</span>
-
-            <select
-              value={month}
-              onChange={(event) => {
-                setMonth(event.target.value);
-                resetPage();
-              }}
-            >
-              <option value="all">
-                全部月份
-                </option>
-
-              {monthOptions.map((value) => (
-
-                <option key={value} value={value}>
-                  {formatMonth(value)}
-                </option>
-
-                ))}
-
-            </select>
-
-          </label>
-
-          {/* 旅程 */}
-          <label className="field">
-
-            <span>旅程</span>
-
-            <select
-              value={selectedTrip}
-              onChange={(event) => {
-
-                setSelectedTrip(event.target.value);
-
-                if (event.target.value !== "all") {
-                  setScope("trip");
-                }
-
-                resetPage();
-              }}
-            >
-              <option value="all">
-                全部旅程
-              </option>
-
-              {tripOptions.map(([id, name]) => (
-
-                <option key={id} value={id}>
-                  {name}
-                </option>
-
-              ))}
-
-            </select>
-
-            </label>
-
-        </div>
-
-        <div className="filterBottom">
-
-          {/* 花費類型 */}
-          <div className="typeTabs">
-
-
-            {([
-              ["all", "全部花費"],
-              ["daily", "日常花費"],
-              ["trip", "旅程花費"],
-            ] as const).map(([value, label]) => (
-
-              <button
-                key={value}
-                type="button"
-                className={
-                  scope === value
-                    ? "typeButton selected"
-                    : "typeButton"
-                }
-                onClick={() => {
-
-                  setScope(value);
-
-                  if (value === "daily") {
-                    setSelectedTrip("all");
-                  }
-
-                  resetPage();
-                }}
-              >
-                {label}
-              </button>
-
-                            ))}
-
-          </div>
-
-          {/* 排序 */}
-          <select
-            className="sortSelect"
-            aria-label="排序方式"
-            value={sort}
-            onChange={(event) => {
-              setSort(
-                event.target.value as SortOption
-              );
               resetPage();
             }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 40,
+              padding: "0 16px",
+              border: selected
+                ? "1px solid #826349"
+                : "1px solid #d8c6b4",
+              borderRadius: 10,
+              background: selected
+                ? "#826349"
+                : "#ffffff",
+              color: selected
+                ? "#ffffff"
+                : "#674b39",
+              fontSize: 14,
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              boxSizing: "border-box",
+            }}
           >
-            <option value="newest">
-              日期：最新優先
-            </option>
+            {label}
+          </button>
+        );
+      })}
+    </div>
 
-            <option value="oldest">
-              日期：最舊優先
-            </option>
-            
-            <option value="amount_desc">
-              金額：高到低
-            </option>
+    {/* 排序 */}
+    <select
+      className="sortSelect"
+      aria-label="排序方式"
+      value={sort}
+      onChange={(event) => {
+        setSort(event.target.value as SortOption);
+        resetPage();
+      }}
+      style={{
+        height: 42,
+        padding: "0 14px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+        background: "#ffffff",
+        color: "#49392f",
+        fontSize: 14,
+        boxSizing: "border-box",
+        marginLeft: "auto",
+      }}
+    >
+      <option value="newest">日期：最新優先</option>
+      <option value="oldest">日期：最舊優先</option>
+      <option value="amount_desc">金額：高到低</option>
+      <option value="amount_asc">金額：低到高</option>
+    </select>
+  </div>
+</section>
 
-            <option value="amount_asc">
-              金額：低到高
-            </option>
-          </select>
-
-          </div>
-
-      </section>
 
 
 {/* ============================================================
