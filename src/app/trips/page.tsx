@@ -48,37 +48,7 @@ function getTripStatus(
 // active   = 綠色
 // ended    = 灰色
 // =========================================================
-function getTripStatusStyle(
-  status:
-    | "upcoming"
-    | "active"
-    | "ended"
-) {
-  if (status === "upcoming") {
-    return {
-      background: "#eff6ff",
-      color: "#1d4ed8",
-      border:
-        "1px solid #bfdbfe",
-    };
-  }
 
-  if (status === "active") {
-    return {
-      background: "#ecfdf5",
-      color: "#047857",
-      border:
-        "1px solid #a7f3d0",
-    };
-  }
-
-  return {
-    background: "#f3f4f6",
-    color: "#6b7280",
-    border:
-      "1px solid #e5e7eb",
-  };
-}
 
 // =========================================================
 // 旅程狀態中文名稱
