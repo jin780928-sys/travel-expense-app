@@ -28,7 +28,7 @@ import {
   useMemo,
   useState,
 } from "react";
-
+import AppNavigation from "../../components/AppNavigation";
 import { supabase } from "../../lib/supabase";
 
 type Expense = {
@@ -580,6 +580,11 @@ const totalCount = filteredExpenses.length;
 return (
 
     <main className="expensesPage">
+
+{/* =========================================
+    共用頂部導覽列
+   ========================================= */}
+<AppNavigation />
 
 {/* =========================================
     返回首頁按鈕
