@@ -7259,7 +7259,7 @@ style={itinerarySourceEditButtonStyle}
                         "wrap",
                     }}
                   >
-                    {
+                    
 {Object.entries(totalsByCurrency).map(
   ([currency, amount]) => (
     <div
