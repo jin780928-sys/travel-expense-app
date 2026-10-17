@@ -12508,7 +12508,6 @@ onChange={(e) => {
   style={{
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
     flexWrap: "wrap",
     gap: 12,
     padding: "12px 16px",
@@ -12549,6 +12548,53 @@ onChange={(e) => {
     <option value="category">依分類分組</option>
     <option value="person">依人員分組</option>
   </select>
+
+  
+{/* =========================================
+    排序方式：與清單顯示方式同一排
+   ========================================= */}
+
+<label
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+    fontSize: 13,
+    fontWeight: 700,
+    color: "#674b39",
+  }}
+>
+  ↕️ 排序方式
+
+  <select
+    value={packingSort}
+    onChange={(e) =>
+      setPackingSort(
+        e.target.value as
+          | "default"
+          | "name"
+          | "unpacked"
+          | "packed"
+      )
+    }
+    style={{
+      height: 42,
+      padding: "0 12px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 10,
+      background: "#ffffff",
+      color: "#49392f",
+      fontSize: 13,
+    }}
+  >
+    <option value="default">預設順序</option>
+    <option value="name">名稱 A → Z</option>
+    <option value="unpacked">未打包優先</option>
+    <option value="packed">已打包優先</option>
+  </select>
+</label>
+
 </div>
 
   
@@ -12569,46 +12615,7 @@ onChange={(e) => {
     borderRadius: 14,
   }}
 >
-  <label
-    style={{
-      display: "flex",
-      alignItems: "center",
-      flexWrap: "wrap",
-      gap: 10,
-      fontSize: 13,
-      fontWeight: 700,
-      color: "#674b39",
-    }}
-  >
-    ↕️ 排序方式
-
-    <select
-      value={packingSort}
-      onChange={(e) =>
-        setPackingSort(
-          e.target.value as
-            | "default"
-            | "name"
-            | "unpacked"
-            | "packed"
-        )
-      }
-      style={{
-        height: 42,
-        padding: "0 12px",
-        border: "1px solid #d8c6b4",
-        borderRadius: 10,
-        background: "#ffffff",
-        color: "#49392f",
-        fontSize: 13,
-      }}
-    >
-      <option value="default">預設順序</option>
-      <option value="name">名稱 A → Z</option>
-      <option value="unpacked">未打包優先</option>
-      <option value="packed">已打包優先</option>
-    </select>
-  </label>
+  
 
   <button
     type="button"
