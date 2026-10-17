@@ -1809,20 +1809,58 @@ XLSX.writeFile(
    	========================================= */}
 <AppNavigation />
   
+
 {/* =========================================
-    Dashboard 頁面標題
+    Dashboard：統一頁面標題區
    ========================================= */}
-<h1
+
+<div
   style={{
-    fontSize: 36,
-    fontWeight: 800,
-    color: "#111827",
-    marginTop: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 16,
     marginBottom: 24,
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
   }}
 >
-  Dashboard
-</h1>
+  <div
+    style={{
+      flex: "1 1 220px",
+      minWidth: 0,
+    }}
+  >
+    <h1
+      style={{
+        margin: 0,
+        fontSize: "clamp(24px, 4vw, 30px)",
+        fontWeight: 800,
+        lineHeight: 1.3,
+        color: "#49392f",
+      }}
+    >
+      Dashboard
+    </h1>
+
+    <p
+      style={{
+        margin: "8px 0 0",
+        fontSize: 14,
+        lineHeight: 1.6,
+        color: "#927f70",
+      }}
+    >
+      日常花費統計與信用卡帳單管理
+    </p>
+  </div>
+</div>
+
 
       {/* ======================================================================
           A02. 統計月份
