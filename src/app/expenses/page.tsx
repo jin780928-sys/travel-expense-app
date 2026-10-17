@@ -622,12 +622,32 @@ return (
         </div>
 
 
-        <Link
-          href="/expenses/new"
-          className="addButton"
-        >
-          ＋ 新增花費
-        </Link>
+        
+<Link
+  href="/expenses/new"
+  style={{
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    padding: "11px 18px",
+    minHeight: 44,
+    boxSizing: "border-box",
+    background: "#826349",
+    color: "#ffffff",
+    border: "1px solid #826349",
+    borderRadius: 12,
+    fontSize: 14,
+    fontWeight: 700,
+    textDecoration: "none",
+    whiteSpace: "nowrap",
+    flexShrink: 0,
+    cursor: "pointer",
+  }}
+>
+  ＋ 新增花費
+</Link>
+
 
       </header>
 
