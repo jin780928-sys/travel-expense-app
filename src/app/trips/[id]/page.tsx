@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
 
 /* =========================================================
-   Type：Trip
+   Type：Trip 
    ========================================================= */
 type Trip = {
   id: number | string;
