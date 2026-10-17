@@ -6212,71 +6212,55 @@ return (
   </Link>
 </div>
             </div>
+
 {/* =============================================
     旅程總支出摘要
    ============================================= */}
-            {Object.keys(
-  totalsByCurrency
-).length > 0 && (
+{Object.keys(totalsByCurrency).length > 0 && (
   <div
     style={{
-      marginTop: 10,
+      marginTop: 12,
       display: "flex",
-      gap: 8,
-      flexWrap: "wrap",
       alignItems: "center",
+      gap: 10,
+      flexWrap: "wrap",
     }}
   >
     <span
       style={{
         fontSize: 14,
+        fontWeight: 600,
         color: "#927f70",
       }}
     >
       總支出：
     </span>
 
-    
-{Object.entries(totalsByCurrency).map(
-  ([currency, amount]) => (
-    <div
-      key={currency}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        flexWrap: "wrap",
-        width: "100%",
-        padding: 12,
-        background: "#f2ebe2",
-        border: "1px solid #e6dcd0",
-        borderRadius: 10,
-        boxSizing: "border-box",
-      }}
-    >
-      <span
-        style={{
-          fontSize: 14,
-          fontWeight: 600,
-          color: "#927f70",
-        }}
-      >
-        總支出
-      </span>
-
-      <span
-        style={{
-          fontSize: 14,
-          fontWeight: 700,
-          color: "#49392f",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {currency} {formatAmount(amount)}
-      </span>
-    </div>
-  )
+    {Object.entries(totalsByCurrency).map(
+      ([currency, amount]) => (
+        <span
+          key={currency}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "6px 12px",
+            background: "#f2ebe2",
+            border: "1px solid #e6dcd0",
+            borderRadius: 10,
+            color: "#49392f",
+            fontSize: 14,
+            fontWeight: 700,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {currency} {formatAmount(amount)}
+        </span>
+      )
+    )}
+  </div>
 )}
+
 
             {trip.notes && (
               <div
