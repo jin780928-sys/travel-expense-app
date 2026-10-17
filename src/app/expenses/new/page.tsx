@@ -737,153 +737,191 @@ if (expenseScope === "trip" && tripId) {
   }
 
   // =========================================================
-  // 頁面
+  // 頁面：奶油米白＋棕色統一版型
+  // 只調整顯示樣式，保留既有 ExpenseForm 與所有事件處理
   // =========================================================
   return (
     <main
+      className="expense-new-page"
       style={{
-        maxWidth: 760,
+        maxWidth: 1100,
         margin: "0 auto",
-        padding: 20,
+        padding: "20px clamp(12px, 3vw, 24px) 48px",
         minHeight: "100vh",
-        boxSizing:
-          "border-box",
+        boxSizing: "border-box",
         width: "100%",
+        background: "#f8f6f3",
+        color: "#49392f",
       }}
     >
-      {/* =====================================================
-          頁面標題
-         ===================================================== */}
-      <div
+      {/* 只套用於新增支出頁，不修改共用元件功能 */}
+      <style jsx global>{`
+        .expense-new-page, .expense-new-page * {
+          box-sizing: border-box;
+        }
+        .expense-new-page h1,
+        .expense-new-page h2,
+        .expense-new-page h3 {
+          color: #49392f !important;
+        }
+        .expense-new-page form > section,
+        .expense-new-page form > fieldset,
+        .expense-new-page form > div:has(> h2),
+        .expense-new-page form > div:has(> h3) {
+          background: #faf7f2 !important;
+          border: 1px solid #e6dcd0 !important;
+          border-radius: 16px !important;
+          box-shadow: 0 3px 12px rgba(103, 75, 57, .04);
+        }
+        .expense-new-page form label {
+          color: #674b39 !important;
+        }
+        .expense-new-page form input:not([type="checkbox"]):not([type="radio"]),
+        .expense-new-page form select,
+        .expense-new-page form textarea {
+          background-color: #fff !important;
+          border-color: #d8c6b4 !important;
+          color: #49392f !important;
+          border-radius: 10px !important;
+          min-width: 0;
+          max-width: 100%;
+        }
+        .expense-new-page form input:not([type="checkbox"]):not([type="radio"]),
+        .expense-new-page form select {
+          min-height: 44px;
+        }
+        .expense-new-page form textarea {
+          min-height: 80px;
+        }
+        .expense-new-page form input:focus-visible,
+        .expense-new-page form select:focus-visible,
+        .expense-new-page form textarea:focus-visible {
+          outline: 2px solid #b89b80;
+          outline-offset: 1px;
+        }
+        .expense-new-page form :is(input, select, textarea):disabled {
+          background-color: #f2ebe2 !important;
+        }
+        .expense-new-page form input[type="checkbox"],
+        .expense-new-page form input[type="radio"] {
+          accent-color: #826349;
+        }
+        .expense-new-page form button[type="submit"] {
+          background: #826349 !important;
+          border-color: #826349 !important;
+          color: #fff !important;
+          border-radius: 10px !important;
+          min-height: 44px;
+        }
+        @media (max-width: 600px) {
+          .expense-new-page form > section,
+          .expense-new-page form > fieldset {
+            padding: 16px !important;
+          }
+        }
+      `}</style>
+
+      {/* 頁面標題 */}
+      <header
         style={{
-          marginBottom: 18,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 16,
+          marginBottom: 24,
+          padding: "20px 24px",
+          background: "#faf7f2",
+          border: "1px solid #e6dcd0",
+          borderRadius: 16,
+          width: "100%",
         }}
       >
-        <h1
-          style={{
-            margin: 0,
-            fontSize: 28,
-            fontWeight: 700,
-            color: "#111827",
-          }}
-        >
-          新增支出
-        </h1>
-      </div>
+        <div style={{ flex: "1 1 220px", minWidth: 0 }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "clamp(24px, 4vw, 30px)",
+              fontWeight: 800,
+              lineHeight: 1.3,
+              color: "#49392f",
+            }}
+          >
+            新增支出
+          </h1>
+          <p
+            style={{
+              margin: "8px 0 0",
+              fontSize: 14,
+              lineHeight: 1.6,
+              color: "#927f70",
+            }}
+          >
+            記錄日常與旅程花費，管理每一筆支出
+          </p>
+        </div>
+      </header>
 
-      {/* =====================================================
-          共用支出表單
-         ===================================================== */}
+      {/* 共用支出表單：完整保留資料與事件綁定 */}
       <ExpenseForm
         openedFromTrip={openedFromTrip}
-  item={item}
-  setItem={setItem}
-
-  // 付款工具 ID
-  paymentMethodId={paymentMethodId}
-  setPaymentMethodId={setPaymentMethodId
-  }
+        item={item}
+        setItem={setItem}
+        paymentMethodId={paymentMethodId}
+        setPaymentMethodId={setPaymentMethodId}
         amount={amount}
         setAmount={setAmount}
         date={date}
         setDate={setDate}
-        majorCategory={
-          majorCategory
-        }
-        setMajorCategory={
-          setMajorCategory
-        }
+        majorCategory={majorCategory}
+        setMajorCategory={setMajorCategory}
         category={category}
-        setCategory={
-          setCategory
-        }
-        paymentMethod={
-          paymentMethod
-        }
-        setPaymentMethod={
-          setPaymentMethod
-        }
+        setCategory={setCategory}
+        paymentMethod={paymentMethod}
+        setPaymentMethod={setPaymentMethod}
         cardName={cardName}
-        setCardName={
-          setCardName
-        }
+        setCardName={setCardName}
         currency={currency}
-        setCurrency={
-          setCurrency
-        }
-        expenseScope={
-          expenseScope
-        }
-        setExpenseScope={
-          setExpenseScope
-        }
+        setCurrency={setCurrency}
+        expenseScope={expenseScope}
+        setExpenseScope={setExpenseScope}
         tripId={tripId}
         setTripId={setTripId}
         notes={notes}
         setNotes={setNotes}
         paidBy={paidBy}
         setPaidBy={setPaidBy}
-        splitType={
-          splitType
-        }
-        setSplitType={
-          setSplitType
-        }
-        selectedPeople={
-          selectedPeople
-        }
-        togglePerson={
-          togglePerson
-        }
-        customShares={
-          customShares
-        }
-        updateCustomShare={
-          updateCustomShare
-        }
+        splitType={splitType}
+        setSplitType={setSplitType}
+        selectedPeople={selectedPeople}
+        togglePerson={togglePerson}
+        customShares={customShares}
+        updateCustomShare={updateCustomShare}
         people={people}
-        creditCards={
-          creditCards
-        }
+        creditCards={creditCards}
         trips={trips}
-        customTotal={
-          customTotal
-        }
-        getEqualShare={
-          getEqualShare
-        }
+        customTotal={customTotal}
+        getEqualShare={getEqualShare}
         saving={saving}
         submitText="新增支出"
-        onSubmit={
-          handleSubmit
-        }
+        onSubmit={handleSubmit}
         cancelContent={
           <a
             href="/dashboard"
             style={{
-              height: 42,
-              padding:
-                "0 18px",
-              display:
-                "inline-flex",
-              alignItems:
-                "center",
-              justifyContent:
-                "center",
-              background:
-                "#ffffff",
-              color:
-                "#374151",
-              border:
-                "1px solid #d1d5db",
-              borderRadius:
-                10,
-              textDecoration:
-                "none",
+              minHeight: 44,
+              padding: "0 20px",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#ffffff",
+              color: "#674b39",
+              border: "1px solid #d8c6b4",
+              borderRadius: 10,
+              textDecoration: "none",
               fontSize: 14,
-              fontWeight: 600,
-              whiteSpace:
-                "nowrap",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
             }}
           >
             取消
@@ -891,14 +929,16 @@ if (expenseScope === "trip" && tripId) {
         }
       />
 
-      {/* =====================================================
-          錯誤訊息
-         ===================================================== */}
       {message && (
         <p
+          role="alert"
           style={{
             marginTop: 16,
             color: "#b91c1c",
+            padding: "12px 16px",
+            border: "1px solid #f4c7c3",
+            borderRadius: 10,
+            background: "#fff7f5",
           }}
         >
           {message}
