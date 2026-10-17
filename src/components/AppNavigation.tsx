@@ -23,9 +23,9 @@ const navigationItems = [
     href: "/expenses",
   },
   {
-    label: "💳 信用卡管理",
-    href: "/cards",
-  },
+  label: "📊 財務總覽",
+  href: "/dashboard",
+},
 ];
 
 
