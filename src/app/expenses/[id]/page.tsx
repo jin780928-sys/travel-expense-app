@@ -233,23 +233,25 @@ useEffect(() => {
         }}
     >
       
+
 <p>
-  <button
-    type="button"
-    onClick={() => window.history.back()}
+  <Link
+    href={
+      expense?.trip_id
+        ? `/trips/${expense.trip_id}?tab=expenses`
+        : "/expenses"
+    }
     style={{
-      border: "none",
-      background: "transparent",
-      padding: 0,
       color: "#826349",
       fontSize: 15,
       fontWeight: 700,
-      cursor: "pointer",
+      textDecoration: "none",
     }}
   >
-    ← 返回上一頁
-  </button>
+    ← 返回支出
+  </Link>
 </p>
+
 
 
       {message && <p>{message}</p>}
