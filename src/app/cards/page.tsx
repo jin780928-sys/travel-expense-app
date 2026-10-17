@@ -1254,7 +1254,7 @@ return (
 }
 
 /* =========================================
-   單筆付款方式：獨立卡片
+   付款方式：獨立卡片
    ========================================= */
 
 .item {
@@ -1263,13 +1263,14 @@ return (
   flex-wrap: wrap;
   gap: 12px;
   padding: 16px;
-  background: #ffffff;
+  background: #f2ebe2;
   border: 1px solid #e6dcd0;
   border-radius: 12px;
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
 }
+
 
        
         
