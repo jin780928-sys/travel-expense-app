@@ -1246,9 +1246,7 @@ return (
   min-width: 0;
 }
 
-        .item:last-child {
-          border-bottom: 0;
-        }
+       
         .itemIcon {
           width: 38px;
           height: 38px;
