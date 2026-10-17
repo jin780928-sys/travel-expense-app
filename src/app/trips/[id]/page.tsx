@@ -6236,36 +6236,48 @@ return (
       總支出：
     </span>
 
-    {Object.entries(
-      totalsByCurrency
-    ).map(
-      ([
-        currency,
-        amount,
-      ]) => (
-        <span
-          key={currency}
-          style={{
-            padding: "4px 9px",
-            background: "#f2ebe2",
-            border:
-              "1px solid #e6dcd0",
-            borderRadius: 999,
-            fontSize: 13,
-            fontWeight: 700,
-            color: "#49392f",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {currency}{" "}
-          {formatAmount(
-            amount
-          )}
-        </span>
-      )
-    )}
-  </div>
+    
+{Object.entries(totalsByCurrency).map(
+  ([currency, amount]) => (
+    <div
+      key={currency}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        flexWrap: "wrap",
+        width: "100%",
+        padding: 12,
+        background: "#f2ebe2",
+        border: "1px solid #e6dcd0",
+        borderRadius: 10,
+        boxSizing: "border-box",
+      }}
+    >
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 600,
+          color: "#927f70",
+        }}
+      >
+        總支出
+      </span>
+
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          color: "#49392f",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {currency} {formatAmount(amount)}
+      </span>
+    </div>
+  )
 )}
+
             {trip.notes && (
               <div
                 style={{
