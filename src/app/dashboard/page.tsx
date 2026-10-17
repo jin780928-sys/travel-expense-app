@@ -2170,19 +2170,22 @@ style={{
               );
             }, 50);
           }}
-         style={{
-            height: 40,
-            padding: "0 14px",
-            background: "#ffffff",
-            color: "#674b39",
-            border: "1px solid #d8c6b4",
-            borderRadius: 10,
-            cursor: "pointer",
-            fontWeight: 600,
-            fontSize: 14,
-			flexShrink: 0,
-			whiteSpace: "nowrap",
-            }}
+         
+style={{
+  height: 40,
+  padding: "0 16px",
+  background: "#f2ebe2",
+  color: "#674b39",
+  border: "1px solid #d8c6b4",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+}}
+
         >
           📚 歷史帳單
         </button>
@@ -2193,19 +2196,22 @@ style={{
               "monthly-expenses"
             )
           }
-          style={{
-            height: 40,
-            padding: "0 14px",
-            background: "#ffffff",
-            color: "#674b39",
-            border: "1px solid #d8c6b4",
-            borderRadius: 10,
-            cursor: "pointer",
-            fontWeight: 600,
-            fontSize: 14,
-			flexShrink: 0,
-			whiteSpace: "nowrap",
-            }}
+          
+style={{
+  height: 40,
+  padding: "0 16px",
+  background: "#f2ebe2",
+  color: "#674b39",
+  border: "1px solid #d8c6b4",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+}}
+
         >
           🧾 本月支出明細
         </button>
