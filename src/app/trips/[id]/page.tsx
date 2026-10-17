@@ -10907,10 +10907,12 @@ alignItems: "center",
           {booking.start_at && (
             <div
               style={{
-                padding: 14,
-                background: "#faf7f2",
-                borderRadius: 12,
-              }}
+  padding: 14,
+  background: "#f2ebe2",
+  border: "1px solid #e6dcd0",
+  borderRadius: 12,
+  boxSizing: "border-box",
+}}
             >
               <div
                 style={{
