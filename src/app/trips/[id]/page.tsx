@@ -8104,16 +8104,7 @@ onClick={() => {
   <button
     type="button"
     onClick={() => startEditHotel(hotel)}
-            style={{
-              padding: "7px 14px",
-              border: "1px solid #d8c6b4",
-              borderRadius: 10,
-              background: "#ffffff",
-              color: "#674b39",
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
+            style={editActionButtonStyle}
           >
             ✏️ 編輯
           </button>
@@ -8126,16 +8117,7 @@ onClick={() => {
 <button
   type="button"
   onClick={() => deleteHotel(hotel)}
-  style={{
-    padding: "7px 14px",
-    border: "1px solid #e7c9c3",
-    borderRadius: 10,
-    background: "#fff7f5",
-    color: "#b4534b",
-    fontSize: 13,
-    fontWeight: 700,
-    cursor: "pointer",
-  }}
+  style={deleteActionButtonStyle}
 >
     🗑️ 刪除
 </button>
@@ -9630,16 +9612,7 @@ alignItems: "center",
   <button
     type="button"
     onClick={() => startEditFlight(flight)}
-    style={{
-      padding: "10px 14px",
-      border: "1px solid #d8c6b4",
-      borderRadius: 10,
-      background: "#ffffff",
-      color: "#674b39",
-      fontSize: 13,
-      fontWeight: 700,
-      cursor: "pointer",
-    }}
+    style={editActionButtonStyle}
   >
     ✏️ 編輯
   </button>
@@ -9647,16 +9620,7 @@ alignItems: "center",
   <button
     type="button"
     onClick={() => deleteFlight(flight)}
-    style={{
-      padding: "10px 14px",
-      border: "1px solid #e7c9c3",
-      borderRadius: 10,
-      background: "#fff7f5",
-      color: "#b4534b",
-      fontSize: 13,
-      fontWeight: 700,
-      cursor: "pointer",
-    }}
+    style={deleteActionButtonStyle}
     >
     🗑️ 刪除
   </button>
