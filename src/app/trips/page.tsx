@@ -227,28 +227,6 @@ const sortedTrips = [
    ========================================= */}
 <AppNavigation />
 
-    {/* =========================================
-    回首頁按鈕
-   ========================================= */}
-<Link
-  href="/"
-  style={{
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
-    padding: "10px 16px",
-    marginBottom: 20,
-    borderRadius: 10,
-    backgroundColor: "#eff6ff",
-    color: "#2563eb",
-    fontSize: 14,
-    fontWeight: 600,
-    textDecoration: "none",
-    border: "1px solid #bfdbfe",
-  }}
->
-  ← 回首頁
-</Link>
     
     {/* =====================================================
         我的旅程頁面標題區
