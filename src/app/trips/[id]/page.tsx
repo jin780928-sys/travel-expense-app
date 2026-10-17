@@ -7017,22 +7017,25 @@ style={itinerarySourceEditButtonStyle}
       dayExpenses,
     ]) => (
       
-{/* =========================================
-    每日支出明細：奶油米白卡片
-   ========================================= */}
-<div
-  key={date}
-  style={{
-    marginBottom: 20,
-    padding: "20px 24px",
-    background: "#faf7f2",
-    border: "1px solid #e6dcd0",
-    borderRadius: 16,
-    boxSizing: "border-box",
-    width: "100%",
-    minWidth: 0,
-  }}
->
+{/* ===========================================
+    支出列表
+   =========================================== */}
+<div>
+  {Object.entries(groupedExpenses).map(
+    ([date, dayExpenses]) => (
+      <div
+        key={date}
+        style={{
+          marginBottom: 20,
+          padding: "20px 24px",
+          background: "#faf7f2",
+          border: "1px solid #e6dcd0",
+          borderRadius: 16,
+          boxSizing: "border-box",
+          width: "100%",
+          minWidth: 0,
+        }}
+      >
 
        {/* ===================================
     支出日期 + 當日小計
