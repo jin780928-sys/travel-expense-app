@@ -657,11 +657,11 @@ return (
         : `/cards/method-${item.id}`
     }
     style={{
-      color: "#4338ca",
-      textDecoration: "none",
-      fontSize: 14,
-      fontWeight: 700,
-    }}
+  color: "#49392f",
+  textDecoration: "none",
+  fontSize: 14,
+  fontWeight: 700,
+}}
   >
     {item.name} ↗
   </Link>
@@ -675,14 +675,61 @@ return (
                 )}
               </div>
 
-              <div className="itemActions">
-                <button onClick={() => openEdit(item)}>
-                  編輯
-                </button>
-                <button onClick={() => void toggleActive(item)}>
-                  {item.is_active ? "停用" : "啟用"}
-                  </button>
-              </div>
+              
+<div
+  className="itemActions"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    flexWrap: "wrap",
+  }}
+>
+  <button
+    type="button"
+    onClick={() => openEdit(item)}
+    style={{
+      width: 80,
+      height: 34,
+      padding: "0 8px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 8,
+      background: "#ffffff",
+      color: "#674b39",
+      fontSize: 12,
+      fontWeight: 600,
+      whiteSpace: "nowrap",
+      boxSizing: "border-box",
+      cursor: "pointer",
+    }}
+  >
+    編輯
+  </button>
+
+  <button
+    type="button"
+    onClick={() => void toggleActive(item)}
+    style={{
+      width: 80,
+      height: 34,
+      padding: "0 8px",
+      border: "1px solid #d8c6b4",
+      borderRadius: 8,
+      background: item.is_active
+        ? "#f2ebe2"
+        : "#ffffff",
+      color: "#674b39",
+      fontSize: 12,
+      fontWeight: 600,
+      whiteSpace: "nowrap",
+      boxSizing: "border-box",
+      cursor: "pointer",
+    }}
+  >
+    {item.is_active ? "停用" : "啟用"}
+  </button>
+</div>
+
             </div>
           ))
         )}
