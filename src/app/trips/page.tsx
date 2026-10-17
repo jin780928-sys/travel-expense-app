@@ -583,6 +583,45 @@ return (
         </div>
       );
     })}
+    
+{/* =========================================
+    花費紀錄：回到頂端浮動按鈕
+   ========================================= */}
+
+<button
+  type="button"
+  onClick={() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }}
+  aria-label="回到頂端"
+  title="回到頂端"
+  style={{
+    position: "fixed",
+    right: 24,
+    bottom: 24,
+    width: 44,
+    height: 44,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    border: "1px solid #d8c6b4",
+    background: "#ffffff",
+    color: "#674b39",
+    fontSize: 25,
+    fontWeight: 600,
+    cursor: "pointer",
+    boxShadow: "0 2px 8px rgba(73,57,47,0.12)",
+    zIndex: 50,
+    padding: 0,
+  }}
+>
+  ↑
+</button>
+
   </main>
 );
 }
