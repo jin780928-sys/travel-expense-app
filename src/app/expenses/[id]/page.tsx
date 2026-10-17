@@ -232,9 +232,25 @@ useEffect(() => {
         width: "100%",
         }}
     >
-      <p>
-        <Link href="/expenses">← 回到花費紀錄</Link>
-      </p>
+      
+<p>
+  <button
+    type="button"
+    onClick={() => window.history.back()}
+    style={{
+      border: "none",
+      background: "transparent",
+      padding: 0,
+      color: "#826349",
+      fontSize: 15,
+      fontWeight: 700,
+      cursor: "pointer",
+    }}
+  >
+    ← 返回上一頁
+  </button>
+</p>
+
 
       {message && <p>{message}</p>}
 
