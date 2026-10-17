@@ -6798,24 +6798,7 @@ onClick={() => {
     goToItinerarySource(item.source);
   }
 }}
-
-
-
-    style={{
-      minHeight: 36,
-      padding: "8px 12px",
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 6,
-      background: "#faf7f2",
-      border: "1px solid #d8c6b4",
-      borderRadius: 8,
-      color: "#826349",
-      fontSize: 12,
-      fontWeight: 700,
-      cursor: "pointer",
-    }}
+style={editActionButtonStyle}
   >
     {item.source === "flight"
   ? "✈️ 編輯機票"
