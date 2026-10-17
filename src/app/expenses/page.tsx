@@ -667,42 +667,6 @@ return (
   </Link>
 
 
-        <div>
-          <h1>花費紀錄</h1>
-
-          <p>
-            查看日常與所有旅程的單筆花費紀錄
-          </p>
-        </div>
-
-
-        
-<Link
-  href="/expenses/new"
-  style={{
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    padding: "11px 18px",
-    minHeight: 44,
-    boxSizing: "border-box",
-    background: "#826349",
-    color: "#ffffff",
-    border: "1px solid #826349",
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: 700,
-    textDecoration: "none",
-    whiteSpace: "nowrap",
-    flexShrink: 0,
-    cursor: "pointer",
-  }}
->
-  ＋ 新增花費
-</Link>
-
-
       </header>
 
 
