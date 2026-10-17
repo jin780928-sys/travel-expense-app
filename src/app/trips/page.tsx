@@ -179,18 +179,19 @@ const sortedTrips = [
     loadTrips();
   }, []);
 
- return (
+ 
+return (
   <main
     style={{
       maxWidth: 1100,
       margin: "0 auto",
-      padding: 20,
-      background: "#f7f7f8",
+      padding: "20px clamp(12px, 3vw, 24px)",
+      background: "#f8f6f3",
       minHeight: "100vh",
       boxSizing: "border-box",
       width: "100%",
     }}
-    >
+  >
 
     {/* =========================================
     共用頂部導覽列
