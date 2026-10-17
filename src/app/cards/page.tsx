@@ -1350,57 +1350,203 @@ return (
           text-align: center;
           color: #64748b;
           }
-        .modalBackdrop {
-          position: fixed;
-          inset: 0;
-          z-index: 100;
-          background: rgba(15,23,42,.55);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 15px;
-        }
-        .modal {
-          width: 100%;
-          max-width: 500px;
-          max-height: 90vh;
-          overflow-y: auto;
-          padding: 22px;
-          border-radius: 16px;
-          background: #fff;
-          box-sizing: border-box;
-        }
-        .modalHeader {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 22px;
-        }
-        .modalHeader h2 {
-          margin: 0;
-          font-size: 20px;
-        }
-        .modalHeader button {
-          border: 0;
-          background: transparent;
-          font-size: 20px;
-          cursor: pointer;
-        }
-        .formFields {
-          display: grid;
-          gap: 16px;
-        }
-        .twoColumns {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-        .formActions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          margin-top: 24px;
-        }
+        
+/* =========================================
+   付款方式管理：彈出視窗背景
+   ========================================= */
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(73, 57, 47, 0.45);
+  box-sizing: border-box;
+}
+
+/* =========================================
+   新增／編輯付款方式：表單視窗
+   ========================================= */
+
+.modal {
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow-y: auto;
+  padding: 24px;
+  background: #faf7f2;
+  border: 1px solid #e6dcd0;
+  border-radius: 18px;
+  box-shadow: 0 16px 48px rgba(73, 57, 47, 0.18);
+  box-sizing: border-box;
+  color: #49392f;
+}
+
+/* =========================================
+   表單標題與關閉按鈕
+   ========================================= */
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e6dcd0;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  color: #49392f;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.modalHeader button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0;
+  color: #674b39;
+  background: #f2ebe2;
+  border: 1px solid #e6dcd0;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* =========================================
+   表單欄位排列
+   ========================================= */
+
+.formFields {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.formFields label {
+  min-width: 0;
+  color: #674b39;
+}
+
+.formFields input,
+.formFields select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  background: #ffffff;
+  border: 1px solid #d8c6b4;
+  border-radius: 10px;
+  color: #49392f;
+  box-sizing: border-box;
+}
+
+.formFields textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 80px;
+  background: #ffffff;
+  border: 1px solid #d8c6b4;
+  border-radius: 10px;
+  color: #49392f;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.formFields input:focus,
+.formFields select:focus,
+.formFields textarea:focus {
+  outline: 2px solid #b89b80;
+  outline-offset: 1px;
+}
+
+.formFields input:disabled,
+.formFields select:disabled {
+  background: #f2ebe2;
+  color: #927f70;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   雙欄：結帳日／繳款日、幣別／末四碼
+   ========================================= */
+
+.twoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+/* =========================================
+   底部：取消／儲存
+   ========================================= */
+
+.formActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 18px;
+  margin-top: 24px;
+  border-top: 1px solid #e6dcd0;
+}
+
+.formActions button {
+  min-width: 90px;
+  min-height: 42px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.formActions .cancelButton {
+  background: #ffffff;
+  color: #674b39;
+  border: 1px solid #d8c6b4;
+}
+
+/* =========================================
+   手機版：縮小邊距，避免畫面溢出
+   ========================================= */
+
+@media (max-width: 600px) {
+  .modalBackdrop {
+    padding: 10px;
+  }
+
+  .modal {
+    padding: 18px;
+    border-radius: 16px;
+    max-height: 95vh;
+    max-height: 95dvh;
+  }
+
+  .formFields {
+    gap: 15px;
+  }
+
+  .twoColumns {
+    gap: 10px;
+  }
+
+  .formActions button {
+    flex: 1 1 100px;
+  }
+}
+
         @media(max-width:600px) {
           .page { padding: 18px 12px 60px; }
           h1 { font-size: 23px; }
