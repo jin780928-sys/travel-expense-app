@@ -626,9 +626,9 @@ function getTripStatusStyle(
 ) {
   if (status === "upcoming") {
     return {
-      background: "#eff6ff",
-      color: "#1d4ed8",
-      border: "1px solid #bfdbfe",
+      background: "#f2ebe2",
+      color: "#826349",
+      border: "1px solid #e6dcd0",
     };
   }
 
@@ -5994,7 +5994,7 @@ return (
         maxWidth: 1100,
         margin: "0 auto",
         padding: 20,
-        background: "#f7f7f8",
+        background: "#f8f6f3",
         minHeight: "100vh",
         boxSizing: "border-box",
         width: "100%",
@@ -6011,7 +6011,7 @@ return (
           display: "inline-flex",
           alignItems: "center",
           marginBottom: 16,
-          color: "#2563eb",
+          color: "#826349",
           fontSize: 14,
           fontWeight: 600,
           textDecoration: "none",
@@ -6046,12 +6046,12 @@ return (
       {!trip && (
         <div
           style={{
-            background: "#ffffff",
+            background: "#faf7f2",
             border:
-              "1px solid #e5e7eb",
+              "1px solid #e6dcd0",
             borderRadius: 14,
             padding: 18,
-            color: "#6b7280",
+            color: "#927f70",
           }}
         >
           找不到旅程資料
@@ -6069,9 +6069,9 @@ return (
              ================================================= */}
           <div
             style={{
-              background: "#ffffff",
+              background: "#faf7f2",
               border:
-                "1px solid #e5e7eb",
+                "1px solid #e6dcd0",
               borderRadius: 14,
               padding: 18,
               marginBottom: 18,
@@ -6096,7 +6096,7 @@ return (
                     margin: 0,
                     fontSize: 28,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                   }}
                 >
                   {trip.name}
@@ -6106,7 +6106,7 @@ return (
                   style={{
                     marginTop: 10,
                     fontSize: 15,
-                    color: "#374151",
+                    color: "#674b39",
                   }}
                   >
                   地點：
@@ -6118,7 +6118,7 @@ return (
   style={{
     marginTop: 8,
     fontSize: 15,
-    color: "#374151",
+    color: "#674b39",
   }}
 >
   日期：
@@ -6198,10 +6198,10 @@ return (
       alignItems: "center",
       justifyContent: "center",
       border:
-        "1px solid #d1d5db",
+        "1px solid #d8c6b4",
       borderRadius: 10,
       background: "#ffffff",
-      color: "#374151",
+      color: "#674b39",
       textDecoration: "none",
       fontSize: 14,
       fontWeight: 600,
@@ -6230,7 +6230,7 @@ return (
     <span
       style={{
         fontSize: 14,
-        color: "#6b7280",
+        color: "#927f70",
       }}
     >
       總支出：
@@ -6247,13 +6247,13 @@ return (
           key={currency}
           style={{
             padding: "4px 9px",
-            background: "#f9fafb",
+            background: "#f2ebe2",
             border:
-              "1px solid #e5e7eb",
+              "1px solid #e6dcd0",
             borderRadius: 999,
             fontSize: 13,
             fontWeight: 700,
-            color: "#111827",
+            color: "#49392f",
             whiteSpace: "nowrap",
           }}
         >
@@ -6272,10 +6272,10 @@ return (
                   marginTop: 12,
                   paddingTop: 12,
                   borderTop:
-                    "1px solid #f3f4f6",
+                    "1px solid #e6dcd0",
                   fontSize: 14,
                   lineHeight: 1.6,
-                  color: "#6b7280",
+                  color: "#927f70",
                   whiteSpace:
                     "pre-wrap",
                 }}
@@ -6365,10 +6365,9 @@ return (
             "itinerary" && (
             <section
               style={{
-                background:
-                  "#ffffff",
+                background: "#faf7f2",
                 border:
-                  "1px solid #e5e7eb",
+                  "1px solid #e6dcd0",
                 borderRadius: 14,
                 padding: 18,
                 marginBottom: 18,
@@ -6395,7 +6394,7 @@ return (
                     margin: 0,
                     fontSize: 20,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                   }}
                 >
                   每日行程
@@ -6414,7 +6413,7 @@ return (
                     justifyContent:
                       "center",
                     background:
-                      "#2563eb",
+                      "#826349",
                     color:
                       "#ffffff",
                     borderRadius: 10,
@@ -6441,7 +6440,7 @@ return (
                     textAlign:
                       "center",
                     color:
-                      "#6b7280",
+                      "#927f70",
                     fontSize: 14,
                   }}
                 >
@@ -6491,7 +6490,7 @@ return (
                            marginBottom: 12,
                           paddingBottom: 10,
                           borderBottom:
-                          "1px solid #e5e7eb",
+                          "1px solid #e6dcd0",
                           }}
                           >
                        {getTripDayNumber(
@@ -6501,7 +6500,7 @@ return (
   <div
     style={{
       padding: "4px 9px",
-      background: "#eff6ff",
+      background: "#f2ebe2",
       border:
         "1px solid #bfdbfe",
       borderRadius: 999,
@@ -6523,7 +6522,7 @@ return (
     style={{
       fontSize: 16,
       fontWeight: 700,
-      color: "#111827",
+      color: "#49392f",
     }}
   >
     {formatTripDate(date)}
@@ -6554,7 +6553,7 @@ return (
   style={{
     padding: "16px",
     marginBottom: 12,
-    background: "#ffffff",
+    background: "#faf7f2",
     border: "1px solid #e6dcd0",
     borderLeft: "4px solid #826349",
     borderRadius: 12,
@@ -6722,7 +6721,7 @@ return (
                                       style={{
                                         marginTop: 6,
                                         fontSize: 14,
-                                        color: "#374151",
+                                        color: "#674b39",
                                         }}
                                     >
                                       地點：
@@ -6738,7 +6737,7 @@ return (
                                       style={{
                                         marginTop: 6,
                                         fontSize: 14,
-                                        color: "#374151",
+                                        color: "#674b39",
                                       }}
                                     >
                                       交通：
@@ -6755,7 +6754,7 @@ return (
                                         marginTop: 6,
                                         fontSize: 14,
                                         lineHeight: 1.6,
-                                        color: "#6b7280",
+                                        color: "#927f70",
                                         whiteSpace: "pre-wrap",
                                         }}
                                     >
@@ -6863,10 +6862,9 @@ style={itinerarySourceEditButtonStyle}
             "expenses" && (
             <section
               style={{
-                background:
-                  "#ffffff",
+                background: "#faf7f2",
                 border:
-                  "1px solid #e5e7eb",
+                  "1px solid #e6dcd0",
                 borderRadius: 14,
                 padding: 18,
                 marginBottom: 18,
@@ -6893,7 +6891,7 @@ style={itinerarySourceEditButtonStyle}
                     margin: 0,
                     fontSize: 20,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                   }}
                 >
                   支出
@@ -6912,7 +6910,7 @@ style={itinerarySourceEditButtonStyle}
                     justifyContent:
                       "center",
                     background:
-                       "#2563eb",
+                       "#826349",
                     color:
                       "#ffffff",
                     borderRadius: 10,
@@ -6942,9 +6940,9 @@ style={itinerarySourceEditButtonStyle}
                     alignItems: "center",
                     marginBottom: 16,
                     padding: 12,
-                    background: "#f9fafb",
+                    background: "#f2ebe2",
                     border:
-                      "1px solid #e5e7eb",
+                      "1px solid #e6dcd0",
                     borderRadius: 10,
                   }}
                 >
@@ -6952,7 +6950,7 @@ style={itinerarySourceEditButtonStyle}
                     style={{
                       fontSize: 14,
                       fontWeight: 600,
-                      color: "#6b7280",
+                      color: "#927f70",
                     }}
                   >
                     支出小計
@@ -6970,7 +6968,7 @@ style={itinerarySourceEditButtonStyle}
                         style={{
                           fontSize: 14,
                           fontWeight: 700,
-                          color: "#111827",
+                          color: "#49392f",
                           whiteSpace:
                             "nowrap",
                         }}
@@ -6997,7 +6995,7 @@ style={itinerarySourceEditButtonStyle}
                     textAlign:
                       "center",
                     color:
-                      "#6b7280",
+                      "#927f70",
                     fontSize: 14,
                   }}
                   >
@@ -7007,9 +7005,6 @@ style={itinerarySourceEditButtonStyle}
 
                 
       
-{/* ===========================================
-    支出列表 
-   =========================================== */}
 <div>
   {Object.entries(groupedExpenses).map(
     ([date, dayExpenses]) => (
@@ -7041,7 +7036,7 @@ style={itinerarySourceEditButtonStyle}
     marginBottom: 8,
     paddingBottom: 8,
     borderBottom:
-      "1px solid #e5e7eb",
+      "1px solid #e6dcd0",
   }}
   >
   {/* 日期 */}
@@ -7049,7 +7044,7 @@ style={itinerarySourceEditButtonStyle}
     style={{
       fontSize: 15,
       fontWeight: 700,
-      color: "#111827",
+      color: "#49392f",
     }}
   >
     {formatTripDate(date)}
@@ -7077,7 +7072,7 @@ style={itinerarySourceEditButtonStyle}
           style={{
             fontSize: 13,
             fontWeight: 700,
-            color: "#374151",
+            color: "#674b39",
             whiteSpace: "nowrap",
           }}
         >
@@ -7157,7 +7152,7 @@ style={itinerarySourceEditButtonStyle}
       style={{
         marginTop: 4,
         fontSize: 13,
-        color: "#6b7280",
+        color: "#927f70",
       }}
       >
       付款：
@@ -7180,7 +7175,7 @@ style={itinerarySourceEditButtonStyle}
                   style={{
                     fontSize: 15,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                     whiteSpace: "nowrap",
                   }}
                   >
@@ -7215,10 +7210,9 @@ style={itinerarySourceEditButtonStyle}
                  ============================================= */}
               <section
                 style={{
-                  background:
-                    "#ffffff",
+                  background: "#faf7f2",
                   border:
-                    "1px solid #e5e7eb",
+                    "1px solid #e6dcd0",
                   borderRadius: 14,
                   padding: 18,
                   marginBottom: 18,
@@ -7229,7 +7223,7 @@ style={itinerarySourceEditButtonStyle}
                     margin: 0,
                     fontSize: 20,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                   }}
                   >
                   統計
@@ -7240,7 +7234,7 @@ style={itinerarySourceEditButtonStyle}
                     marginTop: 16,
                     fontSize: 14,
                     fontWeight: 600,
-                    color: "#6b7280",
+                    color: "#927f70",
                   }}
                 >
                   總支出
@@ -7253,7 +7247,7 @@ style={itinerarySourceEditButtonStyle}
                     style={{
                       marginTop: 8,
                       color:
-                        "#6b7280",
+                        "#927f70",
                       fontSize: 14,
                     }}
                   >
@@ -7285,9 +7279,9 @@ style={itinerarySourceEditButtonStyle}
                              padding:
                               "12px 16px",
                             background:
-                              "#f9fafb",
+                              "#f2ebe2",
                             border:
-                              "1px solid #e5e7eb",
+                              "1px solid #e6dcd0",
                             borderRadius:
                               10,
                           }}
@@ -7297,7 +7291,7 @@ style={itinerarySourceEditButtonStyle}
                               fontSize:
                                 12,
                               color:
-                                "#6b7280",
+                                "#927f70",
                             }}
                           >
                             {
@@ -7314,7 +7308,7 @@ style={itinerarySourceEditButtonStyle}
                               fontWeight:
                                 700,
                               color:
-                                "#111827",
+                                "#49392f",
                             }}
                           >
                             {formatAmount(
@@ -7352,16 +7346,16 @@ style={itinerarySourceEditButtonStyle}
       borderRadius: 10,
       border:
         statsView === "category"
-          ? "1px solid #2563eb"
-          : "1px solid #d1d5db",
+          ? "1px solid #826349"
+          : "1px solid #d8c6b4",
       background:
         statsView === "category"
-          ? "#2563eb"
+          ? "#826349"
           : "#ffffff",
       color:
         statsView === "category"
           ? "#ffffff"
-          : "#374151",
+          : "#674b39",
       fontSize: 14,
       fontWeight: 600,
       cursor: "pointer",
@@ -7381,16 +7375,16 @@ style={itinerarySourceEditButtonStyle}
       borderRadius: 10,
       border:
         statsView === "payment"
-          ? "1px solid #2563eb"
-          : "1px solid #d1d5db",
+          ? "1px solid #826349"
+          : "1px solid #d8c6b4",
       background:
         statsView === "payment"
-          ? "#2563eb"
+          ? "#826349"
           : "#ffffff",
       color:
         statsView === "payment"
           ? "#ffffff"
-          : "#374151",
+          : "#674b39",
       fontSize: 14,
       fontWeight: 600,
       cursor: "pointer",
@@ -7405,10 +7399,9 @@ style={itinerarySourceEditButtonStyle}
               {statsView === "category" && (
               <section
                 style={{
-                  background:
-                    "#ffffff",
+                  background: "#faf7f2",
                   border:
-                     "1px solid #e5e7eb",
+                     "1px solid #e6dcd0",
                   borderRadius: 14,
                   padding: 18,
                   marginBottom: 18,
@@ -7420,7 +7413,7 @@ style={itinerarySourceEditButtonStyle}
                       "0 0 14px",
                     fontSize: 20,
                     fontWeight: 700,
-                    color: "#111827",
+                    color: "#49392f",
                   }}
                   >
                   大分類統計
@@ -7432,7 +7425,7 @@ style={itinerarySourceEditButtonStyle}
                 <div
                     style={{
                       color:
-                        "#6b7280",
+                        "#927f70",
                       fontSize: 14,
                     }}
                   >
@@ -7462,7 +7455,7 @@ style={itinerarySourceEditButtonStyle}
                             padding:
                               "11px 0",
                             borderBottom:
-                              "1px solid #e5e7eb",
+                              "1px solid #e6dcd0",
                           }}
                         >
                           <div
@@ -7472,7 +7465,7 @@ style={itinerarySourceEditButtonStyle}
                               fontWeight:
                                 600,
                               color:
-                                "#374151",
+                                "#674b39",
                             }}
                           >
                             {
@@ -7503,7 +7496,7 @@ style={itinerarySourceEditButtonStyle}
                                     fontWeight:
                                       700,
                                     color:
-                                      "#111827",
+                                      "#49392f",
                                     marginBottom:
                                       3,
                                   }}
@@ -7533,10 +7526,9 @@ style={itinerarySourceEditButtonStyle}
           {statsView === "payment" && (
                 <section
                   style={{
-                    background:
-                      "#ffffff",
+                    background: "#faf7f2",
                     border:
-                      "1px solid #e5e7eb",
+                      "1px solid #e6dcd0",
                     borderRadius: 14,
                     padding: 18,
                     marginBottom: 18,
@@ -7548,7 +7540,7 @@ style={itinerarySourceEditButtonStyle}
                         "0 0 14px",
                       fontSize: 20,
                       fontWeight: 700,
-                      color: "#111827",
+                      color: "#49392f",
                     }}
                   >
                     付款方式統計
@@ -7560,7 +7552,7 @@ style={itinerarySourceEditButtonStyle}
                     <div
                       style={{
                         color:
-                          "#6b7280",
+                          "#927f70",
                         fontSize: 14,
                       }}
                     >
@@ -7590,7 +7582,7 @@ style={itinerarySourceEditButtonStyle}
                               padding:
                                 "11px 0",
                               borderBottom:
-                                "1px solid #e5e7eb",
+                                "1px solid #e6dcd0",
                             }}
                             >
                             <div
@@ -7600,7 +7592,7 @@ style={itinerarySourceEditButtonStyle}
                                 fontWeight:
                                   600,
                                 color:
-                                  "#374151",
+                                  "#674b39",
                               }}
                             >
                               {
@@ -7631,7 +7623,7 @@ style={itinerarySourceEditButtonStyle}
                                       fontWeight:
                                         700,
                                       color:
-                                        "#111827",
+                                        "#49392f",
                                       marginBottom:
                                         3,
                                       }}
