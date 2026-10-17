@@ -1247,45 +1247,104 @@ return (
 }
 
        
-        .itemIcon {
-          width: 38px;
-          height: 38px;
-          display: grid;
-          place-items: center;
-          border-radius: 10px;
-          background: #f1f5f9;
-          flex-shrink: 0;
-        }
-        .itemInfo {
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
-          flex: 1;
-          min-width: 0;
-        }
-        .itemInfo strong {
-          font-size: 14px;
-          overflow-wrap: anywhere;
-        }
-        .itemInfo span {
-          font-size: 12px;
-          color: #64748b;
-        }
-        .itemInfo small {
-          color: #dc2626;
-        }
-        .itemActions {
-          display: flex;
-          gap: 7px;
-        }
-        .itemActions button, .cancelButton {
-          border: 1px solid #dbe2ea;
-          border-radius: 8px;
-          background: #fff;
-          padding: 8px 11px;
-          color: #475569;
-          cursor: pointer;
-        }
+        
+/* =========================================
+   付款方式管理：付款工具圖示
+   ========================================= */
+
+.itemIcon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #f2ebe2;
+  border: 1px solid #e6dcd0;
+  flex-shrink: 0;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   付款方式管理：名稱及說明
+   ========================================= */
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 180px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.itemInfo strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #49392f;
+  overflow-wrap: anywhere;
+}
+
+.itemInfo span {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #927f70;
+  overflow-wrap: anywhere;
+}
+
+.itemInfo small {
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================
+   付款方式管理：操作按鈕
+   ========================================= */
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.itemActions button,
+.cancelButton {
+  height: 34px;
+  border: 1px solid #d8c6b4;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0 10px;
+  color: #674b39;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* =========================================
+   手機版：付款卡片自動排列
+   ========================================= */
+
+@media (max-width: 600px) {
+  .item {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .itemInfo {
+    flex: 1 1 calc(100% - 60px);
+  }
+
+  .itemActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
         .empty {
           padding: 48px 15px;
           text-align: center;
