@@ -685,39 +685,131 @@ return (
 </section>
 
 
-      <section className="toolbar">
+      
+{/* =========================================
+    付款方式管理：分類與搜尋篩選
+    統一米白＋棕色主題
+   ========================================= */}
 
-        <nav className="tabs">
-          {(["all", ...TYPES] as const).map(type => (
-            <button
-              key={type}
-              type="button"
-              className={filter === type ? "active" : ""}
-              onClick={() => setFilter(type)}
-            >
-              {type === "all" ? "全部" : LABELS[type]}
-            </button>
-          ))}
-        </nav>
+<section
+  className="toolbar"
+  style={{
+    display: "grid",
+    gap: 16,
+    padding: "20px 24px",
+    marginBottom: 24,
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {/* 分類篩選 */}
+  <nav
+    className="tabs"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 10,
+    }}
+  >
+    {(["all", ...TYPES] as const).map((type) => {
+      const selected = filter === type;
 
-        <div className="searchRow">
-          <input
-            style={inputStyle}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="搜尋名稱、銀行、末四碼…"
-          />
+      return (
+        <button
+          key={type}
+          type="button"
+          className={selected ? "active" : ""}
+          aria-pressed={selected}
+          onClick={() => setFilter(type)}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: 40,
+            padding: "0 16px",
+            background: selected ? "#826349" : "#ffffff",
+            color: selected ? "#ffffff" : "#674b39",
+            border: selected
+              ? "1px solid #826349"
+              : "1px solid #d8c6b4",
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 700,
+            whiteSpace: "nowrap",
+            cursor: "pointer",
+            boxSizing: "border-box",
+          }}
+        >
+          {type === "all" ? "全部" : LABELS[type]}
+        </button>
+      );
+    })}
+  </nav>
 
-          <label className="inactiveToggle">
-            <input
-              type="checkbox"
-              checked={showInactive}
-              onChange={e => setShowInactive(e.target.checked)}
-            />
-            顯示停用
-          </label>
-        </div>
-      </section>
+  {/* 搜尋及顯示停用 */}
+  <div
+    className="searchRow"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 14,
+    }}
+  >
+    <input
+      type="search"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="搜尋名稱、銀行、末四碼…"
+      style={{
+        ...inputStyle,
+        flex: "1 1 240px",
+        minWidth: 0,
+        width: "100%",
+        height: 44,
+        padding: "0 14px",
+        border: "1px solid #d8c6b4",
+        borderRadius: 10,
+        background: "#ffffff",
+        color: "#49392f",
+        fontSize: 14,
+        boxSizing: "border-box",
+      }}
+    />
+
+    <label
+      className="inactiveToggle"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        color: "#674b39",
+        fontSize: 14,
+        fontWeight: 600,
+        whiteSpace: "nowrap",
+        cursor: "pointer",
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={showInactive}
+        onChange={(e) => setShowInactive(e.target.checked)}
+        style={{
+          width: 17,
+          height: 17,
+          accentColor: "#826349",
+          cursor: "pointer",
+        }}
+      />
+      顯示停用
+    </label>
+  </div>
+</section>
+
 
       <section className="list">
         {loading ? (
