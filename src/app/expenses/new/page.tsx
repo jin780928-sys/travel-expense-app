@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,  useState,} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import ExpenseForm from "../../../components/ExpenseForm";
 import { supabase } from "../../../lib/supabase";
@@ -26,143 +26,93 @@ type Trip = {
 
 export default function NewExpensePage() {
   const router = useRouter();
-  
+
+  // 防止極快連點造成重複送出（state 更新是非同步的，ref 是同步的）
+  const submittingRef = useRef(false);
+
   // =========================================================
   // 基本資料
   // =========================================================
-  const [item, setItem] =
-    useState("");
+  const [item, setItem] = useState("");
 
-  const [amount, setAmount] =
-    useState("");
+  const [amount, setAmount] = useState("");
 
-  const [date, setDate] =
-    useState(
-      new Date()
-        .toISOString()
-        .slice(0, 10)
-    );
+  const [date, setDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
 
-  // =========================================
-// 付款工具 ID
-// =========================================
+  // 付款工具 ID
+  const [paymentMethodId, setPaymentMethodId] = useState<string>("");
 
-const [
-  paymentMethodId,
-  setPaymentMethodId,
-] = useState<string>("");
-  
-  const [
-    majorCategory,
-    setMajorCategory,
-  ] = useState("");
+  const [majorCategory, setMajorCategory] = useState("");
 
-  const [category, setCategory] =
-    useState("");
+  const [category, setCategory] = useState("");
 
-  const [
-    paymentMethod,
-    setPaymentMethod,
-  ] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
 
-  const [cardName, setCardName] =
-    useState("");
+  const [cardName, setCardName] = useState("");
 
-  const [currency, setCurrency] =
-    useState("USD");
+  const [currency, setCurrency] = useState("USD");
 
-  const [
-    expenseScope,
-    setExpenseScope,
-  ] = useState("daily");
+  const [expenseScope, setExpenseScope] = useState("daily");
 
-  const [
-  tripId,
-  setTripId,
-] = useState("");
+  const [tripId, setTripId] = useState("");
 
-const [
-  openedFromTrip,
-  setOpenedFromTrip,
-] = useState(false);
+  const [openedFromTrip, setOpenedFromTrip] = useState(false);
 
-  const [notes, setNotes] =
-    useState("");
+  const [notes, setNotes] = useState("");
 
   // =========================================================
   // 分攤
   // =========================================================
-  const [paidBy, setPaidBy] =
-    useState("");
+  const [paidBy, setPaidBy] = useState("");
 
-  const [
-    splitType,
-    setSplitType,
-  ] = useState("equal");
+  const [splitType, setSplitType] = useState("equal");
 
-  const [
-    selectedPeople,
-    setSelectedPeople,
-  ] = useState<number[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<number[]>([]);
 
-  const [
-    customShares,
-    setCustomShares,
-  ] = useState<
+  const [customShares, setCustomShares] = useState<
     Record<number, number>
   >({});
 
   // =========================================================
   // 選單資料
   // =========================================================
-  const [people, setPeople] =
-    useState<Person[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
 
-  const [
-    creditCards,
-    setCreditCards,
-  ] = useState<CreditCard[]>([]);
+  const [creditCards, setCreditCards] = useState<CreditCard[]>([]);
 
-  const [trips, setTrips] =
-    useState<Trip[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
 
   // =========================================================
   // 頁面狀態
   // =========================================================
-  const [saving, setSaving] =
-    useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [message, setMessage] =
-    useState("");
+  const [message, setMessage] = useState("");
 
- /* =========================================================
+  /* =========================================================
    從旅程頁進入新增花費
    - 讀取網址 ?trip_id=
    - 自動切換成旅程支出
    - 自動帶入旅程 ID
    ========================================================= */
   useEffect(() => {
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
+    const params = new URLSearchParams(window.location.search);
 
-    const tripIdFromUrl =
-    params.get("trip_id");
+    const tripIdFromUrl = params.get("trip_id");
 
-  if (!tripIdFromUrl) {
-  return;
-}
+    if (!tripIdFromUrl) {
+      return;
+    }
 
-setOpenedFromTrip(true);
-setExpenseScope("trip");
-setTripId(tripIdFromUrl);
-}, []);
-  
-  
+    setOpenedFromTrip(true);
+    setExpenseScope("trip");
+    setTripId(tripIdFromUrl);
+  }, []);
+
   // =========================================================
   // 載入付款人、信用卡、旅程
   // =========================================================
@@ -173,130 +123,94 @@ setTripId(tripIdFromUrl);
 
       const {
         data: { user },
-      } =
-        await supabase.auth.getUser();
+      } = await supabase.auth.getUser();
 
+      // 未登入：直接導去登入頁，不顯示表單
+      // （保持 loading 狀態，避免導頁前閃出空表單）
       if (!user) {
-        setMessage("請先登入");
-        setLoading(false);
+        router.replace("/login");
         return;
       }
 
-      const [
-        peopleResult,
-        creditCardResult,
-        tripResult,
-      ] = await Promise.all([
-        supabase
-          .from("People")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("id", {
-            ascending: true,
-          }),
+      const [peopleResult, creditCardResult, tripResult] =
+        await Promise.all([
+          supabase
+            .from("People")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("id", {
+              ascending: true,
+            }),
 
-        supabase
-          .from("CreditCards")
-          .select("id,name")
-          .eq("user_id", user.id)
-          .eq("is_active", true)
-          .order("name", {
-            ascending: true,
-          }),
+          supabase
+            .from("CreditCards")
+            .select("id,name")
+            .eq("user_id", user.id)
+            .eq("is_active", true)
+            .order("name", {
+              ascending: true,
+            }),
 
-        supabase
-          .from("Trips")
-          .select("id,name")
-          .eq("user_id", user.id)
-          .order("start_date", {
-            ascending: false,
-          }),
-      ]);
+          supabase
+            .from("Trips")
+            .select("id,name")
+            .eq("user_id", user.id)
+            .order("start_date", {
+              ascending: false,
+            }),
+        ]);
 
       if (peopleResult.error) {
-        setMessage(
-          peopleResult.error.message
-        );
+        setMessage(peopleResult.error.message);
         setLoading(false);
         return;
       }
 
       if (creditCardResult.error) {
-        setMessage(
-          creditCardResult.error.message
-        );
+        setMessage(creditCardResult.error.message);
         setLoading(false);
         return;
       }
 
       if (tripResult.error) {
-        setMessage(
-          tripResult.error.message
-        );
+        setMessage(tripResult.error.message);
         setLoading(false);
         return;
       }
 
-      setPeople(
-        (peopleResult.data ||
-          []) as Person[]
-      );
+      setPeople((peopleResult.data || []) as Person[]);
 
-      setCreditCards(
-        (creditCardResult.data ||
-          []) as CreditCard[]
-      );
+      setCreditCards((creditCardResult.data || []) as CreditCard[]);
 
-      setTrips(
-        (tripResult.data ||
-          []) as Trip[]
-      );
+      setTrips((tripResult.data || []) as Trip[]);
 
       setLoading(false);
     }
 
     loadPage();
-  }, []);
+  }, [router]);
 
   // =========================================================
   // 選擇 / 取消分攤人
   // =========================================================
-  function togglePerson(
-    personId: number
-  ) {
-    setSelectedPeople(
-      (current) => {
-        if (
-          current.includes(
-            personId
-          )
-        ) {
-          setCustomShares(
-            (currentShares) => {
-              const next = {
-                ...currentShares,
-              };
+  function togglePerson(personId: number) {
+    setSelectedPeople((current) => {
+      if (current.includes(personId)) {
+        setCustomShares((currentShares) => {
+          const next = {
+            ...currentShares,
+          };
 
-              delete next[
-                personId
-              ];
+          delete next[personId];
 
-              return next;
-            }
-          );
+          return next;
+        });
 
-          return current.filter(
-            (id) =>
-              id !== personId
-          );
-        }
-
-        return [
-          ...current,
-          personId,
-        ];
+        return current.filter((id) => id !== personId);
       }
-    );
+
+      return [...current, personId];
+    });
   }
 
   // =========================================================
@@ -304,280 +218,196 @@ setTripId(tripIdFromUrl);
   // 2 人：輸入其中一人，另一人自動補足
   // 3 人以上：最後選取的人自動補差額
   // =========================================================
-  function updateCustomShare(
-    personId: number,
-    value: string
-  ) {
-    const enteredAmount =
-      Number(value) || 0;
+  function updateCustomShare(personId: number, value: string) {
+    const enteredAmount = Number(value) || 0;
 
-    const totalAmount =
-      Number(amount) || 0;
+    const totalAmount = Number(amount) || 0;
 
-    setCustomShares(
-      (prev) => {
-        const next = {
-          ...prev,
-          [personId]:
-            enteredAmount,
-        };
+    setCustomShares((prev) => {
+      const next = {
+        ...prev,
+        [personId]: enteredAmount,
+      };
 
-        if (
-          selectedPeople.length ===
-          2
-        ) {
-          const otherPersonId =
-            selectedPeople.find(
-              (id) =>
-                id !==
-                personId
-            );
+      if (selectedPeople.length === 2) {
+        const otherPersonId = selectedPeople.find(
+          (id) => id !== personId
+        );
 
-          if (
-            otherPersonId !==
-            undefined
-          ) {
-            next[
-              otherPersonId
-            ] = Math.max(
-              0,
-              Number(
-                (
-                  totalAmount -
-                  enteredAmount
-                ).toFixed(2)
-              )
-            );
-          }
-
-          return next;
-        }
-
-        if (
-          selectedPeople.length >=
-          3
-        ) {
-          const autoPersonId =
-            selectedPeople[
-              selectedPeople.length -
-                1
-            ];
-
-          if (
-            personId !==
-            autoPersonId
-          ) {
-            const usedAmount =
-              selectedPeople
-                .filter(
-                  (id) =>
-                    id !==
-                    autoPersonId
-                )
-                .reduce(
-                  (
-                    sum,
-                    id
-                  ) =>
-                    sum +
-                    Number(
-                      next[id] ||
-                        0
-                    ),
-                  0
-                );
-
-            next[
-              autoPersonId
-            ] = Math.max(
-              0,
-              Number(
-                (
-                  totalAmount -
-                  usedAmount
-                ).toFixed(2)
-              )
-            );
-          }
+        if (otherPersonId !== undefined) {
+          next[otherPersonId] = Math.max(
+            0,
+            Number((totalAmount - enteredAmount).toFixed(2))
+          );
         }
 
         return next;
       }
-    );
+
+      if (selectedPeople.length >= 3) {
+        const autoPersonId =
+          selectedPeople[selectedPeople.length - 1];
+
+        if (personId !== autoPersonId) {
+          const usedAmount = selectedPeople
+            .filter((id) => id !== autoPersonId)
+            .reduce(
+              (sum, id) => sum + Number(next[id] || 0),
+              0
+            );
+
+          next[autoPersonId] = Math.max(
+            0,
+            Number((totalAmount - usedAmount).toFixed(2))
+          );
+        }
+      }
+
+      return next;
+    });
   }
 
   // =========================================================
   // 自訂分攤總額
   // =========================================================
-  const customTotal =
-    selectedPeople.reduce(
-      (
-        total,
-        personId
-      ) =>
-        total +
-        Number(
-          customShares[
-            personId
-          ] || 0
-        ),
-      0
-    );
+  const customTotal = selectedPeople.reduce(
+    (total, personId) =>
+      total + Number(customShares[personId] || 0),
+    0
+  );
 
   // =========================================================
   // 平均分攤金額
   // =========================================================
   function getEqualShare() {
-    const totalAmount =
-      Number(amount) || 0;
+    const totalAmount = Number(amount) || 0;
 
-    if (
-      selectedPeople.length ===
-      0
-    ) {
+    if (selectedPeople.length === 0) {
       return 0;
     }
 
-    return Number(
-      (
-        totalAmount /
-        selectedPeople.length
-      ).toFixed(2)
-    );
+    return Number((totalAmount / selectedPeople.length).toFixed(2));
   }
 
   // =========================================================
   // 新增支出
   // =========================================================
-  async function handleSubmit(
-    e: React.FormEvent
-  ) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (saving) {
+    // 用 ref 同步鎖住，避免連點重複送出
+    if (submittingRef.current) {
       return;
     }
 
+    submittingRef.current = true;
     setSaving(true);
     setMessage("");
 
     try {
       const {
         data: { user },
-      } =
-        await supabase.auth.getUser();
+      } = await supabase.auth.getUser();
 
       if (!user) {
-        alert("請先登入");
+        router.replace("/login");
         return;
       }
 
-// =========================================
-// 信用卡付款驗證
-// 避免 card_name 儲存為 NULL
-// =========================================
+      // =====================================================
+      // 送出前驗證
+      // =====================================================
+      const totalAmount = Number(amount);
 
-if (
-  paymentMethod === "信用卡" &&
-  !cardName.trim()
-) {
-  alert("請先選擇信用卡");
-  return;
-}
-      
+      if (!item.trim()) {
+        alert("請輸入項目名稱");
+        return;
+      }
+
+      if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
+        alert("請輸入大於 0 的金額");
+        return;
+      }
+
+      // 信用卡付款驗證，避免 card_name 儲存為 NULL
+      if (paymentMethod === "信用卡" && !cardName.trim()) {
+        alert("請先選擇信用卡");
+        return;
+      }
+
+      // 自訂分攤總和必須等於支出金額
+      if (
+        selectedPeople.length > 0 &&
+        splitType === "custom" &&
+        Math.abs(customTotal - totalAmount) > 0.01
+      ) {
+        alert(
+          `自訂分攤總和 ${customTotal} 與支出金額 ${totalAmount} 不一致，請調整後再送出`
+        );
+        return;
+      }
+
       // =====================================================
       // 先新增 Expenses
       // =====================================================
-      const {
-        data: expenseData,
-        error: expenseError,
-      } = await supabase
-        .from("Expenses")
-        .insert({
-          date,
-          item:
-            item.trim(),
+      const { data: expenseData, error: expenseError } =
+        await supabase
+          .from("Expenses")
+          .insert({
+            date,
+            item: item.trim(),
 
-          amount:
-            Number(amount),
+            amount: totalAmount,
 
-          major_category:
-            majorCategory,
+            major_category: majorCategory,
 
-          category,
+            category,
 
-          // =========================================
-// 付款方式
-// =========================================
+            // 付款方式
+            payment_method:
+              paymentMethod === "Debit Card"
+                ? "金融卡"
+                : paymentMethod,
 
-payment_method:
-  paymentMethod === "Debit Card"
-    ? "金融卡"
-    : paymentMethod,
+            // 實際扣款信用卡
+            card_name:
+              (paymentMethod === "信用卡" ||
+                paymentMethod === "Apple Pay" ||
+                paymentMethod === "Google Pay") &&
+              cardName.trim()
+                ? cardName.trim()
+                : null,
 
-// =========================================
-// 實際扣款信用卡
-// =========================================
-
-card_name:
-  (
-    paymentMethod === "信用卡" ||
-    paymentMethod === "Apple Pay" ||
-    paymentMethod === "Google Pay"
-  ) && cardName.trim()
-    ? cardName.trim()
-    : null,
-
-// =========================================
-// 付款工具 ID
-// 金融卡 / Apple Pay / Google Pay
-// =========================================
-
-payment_method_id:
-  paymentMethodId
-    ? Number(paymentMethodId)
-    : null,
-
-          currency,
-
-          expense_scope:
-            expenseScope,
-
-          trip_id:
-            expenseScope ===
-              "trip" &&
-            tripId
-              ? Number(tripId)
+            // 付款工具 ID
+            // 金融卡 / Apple Pay / Google Pay
+            payment_method_id: paymentMethodId
+              ? Number(paymentMethodId)
               : null,
 
-          notes:
-            notes.trim() ||
-            null,
+            currency,
 
-          paid_by:
-            paidBy
-              ? Number(paidBy)
-              : null,
+            expense_scope: expenseScope,
 
-          split_type:
-            splitType,
+            trip_id:
+              expenseScope === "trip" && tripId
+                ? Number(tripId)
+                : null,
 
-          user_id:
-            user.id,
-        })
-        .select("id")
-        .single();
+            notes: notes.trim() || null,
+
+            paid_by: paidBy ? Number(paidBy) : null,
+
+            split_type: splitType,
+
+            user_id: user.id,
+          })
+          .select("id")
+          .single();
 
       if (expenseError) {
-        console.error(
-          "新增支出失敗:",
-          expenseError
-        );
+        console.error("新增支出失敗:", expenseError);
 
-        alert(
-          "新增支出失敗：" +
-            expenseError.message
-        );
+        alert("新增支出失敗：" + expenseError.message);
 
         return;
       }
@@ -585,134 +415,98 @@ payment_method_id:
       // =====================================================
       // 建立分攤資料
       // =====================================================
-      if (
-        selectedPeople.length >
-        0
-      ) {
-        const splitRows =
-          selectedPeople.map(
-            (
-              personId,
-              index
-            ) => {
-              let shareAmount =
-                0;
+      if (selectedPeople.length > 0) {
+        const peopleCount = selectedPeople.length;
 
-              if (
-                splitType ===
-                "equal"
-              ) {
-                const totalAmount =
-                  Number(amount);
+        const normalShare = Number(
+          (totalAmount / peopleCount).toFixed(2)
+        );
 
-                const peopleCount =
-                  selectedPeople.length;
+        const splitRows = selectedPeople.map(
+          (personId, index) => {
+            let shareAmount = 0;
 
-                const normalShare =
-                  Number(
-                    (
-                      totalAmount /
-                      peopleCount
-                    ).toFixed(
-                      2
-                    )
-                  );
-
-                if (
-                  index ===
-                  peopleCount -
-                    1
-                ) {
-                  shareAmount =
-                    Number(
-                      (
-                        totalAmount -
-                        normalShare *
-                          (peopleCount -
-                            1)
-                      ).toFixed(
-                        2
-                      )
-                    );
-                } else {
-                  shareAmount =
-                    normalShare;
-                }
+            if (splitType === "equal") {
+              // 最後一人補差額，避免四捨五入造成總和不符
+              if (index === peopleCount - 1) {
+                shareAmount = Number(
+                  (
+                    totalAmount -
+                    normalShare * (peopleCount - 1)
+                  ).toFixed(2)
+                );
+              } else {
+                shareAmount = normalShare;
               }
-
-              if (
-                splitType ===
-                "custom"
-              ) {
-                shareAmount =
-                  Number(
-                    customShares[
-                      personId
-                    ] || 0
-                  );
-              }
-
-              return {
-                expense_id:
-                  expenseData.id,
-
-                person_id:
-                  personId,
-
-                share_amount:
-                  shareAmount,
-
-                user_id:
-                  user.id,
-              };
             }
-          );
 
-        const {
-          error: splitError,
-        } = await supabase
-          .from(
-            "ExpenseSplits"
-          )
+            if (splitType === "custom") {
+              shareAmount = Number(customShares[personId] || 0);
+            }
+
+            return {
+              expense_id: expenseData.id,
+
+              person_id: personId,
+
+              share_amount: shareAmount,
+
+              user_id: user.id,
+            };
+          }
+        );
+
+        const { error: splitError } = await supabase
+          .from("ExpenseSplits")
           .insert(splitRows);
 
         if (splitError) {
-          console.error(
-            "新增分攤資料失敗:",
-            splitError
-          );
+          console.error("新增分攤資料失敗:", splitError);
 
-          alert(
-            "新增分攤資料失敗：" +
-              splitError.message
-          );
+          // 回復：刪除剛建立的支出，避免留下沒有分攤的資料，
+          // 也避免使用者重按後產生重複支出
+          const { error: rollbackError } = await supabase
+            .from("Expenses")
+            .delete()
+            .eq("id", expenseData.id);
+
+          if (rollbackError) {
+            console.error("回復支出失敗:", rollbackError);
+
+            alert(
+              "新增分攤資料失敗：" +
+                splitError.message +
+                "\n\n且無法自動還原剛建立的支出，請到花費紀錄確認並手動刪除，再重新新增。"
+            );
+          } else {
+            alert(
+              "新增分攤資料失敗：" +
+                splitError.message +
+                "\n\n本次支出未儲存，請修正後重新送出。"
+            );
+          }
 
           return;
         }
       }
 
-    // =========================================
-// 儲存成功後，自動返回對應頁面
-// =========================================
+      // =====================================================
+      // 儲存成功後，自動返回對應頁面
+      // =====================================================
+      if (expenseScope === "trip" && tripId) {
+        router.push(`/trips/${tripId}?tab=expenses`);
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("新增支出失敗:", error);
 
-if (expenseScope === "trip" && tripId) {
-  router.push(`/trips/${tripId}?tab=expenses`);
-} else {
-  router.push("/dashboard");
-}
-
-      } catch (error) {
-  console.error(
-    "新增支出失敗:",
-    error
-  );
-
-  alert("新增支出時發生錯誤");
-
-} finally {
-  setSaving(false);
-}
-}
+      alert("新增支出時發生錯誤");
+    } finally {
+      submittingRef.current = false;
+      setSaving(false);
+    }
+  }
 
   // =========================================================
   // Loading
@@ -724,10 +518,8 @@ if (expenseScope === "trip" && tripId) {
           maxWidth: 760,
           margin: "0 auto",
           padding: 20,
-          minHeight:
-            "100vh",
-          boxSizing:
-            "border-box",
+          minHeight: "100vh",
+          boxSizing: "border-box",
           width: "100%",
         }}
       >
