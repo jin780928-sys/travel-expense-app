@@ -1210,19 +1210,42 @@ return (
           align-items: center;
           gap: 6px;
         }
-        .list {
-          border: 1px solid #e2e8f0;
-          border-radius: 13px;
-          overflow: hidden;
-          background: #fff;
-        }
-        .item {
-          padding: 13px 15px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          border-bottom: 1px solid #eef2f6;
-        }
+       
+/* =========================================
+   付款方式清單：外層容器
+   ========================================= */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: #faf7f2;
+  border: 1px solid #e6dcd0;
+  border-radius: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================
+   單筆付款方式：獨立卡片
+   ========================================= */
+
+.item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e6dcd0;
+  border-radius: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
         .item:last-child {
           border-bottom: 0;
         }
