@@ -12701,21 +12701,28 @@ onChange={(e) => {
                   (person) => person.id === item.person_id
                 )?.name || "未找到人員";
 
-          return (
-            <div
-              key={item.id}
-              style={{
-                padding: 16,
-                background: item.is_packed ? "#f1f5ed" : "#ffffff",
-                border: "1px solid #e6dcd0",
-                borderRadius: 12,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: 12,
-              }}
-            >
+          
+return (
+  <div
+    key={item.id}
+    style={{
+      padding: 16,
+      background: item.is_packed
+        ? "#f1f5ed"
+        : "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderLeft: "6px solid #826349",
+      borderRadius: 16,
+      boxSizing: "border-box",
+      width: "100%",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 12,
+    }}
+  >
+
               <label
                 style={{
                   display: "flex",
