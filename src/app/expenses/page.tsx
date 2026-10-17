@@ -1047,14 +1047,29 @@ return (
 
 <section className="listPanel">
 
-{/* =========================================
-      清單表頭
-    ========================================= */}
 
-  <div className="listHeader">
+<div
+  className="listHeader"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    padding: "14px 24px",
+    marginBottom: 12,
+    background: "#f2ebe2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 12,
+    boxSizing: "border-box",
+    color: "#674b39",
+    fontSize: 14,
+    fontWeight: 700,
+  }}
+>
   <div>花費資訊</div>
   <div className="amountHeader">金額</div>
 </div>
+
  
 
   {/* 載入中 */}
