@@ -8937,18 +8937,20 @@ onClick={() => {
         </span>
       </h3>
 
-      {group.map((flight) => (
+      
+{group.map((flight) => (
 
-      <div
-        key={flight.id}
-        style={{
-          background: "#ffffff",
-          border: "1px solid #e6dcd0",
-          borderRadius: 14,
-          padding: "clamp(12px, 3vw, 22px)",
-          boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
-        }}
-      >
+  <div
+    key={flight.id}
+    style={{
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 14,
+      padding: "clamp(12px, 3vw, 22px)",
+      boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
+    }}
+  >
+
         {/* 航空公司、航班編號、付款狀態 */}
         <div
           style={{
