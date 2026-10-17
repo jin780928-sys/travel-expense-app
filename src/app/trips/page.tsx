@@ -228,65 +228,84 @@ const sortedTrips = [
 <AppNavigation />
 
     
-    {/* =====================================================
-        我的旅程頁面標題區
-       ===================================================== */}
-    <div
+    
+{/* =========================================
+    我的旅程：統一標題與新增按鈕
+   ========================================= */}
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 16,
+    marginBottom: 24,
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {/* 左側：標題與說明 */}
+  <div
+    style={{
+      flex: "1 1 220px",
+      minWidth: 0,
+    }}
+  >
+    <h1
       style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 12,
-        flexWrap: "wrap",
-        marginBottom: 18,
+        margin: 0,
+        fontSize: "clamp(24px, 4vw, 30px)",
+        fontWeight: 800,
+        lineHeight: 1.3,
+        color: "#49392f",
       }}
     >
-      <div>
-        <h1
-          style={{
-            margin: 0,
-            fontSize: 28,
-            fontWeight: 700,
-            color: "#111827",
-          }}
-        >
-          我的旅程
-        </h1>
+      我的旅程
+    </h1>
 
-        <div
-          style={{
-            marginTop: 6,
-            fontSize: 14,
-            color: "#6b7280",
-          }}
-        >
-          管理旅程與旅遊支出
-        </div>
-      </div>
-
-      <Link
-        href="/trips/new"
-        style={{
-          height: 42,
-
-          padding: "0 16px",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#2563eb",
-          color: "#ffffff",
-          border: "1px solid #2563eb",
-          borderRadius: 10,
-          textDecoration: "none",
-          fontSize: 14,
-          fontWeight: 600,
-          whiteSpace: "nowrap",
-          boxSizing: "border-box",
-        }}
-      >
-        ＋ 新增旅程
-      </Link>
+    <div
+      style={{
+        marginTop: 8,
+        fontSize: 14,
+        lineHeight: 1.6,
+        color: "#927f70",
+      }}
+    >
+      管理旅程與旅遊支出
     </div>
+  </div>
+
+  {/* 右側：新增旅程 */}
+  <Link
+    href="/trips/new"
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: 44,
+      padding: "0 20px",
+      boxSizing: "border-box",
+      background: "#826349",
+      color: "#ffffff",
+      border: "1px solid #826349",
+      borderRadius: 12,
+      textDecoration: "none",
+      fontSize: 14,
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      flexShrink: 0,
+      cursor: "pointer",
+    }}
+  >
+    ＋ 新增旅程
+  </Link>
+</div>
+
 
 
     {/* =====================================================
