@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+
 const navigationItems = [
   {
     label: "🏠 回首頁",
@@ -18,10 +19,15 @@ const navigationItems = [
     href: "/expenses/new",
   },
   {
+    label: "💰 花費紀錄",
+    href: "/expenses",
+  },
+  {
     label: "💳 信用卡管理",
     href: "/cards",
   },
 ];
+
 
 export default function AppNavigation() {
   const pathname = usePathname();
