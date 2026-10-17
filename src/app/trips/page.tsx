@@ -359,27 +359,74 @@ return (
     - 顯示名稱、地點、日期、備註
    ========================================================= */}     
 
-    {/* =========================================================
-        沒有旅程
-       ========================================================= */}
-      {!message &&
-      sortedTrips.length === 0 && (
-        <div
-          style={{
-            background: "#ffffff",
-            border: "1px solid #e5e7eb",
-            borderRadius: 14,
-            padding: 24,
-            color: "#6b7280",
-            fontSize: 14,
-            textAlign: "center",
-          }}
-        >
-          {tripStatusFilter === "all"
-            ? "目前沒有旅程"
-            : "這個分類目前沒有旅程"}
-        </div>
-      )}
+    
+{/* =========================================
+    沒有旅程：統一米白＋棕色主題
+   ========================================= */}
+
+{!message && sortedTrips.length === 0 && (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 12,
+      padding: "40px 24px",
+      marginBottom: 20,
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 16,
+      textAlign: "center",
+      boxSizing: "border-box",
+      width: "100%",
+    }}
+  >
+    {/* 圖示 */}
+    <div
+      style={{
+        width: 64,
+        height: 64,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#f2ebe2",
+        borderRadius: "50%",
+        fontSize: 30,
+      }}
+    >
+      🧳
+    </div>
+
+    {/* 提示標題 */}
+    <div
+      style={{
+        fontSize: 18,
+        fontWeight: 800,
+        color: "#49392f",
+      }}
+    >
+      {tripStatusFilter === "all"
+        ? "目前沒有旅程"
+        : "這個分類目前沒有旅程"}
+    </div>
+
+    {/* 提示說明 */}
+    <div
+      style={{
+        fontSize: 14,
+        lineHeight: 1.7,
+        color: "#927f70",
+        maxWidth: 400,
+      }}
+    >
+      {tripStatusFilter === "all"
+        ? "還沒有建立旅程，點擊上方「＋ 新增旅程」開始規劃吧！"
+        : "目前沒有符合此狀態的旅程，可以切換其他分類查看。"}
+    </div>
+  </div>
+)}
+
 
      {/* =========================================================
         旅程卡片
