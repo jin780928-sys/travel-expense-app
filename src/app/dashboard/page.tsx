@@ -2972,12 +2972,13 @@ XLSX.writeFile(
 
           <div
             style={{
-              border:
-                "1px solid #fecaca",
-              borderRadius: 12,
-              padding: 14,
-              background: "#fff7f7",
-              boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
+              
+border: "1px solid #ebd89a",
+borderRadius: 12,
+padding: 14,
+background: "#fffaeb",
+boxShadow: "0 1px 3px rgba(152,112,28,0.06)",
+
             }}
           >
             <div
