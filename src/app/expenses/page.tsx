@@ -1045,7 +1045,13 @@ return (
     10. 花費清單｜
 ============================================================ */}
 
-<section className="listPanel">
+<section
+  className="listPanel"
+  style={{
+    padding: "16px",
+    boxSizing: "border-box",
+  }}
+>
 
 
 <div
