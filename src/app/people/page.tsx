@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
+import AppNavigation from "../../components/AppNavigation";
 
 
 // ==========================================
@@ -389,33 +390,13 @@ const inactivePeople = people.filter(
   return (
     <main className="people-page">
 
-      <div className="people-container">
-{/* =========================================
-    返回首頁按鈕
-    顯示在人員管理標題上方
-    ========================================= */}
+      {/* =========================================
+    共用頂部導覽列
+   ========================================= */}
+<AppNavigation />
 
-<div style={{ marginBottom: 28 }}>
-  <Link
-    href="/"
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "12px 20px",
-      backgroundColor: "#eff6ff",
-      color: "#2563eb",
-      border: "1px solid #bfdbfe",
-      borderRadius: 12,
-      fontSize: 16,
-      fontWeight: 700,
-      textDecoration: "none",
-      whiteSpace: "nowrap",
-    }}
-  >
-    ← 回首頁
-  </Link>
-</div>
+      <div className="people-container">
+
         
 {/* ==================================
     13. HEADER / 頁面標題＋回首頁
