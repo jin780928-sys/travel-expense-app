@@ -586,20 +586,87 @@ return (
    ========================================= */}
 <AppNavigation />
 
+
+
+      
 {/* =========================================
-    返回首頁按鈕
-    與「我的旅程」相同樣式
+    花費紀錄：統一標題與新增按鈕
    ========================================= */}
 
-<div
+<header
+  className="pageHeader"
   style={{
-    marginBottom: 28,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 16,
+    marginBottom: 24,
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
   }}
 >
-  
-</div>
+  {/* 左側：標題與說明 */}
+  <div
+    style={{
+      flex: "1 1 220px",
+      minWidth: 0,
+    }}
+  >
+    <h1
+      style={{
+        margin: 0,
+        fontSize: "clamp(24px, 4vw, 30px)",
+        fontWeight: 800,
+        lineHeight: 1.3,
+        color: "#49392f",
+      }}
+    >
+      花費紀錄
+    </h1>
 
-      <header className="pageHeader">
+    <p
+      style={{
+        margin: "8px 0 0",
+        fontSize: 14,
+        lineHeight: 1.6,
+        color: "#927f70",
+      }}
+    >
+      查看日常與所有旅程的單筆花費紀錄
+    </p>
+  </div>
+
+  {/* 右側：新增花費 */}
+  <Link
+    href="/expenses/new"
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: 44,
+      padding: "0 20px",
+      boxSizing: "border-box",
+      background: "#826349",
+      color: "#ffffff",
+      border: "1px solid #826349",
+      borderRadius: 12,
+      textDecoration: "none",
+      fontSize: 14,
+      fontWeight: 700,
+      whiteSpace: "nowrap",
+      flexShrink: 0,
+      cursor: "pointer",
+    }}
+  >
+    ＋ 新增花費
+  </Link>
+</header>
+
 
         <div>
           <h1>花費紀錄</h1>
