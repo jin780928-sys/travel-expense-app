@@ -2,7 +2,7 @@
 
 import {useEffect,  useState,} from "react";
 import Link from "next/link";
-import AppNavigation from "@/components/AppNavigation";
+import AppNavigation from "../../components/AppNavigation";
 import { supabase } from "../../lib/supabase";
 
 type Trip = {
