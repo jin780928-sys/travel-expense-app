@@ -8996,6 +8996,15 @@ onClick={() => {
             <div style={{ marginTop: 6, fontSize: 12, color: "#927f70" }}>
               首段航班：{flight.flight_number || "未設定"}
             </div>
+            {/* 航班摘要與航段資訊分隔線 */}
+<div
+  style={{
+    width: "100%",
+    height: 1,
+    background: "#d8c6b4",
+    margin: "20px 0",
+  }}
+/>
           </div>
 
           
