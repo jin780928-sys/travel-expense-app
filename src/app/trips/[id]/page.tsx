@@ -6501,12 +6501,11 @@ return (
     style={{
       padding: "4px 9px",
       background: "#f2ebe2",
-      border:
-        "1px solid #bfdbfe",
+      color: "#826349",
+      border: "1px solid #d8c6b4",
       borderRadius: 999,
       fontSize: 12,
       fontWeight: 700,
-      color: "#1d4ed8",
       whiteSpace: "nowrap",
     }}
     >
