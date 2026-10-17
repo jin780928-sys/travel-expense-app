@@ -78,36 +78,61 @@ const TYPES: MethodType[] = [
 
 // ==================== 02. 樣式 ====================
 
+
+/* =========================================
+   付款方式管理：輸入框與下拉選單
+   ========================================= */
+
 const inputStyle: React.CSSProperties = {
   width: "100%",
   minWidth: 0,
+  height: 44,
   boxSizing: "border-box",
-  padding: "11px 12px",
-  border: "1px solid #dbe2ea",
+  padding: "10px 12px",
+  border: "1px solid #d8c6b4",
   borderRadius: 10,
-  background: "#fff",
-  color: "#172033",
+  background: "#ffffff",
+  color: "#49392f",
   fontSize: 14,
+  lineHeight: 1.5,
+  outlineColor: "#b89b80",
 };
 
+/* =========================================
+   付款方式管理：主要操作按鈕
+   ========================================= */
+
 const primaryButton: React.CSSProperties = {
-  border: 0,
-  borderRadius: 11,
-  padding: "11px 18px",
-  background: "#4f46e5",
-  color: "white",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: 44,
+  padding: "0 20px",
+  boxSizing: "border-box",
+  border: "1px solid #826349",
+  borderRadius: 10,
+  background: "#826349",
+  color: "#ffffff",
+  fontSize: 14,
   fontWeight: 700,
+  whiteSpace: "nowrap",
   cursor: "pointer",
 };
 
+/* =========================================
+   付款方式管理：表單欄位標題
+   ========================================= */
 
 const labelStyle: React.CSSProperties = {
   display: "grid",
-  gap: 7,
+  gap: 8,
+  minWidth: 0,
   fontSize: 13,
   fontWeight: 600,
-  color: "#475569",
+  lineHeight: 1.5,
+  color: "#674b39",
 };
+
 
 function blankForm(type: MethodType = "credit_card") {
   return {
