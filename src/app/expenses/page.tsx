@@ -933,51 +933,112 @@ return (
 
 
 
-{/* ============================================================
-      09. 統計區
-    ============================================================ */}
 
-      {!loading && !errorMessage && (
+{/* =========================================
+    09. 統計摘要區：統一米白棕色主題
+   ========================================= */}
 
-        <section className="summaryPanel">
+{!loading && !errorMessage && (
+  <section
+    className="summaryPanel"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: 20,
+      padding: "20px 24px",
+      marginBottom: 24,
+      background: "#f2ebe2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 16,
+      boxSizing: "border-box",
+      width: "100%",
+    }}
+  >
+    {/* 左側：符合條件筆數 */}
+    <div
+      className="summaryCount"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 6,
+        minWidth: 100,
+      }}
+    >
+      <span
+        style={{
+          fontSize: 13,
+          fontWeight: 600,
+          color: "#927f70",
+        }}
+      >
+        符合條件
+      </span>
 
-          <div className="summaryCount">
+      <strong
+        style={{
+          fontSize: 24,
+          fontWeight: 800,
+          color: "#49392f",
+        }}
+      >
+        {totalCount} 筆
+      </strong>
+    </div>
 
-            <span>符合條件</span>
+    {/* 右側：各幣別總金額 */}
+    <div
+      className="summaryTotals"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        flexWrap: "wrap",
+        gap: 24,
+        flex: "1 1 180px",
+        minWidth: 0,
+      }}
+    >
+      {totalsByCurrency.map(([currency, amount]) => (
+        <div
+          className="currencyTotal"
+          key={currency}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: 6,
+            minWidth: 0,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#927f70",
+            }}
+          >
+            {currency}
+          </span>
 
-            <strong>
-              {totalCount} 筆
-            </strong>
+          <strong
+            style={{
+              fontSize: 24,
+              fontWeight: 800,
+              color: "#49392f",
+              overflowWrap: "anywhere",
+            }}
+          >
+            {formatAmount(amount)}
+          </strong>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
 
-          </div>
-
-
-          <div className="summaryTotals">
-
-            {totalsByCurrency.map(
-              ([currency, amount]) => (
-
-                <div
-                  className="currencyTotal"
-                  key={currency}
-                >
-
-                  <span>{currency}</span>
-
-                  <strong>
-                    {formatAmount(amount)}
-                  </strong>
-
-                  </div>
-
-              )
-            )}
-
-          </div>
-
-        </section>
-
-      )}
 
      
 {/* ============================================================
