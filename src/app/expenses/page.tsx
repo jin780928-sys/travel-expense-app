@@ -596,24 +596,7 @@ return (
     marginBottom: 28,
   }}
 >
-  <Link
-    href="/"
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "12px 20px",
-      backgroundColor: "#eff6ff",
-      color: "#2563eb",
-      border: "1px solid #bfdbfe",
-      borderRadius: 12,
-      fontSize: 16,
-      fontWeight: 700,
-      textDecoration: "none",
-    }}
-  >
-    ← 回首頁
-  </Link>
+  
 </div>
 
       <header className="pageHeader">
