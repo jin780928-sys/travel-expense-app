@@ -572,26 +572,118 @@ return (
 </header>
 
 
-      <section className="overview">
-        <div>
+      
+{/* =========================================
+    付款方式管理：統計摘要區
+    統一米白＋棕色主題
+   ========================================= */}
 
-          <span>付款工具</span>
-          <strong>{items.length}</strong>
-        </div>
-        <div>
-          <span>啟用中</span>
-          <strong>
-            {items.filter(i => i.is_active).length}
-          </strong>
+<section
+  className="overview"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: 16,
+    padding: "20px 24px",
+    marginBottom: 24,
+    background: "#f2ebe2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {/* 付款工具總數 */}
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      minWidth: 0,
+    }}
+  >
+    <span
+      style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#927f70",
+      }}
+    >
+      付款工具
+    </span>
 
-          </div>
-        <div>
-          <span>已停用</span>
-          <strong>
-            {items.filter(i => !i.is_active).length}
-          </strong>
-        </div>
-      </section>
+    <strong
+      style={{
+        fontSize: 24,
+        fontWeight: 800,
+        color: "#49392f",
+      }}
+    >
+      {items.length}
+    </strong>
+  </div>
+
+  {/* 啟用中的付款工具 */}
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      minWidth: 0,
+    }}
+  >
+    <span
+      style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#927f70",
+      }}
+    >
+      啟用中
+    </span>
+
+    <strong
+      style={{
+        fontSize: 24,
+        fontWeight: 800,
+        color: "#49392f",
+      }}
+    >
+      {items.filter((i) => i.is_active).length}
+    </strong>
+  </div>
+
+  {/* 已停用的付款工具 */}
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: 8,
+      minWidth: 0,
+    }}
+  >
+    <span
+      style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: "#927f70",
+      }}
+    >
+      已停用
+    </span>
+
+    <strong
+      style={{
+        fontSize: 24,
+        fontWeight: 800,
+        color: "#49392f",
+      }}
+    >
+      {items.filter((i) => !i.is_active).length}
+    </strong>
+  </div>
+</section>
+
 
       <section className="toolbar">
 
