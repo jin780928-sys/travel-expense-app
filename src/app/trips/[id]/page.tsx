@@ -7259,60 +7259,48 @@ style={itinerarySourceEditButtonStyle}
                         "wrap",
                     }}
                   >
-                    {Object.entries(
-                      totalsByCurrency
-                    ).map(
-                      ([
-                        currency,
-                        amount,
-                        ]) => (
-                        <div
-                          key={
-                            currency
-                          }
-                          style={{
-                             padding:
-                              "12px 16px",
-                            background:
-                              "#f2ebe2",
-                            border:
-                              "1px solid #e6dcd0",
-                            borderRadius:
-                              10,
-                          }}
-                        >
-                          <div
-                            style={{
-                              fontSize:
-                                12,
-                              color:
-                                "#927f70",
-                            }}
-                          >
-                            {
-                              currency
-                            }
-                          </div>
+                    {
+{Object.entries(totalsByCurrency).map(
+  ([currency, amount]) => (
+    <div
+      key={currency}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        flexWrap: "wrap",
+        width: "100%",
+        padding: "14px 16px",
+        background: "#f2ebe2",
+        border: "1px solid #e6dcd0",
+        borderRadius: 10,
+        boxSizing: "border-box",
+      }}
+    >
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          color: "#927f70",
+        }}
+      >
+        總支出
+      </span>
 
-                          <div
-                            style={{
-                              marginTop:
-                                3,
-                              fontSize:
-                                20,
-                              fontWeight:
-                                700,
-                              color:
-                                "#49392f",
-                            }}
-                          >
-                            {formatAmount(
-                              amount
-                            )}
-                          </div>
-                        </div>
-                        )
-                    )}
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          color: "#49392f",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {currency} {formatAmount(amount)}
+      </span>
+    </div>
+  )
+)}
+
                   </div>
                 )}
               </section>
