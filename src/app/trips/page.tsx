@@ -308,136 +308,78 @@ const sortedTrips = [
 
 
 
-    {/* =====================================================
-        旅程狀態篩選區
-       ===================================================== */}
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 8,
-        marginBottom: 18,
-      }}
-    >
-      <button
-        type="button"
-        onClick={() =>
-          setTripStatusFilter("all")
-        }
-        style={{
-          height: 38,
-          padding: "0 14px",
-          borderRadius: 999,
-          border:
-            tripStatusFilter === "all"
-              ? "1px solid #2563eb"
-              : "1px solid #d1d5db",
-          background:
-            tripStatusFilter === "all"
-              ? "#2563eb"
-              : "#ffffff",
-          color:
-            tripStatusFilter === "all"
-              ? "#ffffff"
-              : "#374151",
-          fontSize: 14,
-          fontWeight: 600,
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-        }}
-        >
-        全部
-      </button>
+    
+{/* =========================================
+    旅程狀態篩選區：統一棕色主題
+   ========================================= */}
 
-      <button
-        type="button"
-        onClick={() =>
-          setTripStatusFilter("upcoming")
-        }
-        style={{
-          height: 38,
-          padding: "0 14px",
-          borderRadius: 999,
-          border:
-            tripStatusFilter === "upcoming"
-              ? "1px solid #2563eb"
-              : "1px solid #d1d5db",
-          background:
-            tripStatusFilter === "upcoming"
-              ? "#2563eb"
-              : "#ffffff",
-          color:
-            tripStatusFilter === "upcoming"
-              ? "#ffffff"
-              : "#374151",
-          fontSize: 14,
-          fontWeight: 600,
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-        }}
-      >
-        即將出發
-      </button>
-      <button
-        type="button"
-        onClick={() =>
-          setTripStatusFilter("active")
-        }
-        style={{
-          height: 38,
-          padding: "0 14px",
-          borderRadius: 999,
-          border:
-            tripStatusFilter === "active"
-              ? "1px solid #2563eb"
-              : "1px solid #d1d5db",
-          background:
-            tripStatusFilter === "active"
-              ? "#2563eb"
-              : "#ffffff",
-          color:
-            tripStatusFilter === "active"
-              ? "#ffffff"
-              : "#374151",
-          fontSize: 14,
-          fontWeight: 600,
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-          }}
-      >
-        進行中
-      </button>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+    marginBottom: 20,
+    padding: "12px 16px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 14,
+    boxSizing: "border-box",
+    width: "100%",
+  }}
+>
+  {[
+    { value: "all", label: "全部" },
+    { value: "upcoming", label: "即將出發" },
+    { value: "active", label: "進行中" },
+    { value: "ended", label: "已結束" },
+  ].map((option) => {
+    const selected = tripStatusFilter === option.value;
 
+    return (
       <button
+        key={option.value}
         type="button"
         onClick={() =>
-          setTripStatusFilter("ended")
-          }
+          setTripStatusFilter(
+            option.value as
+              | "all"
+              | "upcoming"
+              | "active"
+              | "ended"
+          )
+        }
+        aria-pressed={selected}
         style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
           height: 38,
-          padding: "0 14px",
+          padding: "0 16px",
           borderRadius: 999,
-          border:
-            tripStatusFilter === "ended"
-            ? "1px solid #2563eb"
-              : "1px solid #d1d5db",
-          background:
-            tripStatusFilter === "ended"
-              ? "#2563eb"
-              : "#ffffff",
-          color:
-            tripStatusFilter === "ended"
+          border: selected
+            ? "1px solid #826349"
+            : "1px solid #d8c6b4",
+          background: selected
+            ? "#826349"
+            : "#ffffff",
+          color: selected
             ? "#ffffff"
-              : "#374151",
+            : "#674b39",
           fontSize: 14,
-          fontWeight: 600,
-          cursor: "pointer",
+          fontWeight: 700,
           whiteSpace: "nowrap",
+          boxSizing: "border-box",
+          cursor: "pointer",
+          transition: "background 0.2s, color 0.2s",
         }}
-        >
-        已結束
+      >
+        {option.label}
       </button>
-    </div>
+    );
+  })}
+</div>
+
 
 {/* =========================================================
     旅程卡片清單
