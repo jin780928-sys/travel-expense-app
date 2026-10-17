@@ -8996,7 +8996,7 @@ onClick={() => {
             <div style={{ marginTop: 6, fontSize: 12, color: "#927f70" }}>
               首段航班：{flight.flight_number || "未設定"}
             </div>
-                      
+                </div>      
 <span
   style={{
     display: "inline-block",
