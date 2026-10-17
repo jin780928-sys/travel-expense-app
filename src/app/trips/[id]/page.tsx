@@ -7005,17 +7005,7 @@ style={itinerarySourceEditButtonStyle}
                 </div>
               ) : (
 
-                /* ===========================================
-                   支出列表
-                   =========================================== */
-                <div>
-  {Object.entries(
-    groupedExpenses
-  ).map(
-    ([
-      date,
-      dayExpenses,
-    ]) => (
+                
       
 {/* ===========================================
     支出列表
