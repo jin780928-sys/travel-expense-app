@@ -10831,7 +10831,6 @@ alignItems: "center",
         border: "1px solid #e6dcd0",
         borderRadius: 14,
         background: "#faf7f2",
-        border: "1px solid #e6dcd0",
         boxShadow: "0 2px 8px rgba(103,75,57,0.04)",
         minWidth: 0,
       }}
