@@ -961,186 +961,83 @@ const inactivePeople = people.filter(
       ================================== */}
 
       <style jsx>{`
-
-      * {
-          box-sizing: border-box;
-        }
-
+        /* 人員管理｜奶油米白＋棕色統一版 */
+        * { box-sizing: border-box; }
         .people-page {
           min-height: 100vh;
-          background: #f8fafc;
-          padding: 28px 16px 60px;
-          color: #111827;
+          padding: 20px clamp(12px, 3vw, 24px) 60px;
+          background: #f8f6f3;
+          color: #49392f;
         }
-
         .people-container {
           width: 100%;
-          max-width: 900px;
+          max-width: 1100px;
           margin: 0 auto;
         }
-
- /* ================================
-           28. HEADER / 標題
-        ================================ */
-
         .page-header {
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          justify-content: space-between;
           gap: 16px;
           margin-bottom: 24px;
         }
+        .page-title { margin: 0; color: #49392f; font-weight: 800; }
+        .page-description { margin: 8px 0 0; color: #927f70; line-height: 1.6; }
+        .people-count { display: inline-flex; align-items: center; gap: 8px; }
+        .count-number { color: #49392f; font-weight: 800; }
+        .count-label { color: #927f70; font-weight: 600; }
 
-        .page-title {
-          font-size: 28px;
-          font-weight: 800;
-          margin: 0 0 8px;
-        }
-
-        .page-description {
-          font-size: 14px;
-          line-height: 1.6;
-          color: #6b7280;
-          margin: 0;
-        }
-
-.people-count {
-          display: flex;
-          align-items: baseline;
-          gap: 5px;
-          padding: 12px 16px;
-          border-radius: 12px;
-          background: #eff6ff;
-          white-space: nowrap;
-        }
-
-        .count-number {
-          font-size: 24px;
-          font-weight: 800;
-          color: #2563eb;
-        }
-
-        .count-label {
-          font-size: 12px;
-          font-weight: 600;
-          color: #2563eb;
-        }
-
-        /* ================================
-           29. CONTENT CARD / 主卡片
-        ================================ */
-
+        /* 新增人員／目前人員共用卡片 */
         .content-card {
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 18px;
+          background: #faf7f2;
+          border: 1px solid #e6dcd0;
+          border-radius: 16px;
           padding: 24px;
           margin-bottom: 20px;
-          box-shadow: 0 3px 12px rgba(0,0,0,0.035);
+          box-shadow: 0 3px 14px rgba(103, 75, 57, 0.04);
+          min-width: 0;
         }
-
-        .section-header {
-          margin-bottom: 22px;
-        }
-
+        .section-header { margin-bottom: 22px; }
         .section-title {
+          margin: 0 0 6px;
           font-size: 20px;
           font-weight: 750;
-          margin: 0 0 6px;
+          color: #49392f;
         }
-
-
-.section-description {
+        .section-description {
+          margin: 0;
+          color: #927f70;
           font-size: 13px;
           line-height: 1.6;
-          color: #6b7280;
-          margin: 0;
         }
-
-        /* ================================
-           30. FORM / 表單
-        ================================ */
-
-        .person-form {
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-        }
-
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .form-label {
-          font-size: 14px;
-          font-weight: 650;
-          color: #374151;
-        }
-
-        .required {
-          color: #ef4444;
-          margin-left: 4px;
-        }
-
-        .optional {
-          color: #9ca3af;
-          font-size: 12px;
-          font-weight: 400;
-        }
-
-        .form-input,
-        .form-textarea {
+        .person-form { display: flex; flex-direction: column; gap: 18px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .form-label { color: #674b39; font-size: 14px; font-weight: 650; }
+        .required { color: #b45309; margin-left: 4px; }
+        .optional { color: #927f70; font-size: 12px; font-weight: 400; }
+        .form-input, .form-textarea {
           width: 100%;
-          border: 1px solid #d1d5db;
+          border: 1px solid #d8c6b4;
           border-radius: 10px;
           padding: 12px 14px;
           font-size: 15px;
           font-family: inherit;
-          color: #111827;
+          color: #49392f;
           background: #ffffff;
           outline: none;
+          box-sizing: border-box;
         }
-
-        .form-input {
-          min-height: 46px;
+        .form-input { min-height: 46px; }
+        .form-textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
+        .form-input:focus, .form-textarea:focus {
+          border-color: #a88a70;
+          box-shadow: 0 0 0 3px rgba(130, 99, 73, 0.14);
         }
+        .form-input::placeholder, .form-textarea::placeholder { color: #a99a8e; }
+        .field-hint { margin: 0; font-size: 12px; line-height: 1.6; color: #927f70; }
 
-        .form-textarea {
-          min-height: 90px;
-          resize: vertical;
-          line-height: 1.6;
-        }
-
-        .form-input:focus,
-        .form-textarea:focus {
-          border-color: #2563eb;
-          box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
-        }
-
-        .form-input::placeholder,
-        .form-textarea::placeholder {
-          color: #9ca3af;
-        }
-
-        .field-hint {
-          font-size: 12px;
-          line-height: 1.6;
-          color: #6b7280;
-          margin: 0;
-        }
-
-        /* ================================
-           31. TYPE SELECTOR / 人員用途
-        ================================ */
-
-        .type-selector {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-
+        /* 人員用途的選取狀態 */
+        .type-selector { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
         .type-option {
           display: flex;
           align-items: center;
@@ -1148,260 +1045,146 @@ const inactivePeople = people.filter(
           gap: 8px;
           min-height: 46px;
           padding: 10px 12px;
-          border: 1px solid #d1d5db;
+          border: 1px solid #d8c6b4;
           border-radius: 10px;
           background: #ffffff;
-          color: #374151;
+          color: #674b39;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
         }
-
         .type-option.selected {
-          background: #eff6ff;
-          border-color: #2563eb;
-          color: #1d4ed8;
+          background: #f2ebe2;
+          border-color: #826349;
+          color: #674b39;
         }
+        .type-option input { accent-color: #826349; }
 
-        .type-option input {
-          accent-color: #2563eb;
-        }
-
-        /* ================================
-           32. BUTTON / 按鈕
-        ================================ */
-
-        .form-actions {
-          display: flex;
-        }
-
+        /* 操作按鈕 */
+        .form-actions { display: flex; flex-wrap: wrap; }
         .primary-button {
           min-height: 44px;
           padding: 0 22px;
-          background: #2563eb;
-          border: none;
+          background: #826349;
+          border: 1px solid #826349;
           border-radius: 10px;
-          color: white;
+          color: #ffffff;
           font-size: 14px;
           font-weight: 700;
           font-family: inherit;
           cursor: pointer;
         }
-
-        .primary-button:hover:not(:disabled) {
-          background: #1d4ed8;
-        }
-
-        .primary-button:disabled {
-          opacity: 0.6;
+        .primary-button:hover:not(:disabled) { background: #674b39; }
+        .primary-button:disabled, .refresh-button:disabled, .status-button:disabled {
+          opacity: 0.55;
           cursor: not-allowed;
         }
-
         .refresh-button {
-          background: white;
-          border: 1px solid #d1d5db;
+          min-height: 38px;
+          padding: 8px 14px;
+          background: #ffffff;
+          border: 1px solid #d8c6b4;
           border-radius: 9px;
-          color: #374151;
-          padding: 9px 14px;
+          color: #674b39;
           font-size: 13px;
           font-weight: 600;
           font-family: inherit;
           cursor: pointer;
         }
-
-        .refresh-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        /* ================================
-           33. LIST HEADER / 人員清單標題
-        ================================ */
-
         .list-heading {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          flex-wrap: wrap;
           gap: 12px;
           margin-bottom: 20px;
         }
-
-        /* ================================
-           34. TABS / 啟用狀態切換
-        ================================ */
-
         .status-tabs {
           display: flex;
-          gap: 8px;
-          border-bottom: 1px solid #e5e7eb;
+          flex-wrap: wrap;
+          gap: 10px;
           margin-bottom: 18px;
         }
         .status-tab {
-          border: none;
-          border-bottom: 3px solid transparent;
-          background: transparent;
-          padding: 11px 14px;
-          color: #6b7280;
+          min-height: 40px;
+          padding: 9px 16px;
+          border: 1px solid #d8c6b4;
+          border-radius: 10px;
+          background: #ffffff;
+          color: #674b39;
           font-size: 14px;
           font-weight: 650;
           font-family: inherit;
           cursor: pointer;
         }
+        .active-tab { color: #ffffff; background: #826349; border-color: #826349; }
 
-        .active-tab {
-          color: #2563eb;
-          border-bottom-color: #2563eb;
-        }
-
-        /* ================================
-           35. PEOPLE LIST / 人員卡片
-        ================================ */
-
-        .people-list {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
+        /* 人員列表：每筆獨立奶油白卡片 */
+        .people-list { display: flex; flex-direction: column; gap: 14px; }
         .person-card {
           display: flex;
           align-items: center;
           gap: 14px;
-          background: white;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          padding: 14px 16px;
           min-height: 76px;
+          padding: 16px;
+          background: #faf7f2;
+          border: 1px solid #e6dcd0;
+          border-radius: 12px;
+          min-width: 0;
         }
-
         .person-avatar {
-        width: 44px;
-          height: 44px;
-          min-width: 44px;
-          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #dbeafe;
-          color: #1d4ed8;
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
+          border-radius: 12px;
+          background: #f2ebe2;
+          color: #674b39;
           font-size: 18px;
           font-weight: 800;
         }
-
-        .person-info {
-          flex: 1;
-          min-width: 0;
-        }
-        .person-name {
-          font-size: 16px;
-          font-weight: 750;
-          overflow-wrap: anywhere;
-        }
-
-        .person-meta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-top: 7px;
-        }
-
+        .person-info { flex: 1; min-width: 0; }
+        .person-name { color: #49392f; font-size: 16px; font-weight: 750; overflow-wrap: anywhere; }
+        .person-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
         .person-badge {
           display: inline-flex;
           align-items: center;
-          border-radius: 999px;
           padding: 4px 9px;
+          border-radius: 999px;
           font-size: 11px;
           font-weight: 650;
         }
-
-        .regular-badge {
-          background: #eff6ff;
-          color: #1d4ed8;
-        }
-
-        .travel-badge {
-          background: #f5f3ff;
-          color: #6d28d9;
-        }
-
-        .enabled-badge {
-          background: #f0fdf4;
-          color: #15803d;
-        }
-
-        .disabled-badge {
-          background: #f3f4f6;
-          color: #6b7280;
-        }
-
+        .regular-badge { background: #eee3d7; color: #674b39; }
+        .travel-badge { background: #efe5d9; color: #826349; }
+        .enabled-badge { background: #edf2e6; color: #526a44; }
+        .disabled-badge { background: #eee9e4; color: #7d7168; }
         .person-detail {
           margin-top: 6px;
+          color: #927f70;
           font-size: 13px;
-          color: #6b7280;
           line-height: 1.5;
           white-space: pre-wrap;
           overflow-wrap: anywhere;
         }
-
-        .person-actions {
-          flex-shrink: 0;
-        }
-
+        .person-actions { flex-shrink: 0; }
         .status-button {
-          border-radius: 9px;
-          padding: 9px 13px;
-          font-family: inherit;
+          min-width: 80px;
+          min-height: 34px;
+          padding: 7px 12px;
+          border-radius: 8px;
           font-size: 13px;
           font-weight: 650;
-          cursor: pointer;
+          font-family: inherit;
           white-space: nowrap;
+          cursor: pointer;
         }
-
-        .disable-button {
-          background: #ffffff;
-          color: #b91c1c;
-          border: 1px solid #fecaca;
-        }
-
-        .enable-button {
-          background: #eff6ff;
-          color: #1d4ed8;
-          border: 1px solid #bfdbfe;
-        }
-
-        .status-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-
-/* ================================
-           36. EMPTY / 無資料
-        ================================ */
-
-        .empty-state {
-          padding: 36px 16px;
-          text-align: center;
-          color: #6b7280;
-          font-size: 14px;
-        }
-
-        .empty-icon {
-          font-size: 32px;
-          margin-bottom: 12px;
-        }
-
-        .empty-title {
-          margin: 0;
-          font-size: 15px;
-          font-weight: 650;
-          color: #374151;
-        }
-
-        /* ================================
-           37. MESSAGE / 提示訊息
-        ================================ */
-
+        .disable-button { background: #ffffff; color: #674b39; border: 1px solid #d8c6b4; }
+        .enable-button { background: #f2ebe2; color: #674b39; border: 1px solid #d8c6b4; }
+        .empty-state { padding: 36px 16px; text-align: center; color: #927f70; font-size: 14px; }
+        .empty-icon { margin-bottom: 12px; font-size: 32px; }
+        .empty-title { margin: 0; font-size: 15px; font-weight: 650; color: #674b39; }
         .message {
           margin-bottom: 16px;
           padding: 12px 16px;
@@ -1410,100 +1193,23 @@ const inactivePeople = people.filter(
           line-height: 1.6;
           overflow-wrap: anywhere;
         }
-
-
-.error-message {
-          background: #fef2f2;
-          border: 1px solid #fecaca;
-          color: #b91c1c;
-        }
-
-        .success-message {
-          background: #f0fdf4;
-          border: 1px solid #bbf7d0;
-          color: #15803d;
-        }
-
-        /* ================================
-           38. MOBILE / 手機版排版
-        ================================ */
+        .error-message { background: #fff2ee; border: 1px solid #e9b4a8; color: #9d4034; }
+        .success-message { background: #f0f4e9; border: 1px solid #cbd8bd; color: #526a44; }
 
         @media (max-width: 600px) {
-
-          .people-page {
-            padding: 20px 12px 40px;
-          }
-
-          .page-title {
-            font-size: 24px;
-          }
-
-          .page-description {
-            font-size: 13px;
-          }
-
-          .people-count {
-            padding: 8px 10px;
-          }
-
-          .count-number {
-            font-size: 20px;
-          }
-
-          .content-card {
-            padding: 18px 14px;
-            border-radius: 14px;
-            margin-bottom: 14px;
-          }
-
-          .section-title {
-            font-size: 18px;
-          }
-
-           .form-input,
-          .form-textarea {
-            font-size: 16px;
-          }
-
-          .primary-button {
-            width: 100%;
-            min-height: 46px;
-          }
-
-          .person-card {
-            flex-wrap: wrap;
-            padding: 12px;
-            gap: 10px;
-          }
-
-          .person-avatar {
-            width: 40px;
-            height: 40px;
-            min-width: 40px;
-            font-size: 16px;
-          }
-
-          .person-name {
-            font-size: 15px;
-          }
-
-          .person-actions {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-          }
-
-          .status-tab {
-            font-size: 13px;
-            padding: 10px;
-          }
-
-          .list-heading {
-            align-items: flex-start;
-          }
-
-          }
-
+          .people-page { padding: 16px 12px 40px; }
+          .content-card { padding: 18px 14px; margin-bottom: 14px; border-radius: 14px; }
+          .section-title { font-size: 18px; }
+          .form-input, .form-textarea { font-size: 16px; }
+          .primary-button { width: 100%; min-height: 46px; }
+          .type-option { padding: 10px 6px; font-size: 13px; }
+          .person-card { flex-wrap: wrap; padding: 12px; gap: 10px; }
+          .person-avatar { width: 40px; height: 40px; min-width: 40px; font-size: 16px; }
+          .person-name { font-size: 15px; }
+          .person-actions { display: flex; justify-content: flex-end; width: 100%; }
+          .status-tab { font-size: 13px; padding: 9px 12px; }
+          .list-heading { align-items: flex-start; }
+        }
       `}</style>
 
     </main>
