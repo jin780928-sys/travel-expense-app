@@ -3057,16 +3057,17 @@ XLSX.writeFile(
                 <div
                   key={card.id}
                   style={{
-                    border: isOpen
-                      ? "2px solid #826349"
-                      : card.isPaid
-                      ? "1px solid #e6dcd0"
-                      : "1px solid #fecaca",
+                    
+border: isOpen
+  ? "2px solid #826349"
+  : card.isPaid
+  ? "1px solid #e6dcd0"
+  : "1px solid #ebd89a",
 
-                    background:
-                      card.isPaid
-                        ? "#faf7f2"
-                        : "#fff7f7",
+background: card.isPaid
+  ? "#faf7f2"
+  : "#fffaeb",
+
 
                     borderRadius: 12,
                     padding: "14px 16px",
@@ -3125,8 +3126,15 @@ XLSX.writeFile(
     borderRadius: 999,
     fontSize: 13,
     fontWeight: 600,
-    background: card.isPaid ? "#ecfdf5" : "#fef2f2",
-    color: card.isPaid ? "#047857" : "#b91c1c",
+    
+background: card.isPaid
+  ? "#ecfdf5"
+  : "#fff3cc",
+
+color: card.isPaid
+  ? "#047857"
+  : "#98701c",
+
     whiteSpace: "nowrap",
     flexShrink: 0,
   }}
@@ -3521,20 +3529,29 @@ XLSX.writeFile(
                     onClick={() =>
                       togglePaidStatus(card)
                     }
-                   style={{
-                        marginTop: 12,
-                        height: 40,
-                        padding: "0 12px",
-                        background: card.isPaid ? "#ecfdf5" : "#fef2f2",
-                        color: card.isPaid ? "#047857" : "#b91c1c",
-                        border: card.isPaid ? "1px solid #a7f3d0" : "1px solid #fecaca",
-                        borderRadius: 10,
-                        cursor: "pointer",
-                        fontWeight: 600,
-                        fontSize: 14,
-                        whiteSpace: "nowrap",
-					   flexShrink: 0,
-                      }}
+                   
+style={{
+  marginTop: 12,
+  height: 40,
+  padding: "0 14px",
+  background: card.isPaid
+    ? "#ecfdf5"
+    : "#fff3cc",
+  color: card.isPaid
+    ? "#047857"
+    : "#98701c",
+  border: card.isPaid
+    ? "1px solid #a7f3d0"
+    : "1px solid #ebd89a",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  whiteSpace: "nowrap",
+  flexShrink: 0,
+  boxSizing: "border-box",
+}}
+
                   >
                     {card.isPaid
                       ? "標記未繳"
