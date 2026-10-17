@@ -7016,12 +7016,24 @@ style={itinerarySourceEditButtonStyle}
       date,
       dayExpenses,
     ]) => (
-      <div
-        key={date}
-        style={{
-          marginBottom: 20,
-          }}
-      >
+      
+{/* =========================================
+    每日支出明細：奶油米白卡片
+   ========================================= */}
+<div
+  key={date}
+  style={{
+    marginBottom: 20,
+    padding: "20px 24px",
+    background: "#faf7f2",
+    border: "1px solid #e6dcd0",
+    borderRadius: 16,
+    boxSizing: "border-box",
+    width: "100%",
+    minWidth: 0,
+  }}
+>
+
        {/* ===================================
     支出日期 + 當日小計
    =================================== */}
@@ -7093,13 +7105,12 @@ style={itinerarySourceEditButtonStyle}
               key={expense.id}
               href={`/expenses/${expense.id}`}
               style={{
-                display: "block",
-                padding: "13px 0",
-                borderBottom:
-                  "1px solid #f3f4f6",
-                textDecoration: "none",
-                color: "inherit",
-              }}
+  display: "block",
+  padding: "13px 0",
+  borderBottom: "1px solid #e6dcd0",
+  textDecoration: "none",
+  color: "#49392f",
+}}
             >
               <div
                 style={{
@@ -7121,7 +7132,7 @@ style={itinerarySourceEditButtonStyle}
                     style={{
                       fontSize: 15,
                       fontWeight: 600,
-                      color: "#111827",
+                      color: "#49392f",
                       }}
                   >
                     {expense.item}
@@ -7133,7 +7144,7 @@ style={itinerarySourceEditButtonStyle}
                       style={{
                         marginTop: 4,
                         fontSize: 13,
-                        color: "#6b7280",
+                        color: "#927f70",
                       }}
                     >
                       分類：
