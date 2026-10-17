@@ -473,16 +473,17 @@ return (
               }}
             >
               <Link
-                href={`/trips/${trip.id}`}
-                style={{
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: "#111827",
-                  textDecoration: "none",
-                }}
-              >
-                {trip.name}
-              </Link>
+  href={`/trips/${trip.id}`}
+  style={{
+    fontSize: 22,
+    fontWeight: 800,
+    color: "#49392f",
+    textDecoration: "none",
+    lineHeight: 1.4,
+  }}
+>
+  {trip.name}
+</Link>
 
               <div
                 style={{
