@@ -1846,7 +1846,7 @@ XLSX.writeFile(
         color: "#49392f",
       }}
     >
-      Dashboard
+      財務總覽
     </h1>
 
     <p
