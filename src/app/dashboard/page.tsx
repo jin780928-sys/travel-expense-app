@@ -3627,19 +3627,22 @@ style={{
 
             <button
               onClick={exportHistoryExcel}
-                style={{
-                      height: 40,
-                      padding: "0 12px",
-                      background: "#826349",
-                      color: "#ffffff",
-                      border: "1px solid #826349",
-                      borderRadius: 10,
-                      cursor: "pointer",
-                      fontWeight: 600,
-                      fontSize: 14,
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
+                
+style={{
+  height: 40,
+  padding: "0 16px",
+  background: "#826349",
+  color: "#ffffff",
+  border: "1px solid #826349",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+  fontSize: 14,
+  whiteSpace: "nowrap",
+  flexShrink: 0,
+  boxSizing: "border-box",
+}}
+
                   >
                     匯出 Excel
               </button>
@@ -3942,8 +3945,8 @@ style={{
 
             <div
               style={{
-                border: "1px solid #e6dcd0",
-                background:"#fff7f7",
+                border: "1px solid #ebd89a",
+background: "#fffaeb",
                 borderRadius: 10,
                 padding: 12,
                 boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
@@ -4061,15 +4064,15 @@ style={{
                     statement.id
                   }
                   style={{
-                    border:
-                      statement.is_paid
-                        ? "1px solid #ddd"
-                        : "1px solid #fecaca",
+                    
+border: statement.is_paid
+  ? "1px solid #e6dcd0"
+  : "1px solid #ebd89a",
 
-                    background:
-                      statement.is_paid
-                        ? "#fff"
-                        : "#fff7f7",
+background: statement.is_paid
+  ? "#faf7f2"
+  : "#fffaeb",
+
 
                     borderRadius: 12,
                     padding: 14,
@@ -4145,8 +4148,15 @@ style={{
                             borderRadius: 999,
                             fontSize: 13,
                             fontWeight: 600,
-                            background: statement.is_paid ? "#ecfdf5" : "#fef2f2",
-                            color: statement.is_paid ? "#047857" : "#b91c1c",
+                            
+background: statement.is_paid
+  ? "#ecfdf5"
+  : "#fff3cc",
+
+color: statement.is_paid
+  ? "#047857"
+  : "#98701c",
+
                             whiteSpace: "nowrap",
                             flexShrink: 0,
                           }}
