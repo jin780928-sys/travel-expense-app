@@ -2556,13 +2556,13 @@ XLSX.writeFile(
                 <div
                   key={cardName}
                   style={{
-                    marginBottom: 10,
+                    marginBottom: 12,
                     border: isOpen
                       ? "2px solid #49392f"
                       : "1px solid #e6dcd0",
                     borderRadius: 12,
-                    padding: 14,
-                    background: isOpen ? "#faf7f2" : "#ffffff",
+                    padding: "14px 16px",
+                    background: "#faf7f2",
                     boxShadow: isOpen
                       ? "0 2px 8px rgba(0,0,0,0.10)"
                       : "0 1px 3px rgba(0,0,0,0.06)",
@@ -2585,7 +2585,7 @@ XLSX.writeFile(
 					 minWidth: 0,
 					 boxSizing: "border-box",
 					 textAlign: "left",
-					 background: "#ffffff",
+					 background: "transparent",
 					 border: "none",
 					 padding: "2px 0",
 					 cursor: "pointer",
@@ -2598,6 +2598,8 @@ XLSX.writeFile(
   style={{
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
     marginBottom: 4,
     minWidth: 0,
   }}
@@ -2621,12 +2623,11 @@ XLSX.writeFile(
   							</strong>
                     <span
   style={{
-    marginLeft: 8,
     color: "#927f70",
-    fontSize: 14,
+    fontSize: 16,
     flexShrink: 0,
-    maxWidth: "100%",
-    width: "100%",
+    width: "auto",
+    textAlign: "right" as const,
   }}
 >
   {isOpen ? "▲" : "▼"}
@@ -3057,19 +3058,19 @@ XLSX.writeFile(
                   key={card.id}
                   style={{
                     border: isOpen
-                      ? "2px solid #444"
+                      ? "2px solid #826349"
                       : card.isPaid
-                      ? "1px solid #ddd"
+                      ? "1px solid #e6dcd0"
                       : "1px solid #fecaca",
 
                     background:
                       card.isPaid
-                        ? "#ffffff"
+                        ? "#faf7f2"
                         : "#fff7f7",
 
                     borderRadius: 12,
-                    padding: 14,
-                    marginBottom: 12,
+                    padding: "14px 16px",
+                    marginBottom: 10,
                     boxShadow: "0 3px 12px rgba(103,75,57,0.05)",
 					minWidth: 0,
   					width: "100%",
@@ -3176,7 +3177,7 @@ XLSX.writeFile(
 
                     <div
                       style={{
- 						marginTop: 8,
+ 						marginTop: 6,
 						fontSize: 14,
   						color: "#927f70",
   						lineHeight: 1.4,
