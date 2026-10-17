@@ -431,29 +431,26 @@ return (
      {/* =========================================================
         旅程卡片
        ========================================================= */}
-
-
 {sortedTrips.map((trip) => {
       const status =
         getTripStatus(
           trip.start_date,
           trip.end_date
         );
-
   
+return (
+  <div
+    key={trip.id}
+    style={{
+      background: "#faf7f2",
+      border: "1px solid #e6dcd0",
+      borderRadius: 16,
+      padding: 20,
+      marginBottom: 16,
+      boxSizing: "border-box",
+    }}
+  >
 
-      return (
-        <div
-          key={trip.id}
-          style={{
-            background: "#ffffff",
-            border: "1px solid #e5e7eb",
-            borderRadius: 14,
-            padding: 18,
-            marginBottom: 14,
-            boxSizing: "border-box",
-          }}
-        >
           <div
             style={{
               display: "flex",
